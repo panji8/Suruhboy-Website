@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --primary: #0a2269;    /* Biru tua elegan */
-            --secondary: #fe7f2d;  /* Orange cerah */
-            --light: #e4eef0;      /* Biru muda soft */
-            --dark: #0a1a4d;       /* Biru lebih gelap */
+            --primary: #0a2269;
+            --secondary: #fe7f2d;
+            --light: #e4eef0;
+            --dark: #0a1a4d;
             --white: #ffffff;
             --gray: #6c757d;
         }
@@ -28,7 +28,6 @@
             color: var(--dark);
         }
         
-        /* Navigation */
         .calc-navbar {
             background: var(--primary);
             color: var(--white);
@@ -79,7 +78,6 @@
             box-shadow: 0 5px 15px rgba(254, 127, 45, 0.3);
         }
         
-        /* Main Container */
         .main-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -89,7 +87,6 @@
             min-height: calc(100vh - 70px);
         }
         
-        /* Calculator Container */
         .calculator-container {
             flex: 1;
             background: var(--white);
@@ -160,7 +157,6 @@
             background: var(--secondary);
         }
         
-        /* Services Grid */
         .services-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -205,7 +201,6 @@
             background: var(--secondary);
         }
         
-        /* Input Sections */
         .input-section {
             margin-bottom: 25px;
         }
@@ -246,14 +241,12 @@
             margin-top: 5px;
         }
         
-        /* Divider */
         .divider {
             height: 1px;
             background: linear-gradient(to right, transparent, var(--light), transparent);
             margin: 30px 0;
         }
         
-        /* Estimation Section */
         .estimation-section {
             text-align: center;
             margin-bottom: 30px;
@@ -328,7 +321,6 @@
             margin-top: 20px;
         }
         
-        /* Chat Button */
         .chat-button {
             background: linear-gradient(135deg, var(--secondary) 0%, #ff6a00 100%);
             color: var(--white);
@@ -356,7 +348,6 @@
             font-size: 20px;
         }
         
-        /* Info Panel */
         .info-panel {
             width: 300px;
             background: var(--white);
@@ -416,7 +407,6 @@
             margin-bottom: 5px;
         }
         
-        /* Footer */
         .calc-footer {
             background: var(--primary);
             color: var(--white);
@@ -435,7 +425,6 @@
             text-decoration: underline;
         }
         
-        /* Responsive */
         @media (max-width: 992px) {
             .main-container {
                 flex-direction: column;
@@ -471,7 +460,6 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
     <nav class="calc-navbar">
         <div class="container">
             <div class="logo">
@@ -485,9 +473,7 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="main-container">
-        <!-- Calculator -->
         <div class="calculator-container">
             <div class="header">
                 <div class="logo-large">
@@ -500,26 +486,21 @@
             <div class="content">
                 <h3 class="section-title">Pilih Layanan</h3>
                 
-                <div class="services-grid" id="servicesGrid">
-                    <!-- Services will be populated by JavaScript -->
-                </div>
+                <div class="services-grid" id="servicesGrid"></div>
                 
                 <div class="input-section">
-                    <!-- Distance Input -->
                     <div class="input-group" id="distanceGroup">
                         <label class="input-label">Jarak (KM)</label>
-                        <input type="number" id="distanceInput" placeholder="Contoh: 5" min="0" max="100" step="0.1">
-                        <div class="example">Contoh: 5 KM</div>
+                        <input type="number" id="distanceInput" placeholder="Contoh: 7" min="0" max="100" step="0.1">
+                        <div class="example">Contoh: 7 KM = Rp 14.000</div>
                     </div>
                     
-                    <!-- Duration Input -->
                     <div class="input-group hidden" id="durationGroup">
                         <label class="input-label">Durasi (Jam)</label>
                         <input type="number" id="durationInput" placeholder="Contoh: 2" min="0.5" max="24" step="0.5">
                         <div class="example">Contoh: 2 jam (minimal 0.5 jam)</div>
                     </div>
                     
-                    <!-- Workers Input -->
                     <div class="input-group hidden" id="workersGroup">
                         <label class="input-label">Jumlah Pekerja</label>
                         <select id="workersInput">
@@ -539,9 +520,7 @@
                     <div class="estimation-label">Estimasi Biaya</div>
                     <div class="estimation-amount" id="estimatedAmount">Rp <span>–</span></div>
                     
-                    <div class="breakdown hidden" id="breakdown">
-                        <!-- Breakdown details will appear here -->
-                    </div>
+                    <div class="breakdown hidden" id="breakdown"></div>
                     
                     <p class="disclaimer">
                         *Ini hanya estimasi. Harga final ditentukan admin berdasarkan kondisi aktual.
@@ -555,7 +534,6 @@
             </div>
         </div>
         
-        <!-- Info Panel -->
         <div class="info-panel">
             <h3 class="info-title">
                 <i class="fas fa-info-circle"></i>
@@ -570,8 +548,9 @@
                     </div>
                     <ul class="price-details">
                         <li>≤5 KM = Rp 10.000</li>
-                        <li>Setiap +2 KM = +Rp 2.000</li>
-                        <li>Contoh: 7 KM = Rp 12.000</li>
+                        <li>Setiap +1 KM = +Rp 2.000</li>
+                        <li>Contoh: 7 KM = Rp 14.000</li>
+                        <li>Contoh: 10 KM = Rp 20.000</li>
                     </ul>
                 </div>
                 
@@ -583,6 +562,7 @@
                     <ul class="price-details">
                         <li>Sama seperti deliv di atas</li>
                         <li>+ Biaya jasa Rp 5.000</li>
+                        <li>Contoh: 7 KM = Rp 19.000</li>
                     </ul>
                 </div>
                 
@@ -594,6 +574,7 @@
                     <ul class="price-details">
                         <li>Rp 15.000 per jam</li>
                         <li>Minimal 1 jam</li>
+                        <li>Contoh: 2 jam = Rp 30.000</li>
                     </ul>
                 </div>
                 
@@ -605,6 +586,7 @@
                     <ul class="price-details">
                         <li>1 orang = Rp 40.000/jam</li>
                         <li>>1 orang = Rp 30.000/jam per orang</li>
+                        <li>Contoh: 2 orang 3 jam = Rp 180.000</li>
                     </ul>
                 </div>
                 
@@ -616,19 +598,18 @@
                     <ul class="price-details">
                         <li>Rp 25.000 per jam</li>
                         <li>Start dari 1 jam</li>
+                        <li>Contoh: 4 jam = Rp 100.000</li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="calc-footer">
         <p>&copy; 2024 SuruhBoy. <a href="index.html">Kembali ke Beranda</a></p>
     </div>
 
     <script>
-        // Data layanan dengan palette warna
         const services = [
             "Deliv Makan",
             "Deliv Barang", 
@@ -640,7 +621,6 @@
             "Jasa Intel"
         ];
         
-        // Kategori layanan
         const serviceCategories = {
             "transport": ["Deliv Makan", "Deliv Barang", "Antar Orang"],
             "belanja": ["Belanja Titip"],
@@ -649,18 +629,17 @@
             "perjam_25rb": ["Jasa Intel"]
         };
         
-        // Harga dasar dengan palette warna
+        // PERHITUNGAN YANG BENAR: PER 1 KM = +Rp 2.000
         const priceConfig = {
-            base_transport: 10000,
-            additional_per_2km: 2000,
-            belanja_fee: 5000,
-            perjam_15rb: 15000,
-            perjam_single: 40000,
-            perjam_multiple: 30000,
-            perjam_25rb: 25000
+            base_transport: 10000,      // ≤5KM
+            additional_per_km: 2000,    // PER 1 KM = +Rp 2.000
+            belanja_fee: 5000,          // Biaya jasa belanja
+            perjam_15rb: 15000,         // Jasa nemenin per jam
+            perjam_single: 40000,       // 1 pekerja per jam
+            perjam_multiple: 30000,     // >1 pekerja per jam per orang
+            perjam_25rb: 25000          // Jasa intel per jam
         };
         
-        // DOM Elements
         const servicesGrid = document.getElementById('servicesGrid');
         const distanceInput = document.getElementById('distanceInput');
         const durationInput = document.getElementById('durationInput');
@@ -675,7 +654,6 @@
         
         let selectedService = null;
         
-        // Populate services grid with color palette
         services.forEach(service => {
             const serviceItem = document.createElement('div');
             serviceItem.className = 'service-item';
@@ -686,37 +664,27 @@
             servicesGrid.appendChild(serviceItem);
         });
         
-        // Function to select service
         function selectService(service) {
-            // Remove active class from all items
             document.querySelectorAll('.service-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            // Add active class to clicked item
             event.target.classList.add('active');
             selectedService = service;
             
-            // Show/hide input fields based on service type
             showRelevantInputs(service);
-            
-            // Update estimation
             updateEstimation();
         }
         
-        // Function to show relevant inputs
         function showRelevantInputs(service) {
-            // Reset all inputs
             distanceInput.value = '';
             durationInput.value = '';
             workersInput.value = '1';
             
-            // Hide all groups first
             distanceGroup.classList.add('hidden');
             durationGroup.classList.add('hidden');
             workersGroup.classList.add('hidden');
             
-            // Show relevant groups
             if (serviceCategories.transport.includes(service) || 
                 serviceCategories.belanja.includes(service)) {
                 distanceGroup.classList.remove('hidden');
@@ -729,7 +697,7 @@
             }
         }
         
-        // Function to calculate transport price
+        // FUNGSI PERHITUNGAN YANG BENAR: PER 1 KM
         function calculateTransportPrice(distance) {
             let details = [];
             let total = 0;
@@ -748,13 +716,12 @@
                 });
                 
                 const additionalKm = distance - 5;
-                const additionalUnits = Math.ceil(additionalKm / 2);
-                const additionalCharges = additionalUnits * priceConfig.additional_per_2km;
+                const additionalCharges = additionalKm * priceConfig.additional_per_km; // PER KM!
                 total += additionalCharges;
                 
                 if (additionalCharges > 0) {
                     details.push({
-                        label: `Tambahan ${additionalUnits}×2 KM`,
+                        label: `Tambahan ${additionalKm} KM @ Rp2.000/KM`,
                         amount: additionalCharges
                     });
                 }
@@ -763,7 +730,6 @@
             return { total, details };
         }
         
-        // Format currency function
         function formatCurrency(amount) {
             return new Intl.NumberFormat('id-ID', {
                 style: 'currency',
@@ -772,21 +738,17 @@
             }).format(amount);
         }
         
-        // Function to update estimation
         function updateEstimation() {
             if (!selectedService) return;
             
             let total = 0;
             let calculationDetails = [];
             
-            // Get input values
             const distance = parseFloat(distanceInput.value) || 0;
             const duration = parseFloat(durationInput.value) || 0;
             const workers = parseInt(workersInput.value) || 1;
             
-            // Calculate based on service category
             if (serviceCategories.transport.includes(selectedService)) {
-                // Transport services
                 if (distance > 0) {
                     const transport = calculateTransportPrice(distance);
                     total = transport.total;
@@ -794,7 +756,6 @@
                 }
                 
             } else if (serviceCategories.belanja.includes(selectedService)) {
-                // Belanja titip
                 if (distance > 0) {
                     const transport = calculateTransportPrice(distance);
                     total = transport.total + priceConfig.belanja_fee;
@@ -806,18 +767,16 @@
                 }
                 
             } else if (serviceCategories.perjam_15rb.includes(selectedService)) {
-                // Jasa nemenin
                 if (duration > 0) {
                     const hours = Math.ceil(duration);
                     total = hours * priceConfig.perjam_15rb;
                     calculationDetails.push({
-                        label: `${hours} jam @ ${formatCurrency(priceConfig.perjam_15rb)}`,
+                        label: `${hours} jam @ ${formatCurrency(priceConfig.perjam_15rb)}/jam`,
                         amount: total
                     });
                 }
                 
             } else if (serviceCategories.perjam_pekerja.includes(selectedService)) {
-                // Bersih-bersih & Jasa Tukang
                 if (duration > 0 && workers > 0) {
                     const hours = Math.ceil(duration);
                     let ratePerWorker;
@@ -830,29 +789,26 @@
                     total = hours * workers * ratePerWorker;
                     
                     calculationDetails.push({
-                        label: `${hours} jam × ${workers} pekerja @ ${formatCurrency(ratePerWorker)}`,
+                        label: `${hours} jam × ${workers} pekerja @ ${formatCurrency(ratePerWorker)}/jam`,
                         amount: total
                     });
                 }
                 
             } else if (serviceCategories.perjam_25rb.includes(selectedService)) {
-                // Jasa intel
                 if (duration > 0) {
                     const hours = Math.ceil(duration);
                     total = hours * priceConfig.perjam_25rb;
                     calculationDetails.push({
-                        label: `${hours} jam @ ${formatCurrency(priceConfig.perjam_25rb)}`,
+                        label: `${hours} jam @ ${formatCurrency(priceConfig.perjam_25rb)}/jam`,
                         amount: total
                     });
                 }
             }
             
-            // Update display
             if (total > 0) {
                 const formatted = formatCurrency(total);
                 estimatedAmount.innerHTML = `Rp <span>${formatted.replace('Rp', '').trim()}</span>`;
                 
-                // Show breakdown
                 if (calculationDetails.length > 0) {
                     breakdown.classList.remove('hidden');
                     let breakdownHTML = '<div class="breakdown-title">Rincian Perhitungan:</div>';
@@ -881,24 +837,20 @@
             }
         }
         
-        // Event listeners for inputs
         distanceInput.addEventListener('input', updateEstimation);
         durationInput.addEventListener('input', updateEstimation);
         workersInput.addEventListener('change', updateEstimation);
         
-        // Chat button click handler
         chatButton.addEventListener('click', function() {
             if (!selectedService) {
                 alert('Silakan pilih layanan terlebih dahulu');
                 return;
             }
             
-            // Get input values
             const distance = parseFloat(distanceInput.value) || 0;
             const duration = parseFloat(durationInput.value) || 0;
             const workers = parseInt(workersInput.value) || 1;
             
-            // Validation based on service type
             let isValid = true;
             let errorMessage = '';
             
@@ -922,13 +874,11 @@
                 return;
             }
             
-            // Animation effect
             this.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 this.style.transform = 'scale(1)';
             }, 150);
             
-            // Prepare message for admin
             let message = `Halo Admin SuruhBoy! 👋\n\n`;
             message += `Saya ingin menggunakan layanan: *${selectedService}*\n`;
             
@@ -950,18 +900,15 @@
             message += `Estimasi biaya: *${estimatedAmount.textContent}*\n\n`;
             message += `Apakah tersedia untuk waktu terdekat?`;
             
-            // Show confirmation and redirect
             const userConfirmed = confirm(`Mengarahkan ke WhatsApp...\n\n${message}\n\nLanjutkan?`);
             
             if (userConfirmed) {
-                // In real app, redirect to WhatsApp
-                const phoneNumber = "6281234567890"; // Ganti dengan nomor admin
+                const phoneNumber = "6281234567890";
                 const encodedMessage = encodeURIComponent(message);
                 window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
             }
         });
         
-        // Initialize first service as selected
         if (servicesGrid.firstChild) {
             selectService(services[0]);
         }
