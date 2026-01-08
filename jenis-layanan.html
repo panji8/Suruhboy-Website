@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pilih Layanan - Semua Jasa Kebutuhan Anda</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #0a2269;
+            --primary-orange: #fe7f2d;
+            --primary-light: #e4eef0;
+            --text-dark: #222222;
+            --text-light: #555555;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--white);
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* HEADER SECTION */
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #0d2b8a 100%);
+            color: var(--white);
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero-section h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+            color: var(--primary-light);
+        }
+
+        /* SERVICES SECTION */
+        .services-title {
+            text-align: center;
+            font-size: 2rem;
+            color: var(--primary-dark);
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .services-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background-color: var(--primary-orange);
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .service-card {
+            background: var(--white);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(10, 34, 105, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid var(--primary-light);
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(10, 34, 105, 0.15);
+            border-color: var(--primary-orange);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-orange));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-dark), #1a3cb0);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto 20px;
+        }
+
+        .service-icon i {
+            font-size: 2.2rem;
+            color: var(--white);
+        }
+
+        .service-content {
+            padding: 0 25px 30px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .service-title {
+            font-size: 1.4rem;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            font-weight: 700;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .service-desc {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .service-features {
+            list-style: none;
+            margin-bottom: 20px;
+            text-align: left;
+            background-color: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 3px solid var(--primary-orange);
+        }
+
+        .service-features li {
+            padding: 5px 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .service-features li::before {
+            content: "•";
+            color: var(--primary-orange);
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        .service-action {
+            margin-top: auto;
+        }
+
+        .service-button {
+            display: inline-block;
+            background: linear-gradient(to right, var(--primary-dark), #1a3cb0);
+            color: var(--white);
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+        }
+
+        .service-button:hover {
+            background: linear-gradient(to right, var(--primary-orange), #ff9a52);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(254, 127, 45, 0.3);
+        }
+
+        /* INFO SECTION */
+        .info-section {
+            background-color: var(--primary-light);
+            padding: 60px 0;
+            border-radius: 20px;
+            margin-bottom: 60px;
+        }
+
+        .info-title {
+            text-align: center;
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+
+        .info-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
+        .highlight {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .accent {
+            color: var(--primary-orange);
+            font-weight: 600;
+        }
+
+        /* FOOTER CTA */
+        .footer-cta {
+            text-align: center;
+            padding: 50px 0;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, #0d2b8a 100%);
+            color: var(--white);
+            border-radius: 20px;
+        }
+
+        .footer-cta h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .footer-cta p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+            color: var(--primary-light);
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 14px 30px;
+            background-color: var(--primary-orange);
+            color: var(--white);
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: #ff913d;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 40px 0;
+            }
+            
+            .hero-section h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero-section p {
+                font-size: 1.1rem;
+                padding: 0 15px;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .service-icon {
+                width: 70px;
+                height: 70px;
+                margin: 25px auto 15px;
+            }
+            
+            .service-icon i {
+                font-size: 2rem;
+            }
+            
+            .service-content {
+                padding: 0 20px 25px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="container">
+            <h1>Pilih Layanan</h1>
+            <p>Temukan solusi tepat untuk semua kebutuhan Anda dengan berbagai pilihan layanan terpercaya</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- SERVICES GRID -->
+        <h2 class="services-title">Semua Layanan Tersedia</h2>
+        
+        <div class="services-grid">
+            <!-- Deliv Makan -->
+            <a href="#" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-utensils"></i>
+                </div>
+                
+                <div class="service-content">
+                    <h3 class="service-title">Deliv Makan</h3>
+                    <p class="service-desc">Pesan dan antar makanan dari restoran favorit ke lokasi Anda dengan cepat</p>
+                    
+                    <ul class="service-features">
+                        <li>Gratis ongkir pesan pertama</li>
+                        <li>200+ restoran partner</li>
+                        <li>Waktu antar 30-60 menit</li>
+                    </ul>
+                    
+                    <div class="service-action">
+                        <div class="service-button">Pesan Sekarang</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Deliv Barang -->
+            <a href="#" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-shipping-fast"></i>
+                </div>
+                
+                <div class="service-content">
+                    <h3 class="service-title">Deliv Barang</h3>
+                    <p class="service-desc">Kirim paket dan barang penting dengan aman ke seluruh Indonesia</p>
+                    
+                    <ul class="service-features">
+                        <li>Asuransi pengiriman</li>
+                        <li>Same-day delivery</li>
+                        <li>Tracking real-time</li>
+                    </ul>
+                    
+                    <div class="service-action">
+                        <div class="service-button">Hitung Ongkir</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Antar Orang -->
+            <a href="#" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-user-friends"></i>
+                </div>
+                
+                <div class="service-content">
+                    <h3 class="service-title">Antar Orang</h3>
+                    <p class="service-desc">Layanan antar jemput orang dengan sopir profesional dan aman</p>
+                    
+                    <ul class="service-features">
+                        <li>Sopir bersertifikat</li>
+                        <li>Kendaraan nyaman</li>
+                        <li>Tersedia 24 jam</li>
+                    </ul>
+                    
+                    <div class="service-action">
+                        <div class="service-button">Pesan Antar</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Belanja Titip -->
+            <a href="#" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-shopping-basket"></i>
+                </div>
+                
+                <div class="service-content">
+                    <h3 class="service-title">Belanja Titip</h3>
+                    <p class="service-desc">Titip belanja kebutuhan harian dari supermarket atau toko online</p>
+                    
+                    <ul class="service-features">
+                        <li>Biaya jasa 10%</li>
+                        <li>Gratis ongkir pertama</li>
+                        <li>Request khusus</li>
+                    </ul>
+                    
+                    <div class="service-action">
+                        <div class="service-button">Request Belanja</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Jasa Nemenin -->
+            <a href="#" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                
+                <div class="service-content">
+                    <h3 class="service-title">Jasa Nemenin</h3>
+                    <p class="service-desc">Temani meeting, jalan-jalan, atau aktivitas lainnya dengan pendamping profesional</p>
+                    
+                    <ul class="service-features">
+                        <li>Pendamping berpengalaman</li>
+                        <li>Flexible booking</li>
+                        <li>Berbagai keahlian</li>
+                    </ul>
+                    
+                    <div class="service-action">
+                        <div class="service-button">Cari Pendamping</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Bersih-bersih -->
+            <a href="#" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-broom"></i>
+                </div>
+                
+                <div class="service-content">
+                    <h3 class="service-title">Bersih-bersih</h3>
+                    <p class="service-desc">Jasa kebersihan rumah, kantor, atau apartemen dengan tenaga profesional</p>
+                    
+                    <ul class="service-features">
+                        <li>Peralatan lengkap</li>
+                        <li>Produk ramah lingkungan</li>
+                        <li>Bisa langganan</li>
+                    </ul>
+                    
+                    <div class="service-action">
+                        <div class="service-button">Pesan Jasa</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Jasa Tukang -->
+            <a href="#" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-tools"></i>
+                </div>
+                
+                <div class="service-content">
+                    <h3 class="service-title">Jasa Tukang</h3>
+                    <p class="service-desc">Perbaikan rumah, instalasi, dan pekerjaan tukang lainnya oleh ahli</p>
+                    
+                    <ul class="service-features">
+                        <li>Tukang bersertifikat</li>
+                        <li>Garansi pekerjaan</li>
+                        <li>Free survey awal</li>
+                    </ul>
+                    
+                    <div class="service-action">
+                        <div class="service-button">Konsultasi Gratis</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Jasa Intel -->
+            <a href="#" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                
+                <div class="service-content">
+                    <h3 class="service-title">Jasa Intel</h3>
+                    <p class="service-desc">Layanan investigasi, penelitian, dan pengumpulan informasi legal</p>
+                    
+                    <ul class="service-features">
+                        <li>Profesional & diskret</li>
+                        <li>Legal & berizin</li>
+                        <li>Laporan lengkap</li>
+                    </ul>
+                    
+                    <div class="service-action">
+                        <div class="service-button">Konsultasi</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Caregiver / Jasa Tunggu Orang Sakit -->
+            <a href="#" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                
+                <div class="service-content">
+                    <h3 class="service-title">Caregiver / Jasa Tunggu Orang Sakit</h3>
+                    <p class="service-desc">Pendampingan pasien di rumah sakit atau di rumah oleh caregiver profesional</p>
+                    
+                    <ul class="service-features">
+                        <li>Caregiver berpengalaman</li>
+                        <li>Tersedia 24 jam</li>
+                        <li>Basic medical training</li>
+                    </ul>
+                    
+                    <div class="service-action">
+                        <div class="service-button">Pesan Caregiver</div>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Jasa Lainnya -->
+            <a href="#" class="service-card">
+                <div class="service-icon">
+                    <i class="fas fa-plus-circle"></i>
+                </div>
+                
+                <div class="service-content">
+                    <h3 class="service-title">Jasa Lainnya</h3>
+                    <p class="service-desc">Konsultasi kebutuhan khusus dan layanan lainnya yang belum tersedia di katalog</p>
+                    
+                    <ul class="service-features">
+                        <li>Custom request layanan</li>
+                        <li>Konsultasi gratis</li>
+                        <li>Solusi khusus kebutuhan</li>
+                    </ul>
+                    
+                    <div class="service-action">
+                        <div class="service-button">Konsultasi Kebutuhan</div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        
+        <!-- INFO SECTION -->
+        <section class="info-section">
+            <div class="container">
+                <h2 class="info-title">Total 10 Layanan Lengkap</h2>
+                
+                <div class="info-content">
+                    <p>Kini kami hadir dengan <span class="highlight">10 layanan lengkap</span> yang dapat memenuhi hampir semua kebutuhan harian Anda. Dari kebutuhan dasar hingga layanan khusus, semua tersedia dalam satu platform.</p>
+                    
+                    <p style="margin-top: 20px;">Jika Anda membutuhkan layanan khusus yang belum tercantum, gunakan layanan <span class="accent">"Jasa Lainnya"</span> untuk konsultasi kebutuhan custom kami.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- FOOTER CTA -->
+    <div class="container">
+        <section class="footer-cta">
+            <h2>Butuh Bantuan Memilih Layanan?</h2>
+            <p>Tim konsultan kami siap membantu Anda memilih layanan yang tepat sesuai kebutuhan dan budget Anda.</p>
+            
+            <a href="#" class="cta-button">Konsultasi Gratis dengan Expert</a>
+        </section>
+    </div>
+
+    <script>
+        // Smooth hover effect for cards
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px)';
+                this.style.boxShadow = '0 15px 35px rgba(10, 34, 105, 0.15)';
+                this.style.borderColor = 'var(--primary-orange)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 8px 25px rgba(10, 34, 105, 0.08)';
+                this.style.borderColor = 'var(--primary-light)';
+            });
+        });
+        
+        // Button hover effects
+        document.querySelectorAll('.service-button, .cta-button').forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
