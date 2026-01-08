@@ -19,86 +19,87 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, var(--light) 0%, #d0e4e8 100%);
-            min-height: 100vh;
+            background: var(--light);
             color: var(--dark);
+            line-height: 1.5;
+            -webkit-text-size-adjust: 100%;
         }
         
+        /* Navigation - Mobile First */
         .calc-navbar {
             background: var(--primary);
             color: var(--white);
-            padding: 15px 0;
+            padding: 12px 0;
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 4px 20px rgba(10, 34, 105, 0.2);
+            box-shadow: 0 2px 10px rgba(10, 34, 105, 0.2);
         }
         
-        .calc-navbar .container {
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
         }
         
         .logo {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         
         .logo i {
             color: var(--secondary);
+            font-size: 22px;
         }
         
         .back-button {
             background: var(--secondary);
             color: var(--white);
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 20px;
             text-decoration: none;
             font-weight: 500;
-            transition: all 0.3s;
+            font-size: 14px;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            white-space: nowrap;
         }
         
-        .back-button:hover {
-            background: #ff6a00;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(254, 127, 45, 0.3);
+        .back-button i {
+            font-size: 14px;
         }
         
+        /* Main Container */
         .main-container {
-            max-width: 1200px;
+            max-width: 100%;
             margin: 0 auto;
-            padding: 20px;
-            display: flex;
-            gap: 40px;
-            min-height: calc(100vh - 70px);
+            padding: 16px;
         }
         
+        /* Calculator Container */
         .calculator-container {
-            flex: 1;
             background: var(--white);
-            border-radius: 25px;
-            box-shadow: 0 20px 60px rgba(10, 34, 105, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(10, 34, 105, 0.1);
             overflow: hidden;
+            margin-bottom: 20px;
         }
         
         .header {
             background: linear-gradient(135deg, var(--primary) 0%, #1a3a8c 100%);
             color: var(--white);
-            padding: 30px;
+            padding: 24px 20px;
             text-align: center;
             position: relative;
         }
@@ -109,40 +110,41 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 5px;
+            height: 4px;
             background: var(--secondary);
         }
         
         .logo-large {
-            font-size: 32px;
+            font-size: 24px;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         
         .logo-large i {
             color: var(--secondary);
+            font-size: 26px;
         }
         
         .subtitle {
-            font-size: 16px;
+            font-size: 14px;
             opacity: 0.9;
-            margin-top: 5px;
+            margin-top: 4px;
         }
         
         .content {
-            padding: 30px;
+            padding: 20px;
         }
         
         .section-title {
             color: var(--primary);
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
             border-bottom: 2px solid var(--light);
             position: relative;
         }
@@ -152,37 +154,53 @@
             position: absolute;
             bottom: -2px;
             left: 0;
-            width: 60px;
+            width: 50px;
             height: 2px;
             background: var(--secondary);
         }
         
+        /* Services Grid - Mobile Optimized */
         .services-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        @media (min-width: 480px) {
+            .services-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .services-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
         }
         
         .service-item {
             background: var(--white);
             border: 2px solid var(--light);
-            border-radius: 15px;
-            padding: 15px;
+            border-radius: 12px;
+            padding: 16px 8px;
             text-align: center;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: var(--dark);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.2s;
             position: relative;
             overflow: hidden;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: break-word;
         }
         
         .service-item:hover {
             border-color: var(--primary);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(10, 34, 105, 0.1);
         }
         
         .service-item.active {
@@ -197,35 +215,39 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 4px;
+            height: 3px;
             background: var(--secondary);
         }
         
+        /* Input Sections - Mobile Optimized */
         .input-section {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
         
         .input-label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 500;
             color: var(--primary);
+            font-size: 15px;
         }
         
         input[type="number"], 
         select {
             width: 100%;
-            padding: 15px;
+            padding: 14px;
             border: 2px solid var(--light);
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 16px;
             transition: all 0.3s;
             background: var(--white);
             color: var(--dark);
+            -webkit-appearance: none;
+            appearance: none;
         }
         
         input[type="number"]:focus, 
@@ -236,39 +258,48 @@
         }
         
         .example {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--gray);
-            margin-top: 5px;
+            margin-top: 4px;
         }
         
+        /* Divider */
         .divider {
             height: 1px;
             background: linear-gradient(to right, transparent, var(--light), transparent);
-            margin: 30px 0;
+            margin: 24px 0;
         }
         
+        /* Estimation Section - Mobile Optimized */
         .estimation-section {
             text-align: center;
-            margin-bottom: 30px;
-            padding: 25px;
+            margin-bottom: 24px;
+            padding: 20px;
             background: linear-gradient(135deg, var(--light) 0%, #e8f4f7 100%);
-            border-radius: 20px;
+            border-radius: 16px;
             border: 2px solid rgba(10, 34, 105, 0.1);
         }
         
         .estimation-label {
-            font-size: 18px;
+            font-size: 16px;
             color: var(--primary);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 500;
         }
         
         .estimation-amount {
-            font-size: 42px;
+            font-size: 32px;
             font-weight: bold;
             color: var(--primary);
-            margin: 15px 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin: 12px 0;
+            word-break: break-all;
+            padding: 0 10px;
+        }
+        
+        @media (min-width: 480px) {
+            .estimation-amount {
+                font-size: 36px;
+            }
         }
         
         .estimation-amount span {
@@ -276,26 +307,27 @@
         }
         
         .breakdown {
-            margin-top: 20px;
+            margin-top: 16px;
             text-align: left;
             background: var(--white);
-            padding: 20px;
-            border-radius: 15px;
+            padding: 16px;
+            border-radius: 12px;
             border-left: 4px solid var(--secondary);
+            font-size: 14px;
         }
         
         .breakdown-title {
             font-weight: 600;
             color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 16px;
+            margin-bottom: 12px;
+            font-size: 15px;
         }
         
         .breakdown-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
             border-bottom: 1px dashed var(--light);
         }
         
@@ -307,27 +339,31 @@
         
         .breakdown-label {
             color: var(--dark);
+            flex: 1;
+            padding-right: 10px;
         }
         
         .breakdown-value {
             font-weight: 600;
             color: var(--primary);
+            white-space: nowrap;
         }
         
         .disclaimer {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--gray);
-            line-height: 1.5;
-            margin-top: 20px;
+            line-height: 1.4;
+            margin-top: 16px;
         }
         
+        /* Chat Button - Mobile Optimized */
         .chat-button {
             background: linear-gradient(135deg, var(--secondary) 0%, #ff6a00 100%);
             color: var(--white);
             border: none;
-            border-radius: 15px;
-            padding: 20px;
-            font-size: 18px;
+            border-radius: 12px;
+            padding: 18px;
+            font-size: 16px;
             font-weight: 600;
             width: 100%;
             cursor: pointer;
@@ -335,38 +371,58 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 20px rgba(254, 127, 45, 0.2);
+            gap: 10px;
+            box-shadow: 0 8px 20px rgba(254, 127, 45, 0.2);
+            touch-action: manipulation;
         }
         
-        .chat-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(254, 127, 45, 0.3);
+        .chat-button:active {
+            transform: scale(0.98);
         }
         
         .chat-button i {
-            font-size: 20px;
+            font-size: 18px;
         }
         
+        /* Info Panel - Mobile Optimized */
         .info-panel {
-            width: 300px;
             background: var(--white);
-            border-radius: 25px;
-            padding: 30px;
-            box-shadow: 0 20px 60px rgba(10, 34, 105, 0.15);
-            height: fit-content;
-            position: sticky;
-            top: 100px;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 30px rgba(10, 34, 105, 0.1);
+            margin-top: 20px;
+        }
+        
+        @media (min-width: 1024px) {
+            .main-container {
+                display: flex;
+                gap: 30px;
+                max-width: 1200px;
+                padding: 30px;
+            }
+            
+            .calculator-container {
+                flex: 1;
+                margin-bottom: 0;
+            }
+            
+            .info-panel {
+                width: 320px;
+                margin-top: 0;
+                align-self: flex-start;
+                position: sticky;
+                top: 100px;
+            }
         }
         
         .info-title {
             color: var(--primary);
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         
         .info-title i {
@@ -374,12 +430,12 @@
         }
         
         .price-guide {
-            margin-top: 25px;
+            margin-top: 20px;
         }
         
         .price-item {
-            margin-bottom: 15px;
-            padding-bottom: 15px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
             border-bottom: 1px solid var(--light);
         }
         
@@ -391,89 +447,98 @@
         .price-category {
             color: var(--primary);
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 15px;
         }
         
         .price-details {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--dark);
-            padding-left: 25px;
+            padding-left: 24px;
         }
         
         .price-details li {
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            line-height: 1.4;
         }
         
+        /* Footer */
         .calc-footer {
             background: var(--primary);
             color: var(--white);
-            padding: 20px;
+            padding: 20px 16px;
             text-align: center;
-            margin-top: auto;
+            margin-top: 30px;
         }
         
         .calc-footer a {
             color: var(--secondary);
             text-decoration: none;
             font-weight: 500;
-        }
-        
-        .calc-footer a:hover {
-            text-decoration: underline;
-        }
-        
-        @media (max-width: 992px) {
-            .main-container {
-                flex-direction: column;
-            }
-            
-            .info-panel {
-                width: 100%;
-                position: static;
-            }
-        }
-        
-        @media (max-width: 576px) {
-            .services-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .header {
-                padding: 20px;
-            }
-            
-            .content {
-                padding: 20px;
-            }
-            
-            .estimation-amount {
-                font-size: 32px;
-            }
+            display: inline-block;
+            margin-top: 8px;
         }
         
         .hidden {
             display: none;
         }
+        
+        /* Mobile Specific Fixes */
+        @media (max-width: 374px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .service-item {
+                font-size: 12px;
+                padding: 12px 6px;
+            }
+        }
+        
+        /* Prevent zoom on input focus on iOS */
+        @media (max-width: 768px) {
+            input[type="number"],
+            select {
+                font-size: 16px !important;
+            }
+        }
+        
+        /* Better touch targets */
+        button, 
+        .service-item, 
+        .back-button {
+            min-height: 44px;
+        }
+        
+        /* iOS Safari specific */
+        @supports (-webkit-touch-callout: none) {
+            .chat-button {
+                -webkit-tap-highlight-color: transparent;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Navigation -->
     <nav class="calc-navbar">
-        <div class="container">
+        <div class="nav-container">
             <div class="logo">
                 <i class="fas fa-running"></i>
                 <span>SuruhBoy</span>
             </div>
             <a href="index.html" class="back-button">
                 <i class="fas fa-arrow-left"></i>
-                Kembali ke Beranda
+                <span class="back-text">Beranda</span>
             </a>
         </div>
     </nav>
 
+    <!-- Main Content -->
     <div class="main-container">
+        <!-- Calculator -->
         <div class="calculator-container">
             <div class="header">
                 <div class="logo-large">
@@ -534,6 +599,7 @@
             </div>
         </div>
         
+        <!-- Info Panel -->
         <div class="info-panel">
             <h3 class="info-title">
                 <i class="fas fa-info-circle"></i>
@@ -605,8 +671,10 @@
         </div>
     </div>
 
+    <!-- Footer -->
     <div class="calc-footer">
-        <p>&copy; 2024 SuruhBoy. <a href="index.html">Kembali ke Beranda</a></p>
+        <p>&copy; 2024 SuruhBoy</p>
+        <a href="index.html">Kembali ke Beranda</a>
     </div>
 
     <script>
@@ -629,15 +697,14 @@
             "perjam_25rb": ["Jasa Intel"]
         };
         
-        // PERHITUNGAN YANG BENAR: PER 1 KM = +Rp 2.000
         const priceConfig = {
-            base_transport: 10000,      // ≤5KM
-            additional_per_km: 2000,    // PER 1 KM = +Rp 2.000
-            belanja_fee: 5000,          // Biaya jasa belanja
-            perjam_15rb: 15000,         // Jasa nemenin per jam
-            perjam_single: 40000,       // 1 pekerja per jam
-            perjam_multiple: 30000,     // >1 pekerja per jam per orang
-            perjam_25rb: 25000          // Jasa intel per jam
+            base_transport: 10000,
+            additional_per_km: 2000,
+            belanja_fee: 5000,
+            perjam_15rb: 15000,
+            perjam_single: 40000,
+            perjam_multiple: 30000,
+            perjam_25rb: 25000
         };
         
         const servicesGrid = document.getElementById('servicesGrid');
@@ -654,12 +721,19 @@
         
         let selectedService = null;
         
+        // Populate services
         services.forEach(service => {
             const serviceItem = document.createElement('div');
             serviceItem.className = 'service-item';
             serviceItem.textContent = service;
             serviceItem.addEventListener('click', () => {
                 selectService(service);
+            });
+            serviceItem.addEventListener('touchstart', () => {
+                serviceItem.style.opacity = '0.7';
+            });
+            serviceItem.addEventListener('touchend', () => {
+                serviceItem.style.opacity = '1';
             });
             servicesGrid.appendChild(serviceItem);
         });
@@ -695,9 +769,17 @@
                 durationGroup.classList.remove('hidden');
                 workersGroup.classList.remove('hidden');
             }
+            
+            // Scroll to input for better UX on mobile
+            setTimeout(() => {
+                if (distanceGroup.classList.contains('hidden') === false) {
+                    distanceInput.focus();
+                } else if (durationGroup.classList.contains('hidden') === false) {
+                    durationInput.focus();
+                }
+            }, 300);
         }
         
-        // FUNGSI PERHITUNGAN YANG BENAR: PER 1 KM
         function calculateTransportPrice(distance) {
             let details = [];
             let total = 0;
@@ -716,12 +798,12 @@
                 });
                 
                 const additionalKm = distance - 5;
-                const additionalCharges = additionalKm * priceConfig.additional_per_km; // PER KM!
+                const additionalCharges = additionalKm * priceConfig.additional_per_km;
                 total += additionalCharges;
                 
                 if (additionalCharges > 0) {
                     details.push({
-                        label: `Tambahan ${additionalKm} KM @ Rp2.000/KM`,
+                        label: `Tambahan ${additionalKm.toFixed(1)} KM @ Rp2.000/KM`,
                         amount: additionalCharges
                     });
                 }
@@ -825,7 +907,7 @@
                     breakdownHTML += `
                         <div class="breakdown-item" style="border-top: 2px solid var(--secondary); padding-top: 10px; margin-top: 10px;">
                             <span class="breakdown-label" style="font-weight: bold; color: var(--primary);">TOTAL ESTIMASI</span>
-                            <span class="breakdown-value" style="font-weight: bold; color: var(--secondary); font-size: 18px;">${formatCurrency(total)}</span>
+                            <span class="breakdown-value" style="font-weight: bold; color: var(--secondary); font-size: 16px;">${formatCurrency(total)}</span>
                         </div>
                     `;
                     
@@ -837,9 +919,23 @@
             }
         }
         
+        // Event listeners with mobile optimizations
         distanceInput.addEventListener('input', updateEstimation);
         durationInput.addEventListener('input', updateEstimation);
         workersInput.addEventListener('change', updateEstimation);
+        
+        // Prevent keyboard from covering input on mobile
+        distanceInput.addEventListener('focus', function() {
+            setTimeout(() => {
+                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+        
+        durationInput.addEventListener('focus', function() {
+            setTimeout(() => {
+                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
         
         chatButton.addEventListener('click', function() {
             if (!selectedService) {
@@ -874,6 +970,7 @@
                 return;
             }
             
+            // Mobile touch feedback
             this.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 this.style.transform = 'scale(1)';
@@ -909,9 +1006,20 @@
             }
         });
         
+        // Initialize
         if (servicesGrid.firstChild) {
             selectService(services[0]);
         }
+        
+        // Handle mobile viewport height
+        function setVH() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        setVH();
+        window.addEventListener('resize', setVH);
+        window.addEventListener('orientationchange', setVH);
     </script>
 </body>
 </html>
