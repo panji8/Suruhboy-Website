@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuruhBoy - Cek Ongkir & Estimasi Biaya</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0a2269;    /* Biru tua elegan */
+            --secondary: #fe7f2d;  /* Orange cerah */
+            --light: #e4eef0;      /* Biru muda soft */
+            --dark: #0a1a4d;       /* Biru lebih gelap */
+            --white: #ffffff;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--light) 0%, #d0e4e8 100%);
+            min-height: 100vh;
+            color: var(--dark);
+        }
+        
+        /* Navigation */
+        .calc-navbar {
+            background: var(--primary);
+            color: var(--white);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(10, 34, 105, 0.2);
+        }
+        
+        .calc-navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            color: var(--secondary);
+        }
+        
+        .back-button {
+            background: var(--secondary);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-button:hover {
+            background: #ff6a00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(254, 127, 45, 0.3);
+        }
+        
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 40px;
+            min-height: calc(100vh - 70px);
+        }
+        
+        /* Calculator Container */
+        .calculator-container {
+            flex: 1;
+            background: var(--white);
+            border-radius: 25px;
+            box-shadow: 0 20px 60px rgba(10, 34, 105, 0.15);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, #1a3a8c 100%);
+            color: var(--white);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--secondary);
+        }
+        
+        .logo-large {
+            font-size: 32px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .logo-large i {
+            color: var(--secondary);
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .section-title {
+            color: var(--primary);
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--secondary);
+        }
+        
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .service-item {
+            background: var(--white);
+            border: 2px solid var(--light);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(10, 34, 105, 0.1);
+        }
+        
+        .service-item.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+        
+        .service-item.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--secondary);
+        }
+        
+        /* Input Sections */
+        .input-section {
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+        
+        input[type="number"], 
+        select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid var(--light);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: var(--white);
+            color: var(--dark);
+        }
+        
+        input[type="number"]:focus, 
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(10, 34, 105, 0.1);
+        }
+        
+        .example {
+            font-size: 13px;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--light), transparent);
+            margin: 30px 0;
+        }
+        
+        /* Estimation Section */
+        .estimation-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, var(--light) 0%, #e8f4f7 100%);
+            border-radius: 20px;
+            border: 2px solid rgba(10, 34, 105, 0.1);
+        }
+        
+        .estimation-label {
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .estimation-amount {
+            font-size: 42px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .estimation-amount span {
+            color: var(--secondary);
+        }
+        
+        .breakdown {
+            margin-top: 20px;
+            text-align: left;
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .breakdown-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--light);
+        }
+        
+        .breakdown-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .breakdown-label {
+            color: var(--dark);
+        }
+        
+        .breakdown-value {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .disclaimer {
+            font-size: 14px;
+            color: var(--gray);
+            line-height: 1.5;
+            margin-top: 20px;
+        }
+        
+        /* Chat Button */
+        .chat-button {
+            background: linear-gradient(135deg, var(--secondary) 0%, #ff6a00 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 15px;
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 20px rgba(254, 127, 45, 0.2);
+        }
+        
+        .chat-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(254, 127, 45, 0.3);
+        }
+        
+        .chat-button i {
+            font-size: 20px;
+        }
+        
+        /* Info Panel */
+        .info-panel {
+            width: 300px;
+            background: var(--white);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(10, 34, 105, 0.15);
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+        
+        .info-title {
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-title i {
+            color: var(--secondary);
+        }
+        
+        .price-guide {
+            margin-top: 25px;
+        }
+        
+        .price-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light);
+        }
+        
+        .price-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        
+        .price-category {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .price-details {
+            font-size: 14px;
+            color: var(--dark);
+            padding-left: 25px;
+        }
+        
+        .price-details li {
+            margin-bottom: 5px;
+        }
+        
+        /* Footer */
+        .calc-footer {
+            background: var(--primary);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            margin-top: auto;
+        }
+        
+        .calc-footer a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .calc-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .info-panel {
+                width: 100%;
+                position: static;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .estimation-amount {
+                font-size: 32px;
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="calc-navbar">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-running"></i>
+                <span>SuruhBoy</span>
+            </div>
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                Kembali ke Beranda
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Calculator -->
+        <div class="calculator-container">
+            <div class="header">
+                <div class="logo-large">
+                    <i class="fas fa-calculator"></i>
+                    <span>Estimasi Biaya</span>
+                </div>
+                <div class="subtitle">Cek perkiraan biaya sebelum chat admin</div>
+            </div>
+            
+            <div class="content">
+                <h3 class="section-title">Pilih Layanan</h3>
+                
+                <div class="services-grid" id="servicesGrid">
+                    <!-- Services will be populated by JavaScript -->
+                </div>
+                
+                <div class="input-section">
+                    <!-- Distance Input -->
+                    <div class="input-group" id="distanceGroup">
+                        <label class="input-label">Jarak (KM)</label>
+                        <input type="number" id="distanceInput" placeholder="Contoh: 5" min="0" max="100" step="0.1">
+                        <div class="example">Contoh: 5 KM</div>
+                    </div>
+                    
+                    <!-- Duration Input -->
+                    <div class="input-group hidden" id="durationGroup">
+                        <label class="input-label">Durasi (Jam)</label>
+                        <input type="number" id="durationInput" placeholder="Contoh: 2" min="0.5" max="24" step="0.5">
+                        <div class="example">Contoh: 2 jam (minimal 0.5 jam)</div>
+                    </div>
+                    
+                    <!-- Workers Input -->
+                    <div class="input-group hidden" id="workersGroup">
+                        <label class="input-label">Jumlah Pekerja</label>
+                        <select id="workersInput">
+                            <option value="1">1 orang</option>
+                            <option value="2">2 orang</option>
+                            <option value="3">3 orang</option>
+                            <option value="4">4 orang</option>
+                            <option value="5">5 orang</option>
+                        </select>
+                        <div class="example">Pilih jumlah pekerja</div>
+                    </div>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <div class="estimation-section">
+                    <div class="estimation-label">Estimasi Biaya</div>
+                    <div class="estimation-amount" id="estimatedAmount">Rp <span>–</span></div>
+                    
+                    <div class="breakdown hidden" id="breakdown">
+                        <!-- Breakdown details will appear here -->
+                    </div>
+                    
+                    <p class="disclaimer">
+                        *Ini hanya estimasi. Harga final ditentukan admin berdasarkan kondisi aktual.
+                    </p>
+                </div>
+                
+                <button class="chat-button" id="chatButton">
+                    <i class="fas fa-comment-alt"></i>
+                    Chat Admin Sekarang
+                </button>
+            </div>
+        </div>
+        
+        <!-- Info Panel -->
+        <div class="info-panel">
+            <h3 class="info-title">
+                <i class="fas fa-info-circle"></i>
+                Panduan Harga
+            </h3>
+            
+            <div class="price-guide">
+                <div class="price-item">
+                    <div class="price-category">
+                        <i class="fas fa-motorcycle"></i>
+                        Deliv Makan/Barang/Antar Orang
+                    </div>
+                    <ul class="price-details">
+                        <li>≤5 KM = Rp 10.000</li>
+                        <li>Setiap +2 KM = +Rp 2.000</li>
+                        <li>Contoh: 7 KM = Rp 12.000</li>
+                    </ul>
+                </div>
+                
+                <div class="price-item">
+                    <div class="price-category">
+                        <i class="fas fa-shopping-cart"></i>
+                        Belanja Titip
+                    </div>
+                    <ul class="price-details">
+                        <li>Sama seperti deliv di atas</li>
+                        <li>+ Biaya jasa Rp 5.000</li>
+                    </ul>
+                </div>
+                
+                <div class="price-item">
+                    <div class="price-category">
+                        <i class="fas fa-user-friends"></i>
+                        Jasa Nemenin
+                    </div>
+                    <ul class="price-details">
+                        <li>Rp 15.000 per jam</li>
+                        <li>Minimal 1 jam</li>
+                    </ul>
+                </div>
+                
+                <div class="price-item">
+                    <div class="price-category">
+                        <i class="fas fa-broom"></i>
+                        Bersih-bersih & Jasa Tukang
+                    </div>
+                    <ul class="price-details">
+                        <li>1 orang = Rp 40.000/jam</li>
+                        <li>>1 orang = Rp 30.000/jam per orang</li>
+                    </ul>
+                </div>
+                
+                <div class="price-item">
+                    <div class="price-category">
+                        <i class="fas fa-search"></i>
+                        Jasa Intel
+                    </div>
+                    <ul class="price-details">
+                        <li>Rp 25.000 per jam</li>
+                        <li>Start dari 1 jam</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="calc-footer">
+        <p>&copy; 2024 SuruhBoy. <a href="index.html">Kembali ke Beranda</a></p>
+    </div>
+
+    <script>
+        // Data layanan dengan palette warna
+        const services = [
+            "Deliv Makan",
+            "Deliv Barang", 
+            "Antar Orang",
+            "Belanja Titip",
+            "Jasa Nemenin",
+            "Bersih-bersih",
+            "Jasa Tukang",
+            "Jasa Intel"
+        ];
+        
+        // Kategori layanan
+        const serviceCategories = {
+            "transport": ["Deliv Makan", "Deliv Barang", "Antar Orang"],
+            "belanja": ["Belanja Titip"],
+            "perjam_15rb": ["Jasa Nemenin"],
+            "perjam_pekerja": ["Bersih-bersih", "Jasa Tukang"],
+            "perjam_25rb": ["Jasa Intel"]
+        };
+        
+        // Harga dasar dengan palette warna
+        const priceConfig = {
+            base_transport: 10000,
+            additional_per_2km: 2000,
+            belanja_fee: 5000,
+            perjam_15rb: 15000,
+            perjam_single: 40000,
+            perjam_multiple: 30000,
+            perjam_25rb: 25000
+        };
+        
+        // DOM Elements
+        const servicesGrid = document.getElementById('servicesGrid');
+        const distanceInput = document.getElementById('distanceInput');
+        const durationInput = document.getElementById('durationInput');
+        const workersInput = document.getElementById('workersInput');
+        const estimatedAmount = document.getElementById('estimatedAmount');
+        const breakdown = document.getElementById('breakdown');
+        const chatButton = document.getElementById('chatButton');
+        
+        const distanceGroup = document.getElementById('distanceGroup');
+        const durationGroup = document.getElementById('durationGroup');
+        const workersGroup = document.getElementById('workersGroup');
+        
+        let selectedService = null;
+        
+        // Populate services grid with color palette
+        services.forEach(service => {
+            const serviceItem = document.createElement('div');
+            serviceItem.className = 'service-item';
+            serviceItem.textContent = service;
+            serviceItem.addEventListener('click', () => {
+                selectService(service);
+            });
+            servicesGrid.appendChild(serviceItem);
+        });
+        
+        // Function to select service
+        function selectService(service) {
+            // Remove active class from all items
+            document.querySelectorAll('.service-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked item
+            event.target.classList.add('active');
+            selectedService = service;
+            
+            // Show/hide input fields based on service type
+            showRelevantInputs(service);
+            
+            // Update estimation
+            updateEstimation();
+        }
+        
+        // Function to show relevant inputs
+        function showRelevantInputs(service) {
+            // Reset all inputs
+            distanceInput.value = '';
+            durationInput.value = '';
+            workersInput.value = '1';
+            
+            // Hide all groups first
+            distanceGroup.classList.add('hidden');
+            durationGroup.classList.add('hidden');
+            workersGroup.classList.add('hidden');
+            
+            // Show relevant groups
+            if (serviceCategories.transport.includes(service) || 
+                serviceCategories.belanja.includes(service)) {
+                distanceGroup.classList.remove('hidden');
+            } else if (serviceCategories.perjam_15rb.includes(service) ||
+                      serviceCategories.perjam_25rb.includes(service)) {
+                durationGroup.classList.remove('hidden');
+            } else if (serviceCategories.perjam_pekerja.includes(service)) {
+                durationGroup.classList.remove('hidden');
+                workersGroup.classList.remove('hidden');
+            }
+        }
+        
+        // Function to calculate transport price
+        function calculateTransportPrice(distance) {
+            let details = [];
+            let total = 0;
+            
+            if (distance <= 5) {
+                total = priceConfig.base_transport;
+                details.push({
+                    label: "Biaya dasar (≤5 KM)",
+                    amount: priceConfig.base_transport
+                });
+            } else {
+                total = priceConfig.base_transport;
+                details.push({
+                    label: "Biaya dasar (5 KM pertama)",
+                    amount: priceConfig.base_transport
+                });
+                
+                const additionalKm = distance - 5;
+                const additionalUnits = Math.ceil(additionalKm / 2);
+                const additionalCharges = additionalUnits * priceConfig.additional_per_2km;
+                total += additionalCharges;
+                
+                if (additionalCharges > 0) {
+                    details.push({
+                        label: `Tambahan ${additionalUnits}×2 KM`,
+                        amount: additionalCharges
+                    });
+                }
+            }
+            
+            return { total, details };
+        }
+        
+        // Format currency function
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+        
+        // Function to update estimation
+        function updateEstimation() {
+            if (!selectedService) return;
+            
+            let total = 0;
+            let calculationDetails = [];
+            
+            // Get input values
+            const distance = parseFloat(distanceInput.value) || 0;
+            const duration = parseFloat(durationInput.value) || 0;
+            const workers = parseInt(workersInput.value) || 1;
+            
+            // Calculate based on service category
+            if (serviceCategories.transport.includes(selectedService)) {
+                // Transport services
+                if (distance > 0) {
+                    const transport = calculateTransportPrice(distance);
+                    total = transport.total;
+                    calculationDetails = transport.details;
+                }
+                
+            } else if (serviceCategories.belanja.includes(selectedService)) {
+                // Belanja titip
+                if (distance > 0) {
+                    const transport = calculateTransportPrice(distance);
+                    total = transport.total + priceConfig.belanja_fee;
+                    calculationDetails = transport.details;
+                    calculationDetails.push({
+                        label: "Biaya jasa belanja",
+                        amount: priceConfig.belanja_fee
+                    });
+                }
+                
+            } else if (serviceCategories.perjam_15rb.includes(selectedService)) {
+                // Jasa nemenin
+                if (duration > 0) {
+                    const hours = Math.ceil(duration);
+                    total = hours * priceConfig.perjam_15rb;
+                    calculationDetails.push({
+                        label: `${hours} jam @ ${formatCurrency(priceConfig.perjam_15rb)}`,
+                        amount: total
+                    });
+                }
+                
+            } else if (serviceCategories.perjam_pekerja.includes(selectedService)) {
+                // Bersih-bersih & Jasa Tukang
+                if (duration > 0 && workers > 0) {
+                    const hours = Math.ceil(duration);
+                    let ratePerWorker;
+                    if (workers === 1) {
+                        ratePerWorker = priceConfig.perjam_single;
+                    } else {
+                        ratePerWorker = priceConfig.perjam_multiple;
+                    }
+                    
+                    total = hours * workers * ratePerWorker;
+                    
+                    calculationDetails.push({
+                        label: `${hours} jam × ${workers} pekerja @ ${formatCurrency(ratePerWorker)}`,
+                        amount: total
+                    });
+                }
+                
+            } else if (serviceCategories.perjam_25rb.includes(selectedService)) {
+                // Jasa intel
+                if (duration > 0) {
+                    const hours = Math.ceil(duration);
+                    total = hours * priceConfig.perjam_25rb;
+                    calculationDetails.push({
+                        label: `${hours} jam @ ${formatCurrency(priceConfig.perjam_25rb)}`,
+                        amount: total
+                    });
+                }
+            }
+            
+            // Update display
+            if (total > 0) {
+                const formatted = formatCurrency(total);
+                estimatedAmount.innerHTML = `Rp <span>${formatted.replace('Rp', '').trim()}</span>`;
+                
+                // Show breakdown
+                if (calculationDetails.length > 0) {
+                    breakdown.classList.remove('hidden');
+                    let breakdownHTML = '<div class="breakdown-title">Rincian Perhitungan:</div>';
+                    
+                    calculationDetails.forEach(detail => {
+                        breakdownHTML += `
+                            <div class="breakdown-item">
+                                <span class="breakdown-label">${detail.label}</span>
+                                <span class="breakdown-value">${formatCurrency(detail.amount)}</span>
+                            </div>
+                        `;
+                    });
+                    
+                    breakdownHTML += `
+                        <div class="breakdown-item" style="border-top: 2px solid var(--secondary); padding-top: 10px; margin-top: 10px;">
+                            <span class="breakdown-label" style="font-weight: bold; color: var(--primary);">TOTAL ESTIMASI</span>
+                            <span class="breakdown-value" style="font-weight: bold; color: var(--secondary); font-size: 18px;">${formatCurrency(total)}</span>
+                        </div>
+                    `;
+                    
+                    breakdown.innerHTML = breakdownHTML;
+                }
+            } else {
+                estimatedAmount.innerHTML = 'Rp <span>–</span>';
+                breakdown.classList.add('hidden');
+            }
+        }
+        
+        // Event listeners for inputs
+        distanceInput.addEventListener('input', updateEstimation);
+        durationInput.addEventListener('input', updateEstimation);
+        workersInput.addEventListener('change', updateEstimation);
+        
+        // Chat button click handler
+        chatButton.addEventListener('click', function() {
+            if (!selectedService) {
+                alert('Silakan pilih layanan terlebih dahulu');
+                return;
+            }
+            
+            // Get input values
+            const distance = parseFloat(distanceInput.value) || 0;
+            const duration = parseFloat(durationInput.value) || 0;
+            const workers = parseInt(workersInput.value) || 1;
+            
+            // Validation based on service type
+            let isValid = true;
+            let errorMessage = '';
+            
+            if ((serviceCategories.transport.includes(selectedService) || 
+                 serviceCategories.belanja.includes(selectedService)) && 
+                (distance <= 0 || distance > 100)) {
+                isValid = false;
+                errorMessage = 'Silakan masukkan jarak yang valid (0.1-100 KM)';
+            }
+            
+            if ((serviceCategories.perjam_15rb.includes(selectedService) ||
+                 serviceCategories.perjam_25rb.includes(selectedService) ||
+                 serviceCategories.perjam_pekerja.includes(selectedService)) && 
+                (duration <= 0 || duration > 24)) {
+                isValid = false;
+                errorMessage = 'Silakan masukkan durasi yang valid (0.5-24 jam)';
+            }
+            
+            if (!isValid) {
+                alert(errorMessage);
+                return;
+            }
+            
+            // Animation effect
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+            
+            // Prepare message for admin
+            let message = `Halo Admin SuruhBoy! 👋\n\n`;
+            message += `Saya ingin menggunakan layanan: *${selectedService}*\n`;
+            
+            if (serviceCategories.transport.includes(selectedService) || 
+                serviceCategories.belanja.includes(selectedService)) {
+                message += `Jarak: ${distance} KM\n`;
+            }
+            
+            if (serviceCategories.perjam_15rb.includes(selectedService) ||
+                serviceCategories.perjam_25rb.includes(selectedService)) {
+                message += `Durasi: ${duration} jam\n`;
+            }
+            
+            if (serviceCategories.perjam_pekerja.includes(selectedService)) {
+                message += `Durasi: ${duration} jam\n`;
+                message += `Jumlah pekerja: ${workers} orang\n`;
+            }
+            
+            message += `Estimasi biaya: *${estimatedAmount.textContent}*\n\n`;
+            message += `Apakah tersedia untuk waktu terdekat?`;
+            
+            // Show confirmation and redirect
+            const userConfirmed = confirm(`Mengarahkan ke WhatsApp...\n\n${message}\n\nLanjutkan?`);
+            
+            if (userConfirmed) {
+                // In real app, redirect to WhatsApp
+                const phoneNumber = "6281234567890"; // Ganti dengan nomor admin
+                const encodedMessage = encodeURIComponent(message);
+                window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+            }
+        });
+        
+        // Initialize first service as selected
+        if (servicesGrid.firstChild) {
+            selectService(services[0]);
+        }
+    </script>
+</body>
+</html>
