@@ -384,6 +384,57 @@
             font-size: 18px;
         }
         
+        /* Direct Chat Section (untuk Jasa Lainnya) */
+        .direct-chat-section {
+            text-align: center;
+            margin-bottom: 24px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, var(--light) 0%, #e8f4f7 100%);
+            border-radius: 16px;
+            border: 2px dashed var(--secondary);
+        }
+        
+        .direct-chat-icon {
+            font-size: 48px;
+            color: var(--secondary);
+            margin-bottom: 20px;
+        }
+        
+        .direct-chat-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .direct-chat-text {
+            font-size: 15px;
+            color: var(--dark);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .direct-chat-button {
+            background: linear-gradient(135deg, var(--primary) 0%, #1a3a8c 100%);
+            color: var(--white);
+            border: none;
+            border-radius: 12px;
+            padding: 18px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 20px rgba(10, 34, 105, 0.2);
+        }
+        
+        .direct-chat-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(10, 34, 105, 0.3);
+        }
+        
         /* Info Panel - Mobile Optimized */
         .info-panel {
             background: var(--white);
@@ -515,7 +566,8 @@
         
         /* iOS Safari specific */
         @supports (-webkit-touch-callout: none) {
-            .chat-button {
+            .chat-button,
+            .direct-chat-button {
                 -webkit-tap-highlight-color: transparent;
             }
         }
@@ -579,23 +631,45 @@
                     </div>
                 </div>
                 
-                <div class="divider"></div>
-                
-                <div class="estimation-section">
-                    <div class="estimation-label">Estimasi Biaya</div>
-                    <div class="estimation-amount" id="estimatedAmount">Rp <span>–</span></div>
+                <!-- Section untuk layanan normal (estimasi biaya) -->
+                <div id="estimationContainer">
+                    <div class="divider" id="normalDivider"></div>
                     
-                    <div class="breakdown hidden" id="breakdown"></div>
+                    <div class="estimation-section" id="normalEstimation">
+                        <div class="estimation-label">Estimasi Biaya</div>
+                        <div class="estimation-amount" id="estimatedAmount">Rp <span>–</span></div>
+                        
+                        <div class="breakdown hidden" id="breakdown"></div>
+                        
+                        <p class="disclaimer">
+                            *Ini hanya estimasi. Harga final ditentukan admin berdasarkan kondisi aktual.
+                        </p>
+                    </div>
                     
-                    <p class="disclaimer">
-                        *Ini hanya estimasi. Harga final ditentukan admin berdasarkan kondisi aktual.
-                    </p>
+                    <button class="chat-button" id="chatButton">
+                        <i class="fas fa-comment-alt"></i>
+                        Chat Admin Sekarang
+                    </button>
                 </div>
                 
-                <button class="chat-button" id="chatButton">
-                    <i class="fas fa-comment-alt"></i>
-                    Chat Admin Sekarang
-                </button>
+                <!-- Section untuk Jasa Lainnya (tanpa estimasi) -->
+                <div class="hidden" id="directChatContainer">
+                    <div class="direct-chat-section">
+                        <div class="direct-chat-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div class="direct-chat-title">Layanan Khusus</div>
+                        <div class="direct-chat-text">
+                            Untuk jasa khusus seperti asisten pribadi, pembantu rumah tangga, 
+                            reparasi, atau layanan lainnya yang tidak termasuk dalam daftar standar, 
+                            silakan langsung konsultasi dengan admin kami.
+                        </div>
+                        <button class="direct-chat-button" id="directChatButton">
+                            <i class="fab fa-whatsapp"></i>
+                            Konsultasi via WhatsApp
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
         
@@ -646,6 +720,21 @@
                 
                 <div class="price-item">
                     <div class="price-category">
+                        <i class="fas fa-heartbeat"></i>
+                        Caregiver
+                    </div>
+                    <ul class="price-details">
+                        <li>Rp 100.000 per 8 jam (paket)</li>
+                        <li>Rp 12.500 per jam (reguler)</li>
+                        <li>Dibawah 4 jam tetap boleh, dihitung per jam</li>
+                        <li>Contoh: 3 jam = Rp 37.500</li>
+                        <li>Contoh: 8 jam = Rp 100.000 (paket)</li>
+                        <li>Contoh: 10 jam = Rp 125.000 (paket + 2 jam tambahan)</li>
+                    </ul>
+                </div>
+                
+                <div class="price-item">
+                    <div class="price-category">
                         <i class="fas fa-broom"></i>
                         Bersih-bersih & Jasa Tukang
                     </div>
@@ -667,6 +756,20 @@
                         <li>Contoh: 4 jam = Rp 100.000</li>
                     </ul>
                 </div>
+                
+                <div class="price-item">
+                    <div class="price-category">
+                        <i class="fas fa-ellipsis-h"></i>
+                        Jasa Lainnya
+                    </div>
+                    <ul class="price-details">
+                        <li>Asisten pribadi</li>
+                        <li>Pembantu rumah tangga</li>
+                        <li>Jasa reparasi</li>
+                        <li>Layanan khusus lainnya</li>
+                        <li><em>Langsung konsultasi dengan admin</em></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -684,17 +787,21 @@
             "Antar Orang",
             "Belanja Titip",
             "Jasa Nemenin",
+            "Caregiver",
             "Bersih-bersih",
             "Jasa Tukang",
-            "Jasa Intel"
+            "Jasa Intel",
+            "Jasa Lainnya"
         ];
         
         const serviceCategories = {
             "transport": ["Deliv Makan", "Deliv Barang", "Antar Orang"],
             "belanja": ["Belanja Titip"],
             "perjam_15rb": ["Jasa Nemenin"],
+            "caregiver": ["Caregiver"],
             "perjam_pekerja": ["Bersih-bersih", "Jasa Tukang"],
-            "perjam_25rb": ["Jasa Intel"]
+            "perjam_25rb": ["Jasa Intel"],
+            "direct_wa": ["Jasa Lainnya"]
         };
         
         const priceConfig = {
@@ -702,6 +809,8 @@
             additional_per_km: 2000,
             belanja_fee: 5000,
             perjam_15rb: 15000,
+            caregiver_paket: 100000,
+            caregiver_perjam: 12500,
             perjam_single: 40000,
             perjam_multiple: 30000,
             perjam_25rb: 25000
@@ -714,10 +823,16 @@
         const estimatedAmount = document.getElementById('estimatedAmount');
         const breakdown = document.getElementById('breakdown');
         const chatButton = document.getElementById('chatButton');
+        const directChatButton = document.getElementById('directChatButton');
         
         const distanceGroup = document.getElementById('distanceGroup');
         const durationGroup = document.getElementById('durationGroup');
         const workersGroup = document.getElementById('workersGroup');
+        
+        const estimationContainer = document.getElementById('estimationContainer');
+        const directChatContainer = document.getElementById('directChatContainer');
+        const normalDivider = document.getElementById('normalDivider');
+        const normalEstimation = document.getElementById('normalEstimation');
         
         let selectedService = null;
         
@@ -748,6 +863,17 @@
             
             showRelevantInputs(service);
             updateEstimation();
+            
+            // Tampilkan section yang sesuai
+            if (serviceCategories.direct_wa.includes(service)) {
+                // Untuk Jasa Lainnya: tampilkan direct chat, sembunyikan estimasi
+                estimationContainer.classList.add('hidden');
+                directChatContainer.classList.remove('hidden');
+            } else {
+                // Untuk layanan lainnya: tampilkan estimasi, sembunyikan direct chat
+                estimationContainer.classList.remove('hidden');
+                directChatContainer.classList.add('hidden');
+            }
         }
         
         function showRelevantInputs(service) {
@@ -763,11 +889,17 @@
                 serviceCategories.belanja.includes(service)) {
                 distanceGroup.classList.remove('hidden');
             } else if (serviceCategories.perjam_15rb.includes(service) ||
-                      serviceCategories.perjam_25rb.includes(service)) {
+                      serviceCategories.perjam_25rb.includes(service) ||
+                      serviceCategories.caregiver.includes(service)) {
                 durationGroup.classList.remove('hidden');
             } else if (serviceCategories.perjam_pekerja.includes(service)) {
                 durationGroup.classList.remove('hidden');
                 workersGroup.classList.remove('hidden');
+            }
+            
+            // For "Jasa Lainnya" - hide all inputs
+            if (serviceCategories.direct_wa.includes(service)) {
+                // Semua input disembunyikan
             }
             
             // Scroll to input for better UX on mobile
@@ -812,6 +944,50 @@
             return { total, details };
         }
         
+        function calculateCaregiverPrice(duration) {
+            let details = [];
+            let total = 0;
+            
+            if (duration >= 8) {
+                // Paket 8 jam (Rp 100.000)
+                total = priceConfig.caregiver_paket;
+                details.push({
+                    label: "Paket 8 jam",
+                    amount: priceConfig.caregiver_paket
+                });
+                
+                // Jika lebih dari 8 jam
+                if (duration > 8) {
+                    const extraHours = Math.ceil(duration - 8);
+                    const extraCharges = extraHours * priceConfig.caregiver_perjam;
+                    total += extraCharges;
+                    details.push({
+                        label: `${extraHours} jam tambahan @ Rp12.500/jam`,
+                        amount: extraCharges
+                    });
+                }
+            } else {
+                // Reguler - per jam untuk durasi berapapun
+                const hours = Math.ceil(duration); // Pembulatan ke atas
+                total = hours * priceConfig.caregiver_perjam;
+                details.push({
+                    label: `${hours} jam @ Rp12.500/jam`,
+                    amount: total
+                });
+                
+                // Info tentang paket 8 jam jika durasi mendekati 8 jam
+                if (duration >= 6 && duration < 8) {
+                    details.push({
+                        label: "Tips: Paket 8 jam = Rp 100.000 (lebih hemat untuk ≥8 jam)",
+                        amount: 0,
+                        isTip: true
+                    });
+                }
+            }
+            
+            return { total, details };
+        }
+        
         function formatCurrency(amount) {
             return new Intl.NumberFormat('id-ID', {
                 style: 'currency',
@@ -822,6 +998,11 @@
         
         function updateEstimation() {
             if (!selectedService) return;
+            
+            // Jangan update estimasi untuk Jasa Lainnya
+            if (serviceCategories.direct_wa.includes(selectedService)) {
+                return;
+            }
             
             let total = 0;
             let calculationDetails = [];
@@ -856,6 +1037,13 @@
                         label: `${hours} jam @ ${formatCurrency(priceConfig.perjam_15rb)}/jam`,
                         amount: total
                     });
+                }
+                
+            } else if (serviceCategories.caregiver.includes(selectedService)) {
+                if (duration > 0) {
+                    const caregiver = calculateCaregiverPrice(duration);
+                    total = caregiver.total;
+                    calculationDetails = caregiver.details;
                 }
                 
             } else if (serviceCategories.perjam_pekerja.includes(selectedService)) {
@@ -896,12 +1084,21 @@
                     let breakdownHTML = '<div class="breakdown-title">Rincian Perhitungan:</div>';
                     
                     calculationDetails.forEach(detail => {
-                        breakdownHTML += `
-                            <div class="breakdown-item">
-                                <span class="breakdown-label">${detail.label}</span>
-                                <span class="breakdown-value">${formatCurrency(detail.amount)}</span>
-                            </div>
-                        `;
+                        if (detail.isTip) {
+                            breakdownHTML += `
+                                <div class="breakdown-item" style="border-bottom: none; padding-top: 10px; margin-top: 5px;">
+                                    <span class="breakdown-label" style="font-style: italic; color: var(--gray);">💡 ${detail.label}</span>
+                                    <span class="breakdown-value" style="color: var(--gray);">–</span>
+                                </div>
+                            `;
+                        } else {
+                            breakdownHTML += `
+                                <div class="breakdown-item">
+                                    <span class="breakdown-label">${detail.label}</span>
+                                    <span class="breakdown-value">${formatCurrency(detail.amount)}</span>
+                                </div>
+                            `;
+                        }
                     });
                     
                     breakdownHTML += `
@@ -919,7 +1116,7 @@
             }
         }
         
-        // Event listeners with mobile optimizations
+        // Event listeners for normal services
         distanceInput.addEventListener('input', updateEstimation);
         durationInput.addEventListener('input', updateEstimation);
         workersInput.addEventListener('change', updateEstimation);
@@ -937,9 +1134,9 @@
             }, 300);
         });
         
+        // Chat button for normal services
         chatButton.addEventListener('click', function() {
-            if (!selectedService) {
-                alert('Silakan pilih layanan terlebih dahulu');
+            if (!selectedService || serviceCategories.direct_wa.includes(selectedService)) {
                 return;
             }
             
@@ -959,6 +1156,7 @@
             
             if ((serviceCategories.perjam_15rb.includes(selectedService) ||
                  serviceCategories.perjam_25rb.includes(selectedService) ||
+                 serviceCategories.caregiver.includes(selectedService) ||
                  serviceCategories.perjam_pekerja.includes(selectedService)) && 
                 (duration <= 0 || duration > 24)) {
                 isValid = false;
@@ -985,7 +1183,8 @@
             }
             
             if (serviceCategories.perjam_15rb.includes(selectedService) ||
-                serviceCategories.perjam_25rb.includes(selectedService)) {
+                serviceCategories.perjam_25rb.includes(selectedService) ||
+                serviceCategories.caregiver.includes(selectedService)) {
                 message += `Durasi: ${duration} jam\n`;
             }
             
@@ -1001,6 +1200,27 @@
             
             if (userConfirmed) {
                 const phoneNumber = "6281234567890";
+                const encodedMessage = encodeURIComponent(message);
+                window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+            }
+        });
+        
+        // Direct chat button for "Jasa Lainnya"
+        directChatButton.addEventListener('click', function() {
+            // Mobile touch feedback
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = 'scale(1)';
+            }, 150);
+            
+            const phoneNumber = "6281234567890";
+            let message = `Halo Admin SuruhBoy! 👋\n\n`;
+            message += `Saya ingin berkonsultasi tentang: *Jasa Lainnya*\n\n`;
+            message += `Bisa tanya-tanya dulu mengenai layanan yang saya butuhkan?`;
+            
+            const userConfirmed = confirm(`Mengarahkan ke WhatsApp...\n\n${message}\n\nLanjutkan?`);
+            
+            if (userConfirmed) {
                 const encodedMessage = encodeURIComponent(message);
                 window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
             }
