@@ -29,6 +29,57 @@
             padding: 0;
         }
 
+        /* Navigation - Mobile First */
+        .calc-navbar {
+            background: var(--primary-dark);
+            color: var(--white);
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(10, 34, 105, 0.2);
+        }
+        
+        .nav-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .logo i {
+            color: var(--primary-orange);
+            font-size: 22px;
+        }
+        
+        .back-button {
+            background: var(--primary-orange);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        
+        .back-button i {
+            font-size: 14px;
+        }
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -39,7 +90,7 @@
         .hero-section {
             background: linear-gradient(135deg, var(--primary-dark) 0%, #0d2b8a 100%);
             color: var(--white);
-            padding: 60px 0;
+            padding: 80px 0 60px;
             text-align: center;
             margin-bottom: 50px;
         }
@@ -256,6 +307,7 @@
             background: linear-gradient(135deg, var(--primary-dark) 0%, #0d2b8a 100%);
             color: var(--white);
             border-radius: 20px;
+            margin-bottom: 40px;
         }
 
         .footer-cta h2 {
@@ -289,10 +341,26 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
+        /* FOOTER */
+        .calc-footer {
+            background: var(--primary-dark);
+            color: var(--white);
+            padding: 20px 16px;
+            text-align: center;
+        }
+        
+        .calc-footer a {
+            color: var(--primary-orange);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 8px;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .hero-section {
-                padding: 40px 0;
+                padding: 60px 0 40px;
             }
             
             .hero-section h1 {
@@ -332,11 +400,25 @@
     </style>
 </head>
 <body>
+    <!-- Navigation -->
+    <nav class="calc-navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-running"></i>
+                <span>SuruhBoy</span>
+            </div>
+            <a href="index.html" class="back-button">
+                <i class="fas fa-arrow-left"></i>
+                <span class="back-text">Beranda</span>
+            </a>
+        </div>
+    </nav>
+
     <!-- HERO SECTION -->
     <section class="hero-section">
         <div class="container">
-            <h1>Pilih Layanan</h1>
-            <p>Temukan solusi tepat untuk semua kebutuhan Anda dengan berbagai pilihan layanan terpercaya</p>
+            <h1>10 Layanan Lengkap SuruhBoy</h1>
+            <p>Semua kebutuhan Anda, kami sediakan dalam satu platform yang praktis dan terpercaya</p>
         </div>
     </section>
 
@@ -346,7 +428,7 @@
         
         <div class="services-grid">
             <!-- Deliv Makan -->
-            <a href="#" class="service-card">
+            <a href="cek-ongkir.html" class="service-card">
                 <div class="service-icon">
                     <i class="fas fa-utensils"></i>
                 </div>
@@ -362,13 +444,13 @@
                     </ul>
                     
                     <div class="service-action">
-                        <div class="service-button">Pesan Sekarang</div>
+                        <div class="service-button">Cek Ongkir</div>
                     </div>
                 </div>
             </a>
 
             <!-- Deliv Barang -->
-            <a href="#" class="service-card">
+            <a href="cek-ongkir.html" class="service-card">
                 <div class="service-icon">
                     <i class="fas fa-shipping-fast"></i>
                 </div>
@@ -390,7 +472,7 @@
             </a>
 
             <!-- Antar Orang -->
-            <a href="#" class="service-card">
+            <a href="cek-ongkir.html" class="service-card">
                 <div class="service-icon">
                     <i class="fas fa-user-friends"></i>
                 </div>
@@ -406,13 +488,13 @@
                     </ul>
                     
                     <div class="service-action">
-                        <div class="service-button">Pesan Antar</div>
+                        <div class="service-button">Cek Ongkir</div>
                     </div>
                 </div>
             </a>
 
             <!-- Belanja Titip -->
-            <a href="#" class="service-card">
+            <a href="cek-ongkir.html" class="service-card">
                 <div class="service-icon">
                     <i class="fas fa-shopping-basket"></i>
                 </div>
@@ -428,13 +510,13 @@
                     </ul>
                     
                     <div class="service-action">
-                        <div class="service-button">Request Belanja</div>
+                        <div class="service-button">Hitung Ongkir</div>
                     </div>
                 </div>
             </a>
 
             <!-- Jasa Nemenin -->
-            <a href="#" class="service-card">
+            <a href="cek-ongkir.html" class="service-card">
                 <div class="service-icon">
                     <i class="fas fa-hands-helping"></i>
                 </div>
@@ -450,13 +532,13 @@
                     </ul>
                     
                     <div class="service-action">
-                        <div class="service-button">Cari Pendamping</div>
+                        <div class="service-button">Cek Harga</div>
                     </div>
                 </div>
             </a>
 
             <!-- Bersih-bersih -->
-            <a href="#" class="service-card">
+            <a href="cek-ongkir.html" class="service-card">
                 <div class="service-icon">
                     <i class="fas fa-broom"></i>
                 </div>
@@ -472,13 +554,13 @@
                     </ul>
                     
                     <div class="service-action">
-                        <div class="service-button">Pesan Jasa</div>
+                        <div class="service-button">Cek Harga</div>
                     </div>
                 </div>
             </a>
 
             <!-- Jasa Tukang -->
-            <a href="#" class="service-card">
+            <a href="cek-ongkir.html" class="service-card">
                 <div class="service-icon">
                     <i class="fas fa-tools"></i>
                 </div>
@@ -494,13 +576,13 @@
                     </ul>
                     
                     <div class="service-action">
-                        <div class="service-button">Konsultasi Gratis</div>
+                        <div class="service-button">Cek Harga</div>
                     </div>
                 </div>
             </a>
 
             <!-- Jasa Intel -->
-            <a href="#" class="service-card">
+            <a href="cek-ongkir.html" class="service-card">
                 <div class="service-icon">
                     <i class="fas fa-search"></i>
                 </div>
@@ -516,19 +598,19 @@
                     </ul>
                     
                     <div class="service-action">
-                        <div class="service-button">Konsultasi</div>
+                        <div class="service-button">Cek Harga</div>
                     </div>
                 </div>
             </a>
 
-            <!-- Caregiver / Jasa Tunggu Orang Sakit -->
-            <a href="#" class="service-card">
+            <!-- Caregiver -->
+            <a href="cek-ongkir.html" class="service-card">
                 <div class="service-icon">
                     <i class="fas fa-heartbeat"></i>
                 </div>
                 
                 <div class="service-content">
-                    <h3 class="service-title">Caregiver / Jasa Tunggu Orang Sakit</h3>
+                    <h3 class="service-title">Caregiver</h3>
                     <p class="service-desc">Pendampingan pasien di rumah sakit atau di rumah oleh caregiver profesional</p>
                     
                     <ul class="service-features">
@@ -538,13 +620,13 @@
                     </ul>
                     
                     <div class="service-action">
-                        <div class="service-button">Pesan Caregiver</div>
+                        <div class="service-button">Cek Harga</div>
                     </div>
                 </div>
             </a>
 
             <!-- Jasa Lainnya -->
-            <a href="#" class="service-card">
+            <a href="cek-ongkir.html" class="service-card">
                 <div class="service-icon">
                     <i class="fas fa-plus-circle"></i>
                 </div>
@@ -560,7 +642,7 @@
                     </ul>
                     
                     <div class="service-action">
-                        <div class="service-button">Konsultasi Kebutuhan</div>
+                        <div class="service-button">Konsultasi via WA</div>
                     </div>
                 </div>
             </a>
@@ -569,12 +651,12 @@
         <!-- INFO SECTION -->
         <section class="info-section">
             <div class="container">
-                <h2 class="info-title">Total 10 Layanan Lengkap</h2>
+                <h2 class="info-title">Semua Layanan, Satu Platform</h2>
                 
                 <div class="info-content">
-                    <p>Kini kami hadir dengan <span class="highlight">10 layanan lengkap</span> yang dapat memenuhi hampir semua kebutuhan harian Anda. Dari kebutuhan dasar hingga layanan khusus, semua tersedia dalam satu platform.</p>
+                    <p>Dengan <span class="highlight">SuruhBoy</span>, Anda bisa mengakses semua layanan yang dibutuhkan untuk aktivitas sehari-hari. Mulai dari pengiriman makanan dan barang, hingga layanan khusus seperti caregiver dan jasa perbaikan.</p>
                     
-                    <p style="margin-top: 20px;">Jika Anda membutuhkan layanan khusus yang belum tercantum, gunakan layanan <span class="accent">"Jasa Lainnya"</span> untuk konsultasi kebutuhan custom kami.</p>
+                    <p style="margin-top: 20px;">Gunakan kalkulator ongkir kami untuk menghitung estimasi biaya, atau langsung konsultasi dengan admin untuk layanan khusus melalui <span class="accent">WhatsApp</span>.</p>
                 </div>
             </div>
         </section>
@@ -583,11 +665,17 @@
     <!-- FOOTER CTA -->
     <div class="container">
         <section class="footer-cta">
-            <h2>Butuh Bantuan Memilih Layanan?</h2>
-            <p>Tim konsultan kami siap membantu Anda memilih layanan yang tepat sesuai kebutuhan dan budget Anda.</p>
+            <h2>Cek Biaya Layanan dengan Kalkulator Ongkir</h2>
+            <p>Hitung estimasi biaya untuk semua layanan kami dengan mudah dan transparan</p>
             
-            <a href="#" class="cta-button">Konsultasi Gratis dengan Expert</a>
+            <a href="cek-ongkir.html" class="cta-button">Buka Kalkulator Ongkir</a>
         </section>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="calc-footer">
+        <p>&copy; 2024 SuruhBoy. All rights reserved.</p>
+        <a href="index.html">Kembali ke Beranda</a>
     </div>
 
     <script>
