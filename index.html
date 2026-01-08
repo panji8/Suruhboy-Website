@@ -91,6 +91,49 @@
             font-size: 26px;
         }
         
+        /* Tombol Cek Ongkir di Header untuk Mobile */
+        .header-cta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .mobile-ongkir-button {
+            background: var(--secondary);
+            color: var(--white);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-ongkir-button:hover {
+            background: #e6711d;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(254, 127, 45, 0.3);
+        }
+        
+        .mobile-ongkir-button i {
+            font-size: 14px;
+        }
+        
+        /* Menu Toggle untuk Mobile */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
         .nav-links {
             display: flex;
             gap: 20px;
@@ -681,8 +724,50 @@
         
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
+            .navbar {
+                position: relative;
+            }
+            
+            .menu-toggle {
+                display: block;
+                order: 2;
+            }
+            
             .nav-links {
                 display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--primary);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(10, 34, 105, 0.2);
+                z-index: 1000;
+                gap: 10px;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links a {
+                width: 100%;
+                text-align: center;
+                padding: 12px 20px;
+                border-radius: 10px;
+            }
+            
+            .nav-links .cta-button {
+                width: 100%;
+                justify-content: center;
+                margin-top: 10px;
+            }
+            
+            .header-cta {
+                order: 1;
+                margin-left: auto;
+                margin-right: 10px;
             }
             
             .hero {
@@ -732,6 +817,16 @@
                 gap: 20px;
             }
         }
+        
+        @media (min-width: 769px) {
+            .mobile-ongkir-button {
+                display: none;
+            }
+            
+            .header-cta {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -744,7 +839,20 @@
                     SuruhBoy
                 </a>
                 
-                <div class="nav-links">
+                <!-- Tombol Cek Ongkir untuk Mobile -->
+                <div class="header-cta">
+                    <a href="cek-ongkir.html" class="mobile-ongkir-button">
+                        <i class="fas fa-calculator"></i>
+                        Cek Ongkir
+                    </a>
+                </div>
+                
+                <!-- Menu Toggle untuk Mobile -->
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="nav-links" id="navLinks">
                     <a href="#" class="active">Beranda</a>
                     <a href="#services">Layanan</a>
                     <a href="#testimonials">Testimoni</a>
@@ -1083,9 +1191,44 @@
             grabCursor: true,
         });
 
+        // Toggle menu for mobile
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+        
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            // Change icon
+            const icon = menuToggle.querySelector('i');
+            if (icon.classList.contains('fa-bars')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('.navbar') && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                const icon = menuToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+
         // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
+                // Close mobile menu if open
+                if (navLinks.classList.contains('active')) {
+                    navLinks.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+                
                 e.preventDefault();
                 
                 const targetId = this.getAttribute('href');
