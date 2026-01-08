@@ -74,6 +74,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-width: 0; /* Untuk mencegah overflow */
         }
         
         .logo {
@@ -84,6 +92,7 @@
             gap: 10px;
             color: var(--white);
             text-decoration: none;
+            white-space: nowrap;
         }
         
         .logo i {
@@ -92,10 +101,11 @@
         }
         
         /* Tombol Cek Ongkir di Header untuk Mobile */
-        .header-cta {
+        .header-right {
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-shrink: 0;
         }
         
         .mobile-ongkir-button {
@@ -132,6 +142,7 @@
             font-size: 24px;
             cursor: pointer;
             padding: 5px;
+            flex-shrink: 0;
         }
         
         .nav-links {
@@ -148,6 +159,7 @@
             padding: 8px 16px;
             border-radius: 25px;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
         
         .nav-links a:hover {
@@ -172,6 +184,7 @@
             align-items: center;
             gap: 8px;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
         
         .cta-button:hover {
@@ -726,11 +739,43 @@
         @media (max-width: 768px) {
             .navbar {
                 position: relative;
+                gap: 10px;
+            }
+            
+            .logo {
+                font-size: 20px;
+            }
+            
+            .logo i {
+                font-size: 22px;
             }
             
             .menu-toggle {
                 display: block;
+                order: 3;
+                flex-shrink: 0;
+            }
+            
+            .header-right {
                 order: 2;
+                flex-shrink: 0;
+            }
+            
+            .logo-wrapper {
+                order: 1;
+                flex: 1;
+                min-width: 0;
+                overflow: hidden;
+            }
+            
+            .mobile-ongkir-button {
+                padding: 8px 12px;
+                font-size: 13px;
+                gap: 4px;
+            }
+            
+            .mobile-ongkir-button i {
+                font-size: 12px;
             }
             
             .nav-links {
@@ -762,12 +807,6 @@
                 width: 100%;
                 justify-content: center;
                 margin-top: 10px;
-            }
-            
-            .header-cta {
-                order: 1;
-                margin-left: auto;
-                margin-right: 10px;
             }
             
             .hero {
@@ -823,8 +862,28 @@
                 display: none;
             }
             
-            .header-cta {
+            .menu-toggle {
                 display: none;
+            }
+        }
+        
+        /* Untuk layar sangat kecil (iPhone SE dll) */
+        @media (max-width: 360px) {
+            .logo {
+                font-size: 18px;
+            }
+            
+            .mobile-ongkir-button {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            
+            .mobile-ongkir-button span {
+                display: none;
+            }
+            
+            .mobile-ongkir-button i {
+                margin: 0;
             }
         }
     </style>
@@ -834,16 +893,18 @@
     <header>
         <div class="container">
             <nav class="navbar">
-                <a href="#" class="logo">
-                    <i class="fas fa-running"></i>
-                    SuruhBoy
-                </a>
+                <div class="logo-wrapper">
+                    <a href="#" class="logo">
+                        <i class="fas fa-running"></i>
+                        <span>SuruhBoy</span>
+                    </a>
+                </div>
                 
                 <!-- Tombol Cek Ongkir untuk Mobile -->
-                <div class="header-cta">
+                <div class="header-right">
                     <a href="cek-ongkir.html" class="mobile-ongkir-button">
                         <i class="fas fa-calculator"></i>
-                        Cek Ongkir
+                        <span>Cek Ongkir</span>
                     </a>
                 </div>
                 
