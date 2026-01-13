@@ -1299,12 +1299,6 @@
             }
         });
         
-        // Click outside to clear if empty
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.search-box') && searchInput.value === '') {
-                clearSearch.classList.remove('visible');
-            }
-        });
         
         // Button click effects
         const serviceButtons = document.querySelectorAll('.service-button');
