@@ -728,10 +728,10 @@
                     </div>
                 </div>
                 
-                <button class="service-button">
+                <a href="cek-ongkir.html" class="service-button">
                     <i class="fas fa-shopping-cart"></i>
                     Pesan Sekarang
-                </button>
+                </a>
             </div>
             
             <!-- Card 2: Kirim Barang -->
@@ -774,10 +774,10 @@
                     </div>
                 </div>
                 
-                <button class="service-button">
+                <a href="cek-ongkir.html" class="service-button">
                     <i class="fas fa-paper-plane"></i>
                     Kirim Sekarang
-                </button>
+                </a>
             </div>
             
             <!-- Card 3: Antar Orang -->
@@ -820,10 +820,10 @@
                     </div>
                 </div>
                 
-                <button class="service-button">
+                <a href="cek-ongkir.html" class="service-button">
                     <i class="fas fa-road"></i>
                     Pesan Antar Jemput
-                </button>
+                </a>
             </div>
             
             <!-- Card 4: Titip Belanja -->
@@ -866,10 +866,10 @@
                     </div>
                 </div>
                 
-                <button class="service-button">
+                <a href="cek-ongkir.html" class="service-button">
                     <i class="fas fa-list-alt"></i>
                     Buat Daftar Belanja
-                </button>
+                </a>
             </div>
             
             <!-- Card 5: Jasa Nemenin -->
@@ -912,10 +912,10 @@
                     </div>
                 </div>
                 
-                <button class="service-button">
+                <a href="cek-ongkir.html" class="service-button">
                     <i class="fas fa-user-plus"></i>
                     Pesan Pendamping
-                </button>
+                </a>
             </div>
             
             <!-- Card 6: Bersih-bersih -->
@@ -958,10 +958,10 @@
                     </div>
                 </div>
                 
-                <button class="service-button">
+                <a href="cek-ongkir.html" class="service-button">
                     <i class="fas fa-broom"></i>
                     Pesan Cleaning Service
-                </button>
+                </a>
             </div>
             
             <!-- Card 7: Jasa Tukang -->
@@ -1004,10 +1004,10 @@
                     </div>
                 </div>
                 
-                <button class="service-button">
+                <a href="cek-ongkir.html" class="service-button">
                     <i class="fas fa-hammer"></i>
                     Pesan Tukang
-                </button>
+                </a>
             </div>
             
             <!-- Card 8: Jasa Intel -->
@@ -1050,10 +1050,10 @@
                     </div>
                 </div>
                 
-                <button class="service-button">
+                <a href="cek-ongkir.html" class="service-button">
                     <i class="fas fa-clipboard-check"></i>
                     Konsultasi Gratis
-                </button>
+                </a>
             </div>
             
             <!-- Card 9: Caregiver -->
@@ -1096,10 +1096,10 @@
                     </div>
                 </div>
                 
-                <button class="service-button">
+                <a href="cek-ongkir.html" class="service-button">
                     <i class="fas fa-user-md"></i>
                     Pesan Caregiver
-                </button>
+                </a>
             </div>
             
             <!-- Card 10: Layanan Lainnya -->
@@ -1142,10 +1142,10 @@
                     </div>
                 </div>
                 
-                <button class="service-button">
+                <a href="cek-ongkir.html" class="service-button">
                     <i class="fas fa-headset"></i>
                     Konsultasi Kebutuhan
-                </button>
+                </a>
             </div>
         </div>
         
@@ -1299,41 +1299,6 @@
             }
         });
         
-        
-        // Button click effects
-        const serviceButtons = document.querySelectorAll('.service-button');
-        
-        serviceButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const serviceTitle = this.closest('.service-card').querySelector('.service-title').textContent;
-                
-                // Add click effect
-                this.style.transform = 'scale(0.95)';
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
-                
-                setTimeout(() => {
-                    this.style.transform = '';
-                    this.innerHTML = '<i class="fas fa-check"></i> Berhasil Dipesan!';
-                    this.style.background = 'linear-gradient(135deg, #4CAF50, #2E7D32)';
-                    
-                    // Show notification
-                    showNotification(`Layanan "${serviceTitle}" berhasil dipesan!`);
-                    
-                    // Reset button after 2 seconds
-                    setTimeout(() => {
-                        const originalIcon = this.closest('.service-card').querySelector('.service-button i');
-                        const iconClass = originalIcon.className;
-                        const buttonText = this.textContent.includes('Sekarang') ? ' Pesan Sekarang' : 
-                                         this.textContent.includes('Kirim') ? ' Kirim Sekarang' :
-                                         this.textContent.includes('Tukang') ? ' Pesan Tukang' :
-                                         this.textContent.includes('Cleaning') ? ' Pesan Cleaning Service' : ' Pesan Sekarang';
-                        
-                        this.innerHTML = `<i class="${iconClass}"></i>${buttonText}`;
-                        this.style.background = '';
-                    }, 2000);
-                }, 1500);
-            });
-        });
         
         // Show notification
         function showNotification(message) {
