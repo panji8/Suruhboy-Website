@@ -53,7 +53,7 @@
         .login-header h1 { font-size: 28px; font-weight: 800; color: #0F172A; }
         .login-header p { color: #64748B; font-size: 14px; margin-top: 4px; }
 
-        .form-group { margin-bottom: 20px; }
+        .form-group { margin-bottom: 20px; position: relative; }
         .form-group label {
             display: block;
             font-size: 13px;
@@ -69,12 +69,22 @@
             border-radius: 20px;
             font-size: 15px;
             font-family: inherit;
+            padding-right: 45px;
         }
         .form-group input:focus {
             outline: none;
             border-color: #FF6B4A;
             box-shadow: 0 0 0 3px rgba(255,107,74,0.1);
         }
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            bottom: 14px;
+            cursor: pointer;
+            color: #94A3B8;
+            font-size: 18px;
+        }
+        .password-toggle:hover { color: #FF6B4A; }
 
         .btn-login {
             width: 100%;
@@ -86,8 +96,13 @@
             font-weight: 600;
             color: white;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         .btn-login:active { transform: scale(0.98); }
+        .btn-login:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .message {
             padding: 12px;
@@ -372,6 +387,7 @@
             align-items: center;
             gap: 8px;
         }
+        .refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .agent-list-card {
             background: white;
@@ -475,7 +491,43 @@
             cursor: pointer;
         }
         .area-check input { width: 18px; height: 18px; accent-color: #FF6B4A; cursor: pointer; }
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .btn-assign-confirm {
+            flex: 2;
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+        }
+        .btn-assign-cancel {
+            flex: 1;
+            background: #F1F5F9;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+        }
+
         .loading-small { text-align: center; padding: 40px; color: #94A3B8; }
+        .loading-spinner-sm {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #E2E8F0;
+            border-top: 2px solid #FF6B4A;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -497,8 +549,11 @@
                     <div class="form-group">
                         <label>Password</label>
                         <input type="password" id="password" placeholder="Masukkan password" required>
+                        <i class="fas fa-eye-slash password-toggle" id="togglePassword"></i>
                     </div>
-                    <button type="submit" class="btn-login">Masuk</button>
+                    <button type="submit" class="btn-login" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Masuk
+                    </button>
                 </form>
             </div>
         </div>
@@ -525,7 +580,7 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <span id="agentStatusText" class="status-badge status-off"><i class="fas fa-power-off"></i> Offline</span>
                     <label class="toggle">
-                        <input type="checkbox" id="agentStatusToggle" onchange="onAgentStatusToggle()">
+                        <input type="checkbox" id="agentStatusToggle">
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
@@ -576,7 +631,7 @@
 
         <div class="stats-card">
             <div><span style="color:#64748B; font-size:14px;">Total Agent Online</span><div class="total" id="totalOnline">0</div></div>
-            <button class="refresh-btn" onclick="refreshAdminData()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            <button class="refresh-btn" id="adminRefreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
 
         <div class="agent-list-card">
@@ -590,7 +645,7 @@
             <div class="modal-header"><h3><i class="fas fa-location-dot"></i> Pilih Area Kerja</h3><p>Pilih kecamatan tempat Anda bertugas</p></div>
             <div class="area-list" id="areaList"></div>
             <div class="modal-footer">
-                <button class="btn-primary-modal" onclick="confirmAreas()">Konfirmasi</button>
+                <button class="btn-primary-modal" id="confirmAreaBtn">Konfirmasi</button>
                 <button class="btn-secondary-modal" onclick="closeAreaModal()">Batal</button>
             </div>
         </div>
@@ -603,7 +658,7 @@
             <p id="assignAgentName">Pilih area untuk agent</p>
             <div class="area-check-group" id="assignAreaList"></div>
             <div class="modal-buttons">
-                <button class="btn-assign-confirm" onclick="confirmAssign()">Assign</button>
+                <button class="btn-assign-confirm" id="assignConfirmBtn">Assign</button>
                 <button class="btn-assign-cancel" onclick="closeAssignModal()">Batal</button>
             </div>
         </div>
@@ -632,6 +687,22 @@
         let isAdmin = false;
         let onlineAgents = [];
         let selectedAgentForAssign = null;
+        let pollingInterval = null;
+        let lastKnownStatus = null;
+        
+        // ============================================
+        // UTILITY - LOADING
+        // ============================================
+        function setLoading(element, isLoading, originalText = '') {
+            if (isLoading) {
+                element.disabled = true;
+                element.originalText = element.innerHTML;
+                element.innerHTML = '<span class="loading-spinner-sm"></span> Memproses...';
+            } else {
+                element.disabled = false;
+                element.innerHTML = element.originalText || originalText;
+            }
+        }
         
         // ============================================
         // LOG FUNCTIONS
@@ -661,6 +732,85 @@
                 await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
                 return true;
             } catch(e) { return false; }
+        }
+        
+        // ============================================
+        // GET LATEST STATUS FROM SHEET
+        // ============================================
+        async function getLatestStatusFromSheet(username) {
+            try {
+                const response = await fetch(AGENT_STATUS_URL);
+                const text = await response.text();
+                const jsonString = text.match(/({.*})/)[1];
+                const data = JSON.parse(jsonString);
+                const rows = data.table.rows;
+                const cols = data.table.cols;
+                
+                let tsIdx=0, nameIdx=1, userIdx=2, actIdx=3, areaIdx=4;
+                for(let i=0;i<cols.length;i++){
+                    const l = cols[i].label?.toLowerCase() || '';
+                    if(l==='timestamp') tsIdx=i;
+                    if(l==='nama agent') nameIdx=i;
+                    if(l==='username') userIdx=i;
+                    if(l==='action') actIdx=i;
+                    if(l==='areas') areaIdx=i;
+                }
+                
+                const statuses = [];
+                for(let i=0;i<rows.length;i++){
+                    const row = rows[i].c;
+                    if(!row) continue;
+                    const uname = row[userIdx]?.v || '';
+                    if(uname === username) {
+                        statuses.push({
+                            timestamp: row[tsIdx]?.v || '',
+                            action: row[actIdx]?.v || '',
+                            areas: row[areaIdx]?.v || ''
+                        });
+                    }
+                }
+                
+                if(statuses.length === 0) return { action: 'offline', areas: [], isOnline: false, isAdminAction: false };
+                
+                statuses.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                const latest = statuses[0];
+                
+                let areasArray = [];
+                if(latest.areas && latest.areas !== '-'){
+                    try {
+                        areasArray = latest.areas.startsWith('[') ? JSON.parse(latest.areas) : latest.areas.split(',').map(a=>a.trim()).filter(a=>a);
+                    } catch(e){ areasArray = latest.areas.split(',').map(a=>a.trim()).filter(a=>a); }
+                }
+                
+                const isOnline = (latest.action === 'Online' || latest.action === 'Online (assigned by admin)');
+                const isAdminAction = latest.action.includes('by admin');
+                
+                return { action: latest.action, areas: areasArray, isOnline, isAdminAction, timestamp: latest.timestamp };
+            } catch(e) { return { action: 'offline', areas: [], isOnline: false, isAdminAction: false }; }
+        }
+        
+        // ============================================
+        // POLLING STATUS
+        // ============================================
+        async function checkStatusChange() {
+            if (!currentUser || isAdmin) return;
+            const latestStatus = await getLatestStatusFromSheet(currentUser.username);
+            if (!latestStatus) return;
+            
+            if (lastKnownStatus && lastKnownStatus.action !== latestStatus.action && latestStatus.isAdminAction) {
+                if (!latestStatus.isOnline) {
+                    agentStatus.status = 'offline';
+                    selectedAreas = [];
+                    updateAgentStatusUI();
+                    alert(`⚠️ Anda telah di-offline-kan oleh admin pada ${latestStatus.timestamp}`);
+                } else {
+                    agentStatus.status = 'available';
+                    selectedAreas = latestStatus.areas;
+                    updateAgentStatusUI();
+                    alert(`✅ Admin mengaktifkan Anda dengan area: ${latestStatus.areas.join(', ') || 'semua area'}`);
+                }
+            }
+            lastKnownStatus = latestStatus;
         }
         
         // ============================================
@@ -761,7 +911,6 @@
         function populateWeekSelect(){ const sel=document.getElementById('weekSelect'); if(sel) sel.innerHTML=weeks.map((w,i)=>`<option value="${i}" ${i===weekIndex?'selected':''}>${w}</option>`).join(''); }
         function onWeekChange(){ const val=parseInt(document.getElementById('weekSelect')?.value); if(!isNaN(val)){ weekIndex=val; renderWeek(weekIndex); } }
         
-        // Agent Status
         function showAreaModal(){
             const modal=document.getElementById('areaModal'), list=document.getElementById('areaList');
             list.innerHTML=KECAMATAN.map(k=>`<div class="area-option" onclick="toggleArea('${k}')"><input type="checkbox" id="chk_${k.replace(/\s/g,'_')}" ${selectedAreas.includes(k)?'checked':''}><label>${k}</label></div>`).join('');
@@ -769,34 +918,49 @@
         }
         window.toggleArea=function(area){ const chk=document.getElementById(`chk_${area.replace(/\s/g,'_')}`); if(chk) chk.checked=!chk.checked; };
         function closeAreaModal(){ document.getElementById('areaModal').style.display='none'; if(selectedAreas.length===0 && agentStatus.status==='offline') document.getElementById('agentStatusToggle').checked=false; }
-        window.confirmAreas=async function(){
+        
+        async function confirmAreas(){
             const selected=KECAMATAN.filter(k=>document.getElementById(`chk_${k.replace(/\s/g,'_')}`)?.checked);
             if(!selected.length){ alert('Pilih minimal 1 area'); return; }
+            const confirmBtn = document.getElementById('confirmAreaBtn');
+            setLoading(confirmBtn, true, 'Konfirmasi');
             selectedAreas=selected; agentStatus.areas=selected; agentStatus.status='available';
-            localStorage.setItem(`suruhboy_agent_status_${currentUser.username}`, JSON.stringify({ status:'available', areas:selected, timestamp:new Date().toISOString() }));
             closeAreaModal(); updateAgentStatusUI();
             await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selected.join(', '));
+            setLoading(confirmBtn, false, 'Konfirmasi');
             alert(`✅ ONLINE di ${selected.length} area: ${selected.join(', ')}`);
-        };
-        window.onAgentStatusToggle=async function(){
+            lastKnownStatus = await getLatestStatusFromSheet(currentUser.username);
+        }
+        
+        async function onAgentStatusToggle(){
             const toggle=document.getElementById('agentStatusToggle');
-            if(toggle.checked){
-                if(agentStatus.status==='offline'||!selectedAreas.length) showAreaModal();
-                else{
+            const latestStatus = await getLatestStatusFromSheet(currentUser.username);
+            
+            if(!toggle.checked){
+                if(agentStatus.status==='available'){
+                    await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', '));
+                }
+                agentStatus.status='offline';
+                selectedAreas=[];
+                updateAgentStatusUI();
+                alert('⚫ Anda OFFLINE');
+            } else {
+                if(latestStatus && latestStatus.isAdminAction && !latestStatus.isOnline){
+                    alert('⚠️ Anda telah di-offline-kan oleh admin. Tidak dapat mengaktifkan status sendiri.');
+                    toggle.checked = false;
+                    return;
+                }
+                if(agentStatus.status==='offline' || !selectedAreas.length){
+                    showAreaModal();
+                } else {
                     agentStatus.status='available';
-                    localStorage.setItem(`suruhboy_agent_status_${currentUser.username}`, JSON.stringify({ status:'available', areas:selectedAreas, timestamp:new Date().toISOString() }));
                     updateAgentStatusUI();
                     await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selectedAreas.join(', '));
                     alert('✅ Anda ONLINE');
                 }
-            } else {
-                if(agentStatus.status==='available') await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', '));
-                agentStatus.status='offline';
-                localStorage.setItem(`suruhboy_agent_status_${currentUser.username}`, JSON.stringify({ status:'offline', areas:[], timestamp:new Date().toISOString() }));
-                updateAgentStatusUI();
-                alert('⚫ Anda OFFLINE');
             }
-        };
+        }
+        
         function updateAgentStatusUI(){
             const statusSpan=document.getElementById('agentStatusText'), toggle=document.getElementById('agentStatusToggle'), areaDiv=document.getElementById('agentAreaDisplay'), tags=document.getElementById('agentAreaTags');
             if(agentStatus.status==='available' && selectedAreas.length){
@@ -808,23 +972,28 @@
                 toggle.checked=false; areaDiv.style.display='none';
             }
         }
-        function restoreAgentStatus(){
-            const saved=localStorage.getItem(`suruhboy_agent_status_${currentUser.username}`);
-            if(saved){
-                try{
-                    const s=JSON.parse(saved);
-                    if(s.status==='available' && s.areas && s.areas.length){
-                        agentStatus.status=s.status; selectedAreas=s.areas; agentStatus.areas=s.areas;
-                        updateAgentStatusUI();
-                        return true;
-                    }
-                }catch(e){}
+        
+        async function loadInitialStatus(){
+            const sheetStatus = await getLatestStatusFromSheet(currentUser.username);
+            
+            if(sheetStatus.isOnline){
+                agentStatus.status = 'available';
+                selectedAreas = sheetStatus.areas;
+                agentStatus.areas = sheetStatus.areas;
+                updateAgentStatusUI();
+                console.log('Status loaded from sheet: ONLINE');
+            } else {
+                agentStatus.status = 'offline';
+                selectedAreas = [];
+                agentStatus.areas = [];
+                updateAgentStatusUI();
+                console.log('Status loaded from sheet: OFFLINE');
             }
-            return false;
+            lastKnownStatus = sheetStatus;
         }
         
         // ============================================
-        // ADMIN DASHBOARD FUNCTIONS
+        // ADMIN DASHBOARD FUNCTIONS (FIXED)
         // ============================================
         async function loadAgentStatusFromSheet() {
             try {
@@ -913,9 +1082,14 @@
                     const areas=areasStr?JSON.parse(areasStr):[];
                     if(action==='offline'){
                         if(confirm(`Offline-kan agent ${agentName}?`)){
+                            const offlineItem = item;
+                            const originalText = offlineItem.innerHTML;
+                            offlineItem.innerHTML = '<span class="loading-spinner-sm"></span> Memproses...';
+                            offlineItem.style.pointerEvents = 'none';
                             await saveOnlineLog(agentName, agentUsername, 'Offline (by admin)', '-');
-                            localStorage.setItem(`suruhboy_agent_status_${agentUsername}`, JSON.stringify({ status:'offline', areas:[], timestamp:new Date().toISOString(), forcedByAdmin:true }));
                             await refreshAdminData();
+                            offlineItem.innerHTML = originalText;
+                            offlineItem.style.pointerEvents = 'auto';
                             alert(`✅ Agent ${agentName} telah di-offline-kan`);
                         }
                     } else if(action==='assign'){
@@ -935,21 +1109,24 @@
         window.closeAssignModal=function(){ document.getElementById('assignModal').style.display='none'; selectedAgentForAssign=null; };
         window.confirmAssign=async function(){
             if(!selectedAgentForAssign) return;
+            const assignBtn = document.getElementById('assignConfirmBtn');
+            setLoading(assignBtn, true, 'Assign');
             const selected=[]; document.querySelectorAll('#assignAreaList input:checked').forEach(cb=>selected.push(cb.value));
             const action=selected.length>0?'Online (assigned by admin)':'Offline (assigned by admin)';
             const areasText=selected.length>0?selected.join(', '):'-';
             await saveOnlineLog(selectedAgentForAssign.name, selectedAgentForAssign.username, action, areasText);
-            localStorage.setItem(`suruhboy_agent_status_${selectedAgentForAssign.username}`, JSON.stringify({ status:selected.length>0?'available':'offline', areas:selected, timestamp:new Date().toISOString(), assignedByAdmin:true }));
             await refreshAdminData();
+            setLoading(assignBtn, false, 'Assign');
             closeAssignModal();
             alert(`✅ Area untuk ${selectedAgentForAssign.name} telah diupdate`);
         };
         
         async function refreshAdminData(){
-            const container=document.getElementById('adminAgentList');
-            container.innerHTML='<div class="loading-small"><i class="fas fa-spinner fa-pulse"></i> Memperbarui data...</div>';
+            const refreshBtn = document.getElementById('adminRefreshBtn');
+            setLoading(refreshBtn, true, 'Refresh');
             await loadAgentStatusFromSheet();
             renderAdminList();
+            setLoading(refreshBtn, false, 'Refresh');
         }
         
         document.addEventListener('click',function(){ document.querySelectorAll('.dropdown-menu').forEach(menu=>menu.style.display='none'); });
@@ -970,9 +1147,13 @@
             document.getElementById('agentDashboard').classList.remove('hidden');
             document.getElementById('adminDashboard').classList.add('hidden');
             updateAgentUI();
-            restoreAgentStatus();
+            await loadInitialStatus();
             await loadOrders();
-            document.getElementById('weekSelect').addEventListener('change',onWeekChange);
+            document.getElementById('weekSelect').addEventListener('change', onWeekChange);
+            document.getElementById('agentStatusToggle').addEventListener('change', onAgentStatusToggle);
+            document.getElementById('confirmAreaBtn').onclick = confirmAreas;
+            if(pollingInterval) clearInterval(pollingInterval);
+            pollingInterval = setInterval(() => checkStatusChange(), 10000);
         }
         
         async function showAdminDashboard(){
@@ -981,12 +1162,11 @@
             document.getElementById('adminDashboard').classList.remove('hidden');
             updateAdminUI();
             await refreshAdminData();
-            if(window.adminInterval) clearInterval(window.adminInterval);
-            window.adminInterval=setInterval(()=>{ if(isAdmin) refreshAdminData(); },15000);
+            if(pollingInterval) clearInterval(pollingInterval);
         }
         
         async function logout(){
-            if(window.adminInterval) clearInterval(window.adminInterval);
+            if(pollingInterval) clearInterval(pollingInterval);
             if(currentUser && !isAdmin && agentStatus.status==='available'){
                 await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', '));
             }
@@ -998,8 +1178,21 @@
             document.getElementById('password').value='';
         }
         
-        document.getElementById('loginForm').addEventListener('submit',async(e)=>{
+        // Password toggle
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+        
+        // Login handler
+        document.getElementById('loginForm').addEventListener('submit', async(e)=>{
             e.preventDefault();
+            const loginBtn = document.getElementById('loginBtn');
+            setLoading(loginBtn, true, 'Masuk');
             const username=document.getElementById('username').value.trim();
             const password=document.getElementById('password').value;
             const found=login(username,password);
@@ -1008,14 +1201,15 @@
                 await saveLoginLog(found.name, found.username, 'Berhasil');
                 if(isAdminUser(found)){
                     isAdmin=true;
-                    showAdminDashboard();
+                    await showAdminDashboard();
                 } else {
                     isAdmin=false;
-                    showAgentDashboard();
+                    await showAgentDashboard();
                 }
             } else {
                 alert('❌ Login gagal! Username atau password salah.');
             }
+            setLoading(loginBtn, false, 'Masuk');
         });
         
         loadUsers();
