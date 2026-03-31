@@ -852,7 +852,7 @@
         }
         
         // ============================================
-        // POLLING STATUS
+        // POLLING STATUS (CEK PERUBAHAN DARI ADMIN)
         // ============================================
         async function checkStatusChange() {
             if (!currentUser || isAdmin) return;
@@ -861,17 +861,17 @@
             
             if (lastKnownStatus && lastKnownStatus.action !== latestStatus.action && latestStatus.isAdminAction) {
                 if (!latestStatus.isOnline) {
+                    // Admin offline-kan agent
                     agentStatus.status = 'offline';
                     selectedAreas = [];
                     updateAgentStatusUI();
                     showToast(`Anda telah di-offline-kan oleh admin pada ${latestStatus.timestamp}`, '⚠️ Status Diubah');
-                    localStorage.setItem(`suruhboy_agent_status_${currentUser.username}`, JSON.stringify({ status:'offline', areas:[], timestamp:new Date().toISOString(), forcedByAdmin:true }));
                 } else {
+                    // Admin assign area (online)
                     agentStatus.status = 'available';
                     selectedAreas = latestStatus.areas;
                     updateAgentStatusUI();
                     showToast(`Admin mengaktifkan Anda dengan area: ${latestStatus.areas.join(', ') || 'semua area'}`, '✅ Status Diubah');
-                    localStorage.setItem(`suruhboy_agent_status_${currentUser.username}`, JSON.stringify({ status:'available', areas:latestStatus.areas, timestamp:new Date().toISOString(), assignedByAdmin:true }));
                 }
             }
             lastKnownStatus = latestStatus;
@@ -1038,17 +1038,21 @@
         }
         
         async function loadInitialStatus(){
+            // Baca status dari sheet
             const sheetStatus = await getLatestStatusFromSheet(currentUser.username);
+            
             if(sheetStatus.isOnline){
                 agentStatus.status = 'available';
                 selectedAreas = sheetStatus.areas;
                 agentStatus.areas = sheetStatus.areas;
                 updateAgentStatusUI();
+                console.log('Status loaded from sheet: ONLINE - Area:', sheetStatus.areas);
             } else {
                 agentStatus.status = 'offline';
                 selectedAreas = [];
                 agentStatus.areas = [];
                 updateAgentStatusUI();
+                console.log('Status loaded from sheet: OFFLINE');
             }
             lastKnownStatus = sheetStatus;
         }
@@ -1148,7 +1152,6 @@
                             offlineItem.innerHTML = '<span class="loading-spinner-sm"></span> Memproses...';
                             offlineItem.style.pointerEvents = 'none';
                             await saveOnlineLog(agentName, agentUsername, 'Offline (by admin)', '-');
-                            localStorage.setItem(`suruhboy_agent_status_${agentUsername}`, JSON.stringify({ status:'offline', areas:[], timestamp:new Date().toISOString(), forcedByAdmin:true }));
                             await refreshAdminData();
                             offlineItem.innerHTML = originalText;
                             offlineItem.style.pointerEvents = 'auto';
@@ -1177,7 +1180,6 @@
             const action=selected.length>0?'Online (assigned by admin)':'Offline (assigned by admin)';
             const areasText=selected.length>0?selected.join(', '):'-';
             await saveOnlineLog(selectedAgentForAssign.name, selectedAgentForAssign.username, action, areasText);
-            localStorage.setItem(`suruhboy_agent_status_${selectedAgentForAssign.username}`, JSON.stringify({ status:selected.length>0?'available':'offline', areas:selected, timestamp:new Date().toISOString(), assignedByAdmin:true }));
             await refreshAdminData();
             setLoading(assignBtn, false, 'Assign');
             closeAssignModal();
