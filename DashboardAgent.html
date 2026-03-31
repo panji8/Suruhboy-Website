@@ -476,6 +476,27 @@
         }
         .area-check input { width: 18px; height: 18px; accent-color: #FF6B4A; cursor: pointer; }
         .loading-small { text-align: center; padding: 40px; color: #94A3B8; }
+        .btn-assign-confirm {
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+        .btn-assign-cancel {
+            background: #F1F5F9;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -602,10 +623,8 @@
             <h3><i class="fas fa-map-marker-alt"></i> Assign Area</h3>
             <p id="assignAgentName">Pilih area untuk agent</p>
             <div class="area-check-group" id="assignAreaList"></div>
-            <div class="modal-buttons">
-                <button class="btn-assign-confirm" onclick="confirmAssign()">Assign</button>
-                <button class="btn-assign-cancel" onclick="closeAssignModal()">Batal</button>
-            </div>
+            <button class="btn-assign-confirm" onclick="confirmAssign()">Assign</button>
+            <button class="btn-assign-cancel" onclick="closeAssignModal()">Batal</button>
         </div>
     </div>
 
@@ -632,6 +651,7 @@
         let isAdmin = false;
         let onlineAgents = [];
         let selectedAgentForAssign = null;
+        let agentStatusRefreshInterval = null;
         
         // ============================================
         // LOG FUNCTIONS
@@ -698,6 +718,60 @@
         function isAdminUser(u){ return u.username==='admin' || u.name==='Admin Suruhboy' || u.username==='adminsuruhboy'; }
         
         // ============================================
+        // LOAD AGENT STATUS FROM SHEET (SINGLE SOURCE OF TRUTH)
+        // ============================================
+        async function loadAgentStatusFromSheet() {
+            try {
+                const res = await fetch(AGENT_STATUS_URL);
+                const text = await res.text();
+                const json = JSON.parse(text.match(/({.*})/)[1]);
+                const rows = json.table.rows, cols = json.table.cols;
+                let tsIdx=0, nameIdx=1, userIdx=2, actIdx=3, areaIdx=4;
+                for(let i=0;i<cols.length;i++){
+                    const l=cols[i].label?.toLowerCase()||'';
+                    if(l==='timestamp') tsIdx=i;
+                    if(l==='nama agent') nameIdx=i;
+                    if(l==='username') userIdx=i;
+                    if(l==='action') actIdx=i;
+                    if(l==='areas') areaIdx=i;
+                }
+                const all=[];
+                for(let i=0;i<rows.length;i++){
+                    const row=rows[i].c;
+                    if(!row) continue;
+                    const ts=row[tsIdx]?.v||'', name=row[nameIdx]?.v||'', uname=row[userIdx]?.v||'', act=row[actIdx]?.v||'', areasRaw=row[areaIdx]?.v||'';
+                    if(name && uname && act){
+                        let arr=[];
+                        if(areasRaw && areasRaw !== '-'){
+                            try{ arr=areasRaw.startsWith('[')?JSON.parse(areasRaw):areasRaw.split(',').map(a=>a.trim()).filter(a=>a); }
+                            catch(e){ arr=areasRaw.split(',').map(a=>a.trim()).filter(a=>a); }
+                        }
+                        all.push({ timestamp:ts, namaAgent:String(name), username:String(uname), action:String(act).toLowerCase(), areas:arr });
+                    }
+                }
+                const latest=new Map();
+                all.forEach(s=>{ 
+                    const ex=latest.get(s.username); 
+                    if(!ex || new Date(s.timestamp) > new Date(ex.timestamp)) latest.set(s.username,s);
+                });
+                onlineAgents=[];
+                for(const [uname,s] of latest){
+                    if(s.action==='online' || s.action==='available' || s.action==='online (assigned by admin)') {
+                        onlineAgents.push({ 
+                            username:s.username, 
+                            namaAgent:s.namaAgent, 
+                            areas:s.areas, 
+                            lastActive:s.timestamp,
+                            action:s.action 
+                        });
+                    }
+                }
+                onlineAgents.sort((a,b)=>new Date(b.lastActive)-new Date(a.lastActive));
+                return true;
+            } catch(e){ console.error('Error loading agent status:', e); return false; }
+        }
+        
+        // ============================================
         // AGENT DASHBOARD FUNCTIONS
         // ============================================
         async function loadOrders() {
@@ -741,7 +815,7 @@
                 });
                 aggregated=agg; orderDetails=details; weeks=Object.keys(agg).sort((a,b)=>a.localeCompare(b));
                 if(weeks.length){ weekIndex=weeks.length-1; populateWeekSelect(); renderCurrentWeek(); }
-            } catch(e){}
+            } catch(e){ console.error('Error loading orders:', e);}
         }
         
         function renderWeek(idx){
@@ -755,117 +829,152 @@
             const orders=(orderDetails[week]||[]).filter(o=>o.agent===currentUser.name);
             const container=document.getElementById('historyList');
             if(!orders.length) container.innerHTML='<div class="empty-state"><i class="fas fa-calendar-times"></i><div>Tidak ada order minggu ini</div></div>';
-            else container.innerHTML=orders.map(o=>`<div class="order-card"><div class="order-top"><div class="customer-name"><i class="fas fa-user"></i> ${o.customer}</div><div class="order-amount">Rp${o.nominal.toLocaleString()}</div></div><div class="order-date"><i class="fas fa-calendar-alt"></i> ${o.tanggal||o.week}</div></div>`).join('');
+            else container.innerHTML=orders.map(o=>`<div class="order-card"><div class="order-top"><div class="customer-name"><i class="fas fa-user"></i> ${escapeHtml(o.customer)}</div><div class="order-amount">Rp${o.nominal.toLocaleString()}</div></div><div class="order-date"><i class="fas fa-calendar-alt"></i> ${o.tanggal||o.week}</div></div>`).join('');
         }
         function renderCurrentWeek(){ if(weeks.length && currentUser) renderWeek(weekIndex); }
         function populateWeekSelect(){ const sel=document.getElementById('weekSelect'); if(sel) sel.innerHTML=weeks.map((w,i)=>`<option value="${i}" ${i===weekIndex?'selected':''}>${w}</option>`).join(''); }
         function onWeekChange(){ const val=parseInt(document.getElementById('weekSelect')?.value); if(!isNaN(val)){ weekIndex=val; renderWeek(weekIndex); } }
         
-        // Agent Status
+        // ============================================
+        // AGENT STATUS MANAGEMENT (READ FROM SHEET)
+        // ============================================
+        async function refreshAgentStatus() {
+            if(!currentUser || isAdmin) return;
+            
+            // Load latest status from sheet
+            await loadAgentStatusFromSheet();
+            
+            // Find current user's status
+            const myStatus = onlineAgents.find(a => a.username === currentUser.username);
+            
+            if(myStatus && (myStatus.action === 'online' || myStatus.action === 'online (assigned by admin)')) {
+                agentStatus.status = 'available';
+                selectedAreas = myStatus.areas || [];
+                agentStatus.areas = selectedAreas;
+            } else {
+                agentStatus.status = 'offline';
+                selectedAreas = [];
+                agentStatus.areas = [];
+            }
+            
+            updateAgentStatusUI();
+            return agentStatus.status === 'available';
+        }
+        
+        function updateAgentStatusUI(){
+            const statusSpan=document.getElementById('agentStatusText'), toggle=document.getElementById('agentStatusToggle'), areaDiv=document.getElementById('agentAreaDisplay'), tags=document.getElementById('agentAreaTags');
+            
+            if(agentStatus.status==='available' && selectedAreas.length){
+                statusSpan.innerHTML='<i class="fas fa-circle"></i> Available'; 
+                statusSpan.className='status-badge status-on';
+                if(toggle) toggle.checked=true; 
+                areaDiv.style.display='block';
+                tags.innerHTML=selectedAreas.map(a=>`<span class="area-tag">${escapeHtml(a)}</span>`).join('');
+            } else {
+                statusSpan.innerHTML='<i class="fas fa-power-off"></i> Offline'; 
+                statusSpan.className='status-badge status-off';
+                if(toggle) toggle.checked=false; 
+                areaDiv.style.display='none';
+            }
+        }
+        
+        // Area modal functions
         function showAreaModal(){
             const modal=document.getElementById('areaModal'), list=document.getElementById('areaList');
             list.innerHTML=KECAMATAN.map(k=>`<div class="area-option" onclick="toggleArea('${k}')"><input type="checkbox" id="chk_${k.replace(/\s/g,'_')}" ${selectedAreas.includes(k)?'checked':''}><label>${k}</label></div>`).join('');
             modal.style.display='flex';
         }
-        window.toggleArea=function(area){ const chk=document.getElementById(`chk_${area.replace(/\s/g,'_')}`); if(chk) chk.checked=!chk.checked; };
-        function closeAreaModal(){ document.getElementById('areaModal').style.display='none'; if(selectedAreas.length===0 && agentStatus.status==='offline') document.getElementById('agentStatusToggle').checked=false; }
+        
+        window.toggleArea=function(area){ 
+            const chk=document.getElementById(`chk_${area.replace(/\s/g,'_')}`); 
+            if(chk) chk.checked=!chk.checked; 
+        };
+        
+        function closeAreaModal(){ 
+            document.getElementById('areaModal').style.display='none'; 
+            // If no areas selected and trying to go online, keep toggle off
+            if(selectedAreas.length===0 && agentStatus.status==='offline') {
+                const toggle = document.getElementById('agentStatusToggle');
+                if(toggle) toggle.checked = false;
+            }
+        }
+        
         window.confirmAreas=async function(){
             const selected=KECAMATAN.filter(k=>document.getElementById(`chk_${k.replace(/\s/g,'_')}`)?.checked);
             if(!selected.length){ alert('Pilih minimal 1 area'); return; }
-            selectedAreas=selected; agentStatus.areas=selected; agentStatus.status='available';
-            localStorage.setItem(`suruhboy_agent_status_${currentUser.username}`, JSON.stringify({ status:'available', areas:selected, timestamp:new Date().toISOString() }));
-            closeAreaModal(); updateAgentStatusUI();
-            await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selected.join(', '));
-            alert(`✅ ONLINE di ${selected.length} area: ${selected.join(', ')}`);
+            
+            // Save to sheet first
+            const success = await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selected.join(', '));
+            
+            if(success) {
+                // Wait a moment for sheet to update
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                // Refresh status from sheet
+                await refreshAgentStatus();
+                closeAreaModal();
+                alert(`✅ ONLINE di ${selected.length} area: ${selected.join(', ')}`);
+            } else {
+                alert('❌ Gagal menyimpan status. Coba lagi.');
+                const toggle = document.getElementById('agentStatusToggle');
+                if(toggle) toggle.checked = false;
+            }
         };
+        
         window.onAgentStatusToggle=async function(){
             const toggle=document.getElementById('agentStatusToggle');
-            if(toggle.checked){
-                if(agentStatus.status==='offline'||!selectedAreas.length) showAreaModal();
-                else{
-                    agentStatus.status='available';
-                    localStorage.setItem(`suruhboy_agent_status_${currentUser.username}`, JSON.stringify({ status:'available', areas:selectedAreas, timestamp:new Date().toISOString() }));
-                    updateAgentStatusUI();
-                    await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selectedAreas.join(', '));
-                    alert('✅ Anda ONLINE');
+            if(!toggle) return;
+            
+            // Disable toggle temporarily while processing
+            toggle.disabled = true;
+            
+            try {
+                if(toggle.checked){
+                    // Trying to go ONLINE
+                    if(selectedAreas.length === 0) {
+                        // No areas selected, show modal
+                        showAreaModal();
+                        toggle.checked = false;
+                        toggle.disabled = false;
+                        return;
+                    }
+                    
+                    // Save to sheet
+                    const success = await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selectedAreas.join(', '));
+                    
+                    if(success) {
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        await refreshAgentStatus();
+                        alert('✅ Status ONLINE telah disimpan');
+                    } else {
+                        alert('❌ Gagal mengubah status');
+                        toggle.checked = false;
+                    }
+                } else {
+                    // Trying to go OFFLINE
+                    const success = await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', '));
+                    
+                    if(success) {
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        await refreshAgentStatus();
+                        alert('⚫ Status OFFLINE telah disimpan');
+                    } else {
+                        alert('❌ Gagal mengubah status');
+                        toggle.checked = true;
+                    }
                 }
-            } else {
-                if(agentStatus.status==='available') await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', '));
-                agentStatus.status='offline';
-                localStorage.setItem(`suruhboy_agent_status_${currentUser.username}`, JSON.stringify({ status:'offline', areas:[], timestamp:new Date().toISOString() }));
-                updateAgentStatusUI();
-                alert('⚫ Anda OFFLINE');
+            } catch(e) {
+                console.error('Error toggling status:', e);
+                alert('Terjadi kesalahan');
+                // Revert toggle
+                await refreshAgentStatus();
+            } finally {
+                toggle.disabled = false;
             }
         };
-        function updateAgentStatusUI(){
-            const statusSpan=document.getElementById('agentStatusText'), toggle=document.getElementById('agentStatusToggle'), areaDiv=document.getElementById('agentAreaDisplay'), tags=document.getElementById('agentAreaTags');
-            if(agentStatus.status==='available' && selectedAreas.length){
-                statusSpan.innerHTML='<i class="fas fa-circle"></i> Available'; statusSpan.className='status-badge status-on';
-                toggle.checked=true; areaDiv.style.display='block';
-                tags.innerHTML=selectedAreas.map(a=>`<span class="area-tag">${a}</span>`).join('');
-            } else {
-                statusSpan.innerHTML='<i class="fas fa-power-off"></i> Offline'; statusSpan.className='status-badge status-off';
-                toggle.checked=false; areaDiv.style.display='none';
-            }
-        }
-        function restoreAgentStatus(){
-            const saved=localStorage.getItem(`suruhboy_agent_status_${currentUser.username}`);
-            if(saved){
-                try{
-                    const s=JSON.parse(saved);
-                    if(s.status==='available' && s.areas && s.areas.length){
-                        agentStatus.status=s.status; selectedAreas=s.areas; agentStatus.areas=s.areas;
-                        updateAgentStatusUI();
-                        return true;
-                    }
-                }catch(e){}
-            }
-            return false;
-        }
         
         // ============================================
         // ADMIN DASHBOARD FUNCTIONS
         // ============================================
-        async function loadAgentStatusFromSheet() {
-            try {
-                const res = await fetch(AGENT_STATUS_URL);
-                const text = await res.text();
-                const json = JSON.parse(text.match(/({.*})/)[1]);
-                const rows = json.table.rows, cols = json.table.cols;
-                let tsIdx=0, nameIdx=1, userIdx=2, actIdx=3, areaIdx=4;
-                for(let i=0;i<cols.length;i++){
-                    const l=cols[i].label?.toLowerCase()||'';
-                    if(l==='timestamp') tsIdx=i;
-                    if(l==='nama agent') nameIdx=i;
-                    if(l==='username') userIdx=i;
-                    if(l==='action') actIdx=i;
-                    if(l==='areas') areaIdx=i;
-                }
-                const all=[];
-                for(let i=0;i<rows.length;i++){
-                    const row=rows[i].c;
-                    if(!row) continue;
-                    const ts=row[tsIdx]?.v||'', name=row[nameIdx]?.v||'', uname=row[userIdx]?.v||'', act=row[actIdx]?.v||'', areasRaw=row[areaIdx]?.v||'';
-                    if(name && uname && act){
-                        let arr=[];
-                        if(areasRaw){
-                            try{ arr=areasRaw.startsWith('[')?JSON.parse(areasRaw):areasRaw.split(',').map(a=>a.trim()).filter(a=>a); }
-                            catch(e){ arr=areasRaw.split(',').map(a=>a.trim()).filter(a=>a); }
-                        }
-                        all.push({ timestamp:ts, namaAgent:String(name), username:String(uname), action:String(act).toLowerCase(), areas:arr });
-                    }
-                }
-                const latest=new Map();
-                all.forEach(s=>{ const ex=latest.get(s.username); if(!ex || s.timestamp>ex.timestamp) latest.set(s.username,s); });
-                onlineAgents=[];
-                for(const [uname,s] of latest){
-                    if(s.action==='online' || s.action==='available') onlineAgents.push({ username:s.username, namaAgent:s.namaAgent, areas:s.areas, lastActive:s.timestamp });
-                }
-                onlineAgents.sort((a,b)=>new Date(b.lastActive)-new Date(a.lastActive));
-                return true;
-            } catch(e){ console.error(e); return false; }
-        }
-        
         function renderAdminList(){
             const container=document.getElementById('adminAgentList');
             document.getElementById('totalOnline').innerText=onlineAgents.length;
@@ -903,6 +1012,7 @@
                     dropdown.style.display=dropdown.style.display==='none'?'block':'none';
                 });
             });
+            
             document.querySelectorAll('.dropdown-item').forEach(item=>{
                 item.addEventListener('click',async (e)=>{
                     e.stopPropagation();
@@ -911,10 +1021,11 @@
                     const agentUsername=item.getAttribute('data-agent-username');
                     const areasStr=item.getAttribute('data-areas');
                     const areas=areasStr?JSON.parse(areasStr):[];
+                    
                     if(action==='offline'){
                         if(confirm(`Offline-kan agent ${agentName}?`)){
                             await saveOnlineLog(agentName, agentUsername, 'Offline (by admin)', '-');
-                            localStorage.setItem(`suruhboy_agent_status_${agentUsername}`, JSON.stringify({ status:'offline', areas:[], timestamp:new Date().toISOString(), forcedByAdmin:true }));
+                            await new Promise(resolve => setTimeout(resolve, 1000));
                             await refreshAdminData();
                             alert(`✅ Agent ${agentName} telah di-offline-kan`);
                         }
@@ -925,21 +1036,27 @@
                         areaList.innerHTML=KECAMATAN.map(k=>`<label class="area-check"><input type="checkbox" value="${k}" ${areas.includes(k)?'checked':''}><span>${k}</span></label>`).join('');
                         modal.style.display='flex';
                     }
-                    item.closest('.dropdown-menu').style.display='none';
+                    
+                    // Close dropdown
+                    const dropdown = item.closest('.dropdown-menu');
+                    if(dropdown) dropdown.style.display = 'none';
                 });
             });
         }
         
-        function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g,m=>{ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m; }); }
+        function escapeHtml(str){ if(!str) return ''; return String(str).replace(/[&<>]/g,m=>{ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m; }); }
         
         window.closeAssignModal=function(){ document.getElementById('assignModal').style.display='none'; selectedAgentForAssign=null; };
+        
         window.confirmAssign=async function(){
             if(!selectedAgentForAssign) return;
-            const selected=[]; document.querySelectorAll('#assignAreaList input:checked').forEach(cb=>selected.push(cb.value));
-            const action=selected.length>0?'Online (assigned by admin)':'Offline (assigned by admin)';
-            const areasText=selected.length>0?selected.join(', '):'-';
+            const selected=[]; 
+            document.querySelectorAll('#assignAreaList input:checked').forEach(cb=>selected.push(cb.value));
+            const action = selected.length > 0 ? 'Online (assigned by admin)' : 'Offline (assigned by admin)';
+            const areasText = selected.length > 0 ? selected.join(', ') : '-';
+            
             await saveOnlineLog(selectedAgentForAssign.name, selectedAgentForAssign.username, action, areasText);
-            localStorage.setItem(`suruhboy_agent_status_${selectedAgentForAssign.username}`, JSON.stringify({ status:selected.length>0?'available':'offline', areas:selected, timestamp:new Date().toISOString(), assignedByAdmin:true }));
+            await new Promise(resolve => setTimeout(resolve, 1000));
             await refreshAdminData();
             closeAssignModal();
             alert(`✅ Area untuk ${selectedAgentForAssign.name} telah diupdate`);
@@ -947,12 +1064,17 @@
         
         async function refreshAdminData(){
             const container=document.getElementById('adminAgentList');
-            container.innerHTML='<div class="loading-small"><i class="fas fa-spinner fa-pulse"></i> Memperbarui data...</div>';
+            if(container) container.innerHTML='<div class="loading-small"><i class="fas fa-spinner fa-pulse"></i> Memperbarui data...</div>';
             await loadAgentStatusFromSheet();
             renderAdminList();
         }
         
-        document.addEventListener('click',function(){ document.querySelectorAll('.dropdown-menu').forEach(menu=>menu.style.display='none'); });
+        // Close dropdowns when clicking elsewhere
+        document.addEventListener('click', function(e) {
+            if(!e.target.closest('.burger-menu')) {
+                document.querySelectorAll('.dropdown-menu').forEach(menu=>menu.style.display='none');
+            }
+        });
         
         // ============================================
         // DASHBOARD CONTROLLER
@@ -961,18 +1083,35 @@
             if(!currentUser) return;
             document.getElementById('agentName').innerText=currentUser.name;
             document.getElementById('agentAvatar').innerText=currentUser.name.charAt(0).toUpperCase();
-            updateAgentStatusUI();
         }
-        function updateAdminUI(){ if(currentUser) document.getElementById('adminAvatar').innerText=currentUser.name.charAt(0).toUpperCase(); }
+        
+        function updateAdminUI(){ 
+            if(currentUser) document.getElementById('adminAvatar').innerText=currentUser.name.charAt(0).toUpperCase(); 
+        }
         
         async function showAgentDashboard(){
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('agentDashboard').classList.remove('hidden');
             document.getElementById('adminDashboard').classList.add('hidden');
             updateAgentUI();
-            restoreAgentStatus();
+            
+            // Load initial status from sheet
+            await refreshAgentStatus();
+            
+            // Load orders
             await loadOrders();
-            document.getElementById('weekSelect').addEventListener('change',onWeekChange);
+            
+            // Set up week select listener
+            const weekSelect = document.getElementById('weekSelect');
+            if(weekSelect) weekSelect.addEventListener('change', onWeekChange);
+            
+            // Start auto-refresh for agent status (every 10 seconds)
+            if(agentStatusRefreshInterval) clearInterval(agentStatusRefreshInterval);
+            agentStatusRefreshInterval = setInterval(async () => {
+                if(currentUser && !isAdmin) {
+                    await refreshAgentStatus();
+                }
+            }, 10000);
         }
         
         async function showAdminDashboard(){
@@ -980,37 +1119,58 @@
             document.getElementById('agentDashboard').classList.add('hidden');
             document.getElementById('adminDashboard').classList.remove('hidden');
             updateAdminUI();
+            
+            // Stop agent auto-refresh
+            if(agentStatusRefreshInterval) {
+                clearInterval(agentStatusRefreshInterval);
+                agentStatusRefreshInterval = null;
+            }
+            
             await refreshAdminData();
             if(window.adminInterval) clearInterval(window.adminInterval);
-            window.adminInterval=setInterval(()=>{ if(isAdmin) refreshAdminData(); },15000);
+            window.adminInterval = setInterval(() => { 
+                if(isAdmin) refreshAdminData(); 
+            }, 15000);
         }
         
         async function logout(){
+            // Stop all intervals
             if(window.adminInterval) clearInterval(window.adminInterval);
-            if(currentUser && !isAdmin && agentStatus.status==='available'){
+            if(agentStatusRefreshInterval) clearInterval(agentStatusRefreshInterval);
+            
+            // If agent is online, log out as offline
+            if(currentUser && !isAdmin && agentStatus.status === 'available') {
                 await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', '));
             }
-            currentUser=null; isAdmin=false; agentStatus={ status:'offline', areas:[] }; selectedAreas=[];
+            
+            currentUser = null; 
+            isAdmin = false; 
+            agentStatus = { status: 'offline', areas: [] }; 
+            selectedAreas = [];
+            
             document.getElementById('loginPage').classList.remove('hidden');
             document.getElementById('agentDashboard').classList.add('hidden');
             document.getElementById('adminDashboard').classList.add('hidden');
-            document.getElementById('username').value='';
-            document.getElementById('password').value='';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
         }
         
-        document.getElementById('loginForm').addEventListener('submit',async(e)=>{
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username=document.getElementById('username').value.trim();
-            const password=document.getElementById('password').value;
-            const found=login(username,password);
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const found = login(username, password);
+            
             if(found){
-                currentUser=found;
+                currentUser = found;
                 await saveLoginLog(found.name, found.username, 'Berhasil');
+                
                 if(isAdminUser(found)){
-                    isAdmin=true;
+                    isAdmin = true;
                     showAdminDashboard();
                 } else {
-                    isAdmin=false;
+                    isAdmin = false;
                     showAgentDashboard();
                 }
             } else {
@@ -1018,6 +1178,7 @@
             }
         });
         
+        // Initialize
         loadUsers();
     </script>
 </body>
