@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>SuruhBoy - Cek Ketersediaan Agent</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: linear-gradient(145deg, #F7F9FC 0%, #EFF3F8 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-top: 20px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 40px;
+            box-shadow: 0 10px 25px -5px rgba(255, 59, 47, 0.3);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0F172A, #1E293B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #64748B;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+        }
+
+        .note {
+            background: #FFFBEB;
+            border-left: 4px solid #F59E0B;
+            padding: 12px 16px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .note i {
+            color: #F59E0B;
+            font-size: 18px;
+            margin-top: 2px;
+        }
+
+        .note p {
+            font-size: 13px;
+            color: #92400E;
+            line-height: 1.4;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .form-group label i {
+            color: #FF6B4A;
+            margin-right: 6px;
+        }
+
+        select {
+            width: 100%;
+            padding: 16px 18px;
+            background: #F8FAFE;
+            border: 1px solid #E2E8F0;
+            border-radius: 24px;
+            font-size: 15px;
+            font-family: inherit;
+            color: #0F172A;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #FF6B4A;
+            box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.1);
+        }
+
+        .btn-check {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border: none;
+            border-radius: 28px;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
+        }
+
+        .btn-check:active {
+            transform: scale(0.98);
+        }
+
+        .btn-check:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-content {
+            background: white;
+            border-radius: 48px;
+            padding: 32px 40px;
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #F1F5F9;
+            border-top: 4px solid #FF6B4A;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-content p {
+            color: #334155;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .loading-content .searching-text {
+            font-size: 12px;
+            color: #94A3B8;
+            margin-top: 8px;
+        }
+
+        .result-section {
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 32px;
+            padding: 24px;
+            border: 1px solid #EDF2F7;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #F1F5F9;
+        }
+
+        .result-header i {
+            font-size: 28px;
+            color: #FF6B4A;
+        }
+
+        .result-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0F172A;
+        }
+
+        .status-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+
+        .status-ready {
+            background: #DCFCE7;
+            color: #15803D;
+        }
+
+        .status-waiting {
+            background: #FEF3C7;
+            color: #B45309;
+        }
+
+        .status-none {
+            background: #FEE2E2;
+            color: #B91C1C;
+        }
+
+        .result-message {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .result-detail {
+            font-size: 13px;
+            color: #64748B;
+            line-height: 1.5;
+        }
+
+        .agent-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #F1F5F9;
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            color: #475569;
+            margin-top: 12px;
+        }
+
+        .agent-badge i {
+            font-size: 10px;
+            color: #10B981;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn-order {
+            flex: 1;
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border: none;
+            padding: 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-order:disabled {
+            background: #94A3B8;
+            cursor: not-allowed;
+        }
+
+        .btn-reset {
+            flex: 1;
+            background: #F1F5F9;
+            border: none;
+            padding: 14px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .info-box {
+            background: #EFF6FF;
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #1E40AF;
+        }
+
+        .warning-box {
+            background: #FEF3C7;
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #B45309;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #94A3B8;
+            font-size: 12px;
+            margin-top: auto;
+        }
+
+        .error-banner {
+            background: #FEE2E2;
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #B91C1C;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                🤖
+            </div>
+            <h1>SuruhBoy</h1>
+            <p>Cek ketersediaan agent di area kamu</p>
+        </div>
+
+        <div class="card">
+            <div class="note">
+                <i class="fas fa-info-circle"></i>
+                <p>Pastikan area jemput adalah titik pertama untuk pick up barang / jemput kamu ya!</p>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-map-marker-alt"></i> Pilih Area Jemput</label>
+                <select id="areaSelect">
+                    <option value="" disabled selected>-- Pilih Kecamatan --</option>
+                </select>
+            </div>
+
+            <button class="btn-check" id="checkBtn" onclick="checkAvailability()">
+                <i class="fas fa-search"></i> Cek Ketersediaan Agent
+            </button>
+        </div>
+
+        <div id="resultSection" class="result-section hidden"></div>
+
+        <footer>
+            <i class="fas fa-clock"></i> Data ketersediaan diperbarui secara real-time dari database agent
+        </footer>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Mencari agent terdekat...</p>
+            <p class="searching-text" id="searchingText">Menghubungkan ke database</p>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // KONFIGURASI
+        // ============================================
+        // URL untuk membaca data status agent dari Google Sheet (gid=1931290882)
+        const AGENT_STATUS_SHEET_ID = '1FgWiv56J2w7A0WprwqOKJMU7BO4mX3jotW3IC397rWg';
+        const AGENT_STATUS_GID = '1931290882';
+        const AGENT_STATUS_URL = `https://docs.google.com/spreadsheets/d/${AGENT_STATUS_SHEET_ID}/gviz/tq?tqx=out:json&gid=${AGENT_STATUS_GID}`;
+        
+        // Daftar kecamatan
+        const KECAMATAN = [
+            "Ampel", "Andong", "Banyudono", "Boyolali Kota", "Cepogo",
+            "Juwangi", "Karanggede", "Kemusu", "Klego", "Mojosongo",
+            "Musuk", "Ngemplak", "Nogosari", "Sambi", "Sawit",
+            "Selo", "Simo", "Tamansari", "Teras", "Wonosegoro"
+        ];
+        
+        // Data struktur untuk menyimpan agent online
+        let onlineAgents = []; // Array of { namaAgent, username, areas, timestamp, action }
+        let isLoading = false;
+        let loadingInterval;
+        
+        const loadingTexts = [
+            "Menghubungkan ke database agent",
+            "Membaca data status terbaru",
+            "Mencari agent aktif di area",
+            "Memeriksa ketersediaan..."
+        ];
+        
+        // ============================================
+        // LOAD AGENT STATUS DARI GOOGLE SHEET (GID 1931290882)
+        // ============================================
+        async function loadAgentStatusFromSheet() {
+            try {
+                console.log('Fetching agent status from sheet...');
+                const response = await fetch(AGENT_STATUS_URL);
+                const text = await response.text();
+                const jsonString = text.match(/({.*})/)[1];
+                const data = JSON.parse(jsonString);
+                const rows = data.table.rows;
+                const cols = data.table.cols;
+                
+                // Cari index kolom berdasarkan header
+                let timestampIdx = -1;
+                let namaAgentIdx = -1;
+                let usernameIdx = -1;
+                let actionIdx = -1;
+                let areasIdx = -1;
+                
+                for (let i = 0; i < cols.length; i++) {
+                    const label = cols[i].label?.toLowerCase() || '';
+                    if (label === 'timestamp') timestampIdx = i;
+                    if (label === 'nama agent' || label === 'nama_agent' || label === 'namaagent') namaAgentIdx = i;
+                    if (label === 'username') usernameIdx = i;
+                    if (label === 'action') actionIdx = i;
+                    if (label === 'areas') areasIdx = i;
+                }
+                
+                // Jika tidak ditemukan berdasarkan label, coba berdasarkan posisi (asumsi urutan: Timestamp, Nama Agent, Username, Action, Areas)
+                if (timestampIdx === -1) timestampIdx = 0;
+                if (namaAgentIdx === -1) namaAgentIdx = 1;
+                if (usernameIdx === -1) usernameIdx = 2;
+                if (actionIdx === -1) actionIdx = 3;
+                if (areasIdx === -1) areasIdx = 4;
+                
+                // Kumpulkan semua data status
+                const allStatus = [];
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i].c;
+                    if (!row) continue;
+                    
+                    const timestamp = row[timestampIdx]?.v || '';
+                    const namaAgent = row[namaAgentIdx]?.v || '';
+                    const username = row[usernameIdx]?.v || '';
+                    const action = row[actionIdx]?.v || '';
+                    let areas = row[areasIdx]?.v || '';
+                    
+                    if (namaAgent && username && action) {
+                        // Parse areas (bisa berupa string dengan koma atau array JSON)
+                        let areasArray = [];
+                        if (areas) {
+                            try {
+                                // Coba parse sebagai JSON dulu
+                                if (areas.startsWith('[')) {
+                                    areasArray = JSON.parse(areas);
+                                } else {
+                                    // Pisahkan dengan koma
+                                    areasArray = areas.split(',').map(a => a.trim()).filter(a => a);
+                                }
+                            } catch(e) {
+                                areasArray = areas.split(',').map(a => a.trim()).filter(a => a);
+                            }
+                        }
+                        
+                        allStatus.push({
+                            timestamp: timestamp,
+                            namaAgent: String(namaAgent),
+                            username: String(username),
+                            action: String(action).toLowerCase(),
+                            areas: areasArray,
+                            rawTimestamp: timestamp
+                        });
+                    }
+                }
+                
+                // Kelompokkan per agent, ambil status terbaru (berdasarkan timestamp)
+                const latestStatusPerAgent = new Map();
+                
+                allStatus.forEach(status => {
+                    const key = status.username;
+                    const existing = latestStatusPerAgent.get(key);
+                    
+                    // Parse timestamp untuk perbandingan
+                    let currentTimestamp = new Date(status.timestamp);
+                    let existingTimestamp = existing ? new Date(existing.timestamp) : new Date(0);
+                    
+                    if (isNaN(currentTimestamp.getTime())) {
+                        // Jika timestamp tidak valid, gunakan string comparison
+                        if (!existing || status.timestamp > existing.timestamp) {
+                            latestStatusPerAgent.set(key, status);
+                        }
+                    } else {
+                        if (currentTimestamp > existingTimestamp) {
+                            latestStatusPerAgent.set(key, status);
+                        }
+                    }
+                });
+                
+                // Filter hanya yang statusnya 'online' atau 'available'
+                onlineAgents = [];
+                for (const [username, status] of latestStatusPerAgent) {
+                    if (status.action === 'online' || status.action === 'available') {
+                        onlineAgents.push({
+                            username: status.username,
+                            namaAgent: status.namaAgent,
+                            areas: status.areas,
+                            lastActive: status.timestamp
+                        });
+                    }
+                }
+                
+                console.log(`Found ${onlineAgents.length} online agents:`, onlineAgents);
+                return true;
+                
+            } catch(error) {
+                console.error('Error loading agent status from sheet:', error);
+                return false;
+            }
+        }
+        
+        // ============================================
+        // CEK KETERSEDIAAN AGENT PER AREA
+        // ============================================
+        function getAgentAvailability(area) {
+            // Cari agent yang memiliki area tersebut dan sedang online
+            const availableAgents = onlineAgents.filter(agent => 
+                agent.areas && agent.areas.includes(area)
+            );
+            
+            const agentCount = availableAgents.length;
+            
+            if (agentCount === 0) {
+                return {
+                    status: 'none',
+                    message: 'Maaf, belum ada agent yang siap di area ini',
+                    detail: 'Belum ada agent yang sedang online di area ini. Silakan coba lagi nanti atau pilih area lain.',
+                    agentCount: 0
+                };
+            } else {
+                // Ada agent yang online di area ini
+                // Cek apakah agent sedang dalam pengantaran?
+                // Untuk saat ini, asumsikan semua agent yang online siap menerima order
+                // Nanti bisa ditambahkan logika dari sheet order jika ada
+                return {
+                    status: 'ready',
+                    message: 'Ada agent yang siap bantu!',
+                    detail: `Tersedia ${agentCount} agent siap di area ${area}. Agent akan segera menjemput pesanan Anda.`,
+                    agentCount: agentCount,
+                    isReady: true,
+                    agents: availableAgents
+                };
+            }
+        }
+        
+        // ============================================
+        // LOADING ANIMATION
+        // ============================================
+        function startLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            const searchingText = document.getElementById('searchingText');
+            
+            let idx = 0;
+            searchingText.textContent = loadingTexts[0];
+            
+            loadingInterval = setInterval(() => {
+                idx = (idx + 1) % loadingTexts.length;
+                searchingText.textContent = loadingTexts[idx];
+            }, 800);
+            
+            overlay.classList.add('show');
+        }
+        
+        function stopLoading() {
+            const overlay = document.getElementById('loadingOverlay');
+            if (loadingInterval) {
+                clearInterval(loadingInterval);
+            }
+            overlay.classList.remove('show');
+        }
+        
+        // ============================================
+        // SHOW RESULT
+        // ============================================
+        function showResult(area, availability) {
+            const resultSection = document.getElementById('resultSection');
+            const { status, message, detail, agentCount } = availability;
+            
+            let statusIcon = '';
+            let statusClass = '';
+            let actionButtons = '';
+            
+            if (status === 'ready') {
+                statusIcon = 'fas fa-check-circle';
+                statusClass = 'status-ready';
+                actionButtons = `
+                    <div class="action-buttons">
+                        <button class="btn-order" onclick="orderNow('${area}')">
+                            <i class="fas fa-shopping-cart"></i> Pesan Sekarang
+                        </button>
+                        <button class="btn-reset" onclick="resetCheck()">
+                            <i class="fas fa-undo"></i> Cek Area Lain
+                        </button>
+                    </div>
+                `;
+            } else {
+                statusIcon = 'fas fa-times-circle';
+                statusClass = 'status-none';
+                actionButtons = `
+                    <div class="action-buttons">
+                        <button class="btn-reset" onclick="resetCheck()">
+                            <i class="fas fa-undo"></i> Cek Area Lain
+                        </button>
+                    </div>
+                `;
+            }
+            
+            resultSection.innerHTML = `
+                <div class="result-card">
+                    <div class="result-header">
+                        <i class="fas fa-map-pin"></i>
+                        <h3>Area: ${area}</h3>
+                    </div>
+                    <div style="text-align: center;">
+                        <div class="status-icon ${statusClass}" style="margin: 0 auto 16px;">
+                            <i class="${statusIcon}"></i>
+                        </div>
+                        <div class="result-message">${message}</div>
+                        <div class="result-detail">${detail}</div>
+                        ${agentCount > 0 ? `<div class="agent-badge"><i class="fas fa-user-check"></i> ${agentCount} agent aktif di area ini</div>` : ''}
+                        ${status === 'ready' ? `<div class="info-box"><i class="fas fa-bolt"></i> Estimasi waktu tunggu: 10-15 menit</div>` : ''}
+                    </div>
+                    ${actionButtons}
+                </div>
+            `;
+            
+            resultSection.classList.remove('hidden');
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function showError(message) {
+            const resultSection = document.getElementById('resultSection');
+            resultSection.innerHTML = `
+                <div class="result-card">
+                    <div class="error-banner">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>${message}</span>
+                    </div>
+                    <button class="btn-reset" onclick="resetCheck()" style="width: 100%;">
+                        <i class="fas fa-undo"></i> Coba Lagi
+                    </button>
+                </div>
+            `;
+            resultSection.classList.remove('hidden');
+        }
+        
+        // ============================================
+        // CEK KETERSEDIAAN (MAIN FUNCTION)
+        // ============================================
+        async function checkAvailability() {
+            const areaSelect = document.getElementById('areaSelect');
+            const selectedArea = areaSelect.value;
+            
+            if (!selectedArea) {
+                alert('Silakan pilih area jemput terlebih dahulu');
+                return;
+            }
+            
+            if (isLoading) return;
+            isLoading = true;
+            
+            startLoading();
+            
+            try {
+                // Load data terbaru dari sheet
+                const success = await loadAgentStatusFromSheet();
+                
+                if (!success) {
+                    stopLoading();
+                    showError('Gagal mengambil data ketersediaan agent. Silakan coba lagi.');
+                    isLoading = false;
+                    return;
+                }
+                
+                // Simulasi delay untuk efek loading
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Cek ketersediaan
+                const availability = getAgentAvailability(selectedArea);
+                
+                stopLoading();
+                showResult(selectedArea, availability);
+                
+            } catch (error) {
+                console.error('Error checking availability:', error);
+                stopLoading();
+                showError('Terjadi kesalahan. Silakan coba lagi.');
+            }
+            
+            isLoading = false;
+        }
+        
+        // ============================================
+        // ORDER NOW
+        // ============================================
+        function orderNow(area) {
+            alert(`🛵 Pesanan Anda akan segera diproses!\n\n📍 Area: ${area}\n✅ Agent akan segera menjemput pesanan Anda.\n\nTerima kasih telah menggunakan SuruhBoy!`);
+            // Bisa ditambahkan redirect ke form order atau WhatsApp
+        }
+        
+        // ============================================
+        // RESET CHECK
+        // ============================================
+        function resetCheck() {
+            const resultSection = document.getElementById('resultSection');
+            resultSection.classList.add('hidden');
+            const areaSelect = document.getElementById('areaSelect');
+            areaSelect.value = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // ============================================
+        // POPULATE AREA SELECT
+        // ============================================
+        function populateAreaSelect() {
+            const select = document.getElementById('areaSelect');
+            select.innerHTML = '<option value="" disabled selected>-- Pilih Kecamatan --</option>' + 
+                KECAMATAN.map(area => `<option value="${area}">${area}</option>`).join('');
+        }
+        
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        async function init() {
+            populateAreaSelect();
+            
+            // Preload data saat pertama kali buka
+            const checkBtn = document.getElementById('checkBtn');
+            checkBtn.disabled = true;
+            checkBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat data agent...';
+            
+            await loadAgentStatusFromSheet();
+            
+            checkBtn.disabled = false;
+            checkBtn.innerHTML = '<i class="fas fa-search"></i> Cek Ketersediaan Agent';
+            
+            // Auto refresh setiap 15 detik
+            setInterval(async () => {
+                if (!isLoading) {
+                    await loadAgentStatusFromSheet();
+                    console.log('Auto-refresh: Agent status updated');
+                }
+            }, 15000);
+        }
+        
+        init();
+    </script>
+</body>
+</html>
