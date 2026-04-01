@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>SuruhBoy - Dashboard</title>
+    <title>SuruhBoy - Dashboard Agent & Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             background: #F7F9FC;
@@ -36,12 +41,17 @@
             width: 100%;
             max-width: 360px;
             padding: 40px 28px;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
 
-        .login-header { text-align: center; margin-bottom: 32px; }
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
         .login-icon {
-            width: 70px; height: 70px;
+            width: 70px;
+            height: 70px;
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
             border-radius: 28px;
             display: flex;
@@ -50,10 +60,23 @@
             margin: 0 auto 16px;
             font-size: 36px;
         }
-        .login-header h1 { font-size: 28px; font-weight: 800; color: #0F172A; }
-        .login-header p { color: #64748B; font-size: 14px; margin-top: 4px; }
 
-        .form-group { margin-bottom: 20px; }
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #0F172A;
+        }
+
+        .login-header p {
+            color: #64748B;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
         .form-group label {
             display: block;
             font-size: 13px;
@@ -61,6 +84,7 @@
             color: #334155;
             margin-bottom: 8px;
         }
+
         .form-group input {
             width: 100%;
             padding: 14px 16px;
@@ -69,11 +93,13 @@
             border-radius: 20px;
             font-size: 15px;
             font-family: inherit;
+            transition: all 0.2s;
         }
+
         .form-group input:focus {
             outline: none;
             border-color: #FF6B4A;
-            box-shadow: 0 0 0 3px rgba(255,107,74,0.1);
+            box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.1);
         }
 
         .btn-login {
@@ -86,8 +112,12 @@
             font-weight: 600;
             color: white;
             cursor: pointer;
+            transition: transform 0.1s;
         }
-        .btn-login:active { transform: scale(0.98); }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
 
         .message {
             padding: 12px;
@@ -96,11 +126,25 @@
             font-size: 13px;
             text-align: center;
         }
-        .info { background: #EFF6FF; color: #1E40AF; }
-        .success { background: #DCFCE7; color: #15803D; }
-        .error { background: #FEE2E2; color: #B91C1C; }
 
-        .hidden { display: none; }
+        .info {
+            background: #EFF6FF;
+            color: #1E40AF;
+        }
+
+        .success {
+            background: #DCFCE7;
+            color: #15803D;
+        }
+
+        .error {
+            background: #FEE2E2;
+            color: #B91C1C;
+        }
+
+        .hidden {
+            display: none;
+        }
 
         /* Dashboard Umum */
         .dashboard-header {
@@ -109,6 +153,7 @@
             align-items: center;
             margin-bottom: 24px;
         }
+
         .logo-area h2 {
             font-size: 24px;
             font-weight: 800;
@@ -116,10 +161,21 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .logo-area p { font-size: 12px; color: #94A3B8; }
-        .user-menu { display: flex; align-items: center; gap: 12px; }
+
+        .logo-area p {
+            font-size: 12px;
+            color: #94A3B8;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
         .user-avatar {
-            width: 48px; height: 48px;
+            width: 48px;
+            height: 48px;
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
             border-radius: 24px;
             display: flex;
@@ -129,8 +185,10 @@
             font-size: 18px;
             color: white;
         }
+
         .logout-icon {
-            width: 44px; height: 44px;
+            width: 44px;
+            height: 44px;
             background: #F1F5F9;
             border-radius: 22px;
             display: flex;
@@ -138,12 +196,21 @@
             justify-content: center;
             color: #64748B;
             cursor: pointer;
+            transition: 0.1s;
         }
-        .logout-icon:active { background: #E2E8F0; transform: scale(0.95); }
+
+        .logout-icon:active {
+            background: #E2E8F0;
+            transform: scale(0.95);
+        }
 
         /* Agent Dashboard */
-        .agent-dashboard { max-width: 480px; margin: 0 auto; padding: 20px 16px 100px; }
-        
+        .agent-dashboard {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px 16px 100px;
+        }
+
         .welcome-card {
             background: linear-gradient(135deg, #0F172A, #1E293B);
             border-radius: 32px;
@@ -151,22 +218,34 @@
             margin-bottom: 20px;
             color: white;
         }
-        .welcome-text { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+
+        .welcome-text {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
         .welcome-text span {
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .welcome-sub { font-size: 13px; color: #94A3B8; margin-bottom: 20px; }
+
+        .welcome-sub {
+            font-size: 13px;
+            color: #94A3B8;
+            margin-bottom: 20px;
+        }
 
         .status-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 0;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -176,15 +255,29 @@
             font-size: 13px;
             font-weight: 600;
         }
-        .status-on { background: rgba(16,185,129,0.2); color: #34D399; }
-        .status-off { background: rgba(239,68,68,0.2); color: #F87171; }
+
+        .status-on {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34D399;
+        }
+
+        .status-off {
+            background: rgba(239, 68, 68, 0.2);
+            color: #F87171;
+        }
 
         .toggle {
             position: relative;
             width: 48px;
             height: 26px;
         }
-        .toggle input { opacity: 0; width: 0; height: 0; }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
         .toggle-slider {
             position: absolute;
             cursor: pointer;
@@ -196,6 +289,7 @@
             transition: 0.3s;
             border-radius: 34px;
         }
+
         .toggle-slider:before {
             position: absolute;
             content: "";
@@ -207,12 +301,33 @@
             transition: 0.3s;
             border-radius: 50%;
         }
-        input:checked + .toggle-slider { background-color: #10B981; }
-        input:checked + .toggle-slider:before { transform: translateX(22px); }
 
-        .area-section { margin-top: 16px; }
-        .area-tags { display: flex; flex-wrap: wrap; gap: 8px; }
-        .area-tag { background: rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 20px; font-size: 12px; color: #CBD5E1; }
+        input:checked+.toggle-slider {
+            background-color: #10B981;
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(22px);
+        }
+
+        .area-section {
+            margin-top: 16px;
+        }
+
+        .area-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .area-tag {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #CBD5E1;
+        }
 
         .section-card {
             background: white;
@@ -220,7 +335,9 @@
             padding: 20px;
             margin-bottom: 16px;
             border: 1px solid #EDF2F7;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
+
         .section-title {
             font-size: 16px;
             font-weight: 700;
@@ -230,7 +347,10 @@
             align-items: center;
             gap: 8px;
         }
-        .section-title i { color: #FF6B4A; }
+
+        .section-title i {
+            color: #FF6B4A;
+        }
 
         .week-select {
             width: 100%;
@@ -240,6 +360,7 @@
             border-radius: 20px;
             font-size: 14px;
             cursor: pointer;
+            font-weight: 500;
         }
 
         .stats-grid {
@@ -247,33 +368,75 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
         }
+
         .stat-block {
             background: #F8FAFE;
             border-radius: 20px;
             padding: 14px 8px;
             text-align: center;
         }
-        .stat-number { font-size: 20px; font-weight: 800; color: #0F172A; }
-        .stat-label { font-size: 11px; color: #64748B; margin-top: 4px; }
 
-        .order-list { display: flex; flex-direction: column; gap: 12px; }
+        .stat-number {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0F172A;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #64748B;
+            margin-top: 4px;
+        }
+
+        .order-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         .order-card {
             background: #F8FAFE;
             border-radius: 20px;
             padding: 16px;
         }
+
         .order-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
-        .customer-name { font-weight: 700; font-size: 15px; color: #0F172A; display: flex; align-items: center; gap: 8px; }
-        .order-amount { font-weight: 700; font-size: 15px; color: #10B981; }
-        .order-date { font-size: 12px; color: #94A3B8; display: flex; align-items: center; gap: 6px; }
 
-        .empty-state { text-align: center; padding: 40px 20px; color: #94A3B8; }
+        .customer-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: #0F172A;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
+        .order-amount {
+            font-weight: 700;
+            font-size: 15px;
+            color: #10B981;
+        }
+
+        .order-date {
+            font-size: 12px;
+            color: #94A3B8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94A3B8;
+        }
+
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -281,13 +444,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(8px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
+
         .modal-container {
             background: white;
             border-radius: 32px;
@@ -296,8 +460,18 @@
             max-height: 80vh;
             overflow: hidden;
         }
-        .modal-header { padding: 24px 20px 12px; text-align: center; }
-        .modal-header h3 { font-size: 20px; font-weight: 700; color: #0F172A; }
+
+        .modal-header {
+            padding: 24px 20px 12px;
+            text-align: center;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0F172A;
+        }
+
         .area-list {
             padding: 8px 20px;
             display: grid;
@@ -306,6 +480,7 @@
             max-height: 400px;
             overflow-y: auto;
         }
+
         .area-option {
             display: flex;
             align-items: center;
@@ -315,13 +490,21 @@
             border-radius: 40px;
             cursor: pointer;
         }
-        .area-option input { width: 18px; height: 18px; accent-color: #FF6B4A; cursor: pointer; }
+
+        .area-option input {
+            width: 18px;
+            height: 18px;
+            accent-color: #FF6B4A;
+            cursor: pointer;
+        }
+
         .modal-footer {
             padding: 16px 20px 24px;
             display: flex;
             gap: 12px;
             border-top: 1px solid #F1F5F9;
         }
+
         .btn-primary-modal {
             flex: 2;
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
@@ -332,6 +515,7 @@
             color: white;
             cursor: pointer;
         }
+
         .btn-secondary-modal {
             flex: 1;
             background: #F1F5F9;
@@ -344,10 +528,21 @@
         }
 
         /* Admin Dashboard */
-        .admin-dashboard { max-width: 800px; margin: 0 auto; padding: 20px 16px 100px; }
-        .admin-title { margin-bottom: 20px; }
-        .admin-title h2 { font-size: 24px; font-weight: 700; color: #0F172A; }
-        .admin-title p { color: #64748B; }
+        .admin-dashboard {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 16px 100px;
+        }
+
+        .admin-title {
+            margin-bottom: 20px;
+        }
+
+        .admin-title h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0F172A;
+        }
 
         .stats-card {
             background: white;
@@ -359,7 +554,13 @@
             justify-content: space-between;
             align-items: center;
         }
-        .stats-card .total { font-size: 32px; font-weight: 800; color: #FF6B4A; }
+
+        .stats-card .total {
+            font-size: 32px;
+            font-weight: 800;
+            color: #FF6B4A;
+        }
+
         .refresh-btn {
             background: #F1F5F9;
             border: none;
@@ -371,6 +572,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            transition: 0.1s;
         }
 
         .agent-list-card {
@@ -388,8 +590,17 @@
             border-bottom: 1px solid #F1F5F9;
             position: relative;
         }
-        .agent-item-admin:last-child { border-bottom: none; }
-        .agent-info h4 { font-size: 16px; font-weight: 700; color: #0F172A; }
+
+        .agent-item-admin:last-child {
+            border-bottom: none;
+        }
+
+        .agent-info h4 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0F172A;
+        }
+
         .agent-status {
             display: inline-flex;
             align-items: center;
@@ -399,10 +610,24 @@
             font-size: 12px;
             font-weight: 600;
         }
-        .status-online { background: #DCFCE7; color: #15803D; }
-        .agent-areas { font-size: 12px; color: #64748B; margin-top: 4px; }
-        .agent-last-active { font-size: 11px; color: #94A3B8; margin-top: 2px; }
-        
+
+        .status-online {
+            background: #DCFCE7;
+            color: #15803D;
+        }
+
+        .agent-areas {
+            font-size: 12px;
+            color: #64748B;
+            margin-top: 4px;
+        }
+
+        .agent-last-active {
+            font-size: 11px;
+            color: #94A3B8;
+            margin-top: 2px;
+        }
+
         .burger-menu {
             position: relative;
             cursor: pointer;
@@ -410,22 +635,30 @@
             border-radius: 40px;
             background: #F8FAFE;
         }
-        .burger-menu:hover { background: #E2E8F0; }
-        .burger-icon { font-size: 18px; color: #64748B; }
+
+        .burger-icon {
+            font-size: 18px;
+            color: #64748B;
+        }
+
         .dropdown-menu {
             position: absolute;
             right: 0;
             top: 45px;
             background: white;
             border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
             min-width: 170px;
             z-index: 1000;
             overflow: hidden;
             display: none;
             border: 1px solid #E2E8F0;
         }
-        .dropdown-menu.show { display: block; }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
         .dropdown-item {
             padding: 12px 16px;
             display: flex;
@@ -436,8 +669,10 @@
             font-size: 13px;
             color: #334155;
         }
-        .dropdown-item:hover { background: #F8FAFE; }
-        .dropdown-item i { width: 20px; color: #FF6B4A; }
+
+        .dropdown-item:hover {
+            background: #F8FAFE;
+        }
 
         .assign-modal {
             display: none;
@@ -446,13 +681,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(8px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
+
         .assign-modal-content {
             background: white;
             border-radius: 32px;
@@ -460,22 +696,63 @@
             max-width: 380px;
             padding: 24px;
         }
+
         .area-check-group {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            margin-bottom: 20px;
+            margin: 20px 0;
             max-height: 300px;
             overflow-y: auto;
         }
+
         .area-check {
             display: flex;
             align-items: center;
             gap: 8px;
             cursor: pointer;
+            font-size: 14px;
         }
-        .area-check input { width: 18px; height: 18px; accent-color: #FF6B4A; cursor: pointer; }
-        .loading-small { text-align: center; padding: 40px; color: #94A3B8; }
+
+        .area-check input {
+            width: 18px;
+            height: 18px;
+            accent-color: #FF6B4A;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .btn-assign-confirm {
+            flex: 2;
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn-assign-cancel {
+            flex: 1;
+            background: #F1F5F9;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .loading-small {
+            text-align: center;
+            padding: 40px;
+            color: #94A3B8;
+        }
     </style>
 </head>
 <body>
@@ -492,7 +769,7 @@
                 <form id="loginForm">
                     <div class="form-group">
                         <label>Username</label>
-                        <input type="text" id="username" placeholder="Masukkan username" required>
+                        <input type="text" id="username" placeholder="Masukkan username" required autocomplete="off">
                     </div>
                     <div class="form-group">
                         <label>Password</label>
@@ -516,7 +793,6 @@
                 <div class="logout-icon" onclick="logout()"><i class="fas fa-sign-out-alt"></i></div>
             </div>
         </div>
-
         <div class="welcome-card">
             <div class="welcome-text">Halo, <span id="agentName"></span></div>
             <div class="welcome-sub">Kelola order dan pantau penghasilan Anda</div>
@@ -525,7 +801,7 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <span id="agentStatusText" class="status-badge status-off"><i class="fas fa-power-off"></i> Offline</span>
                     <label class="toggle">
-                        <input type="checkbox" id="agentStatusToggle" onchange="onAgentStatusToggle()">
+                        <input type="checkbox" id="agentStatusToggle">
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
@@ -535,12 +811,10 @@
                 <div class="area-tags" id="agentAreaTags"></div>
             </div>
         </div>
-
         <div class="section-card">
             <div class="section-title"><i class="fas fa-calendar-week"></i> Periode Minggu</div>
-            <select class="week-select" id="weekSelect"><option>Loading...</option></select>
+            <select class="week-select" id="weekSelect"><option>Memuat data...</option></select>
         </div>
-
         <div class="section-card">
             <div class="section-title"><i class="fas fa-chart-simple"></i> Ringkasan Penghasilan</div>
             <div class="stats-grid">
@@ -549,7 +823,6 @@
                 <div class="stat-block"><div class="stat-number" id="totalEarnings">Rp0</div><div class="stat-label">Pendapatan</div></div>
             </div>
         </div>
-
         <div class="section-card">
             <div class="section-title"><i class="fas fa-clock"></i> Riwayat Order</div>
             <div id="historyList" class="order-list"><div class="loading-small">Pilih minggu untuk melihat data</div></div>
@@ -568,17 +841,14 @@
                 <div class="logout-icon" onclick="logout()"><i class="fas fa-sign-out-alt"></i></div>
             </div>
         </div>
-
         <div class="admin-title">
             <h2>👥 Agent Online</h2>
             <p>Daftar agent yang sedang aktif dan siap kerja</p>
         </div>
-
         <div class="stats-card">
             <div><span style="color:#64748B; font-size:14px;">Total Agent Online</span><div class="total" id="totalOnline">0</div></div>
             <button class="refresh-btn" onclick="refreshAdminData()"><i class="fas fa-sync-alt"></i> Refresh</button>
         </div>
-
         <div class="agent-list-card">
             <div id="adminAgentList" class="agent-list"><div class="loading-small">Memuat data agent...</div></div>
         </div>
@@ -610,19 +880,15 @@
     </div>
 
     <script>
-        // ============================================
-        // KONFIGURASI
-        // ============================================
+        // KONFIGURASI (SHEET ID TERINTEGRASI)
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyEyzeBKEsP_6PuAJDnuFmeqq0LBNNnIs97fnfQ6HZ_dpiUgrX9wdD0LNvbSyMKw0l06g/exec';
         const SPREADSHEET_ID_LOGIN = '1FgWiv56J2w7A0WprwqOKJMU7BO4mX3jotW3IC397rWg';
         const SPREADSHEET_ID_ORDER = '1fDE1tj2mYanx9FA4deMPd-OLY6CdxWHZecMsdVtkc6c';
         const ORDER_SHEET_NAME = 'Mirroring';
         const AGENT_STATUS_GID = '1931290882';
-        
         const LOGIN_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_LOGIN}/gviz/tq?tqx=out:json&sheet=Sheet1`;
         const AGENT_STATUS_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_LOGIN}/gviz/tq?tqx=out:json&gid=${AGENT_STATUS_GID}`;
         const ORDER_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_ORDER}/gviz/tq?tqx=out:csv&sheet=${ORDER_SHEET_NAME}`;
-        
         const COL = { TANGGAL: 2, CUSTOMER: 3, AGENT: 8, NOMINAL: 10, MINGGU: 15 };
         const KECAMATAN = ["Ampel","Andong","Banyudono","Boyolali Kota","Cepogo","Juwangi","Karanggede","Kemusu","Klego","Mojosongo","Musuk","Ngemplak","Nogosari","Sambi","Sawit","Selo","Simo","Tamansari","Teras","Wonosegoro"];
         
@@ -633,39 +899,13 @@
         let onlineAgents = [];
         let selectedAgentForAssign = null;
         
-        // ============================================
-        // LOG FUNCTIONS
-        // ============================================
-        async function saveLoginLog(namaAgent, username, status) {
-            try {
-                const params = new URLSearchParams();
-                params.append('type', 'login');
-                params.append('timestamp', new Date().toLocaleString('id-ID'));
-                params.append('namaAgent', namaAgent);
-                params.append('username', username);
-                params.append('status', status);
-                params.append('deviceInfo', navigator.userAgent);
-                await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
-            } catch(e) {}
-        }
+        // Helper
+        function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m] || m)); }
         
-        async function saveOnlineLog(namaAgent, username, action, areas) {
-            try {
-                const params = new URLSearchParams();
-                params.append('type', 'online');
-                params.append('timestamp', new Date().toLocaleString('id-ID'));
-                params.append('namaAgent', namaAgent);
-                params.append('username', username);
-                params.append('action', action);
-                params.append('areas', areas || '-');
-                await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
-                return true;
-            } catch(e) { return false; }
-        }
+        // LOGS
+        async function saveLoginLog(namaAgent, username, status) { try { await fetch(`${WEB_APP_URL}?type=login&timestamp=${encodeURIComponent(new Date().toLocaleString('id-ID'))}&namaAgent=${encodeURIComponent(namaAgent)}&username=${encodeURIComponent(username)}&status=${encodeURIComponent(status)}`, { method:'GET', mode:'no-cors' }); } catch(e) {} }
+        async function saveOnlineLog(namaAgent, username, action, areas) { try { await fetch(`${WEB_APP_URL}?type=online&timestamp=${encodeURIComponent(new Date().toLocaleString('id-ID'))}&namaAgent=${encodeURIComponent(namaAgent)}&username=${encodeURIComponent(username)}&action=${encodeURIComponent(action)}&areas=${encodeURIComponent(areas||'-')}`, { method:'GET', mode:'no-cors' }); return true; } catch(e) { return false; } }
         
-        // ============================================
-        // LOAD USERS
-        // ============================================
         async function loadUsers() {
             const statusDiv = document.getElementById('loginStatus');
             try {
@@ -674,12 +914,7 @@
                 const json = JSON.parse(text.match(/({.*})/)[1]);
                 const rows = json.table.rows, cols = json.table.cols;
                 let nIdx=0, uIdx=1, pIdx=2;
-                for(let i=0;i<cols.length;i++){
-                    const l = cols[i].label?.toLowerCase() || '';
-                    if(l==='user') nIdx=i;
-                    if(l==='username') uIdx=i;
-                    if(l==='password') pIdx=i;
-                }
+                for(let i=0;i<cols.length;i++){ const l = cols[i].label?.toLowerCase() || ''; if(l==='user') nIdx=i; if(l==='username') uIdx=i; if(l==='password') pIdx=i; }
                 users = [];
                 for(let i=0;i<rows.length;i++){
                     const row = rows[i].c;
@@ -689,65 +924,45 @@
                     const pass = row[pIdx]?.v || '';
                     if(uname && pass && uname!=='Username') users.push({ name:String(name), username:String(uname).toLowerCase(), password:String(pass) });
                 }
-                statusDiv.innerHTML = '✅ Siap login';
-                statusDiv.className = 'message success';
+                statusDiv.innerHTML = '✅ Siap login'; statusDiv.className = 'message success';
             } catch(e){ statusDiv.innerHTML = '❌ Gagal ambil data'; statusDiv.className = 'message error'; }
         }
-        
         function login(username, password){ return users.find(u=>u.username===username.toLowerCase() && u.password===password); }
         function isAdminUser(u){ return u.username==='admin' || u.name==='Admin Suruhboy' || u.username==='adminsuruhboy'; }
         
-        // ============================================
-        // AGENT DASHBOARD FUNCTIONS
-        // ============================================
+        // LOAD ORDERS (CSV)
         async function loadOrders() {
             try {
                 const res = await fetch(ORDER_CSV_URL);
                 if(!res.ok) throw new Error();
                 const csv = await res.text();
-                const lines = [];
-                let line='', inQ=false;
-                for(let i=0;i<csv.length;i++){ const c=csv[i]; if(c==='"') inQ=!inQ; line+=c; if(c==='\n' && !inQ){ lines.push(line); line=''; } }
-                if(line.trim()) lines.push(line);
+                const lines = csv.split(/\r?\n/);
                 const data=[];
-                for(let i=0;i<lines.length;i++){
-                    try{
-                        let cols=[], cur='', inQuote=false;
-                        for(let j=0;j<lines[i].length;j++){
-                            const c=lines[i][j];
-                            if(c==='"') inQuote=!inQuote;
-                            else if(c===',' && !inQuote){ cols.push(cur.trim()); cur=''; }
-                            else cur+=c;
-                        }
-                        cols.push(cur.trim());
-                        cols=cols.map(v=>v.replace(/^"|"$/g,''));
-                        if(i>0 && cols.length>COL.MINGGU){
-                            const agent=cols[COL.AGENT];
-                            const nominal=parseInt(cols[COL.NOMINAL]?.replace(/[^0-9-]/g,''))||0;
-                            const week=cols[COL.MINGGU];
-                            if(agent && agent.trim() && week && week.trim()){
-                                data.push({ agent:agent.trim(), nominal, week:week.trim(), customer:cols[COL.CUSTOMER]||'-', tanggal:cols[COL.TANGGAL]||'-' });
-                            }
-                        }
-                    }catch(e){}
+                for(let i=1;i<lines.length;i++){
+                    const cols = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+                    if(!cols || cols.length<=COL.MINGGU) continue;
+                    const clean = cols.map(v=>v.replace(/^"|"$/g,''));
+                    const agent = clean[COL.AGENT]?.trim();
+                    const nominal = parseInt(clean[COL.NOMINAL]?.replace(/[^0-9-]/g,'')) || 0;
+                    const week = clean[COL.MINGGU]?.trim();
+                    if(agent && week) data.push({ agent, nominal, week, customer: clean[COL.CUSTOMER]||'-', tanggal: clean[COL.TANGGAL]||'-' });
                 }
                 const agg={}, details={};
                 data.forEach(({ agent, nominal, week, customer, tanggal }) => {
                     if(!week) return;
-                    if(!agg[week]) agg[week]={};
-                    agg[week][agent]=(agg[week][agent]||0)+nominal;
-                    if(!details[week]) details[week]=[];
+                    agg[week] = agg[week] || {};
+                    agg[week][agent] = (agg[week][agent]||0) + nominal;
+                    details[week] = details[week] || [];
                     details[week].push({ agent, nominal, customer, tanggal, week });
                 });
                 aggregated=agg; orderDetails=details; weeks=Object.keys(agg).sort((a,b)=>a.localeCompare(b));
                 if(weeks.length){ weekIndex=weeks.length-1; populateWeekSelect(); renderCurrentWeek(); }
-            } catch(e){}
+            } catch(e){ console.warn(e); }
         }
         
         function renderWeek(idx){
             if(!weeks.length||!currentUser) return;
             const week=weeks[idx];
-            if(!week) return;
             const fee=aggregated[week]?.[currentUser.name]||0;
             document.getElementById('totalOrders').innerText=fee.toLocaleString();
             document.getElementById('totalAdminFee').innerText=`Rp${fee.toLocaleString()}`;
@@ -755,20 +970,20 @@
             const orders=(orderDetails[week]||[]).filter(o=>o.agent===currentUser.name);
             const container=document.getElementById('historyList');
             if(!orders.length) container.innerHTML='<div class="empty-state"><i class="fas fa-calendar-times"></i><div>Tidak ada order minggu ini</div></div>';
-            else container.innerHTML=orders.map(o=>`<div class="order-card"><div class="order-top"><div class="customer-name"><i class="fas fa-user"></i> ${o.customer}</div><div class="order-amount">Rp${o.nominal.toLocaleString()}</div></div><div class="order-date"><i class="fas fa-calendar-alt"></i> ${o.tanggal||o.week}</div></div>`).join('');
+            else container.innerHTML=orders.map(o=>`<div class="order-card"><div class="order-top"><div class="customer-name"><i class="fas fa-user"></i> ${escapeHtml(o.customer)}</div><div class="order-amount">Rp${o.nominal.toLocaleString()}</div></div><div class="order-date"><i class="fas fa-calendar-alt"></i> ${escapeHtml(o.tanggal||o.week)}</div></div>`).join('');
         }
         function renderCurrentWeek(){ if(weeks.length && currentUser) renderWeek(weekIndex); }
         function populateWeekSelect(){ const sel=document.getElementById('weekSelect'); if(sel) sel.innerHTML=weeks.map((w,i)=>`<option value="${i}" ${i===weekIndex?'selected':''}>${w}</option>`).join(''); }
         function onWeekChange(){ const val=parseInt(document.getElementById('weekSelect')?.value); if(!isNaN(val)){ weekIndex=val; renderWeek(weekIndex); } }
         
-        // Agent Status
+        // Agent Status & Area
         function showAreaModal(){
             const modal=document.getElementById('areaModal'), list=document.getElementById('areaList');
             list.innerHTML=KECAMATAN.map(k=>`<div class="area-option" onclick="toggleArea('${k}')"><input type="checkbox" id="chk_${k.replace(/\s/g,'_')}" ${selectedAreas.includes(k)?'checked':''}><label>${k}</label></div>`).join('');
             modal.style.display='flex';
         }
         window.toggleArea=function(area){ const chk=document.getElementById(`chk_${area.replace(/\s/g,'_')}`); if(chk) chk.checked=!chk.checked; };
-        function closeAreaModal(){ document.getElementById('areaModal').style.display='none'; if(selectedAreas.length===0 && agentStatus.status==='offline') document.getElementById('agentStatusToggle').checked=false; }
+        window.closeAreaModal=function(){ document.getElementById('areaModal').style.display='none'; if(selectedAreas.length===0 && agentStatus.status==='offline') document.getElementById('agentStatusToggle').checked=false; };
         window.confirmAreas=async function(){
             const selected=KECAMATAN.filter(k=>document.getElementById(`chk_${k.replace(/\s/g,'_')}`)?.checked);
             if(!selected.length){ alert('Pilih minimal 1 area'); return; }
@@ -802,7 +1017,7 @@
             if(agentStatus.status==='available' && selectedAreas.length){
                 statusSpan.innerHTML='<i class="fas fa-circle"></i> Available'; statusSpan.className='status-badge status-on';
                 toggle.checked=true; areaDiv.style.display='block';
-                tags.innerHTML=selectedAreas.map(a=>`<span class="area-tag">${a}</span>`).join('');
+                tags.innerHTML=selectedAreas.map(a=>`<span class="area-tag">${escapeHtml(a)}</span>`).join('');
             } else {
                 statusSpan.innerHTML='<i class="fas fa-power-off"></i> Offline'; statusSpan.className='status-badge status-off';
                 toggle.checked=false; areaDiv.style.display='none';
@@ -811,21 +1026,12 @@
         function restoreAgentStatus(){
             const saved=localStorage.getItem(`suruhboy_agent_status_${currentUser.username}`);
             if(saved){
-                try{
-                    const s=JSON.parse(saved);
-                    if(s.status==='available' && s.areas && s.areas.length){
-                        agentStatus.status=s.status; selectedAreas=s.areas; agentStatus.areas=s.areas;
-                        updateAgentStatusUI();
-                        return true;
-                    }
-                }catch(e){}
+                try{ const s=JSON.parse(saved); if(s.status==='available' && s.areas && s.areas.length){ agentStatus.status=s.status; selectedAreas=s.areas; agentStatus.areas=s.areas; updateAgentStatusUI(); return true; } }catch(e){}
             }
             return false;
         }
         
-        // ============================================
-        // ADMIN DASHBOARD FUNCTIONS
-        // ============================================
+        // ADMIN
         async function loadAgentStatusFromSheet() {
             try {
                 const res = await fetch(AGENT_STATUS_URL);
@@ -833,14 +1039,7 @@
                 const json = JSON.parse(text.match(/({.*})/)[1]);
                 const rows = json.table.rows, cols = json.table.cols;
                 let tsIdx=0, nameIdx=1, userIdx=2, actIdx=3, areaIdx=4;
-                for(let i=0;i<cols.length;i++){
-                    const l=cols[i].label?.toLowerCase()||'';
-                    if(l==='timestamp') tsIdx=i;
-                    if(l==='nama agent') nameIdx=i;
-                    if(l==='username') userIdx=i;
-                    if(l==='action') actIdx=i;
-                    if(l==='areas') areaIdx=i;
-                }
+                for(let i=0;i<cols.length;i++){ const l=cols[i].label?.toLowerCase()||''; if(l==='timestamp') tsIdx=i; if(l==='nama agent') nameIdx=i; if(l==='username') userIdx=i; if(l==='action') actIdx=i; if(l==='areas') areaIdx=i; }
                 const all=[];
                 for(let i=0;i<rows.length;i++){
                     const row=rows[i].c;
@@ -848,10 +1047,7 @@
                     const ts=row[tsIdx]?.v||'', name=row[nameIdx]?.v||'', uname=row[userIdx]?.v||'', act=row[actIdx]?.v||'', areasRaw=row[areaIdx]?.v||'';
                     if(name && uname && act){
                         let arr=[];
-                        if(areasRaw){
-                            try{ arr=areasRaw.startsWith('[')?JSON.parse(areasRaw):areasRaw.split(',').map(a=>a.trim()).filter(a=>a); }
-                            catch(e){ arr=areasRaw.split(',').map(a=>a.trim()).filter(a=>a); }
-                        }
+                        if(areasRaw){ try{ arr=areasRaw.startsWith('[')?JSON.parse(areasRaw):areasRaw.split(',').map(a=>a.trim()).filter(a=>a); } catch(e){ arr=areasRaw.split(',').map(a=>a.trim()).filter(a=>a); } }
                         all.push({ timestamp:ts, namaAgent:String(name), username:String(uname), action:String(act).toLowerCase(), areas:arr });
                     }
                 }
@@ -883,17 +1079,12 @@
                             <i class="fas fa-ellipsis-v burger-icon"></i>
                         </div>
                         <div class="dropdown-menu" id="adminDropdown-${i}" style="display:none;">
-                            <div class="dropdown-item" data-action="offline" data-agent-name="${escapeHtml(a.namaAgent)}" data-agent-username="${escapeHtml(a.username)}">
-                                <i class="fas fa-power-off"></i> Offline-kan Agent
-                            </div>
-                            <div class="dropdown-item" data-action="assign" data-agent-name="${escapeHtml(a.namaAgent)}" data-agent-username="${escapeHtml(a.username)}" data-areas='${JSON.stringify(a.areas)}'>
-                                <i class="fas fa-map-marker-alt"></i> Assign Area
-                            </div>
+                            <div class="dropdown-item" data-action="offline" data-agent-name="${escapeHtml(a.namaAgent)}" data-agent-username="${escapeHtml(a.username)}"><i class="fas fa-power-off"></i> Offline-kan Agent</div>
+                            <div class="dropdown-item" data-action="assign" data-agent-name="${escapeHtml(a.namaAgent)}" data-agent-username="${escapeHtml(a.username)}" data-areas='${JSON.stringify(a.areas)}'><i class="fas fa-map-marker-alt"></i> Assign Area</div>
                         </div>
                     </div>
                 </div>
             `).join('');
-            
             document.querySelectorAll('.burger-menu').forEach(burger=>{
                 burger.addEventListener('click',(e)=>{
                     e.stopPropagation();
@@ -930,8 +1121,6 @@
             });
         }
         
-        function escapeHtml(str){ if(!str) return ''; return str.replace(/[&<>]/g,m=>{ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m; }); }
-        
         window.closeAssignModal=function(){ document.getElementById('assignModal').style.display='none'; selectedAgentForAssign=null; };
         window.confirmAssign=async function(){
             if(!selectedAgentForAssign) return;
@@ -951,18 +1140,10 @@
             await loadAgentStatusFromSheet();
             renderAdminList();
         }
-        
         document.addEventListener('click',function(){ document.querySelectorAll('.dropdown-menu').forEach(menu=>menu.style.display='none'); });
         
-        // ============================================
-        // DASHBOARD CONTROLLER
-        // ============================================
-        function updateAgentUI(){
-            if(!currentUser) return;
-            document.getElementById('agentName').innerText=currentUser.name;
-            document.getElementById('agentAvatar').innerText=currentUser.name.charAt(0).toUpperCase();
-            updateAgentStatusUI();
-        }
+        // Dashboard Switching
+        function updateAgentUI(){ if(currentUser){ document.getElementById('agentName').innerText=currentUser.name; document.getElementById('agentAvatar').innerText=currentUser.name.charAt(0).toUpperCase(); updateAgentStatusUI(); } }
         function updateAdminUI(){ if(currentUser) document.getElementById('adminAvatar').innerText=currentUser.name.charAt(0).toUpperCase(); }
         
         async function showAgentDashboard(){
@@ -987,9 +1168,7 @@
         
         async function logout(){
             if(window.adminInterval) clearInterval(window.adminInterval);
-            if(currentUser && !isAdmin && agentStatus.status==='available'){
-                await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', '));
-            }
+            if(currentUser && !isAdmin && agentStatus.status==='available'){ await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', ')); }
             currentUser=null; isAdmin=false; agentStatus={ status:'offline', areas:[] }; selectedAreas=[];
             document.getElementById('loginPage').classList.remove('hidden');
             document.getElementById('agentDashboard').classList.add('hidden');
@@ -1006,18 +1185,10 @@
             if(found){
                 currentUser=found;
                 await saveLoginLog(found.name, found.username, 'Berhasil');
-                if(isAdminUser(found)){
-                    isAdmin=true;
-                    showAdminDashboard();
-                } else {
-                    isAdmin=false;
-                    showAgentDashboard();
-                }
-            } else {
-                alert('❌ Login gagal! Username atau password salah.');
-            }
+                if(isAdminUser(found)){ isAdmin=true; showAdminDashboard(); }
+                else { isAdmin=false; showAgentDashboard(); }
+            } else { alert('❌ Login gagal! Username atau password salah.'); }
         });
-        
         loadUsers();
     </script>
 </body>
