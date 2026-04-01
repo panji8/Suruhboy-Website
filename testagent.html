@@ -3,16 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>SuruhBoy - Dashboard Agent & Admin</title>
+    <title>SuruhBoy - Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             background: #F7F9FC;
@@ -41,17 +36,12 @@
             width: 100%;
             max-width: 360px;
             padding: 40px 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
         }
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
+        .login-header { text-align: center; margin-bottom: 32px; }
         .login-icon {
-            width: 70px;
-            height: 70px;
+            width: 70px; height: 70px;
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
             border-radius: 28px;
             display: flex;
@@ -60,23 +50,10 @@
             margin: 0 auto 16px;
             font-size: 36px;
         }
+        .login-header h1 { font-size: 28px; font-weight: 800; color: #0F172A; }
+        .login-header p { color: #64748B; font-size: 14px; margin-top: 4px; }
 
-        .login-header h1 {
-            font-size: 28px;
-            font-weight: 800;
-            color: #0F172A;
-        }
-
-        .login-header p {
-            color: #64748B;
-            font-size: 14px;
-            margin-top: 4px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
+        .form-group { margin-bottom: 20px; }
         .form-group label {
             display: block;
             font-size: 13px;
@@ -84,7 +61,6 @@
             color: #334155;
             margin-bottom: 8px;
         }
-
         .form-group input {
             width: 100%;
             padding: 14px 16px;
@@ -93,13 +69,11 @@
             border-radius: 20px;
             font-size: 15px;
             font-family: inherit;
-            transition: all 0.2s;
         }
-
         .form-group input:focus {
             outline: none;
             border-color: #FF6B4A;
-            box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.1);
+            box-shadow: 0 0 0 3px rgba(255,107,74,0.1);
         }
 
         .btn-login {
@@ -112,12 +86,8 @@
             font-weight: 600;
             color: white;
             cursor: pointer;
-            transition: transform 0.1s;
         }
-
-        .btn-login:active {
-            transform: scale(0.98);
-        }
+        .btn-login:active { transform: scale(0.98); }
 
         .message {
             padding: 12px;
@@ -126,34 +96,21 @@
             font-size: 13px;
             text-align: center;
         }
+        .info { background: #EFF6FF; color: #1E40AF; }
+        .success { background: #DCFCE7; color: #15803D; }
+        .error { background: #FEE2E2; color: #B91C1C; }
 
-        .info {
-            background: #EFF6FF;
-            color: #1E40AF;
-        }
+        .hidden { display: none; }
 
-        .success {
-            background: #DCFCE7;
-            color: #15803D;
-        }
+        /* Dashboard Common */
+        .dashboard { max-width: 480px; margin: 0 auto; padding: 20px 16px 100px; }
 
-        .error {
-            background: #FEE2E2;
-            color: #B91C1C;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        /* Dashboard Umum */
         .dashboard-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
         }
-
         .logo-area h2 {
             font-size: 24px;
             font-weight: 800;
@@ -161,21 +118,10 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
-        .logo-area p {
-            font-size: 12px;
-            color: #94A3B8;
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
+        .logo-area p { font-size: 12px; color: #94A3B8; }
+        .user-menu { display: flex; align-items: center; gap: 12px; }
         .user-avatar {
-            width: 48px;
-            height: 48px;
+            width: 48px; height: 48px;
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
             border-radius: 24px;
             display: flex;
@@ -185,10 +131,8 @@
             font-size: 18px;
             color: white;
         }
-
         .logout-icon {
-            width: 44px;
-            height: 44px;
+            width: 44px; height: 44px;
             background: #F1F5F9;
             border-radius: 22px;
             display: flex;
@@ -196,21 +140,57 @@
             justify-content: center;
             color: #64748B;
             cursor: pointer;
-            transition: 0.1s;
+        }
+        .logout-icon:active { background: #E2E8F0; transform: scale(0.95); }
+
+        /* Admin Dashboard Specific */
+        .admin-dashboard { max-width: 800px; margin: 0 auto; padding: 20px 16px 100px; }
+        .admin-title { margin-bottom: 20px; }
+        .admin-title h2 { font-size: 24px; font-weight: 700; color: #0F172A; }
+        .admin-title p { color: #64748B; }
+
+        .agent-list-card {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #EDF2F7;
         }
 
-        .logout-icon:active {
-            background: #E2E8F0;
-            transform: scale(0.95);
+        .agent-item-admin {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #F1F5F9;
         }
+        .agent-item-admin:last-child { border-bottom: none; }
+        .agent-info h4 { font-size: 16px; font-weight: 700; color: #0F172A; }
+        .agent-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-online { background: #DCFCE7; color: #15803D; }
+        .status-offline { background: #FEE2E2; color: #B91C1C; }
+        .agent-areas { font-size: 12px; color: #64748B; margin-top: 4px; }
+        .agent-last-active { font-size: 11px; color: #94A3B8; margin-top: 2px; }
+        .btn-offline {
+            background: #FEE2E2;
+            color: #B91C1C;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-offline:active { transform: scale(0.96); background: #FECACA; }
 
         /* Agent Dashboard */
-        .agent-dashboard {
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 20px 16px 100px;
-        }
-
         .welcome-card {
             background: linear-gradient(135deg, #0F172A, #1E293B);
             border-radius: 32px;
@@ -218,34 +198,22 @@
             margin-bottom: 20px;
             color: white;
         }
-
-        .welcome-text {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
+        .welcome-text { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
         .welcome-text span {
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
-        .welcome-sub {
-            font-size: 13px;
-            color: #94A3B8;
-            margin-bottom: 20px;
-        }
+        .welcome-sub { font-size: 13px; color: #94A3B8; margin-bottom: 20px; }
 
         .status-container {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -255,29 +223,15 @@
             font-size: 13px;
             font-weight: 600;
         }
-
-        .status-on {
-            background: rgba(16, 185, 129, 0.2);
-            color: #34D399;
-        }
-
-        .status-off {
-            background: rgba(239, 68, 68, 0.2);
-            color: #F87171;
-        }
+        .status-on { background: rgba(16,185,129,0.2); color: #34D399; }
+        .status-off { background: rgba(239,68,68,0.2); color: #F87171; }
 
         .toggle {
             position: relative;
             width: 48px;
             height: 26px;
         }
-
-        .toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
+        .toggle input { opacity: 0; width: 0; height: 0; }
         .toggle-slider {
             position: absolute;
             cursor: pointer;
@@ -289,7 +243,6 @@
             transition: 0.3s;
             border-radius: 34px;
         }
-
         .toggle-slider:before {
             position: absolute;
             content: "";
@@ -301,33 +254,12 @@
             transition: 0.3s;
             border-radius: 50%;
         }
+        input:checked + .toggle-slider { background-color: #10B981; }
+        input:checked + .toggle-slider:before { transform: translateX(22px); }
 
-        input:checked+.toggle-slider {
-            background-color: #10B981;
-        }
-
-        input:checked+.toggle-slider:before {
-            transform: translateX(22px);
-        }
-
-        .area-section {
-            margin-top: 16px;
-        }
-
-        .area-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 8px;
-        }
-
-        .area-tag {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: #CBD5E1;
-        }
+        .area-section { margin-top: 16px; }
+        .area-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .area-tag { background: rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 20px; font-size: 12px; color: #CBD5E1; }
 
         .section-card {
             background: white;
@@ -335,9 +267,7 @@
             padding: 20px;
             margin-bottom: 16px;
             border: 1px solid #EDF2F7;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
-
         .section-title {
             font-size: 16px;
             font-weight: 700;
@@ -347,10 +277,7 @@
             align-items: center;
             gap: 8px;
         }
-
-        .section-title i {
-            color: #FF6B4A;
-        }
+        .section-title i { color: #FF6B4A; }
 
         .week-select {
             width: 100%;
@@ -360,7 +287,6 @@
             border-radius: 20px;
             font-size: 14px;
             cursor: pointer;
-            font-weight: 500;
         }
 
         .stats-grid {
@@ -368,75 +294,33 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
         }
-
         .stat-block {
             background: #F8FAFE;
             border-radius: 20px;
             padding: 14px 8px;
             text-align: center;
         }
+        .stat-number { font-size: 20px; font-weight: 800; color: #0F172A; }
+        .stat-label { font-size: 11px; color: #64748B; margin-top: 4px; }
 
-        .stat-number {
-            font-size: 20px;
-            font-weight: 800;
-            color: #0F172A;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: #64748B;
-            margin-top: 4px;
-        }
-
-        .order-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
+        .order-list { display: flex; flex-direction: column; gap: 12px; }
         .order-card {
             background: #F8FAFE;
             border-radius: 20px;
             padding: 16px;
         }
-
         .order-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
+        .customer-name { font-weight: 700; font-size: 15px; color: #0F172A; display: flex; align-items: center; gap: 8px; }
+        .order-amount { font-weight: 700; font-size: 15px; color: #10B981; }
+        .order-date { font-size: 12px; color: #94A3B8; display: flex; align-items: center; gap: 6px; }
 
-        .customer-name {
-            font-weight: 700;
-            font-size: 15px;
-            color: #0F172A;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .empty-state { text-align: center; padding: 40px 20px; color: #94A3B8; }
 
-        .order-amount {
-            font-weight: 700;
-            font-size: 15px;
-            color: #10B981;
-        }
-
-        .order-date {
-            font-size: 12px;
-            color: #94A3B8;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #94A3B8;
-        }
-
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -444,14 +328,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0,0,0,0.6);
             backdrop-filter: blur(8px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
-
         .modal-container {
             background: white;
             border-radius: 32px;
@@ -459,19 +342,14 @@
             max-width: 380px;
             max-height: 80vh;
             overflow: hidden;
+            animation: modalIn 0.2s ease;
         }
-
-        .modal-header {
-            padding: 24px 20px 12px;
-            text-align: center;
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
-
-        .modal-header h3 {
-            font-size: 20px;
-            font-weight: 700;
-            color: #0F172A;
-        }
-
+        .modal-header { padding: 24px 20px 12px; text-align: center; }
+        .modal-header h3 { font-size: 20px; font-weight: 700; color: #0F172A; }
         .area-list {
             padding: 8px 20px;
             display: grid;
@@ -480,7 +358,6 @@
             max-height: 400px;
             overflow-y: auto;
         }
-
         .area-option {
             display: flex;
             align-items: center;
@@ -490,21 +367,13 @@
             border-radius: 40px;
             cursor: pointer;
         }
-
-        .area-option input {
-            width: 18px;
-            height: 18px;
-            accent-color: #FF6B4A;
-            cursor: pointer;
-        }
-
+        .area-option input { width: 18px; height: 18px; accent-color: #FF6B4A; cursor: pointer; }
         .modal-footer {
             padding: 16px 20px 24px;
             display: flex;
             gap: 12px;
             border-top: 1px solid #F1F5F9;
         }
-
         .btn-primary-modal {
             flex: 2;
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
@@ -515,7 +384,6 @@
             color: white;
             cursor: pointer;
         }
-
         .btn-secondary-modal {
             flex: 1;
             background: #F1F5F9;
@@ -526,240 +394,7 @@
             color: #475569;
             cursor: pointer;
         }
-
-        /* Admin Dashboard */
-        .admin-dashboard {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px 16px 100px;
-        }
-
-        .admin-title {
-            margin-bottom: 20px;
-        }
-
-        .admin-title h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #0F172A;
-        }
-
-        .stats-card {
-            background: white;
-            border-radius: 28px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #EDF2F7;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .stats-card .total {
-            font-size: 32px;
-            font-weight: 800;
-            color: #FF6B4A;
-        }
-
-        .refresh-btn {
-            background: #F1F5F9;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-weight: 600;
-            color: #475569;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.1s;
-        }
-
-        .agent-list-card {
-            background: white;
-            border-radius: 28px;
-            padding: 20px;
-            border: 1px solid #EDF2F7;
-        }
-
-        .agent-item-admin {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px;
-            border-bottom: 1px solid #F1F5F9;
-            position: relative;
-        }
-
-        .agent-item-admin:last-child {
-            border-bottom: none;
-        }
-
-        .agent-info h4 {
-            font-size: 16px;
-            font-weight: 700;
-            color: #0F172A;
-        }
-
-        .agent-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-online {
-            background: #DCFCE7;
-            color: #15803D;
-        }
-
-        .agent-areas {
-            font-size: 12px;
-            color: #64748B;
-            margin-top: 4px;
-        }
-
-        .agent-last-active {
-            font-size: 11px;
-            color: #94A3B8;
-            margin-top: 2px;
-        }
-
-        .burger-menu {
-            position: relative;
-            cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 40px;
-            background: #F8FAFE;
-        }
-
-        .burger-icon {
-            font-size: 18px;
-            color: #64748B;
-        }
-
-        .dropdown-menu {
-            position: absolute;
-            right: 0;
-            top: 45px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
-            min-width: 170px;
-            z-index: 1000;
-            overflow: hidden;
-            display: none;
-            border: 1px solid #E2E8F0;
-        }
-
-        .dropdown-menu.show {
-            display: block;
-        }
-
-        .dropdown-item {
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-size: 13px;
-            color: #334155;
-        }
-
-        .dropdown-item:hover {
-            background: #F8FAFE;
-        }
-
-        .assign-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .assign-modal-content {
-            background: white;
-            border-radius: 32px;
-            width: 100%;
-            max-width: 380px;
-            padding: 24px;
-        }
-
-        .area-check-group {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin: 20px 0;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .area-check {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .area-check input {
-            width: 18px;
-            height: 18px;
-            accent-color: #FF6B4A;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        .btn-assign-confirm {
-            flex: 2;
-            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
-            border: none;
-            padding: 12px;
-            border-radius: 40px;
-            font-weight: 600;
-            color: white;
-            cursor: pointer;
-        }
-
-        .btn-assign-cancel {
-            flex: 1;
-            background: #F1F5F9;
-            border: none;
-            padding: 12px;
-            border-radius: 40px;
-            font-weight: 600;
-            color: #475569;
-            cursor: pointer;
-        }
-
-        .loading-small {
-            text-align: center;
-            padding: 40px;
-            color: #94A3B8;
-        }
-        
-        .debug-info {
-            font-size: 11px;
-            color: #94A3B8;
-            margin-top: 8px;
-            text-align: center;
-        }
+        .loading-small { text-align: center; padding: 30px; color: #94A3B8; }
     </style>
 </head>
 <body>
@@ -776,7 +411,7 @@
                 <form id="loginForm">
                     <div class="form-group">
                         <label>Username</label>
-                        <input type="text" id="username" placeholder="Masukkan username" required autocomplete="off">
+                        <input type="text" id="username" placeholder="Masukkan username" required>
                     </div>
                     <div class="form-group">
                         <label>Password</label>
@@ -789,7 +424,7 @@
     </div>
 
     <!-- Agent Dashboard -->
-    <div id="agentDashboard" class="agent-dashboard hidden">
+    <div id="agentDashboard" class="dashboard hidden">
         <div class="dashboard-header">
             <div class="logo-area">
                 <h2>SuruhBoy</h2>
@@ -797,9 +432,12 @@
             </div>
             <div class="user-menu">
                 <div class="user-avatar" id="agentAvatar">👤</div>
-                <div class="logout-icon" onclick="logout()"><i class="fas fa-sign-out-alt"></i></div>
+                <div class="logout-icon" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
             </div>
         </div>
+
         <div class="welcome-card">
             <div class="welcome-text">Halo, <span id="agentName"></span></div>
             <div class="welcome-sub">Kelola order dan pantau penghasilan Anda</div>
@@ -808,7 +446,7 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <span id="agentStatusText" class="status-badge status-off"><i class="fas fa-power-off"></i> Offline</span>
                     <label class="toggle">
-                        <input type="checkbox" id="agentStatusToggle">
+                        <input type="checkbox" id="agentStatusToggle" onchange="onAgentStatusToggle()">
                         <span class="toggle-slider"></span>
                     </label>
                 </div>
@@ -818,10 +456,12 @@
                 <div class="area-tags" id="agentAreaTags"></div>
             </div>
         </div>
+
         <div class="section-card">
             <div class="section-title"><i class="fas fa-calendar-week"></i> Periode Minggu</div>
-            <select class="week-select" id="weekSelect"><option>Memuat data...</option></select>
+            <select class="week-select" id="weekSelect"><option>Loading...</option></select>
         </div>
+
         <div class="section-card">
             <div class="section-title"><i class="fas fa-chart-simple"></i> Ringkasan Penghasilan</div>
             <div class="stats-grid">
@@ -830,6 +470,7 @@
                 <div class="stat-block"><div class="stat-number" id="totalEarnings">Rp0</div><div class="stat-label">Pendapatan</div></div>
             </div>
         </div>
+
         <div class="section-card">
             <div class="section-title"><i class="fas fa-clock"></i> Riwayat Order</div>
             <div id="historyList" class="order-list"><div class="loading-small">Pilih minggu untuk melihat data</div></div>
@@ -848,20 +489,20 @@
                 <div class="logout-icon" onclick="logout()"><i class="fas fa-sign-out-alt"></i></div>
             </div>
         </div>
+
         <div class="admin-title">
-            <h2>👥 Agent Online</h2>
-            <p>Daftar agent yang sedang aktif dan siap kerja (data dari sheet GID 1931290882)</p>
+            <h2>👥 Daftar Agent</h2>
+            <p>Lihat status agent dan kelola koneksi</p>
         </div>
-        <div class="stats-card">
-            <div><span style="color:#64748B; font-size:14px;">Total Agent Online</span><div class="total" id="totalOnline">0</div></div>
-            <button class="refresh-btn" onclick="refreshAdminData()"><i class="fas fa-sync-alt"></i> Refresh</button>
-        </div>
+
         <div class="agent-list-card">
-            <div id="adminAgentList" class="agent-list"><div class="loading-small">Memuat data agent...</div></div>
+            <div id="adminAgentList" class="agent-list">
+                <div class="loading-small">Memuat data agent...</div>
+            </div>
         </div>
     </div>
 
-    <!-- Modal Agent (pilih area) -->
+    <!-- Modal Area untuk Agent -->
     <div id="areaModal" class="modal">
         <div class="modal-container">
             <div class="modal-header"><h3><i class="fas fa-location-dot"></i> Pilih Area Kerja</h3><p>Pilih kecamatan tempat Anda bertugas</p></div>
@@ -869,19 +510,6 @@
             <div class="modal-footer">
                 <button class="btn-primary-modal" onclick="confirmAreas()">Konfirmasi</button>
                 <button class="btn-secondary-modal" onclick="closeAreaModal()">Batal</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Assign Admin -->
-    <div id="assignModal" class="assign-modal">
-        <div class="assign-modal-content">
-            <h3><i class="fas fa-map-marker-alt"></i> Assign Area</h3>
-            <p id="assignAgentName">Pilih area untuk agent</p>
-            <div class="area-check-group" id="assignAreaList"></div>
-            <div class="modal-buttons">
-                <button class="btn-assign-confirm" onclick="confirmAssign()">Assign</button>
-                <button class="btn-assign-cancel" onclick="closeAssignModal()">Batal</button>
             </div>
         </div>
     </div>
@@ -894,513 +522,434 @@
         const SPREADSHEET_ID_LOGIN = '1FgWiv56J2w7A0WprwqOKJMU7BO4mX3jotW3IC397rWg';
         const SPREADSHEET_ID_ORDER = '1fDE1tj2mYanx9FA4deMPd-OLY6CdxWHZecMsdVtkc6c';
         const ORDER_SHEET_NAME = 'Mirroring';
-        const AGENT_STATUS_GID = '1931290882';
         const LOGIN_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_LOGIN}/gviz/tq?tqx=out:json&sheet=Sheet1`;
-        const AGENT_STATUS_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_LOGIN}/gviz/tq?tqx=out:json&gid=${AGENT_STATUS_GID}`;
         const ORDER_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_ORDER}/gviz/tq?tqx=out:csv&sheet=${ORDER_SHEET_NAME}`;
         const COL = { TANGGAL: 2, CUSTOMER: 3, AGENT: 8, NOMINAL: 10, MINGGU: 15 };
         const KECAMATAN = ["Ampel","Andong","Banyudono","Boyolali Kota","Cepogo","Juwangi","Karanggede","Kemusu","Klego","Mojosongo","Musuk","Ngemplak","Nogosari","Sambi","Sawit","Selo","Simo","Tamansari","Teras","Wonosegoro"];
-        
+
         let users = [], currentUser = null, selectedAreas = [];
         let rawOrders = [], aggregated = {}, weeks = [], weekIndex = 0, orderDetails = {};
         let agentStatus = { status: 'offline', areas: [] };
         let isAdmin = false;
-        let onlineAgents = [];
-        let selectedAgentForAssign = null;
-        
-        // Helper
-        function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m] || m)); }
-        
-        // LOGS
-        async function saveLoginLog(namaAgent, username, status) { 
-            try { 
-                await fetch(`${WEB_APP_URL}?type=login&timestamp=${encodeURIComponent(new Date().toLocaleString('id-ID'))}&namaAgent=${encodeURIComponent(namaAgent)}&username=${encodeURIComponent(username)}&status=${encodeURIComponent(status)}`, { method:'GET', mode:'no-cors' }); 
-            } catch(e) {} 
-        }
-        
-        async function saveOnlineLog(namaAgent, username, action, areas) { 
-            try { 
-                await fetch(`${WEB_APP_URL}?type=online&timestamp=${encodeURIComponent(new Date().toLocaleString('id-ID'))}&namaAgent=${encodeURIComponent(namaAgent)}&username=${encodeURIComponent(username)}&action=${encodeURIComponent(action)}&areas=${encodeURIComponent(areas||'-')}`, { method:'GET', mode:'no-cors' }); 
-                return true; 
-            } catch(e) { return false; }
-        }
         
         // ============================================
-        // LOAD USERS FROM SHEET
+        // PERSISTENT STATUS - LocalStorage
+        // ============================================
+        // Key: suruhboy_agent_status_{username}
+        function saveAgentStatusToLocal(username, statusData) {
+            localStorage.setItem(`suruhboy_agent_status_${username}`, JSON.stringify(statusData));
+        }
+
+        function loadAgentStatusFromLocal(username) {
+            const saved = localStorage.getItem(`suruhboy_agent_status_${username}`);
+            if (saved) {
+                try {
+                    return JSON.parse(saved);
+                } catch(e) { return null; }
+            }
+            return null;
+        }
+
+        // Global online agents tracking (untuk admin)
+        let onlineAgents = {};
+
+        function saveOnlineAgentsToLocal() {
+            localStorage.setItem('suruhboy_online_agents', JSON.stringify(onlineAgents));
+        }
+
+        function loadOnlineAgentsFromLocal() {
+            const saved = localStorage.getItem('suruhboy_online_agents');
+            if (saved) {
+                try {
+                    onlineAgents = JSON.parse(saved);
+                } catch(e) { onlineAgents = {}; }
+            }
+        }
+
+        // Update status online agent di global tracking
+        function updateOnlineAgents(username, name, areas, action) {
+            if (action === 'Online') {
+                onlineAgents[username] = {
+                    name: name,
+                    areas: areas,
+                    status: 'online',
+                    lastActive: new Date().toISOString()
+                };
+            } else {
+                delete onlineAgents[username];
+            }
+            saveOnlineAgentsToLocal();
+        }
+
+        // ============================================
+        // LOG FUNCTIONS
+        // ============================================
+        async function saveLoginLog(namaAgent, username, status, deviceInfo = '') {
+            try {
+                const params = new URLSearchParams();
+                params.append('type', 'login');
+                params.append('timestamp', new Date().toLocaleString('id-ID'));
+                params.append('namaAgent', namaAgent);
+                params.append('username', username);
+                params.append('status', status);
+                params.append('deviceInfo', deviceInfo || navigator.userAgent);
+                await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
+            } catch(e) { console.warn(e); }
+        }
+
+        async function saveOnlineLog(namaAgent, username, action, areas) {
+            try {
+                const params = new URLSearchParams();
+                params.append('type', 'online');
+                params.append('timestamp', new Date().toLocaleString('id-ID'));
+                params.append('namaAgent', namaAgent);
+                params.append('username', username);
+                params.append('action', action);
+                params.append('areas', areas || '-');
+                await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
+                
+                // Update status online agent
+                if (action === 'Online') {
+                    updateOnlineAgents(username, namaAgent, areas, 'Online');
+                } else {
+                    updateOnlineAgents(username, namaAgent, areas, 'Offline');
+                }
+            } catch(e) { console.warn(e); }
+        }
+
+        // ============================================
+        // LOAD USERS
         // ============================================
         async function loadUsers() {
             const statusDiv = document.getElementById('loginStatus');
             try {
-                const res = await fetch(LOGIN_URL);
-                const text = await res.text();
-                const json = JSON.parse(text.match(/({.*})/)[1]);
-                const rows = json.table.rows, cols = json.table.cols;
-                let nIdx=0, uIdx=1, pIdx=2;
-                for(let i=0;i<cols.length;i++){ 
-                    const l = cols[i].label?.toLowerCase() || ''; 
-                    if(l==='user' || l==='nama') nIdx=i; 
-                    if(l==='username') uIdx=i; 
-                    if(l==='password') pIdx=i; 
+                const response = await fetch(LOGIN_URL);
+                const text = await response.text();
+                const jsonString = text.match(/({.*})/)[1];
+                const data = JSON.parse(jsonString);
+                const rows = data.table.rows, cols = data.table.cols;
+                let nameIdx = 0, usernameIdx = 1, passwordIdx = 2;
+                for (let i = 0; i < cols.length; i++) {
+                    const label = cols[i].label?.toLowerCase() || '';
+                    if (label === 'user' || label === 'nama') nameIdx = i;
+                    if (label === 'username') usernameIdx = i;
+                    if (label === 'password') passwordIdx = i;
                 }
                 users = [];
-                for(let i=0;i<rows.length;i++){
+                for (let i = 0; i < rows.length; i++) {
                     const row = rows[i].c;
-                    if(!row) continue;
-                    const name = row[nIdx]?.v || '';
-                    const uname = row[uIdx]?.v || '';
-                    const pass = row[pIdx]?.v || '';
-                    if(uname && pass && uname!=='Username') users.push({ name:String(name), username:String(uname).toLowerCase(), password:String(pass) });
+                    if (!row) continue;
+                    const name = row[nameIdx]?.v || '';
+                    const username = row[usernameIdx]?.v || '';
+                    const password = row[passwordIdx]?.v || '';
+                    if (username && password && username !== 'Username' && username !== 'username') {
+                        users.push({ name: String(name), username: String(username).toLowerCase(), password: String(password) });
+                    }
                 }
-                statusDiv.innerHTML = '✅ Siap login'; 
+                statusDiv.innerHTML = '✅ Siap login';
                 statusDiv.className = 'message success';
-            } catch(e){ 
-                statusDiv.innerHTML = '❌ Gagal ambil data'; 
+            } catch(error) {
+                statusDiv.innerHTML = '❌ Gagal mengambil data login';
                 statusDiv.className = 'message error';
-                console.error(e);
             }
         }
-        
-        function login(username, password){ return users.find(u=>u.username===username.toLowerCase() && u.password===password); }
-        function isAdminUser(u){ return u.username==='admin' || u.name==='Admin Suruhboy' || u.username==='adminsuruhboy'; }
-        
+
+        function login(username, password) {
+            return users.find(u => u.username === username.toLowerCase() && u.password === password);
+        }
+
+        function isAdminUser(user) {
+            return user.username === 'admin' || user.name === 'Admin Suruhboy' || user.username === 'adminsuruhboy';
+        }
+
         // ============================================
-        // LOAD ORDERS FROM MIRRORING SHEET
+        // LOAD ORDERS (untuk agent)
         // ============================================
+        function parseCSV(csv) {
+            const lines = [];
+            let line = '', inQ = false;
+            for (let i = 0; i < csv.length; i++) {
+                const c = csv[i];
+                if (c === '"') inQ = !inQ;
+                line += c;
+                if (c === '\n' && !inQ) { lines.push(line); line = ''; }
+            }
+            if (line.trim()) lines.push(line);
+            const data = [];
+            for (let i = 0; i < lines.length; i++) {
+                try {
+                    let cols = [], cur = '', inQuote = false;
+                    for (let j = 0; j < lines[i].length; j++) {
+                        const c = lines[i][j];
+                        if (c === '"') inQuote = !inQuote;
+                        else if (c === ',' && !inQuote) { cols.push(cur.trim()); cur = ''; }
+                        else cur += c;
+                    }
+                    cols.push(cur.trim());
+                    cols = cols.map(v => v.replace(/^"|"$/g, ''));
+                    if (i > 0 && cols.length > COL.MINGGU) {
+                        const agent = cols[COL.AGENT];
+                        const nominal = parseInt(cols[COL.NOMINAL]?.replace(/[^0-9-]/g, '')) || 0;
+                        const week = cols[COL.MINGGU];
+                        if (agent && agent.trim() && week && week.trim()) {
+                            data.push({ agent: agent.trim(), nominal, week: week.trim(), customer: cols[COL.CUSTOMER] || '-', tanggal: cols[COL.TANGGAL] || '-' });
+                        }
+                    }
+                } catch(e) {}
+            }
+            return data;
+        }
+
+        function aggregate(data) {
+            const agg = {}, details = {};
+            data.forEach(({ agent, nominal, week, customer, tanggal }) => {
+                if (!week) return;
+                if (!agg[week]) agg[week] = {};
+                agg[week][agent] = (agg[week][agent] || 0) + nominal;
+                if (!details[week]) details[week] = [];
+                details[week].push({ agent, nominal, customer, tanggal, week });
+            });
+            return { agg, details };
+        }
+
         async function loadOrders() {
             try {
                 const res = await fetch(ORDER_CSV_URL);
-                if(!res.ok) throw new Error();
+                if (!res.ok) throw new Error();
                 const csv = await res.text();
-                const lines = csv.split(/\r?\n/);
-                const data=[];
-                for(let i=1;i<lines.length;i++){
-                    const cols = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                    if(!cols || cols.length<=COL.MINGGU) continue;
-                    const clean = cols.map(v=>v.replace(/^"|"$/g,''));
-                    const agent = clean[COL.AGENT]?.trim();
-                    const nominal = parseInt(clean[COL.NOMINAL]?.replace(/[^0-9-]/g,'')) || 0;
-                    const week = clean[COL.MINGGU]?.trim();
-                    if(agent && week) data.push({ agent, nominal, week, customer: clean[COL.CUSTOMER]||'-', tanggal: clean[COL.TANGGAL]||'-' });
+                rawOrders = parseCSV(csv);
+                if (rawOrders.length > 0) {
+                    const { agg, details } = aggregate(rawOrders);
+                    aggregated = agg;
+                    orderDetails = details;
+                    weeks = Object.keys(agg).sort((a,b) => a.localeCompare(b));
+                    if (weeks.length) {
+                        weekIndex = weeks.length - 1;
+                        populateWeekSelect();
+                        renderCurrentWeek();
+                    }
                 }
-                const agg={}, details={};
-                data.forEach(({ agent, nominal, week, customer, tanggal }) => {
-                    if(!week) return;
-                    agg[week] = agg[week] || {};
-                    agg[week][agent] = (agg[week][agent]||0) + nominal;
-                    details[week] = details[week] || [];
-                    details[week].push({ agent, nominal, customer, tanggal, week });
-                });
-                aggregated=agg; orderDetails=details; weeks=Object.keys(agg).sort((a,b)=>a.localeCompare(b));
-                if(weeks.length){ weekIndex=weeks.length-1; populateWeekSelect(); renderCurrentWeek(); }
-            } catch(e){ console.warn(e); }
+            } catch(e) { console.error(e); }
         }
-        
-        function renderWeek(idx){
-            if(!weeks.length||!currentUser) return;
-            const week=weeks[idx];
-            const fee=aggregated[week]?.[currentUser.name]||0;
-            document.getElementById('totalOrders').innerText=fee.toLocaleString();
-            document.getElementById('totalAdminFee').innerText=`Rp${fee.toLocaleString()}`;
-            document.getElementById('totalEarnings').innerText=`Rp${fee.toLocaleString()}`;
-            const orders=(orderDetails[week]||[]).filter(o=>o.agent===currentUser.name);
-            const container=document.getElementById('historyList');
-            if(!orders.length) container.innerHTML='<div class="empty-state"><i class="fas fa-calendar-times"></i><div>Tidak ada order minggu ini</div></div>';
-            else container.innerHTML=orders.map(o=>`<div class="order-card"><div class="order-top"><div class="customer-name"><i class="fas fa-user"></i> ${escapeHtml(o.customer)}</div><div class="order-amount">Rp${o.nominal.toLocaleString()}</div></div><div class="order-date"><i class="fas fa-calendar-alt"></i> ${escapeHtml(o.tanggal||o.week)}</div></div>`).join('');
+
+        function renderWeek(idx) {
+            if (!weeks.length || !currentUser) return;
+            const week = weeks[idx];
+            if (!week) return;
+            const fee = aggregated[week]?.[currentUser.name] || 0;
+            document.getElementById('totalOrders').innerText = fee.toLocaleString();
+            document.getElementById('totalAdminFee').innerText = `Rp${fee.toLocaleString()}`;
+            document.getElementById('totalEarnings').innerText = `Rp${fee.toLocaleString()}`;
+            const orders = (orderDetails[week] || []).filter(o => o.agent === currentUser.name);
+            const container = document.getElementById('historyList');
+            if (!orders.length) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><div>Tidak ada order minggu ini</div></div>';
+            } else {
+                container.innerHTML = orders.map(o => `<div class="order-card"><div class="order-top"><div class="customer-name"><i class="fas fa-user"></i> ${o.customer}</div><div class="order-amount">Rp${o.nominal.toLocaleString()}</div></div><div class="order-date"><i class="fas fa-calendar-alt"></i> ${o.tanggal || o.week}</div></div>`).join('');
+            }
         }
-        
-        function renderCurrentWeek(){ if(weeks.length && currentUser) renderWeek(weekIndex); }
-        function populateWeekSelect(){ const sel=document.getElementById('weekSelect'); if(sel) sel.innerHTML=weeks.map((w,i)=>`<option value="${i}" ${i===weekIndex?'selected':''}>${w}</option>`).join(''); }
-        function onWeekChange(){ const val=parseInt(document.getElementById('weekSelect')?.value); if(!isNaN(val)){ weekIndex=val; renderWeek(weekIndex); } }
-        
+
+        function renderCurrentWeek() { if (weeks.length && currentUser) renderWeek(weekIndex); }
+        function populateWeekSelect() {
+            const sel = document.getElementById('weekSelect');
+            if (sel) sel.innerHTML = weeks.map((w,i) => `<option value="${i}" ${i===weekIndex?'selected':''}>${w}</option>`).join('');
+        }
+        function onWeekChange() {
+            const sel = document.getElementById('weekSelect');
+            const val = parseInt(sel?.value);
+            if (!isNaN(val)) { weekIndex = val; renderWeek(weekIndex); }
+        }
+
         // ============================================
-        // AGENT STATUS & AREA
+        // AGENT STATUS (DENGAN PERSISTENT STORAGE)
         // ============================================
-        function showAreaModal(){
-            const modal=document.getElementById('areaModal'), list=document.getElementById('areaList');
-            list.innerHTML=KECAMATAN.map(k=>`<div class="area-option" onclick="toggleArea('${k}')"><input type="checkbox" id="chk_${k.replace(/\s/g,'_')}" ${selectedAreas.includes(k)?'checked':''}><label>${k}</label></div>`).join('');
-            modal.style.display='flex';
+        function showAreaModal() {
+            const modal = document.getElementById('areaModal');
+            const list = document.getElementById('areaList');
+            list.innerHTML = KECAMATAN.map(k => `<div class="area-option" onclick="toggleArea('${k}')"><input type="checkbox" id="chk_${k.replace(/\s/g,'_')}" ${selectedAreas.includes(k) ? 'checked' : ''}><label>${k}</label></div>`).join('');
+            modal.style.display = 'flex';
         }
-        
-        window.toggleArea=function(area){ const chk=document.getElementById(`chk_${area.replace(/\s/g,'_')}`); if(chk) chk.checked=!chk.checked; };
-        
-        window.closeAreaModal=function(){ document.getElementById('areaModal').style.display='none'; if(selectedAreas.length===0 && agentStatus.status==='offline') document.getElementById('agentStatusToggle').checked=false; };
-        
-        window.confirmAreas=async function(){
-            const selected=KECAMATAN.filter(k=>document.getElementById(`chk_${k.replace(/\s/g,'_')}`)?.checked);
-            if(!selected.length){ alert('Pilih minimal 1 area'); return; }
-            selectedAreas=selected; agentStatus.areas=selected; agentStatus.status='available';
-            localStorage.setItem(`suruhboy_agent_status_${currentUser.username}`, JSON.stringify({ status:'available', areas:selected, timestamp:new Date().toISOString() }));
-            closeAreaModal(); updateAgentStatusUI();
+
+        window.toggleArea = function(area) {
+            const chk = document.getElementById(`chk_${area.replace(/\s/g,'_')}`);
+            if (chk) chk.checked = !chk.checked;
+        };
+
+        function closeAreaModal() {
+            document.getElementById('areaModal').style.display = 'none';
+            if (selectedAreas.length === 0 && agentStatus.status === 'offline') {
+                document.getElementById('agentStatusToggle').checked = false;
+            }
+        }
+
+        window.confirmAreas = async function() {
+            const selected = KECAMATAN.filter(k => document.getElementById(`chk_${k.replace(/\s/g,'_')}`)?.checked);
+            if (!selected.length) { alert('Pilih minimal 1 area'); return; }
+            selectedAreas = selected;
+            agentStatus.areas = selected;
+            agentStatus.status = 'available';
+            
+            // Simpan ke localStorage
+            saveAgentStatusToLocal(currentUser.username, { status: 'available', areas: selected, timestamp: new Date().toISOString() });
+            
+            closeAreaModal();
+            updateAgentStatusUI();
             await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selected.join(', '));
             alert(`✅ ONLINE di ${selected.length} area: ${selected.join(', ')}`);
         };
-        
-        window.onAgentStatusToggle=async function(){
-            const toggle=document.getElementById('agentStatusToggle');
-            if(toggle.checked){
-                if(agentStatus.status==='offline'||!selectedAreas.length) showAreaModal();
-                else{
-                    agentStatus.status='available';
-                    localStorage.setItem(`suruhboy_agent_status_${currentUser.username}`, JSON.stringify({ status:'available', areas:selectedAreas, timestamp:new Date().toISOString() }));
+
+        window.onAgentStatusToggle = async function() {
+            const toggle = document.getElementById('agentStatusToggle');
+            if (toggle.checked) {
+                if (agentStatus.status === 'offline' || !selectedAreas.length) {
+                    showAreaModal();
+                } else {
+                    agentStatus.status = 'available';
+                    saveAgentStatusToLocal(currentUser.username, { status: 'available', areas: selectedAreas, timestamp: new Date().toISOString() });
                     updateAgentStatusUI();
                     await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selectedAreas.join(', '));
                     alert('✅ Anda ONLINE');
                 }
             } else {
-                if(agentStatus.status==='available') await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', '));
-                agentStatus.status='offline';
-                localStorage.setItem(`suruhboy_agent_status_${currentUser.username}`, JSON.stringify({ status:'offline', areas:[], timestamp:new Date().toISOString() }));
+                if (agentStatus.status === 'available') {
+                    await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', '));
+                }
+                agentStatus.status = 'offline';
+                saveAgentStatusToLocal(currentUser.username, { status: 'offline', areas: [], timestamp: new Date().toISOString() });
                 updateAgentStatusUI();
                 alert('⚫ Anda OFFLINE');
             }
         };
-        
-        function updateAgentStatusUI(){
-            const statusSpan=document.getElementById('agentStatusText'), toggle=document.getElementById('agentStatusToggle'), areaDiv=document.getElementById('agentAreaDisplay'), tags=document.getElementById('agentAreaTags');
-            if(agentStatus.status==='available' && selectedAreas.length){
-                statusSpan.innerHTML='<i class="fas fa-circle"></i> Available'; statusSpan.className='status-badge status-on';
-                toggle.checked=true; areaDiv.style.display='block';
-                tags.innerHTML=selectedAreas.map(a=>`<span class="area-tag">${escapeHtml(a)}</span>`).join('');
+
+        function updateAgentStatusUI() {
+            const statusSpan = document.getElementById('agentStatusText');
+            const toggle = document.getElementById('agentStatusToggle');
+            const areaDiv = document.getElementById('agentAreaDisplay');
+            const tags = document.getElementById('agentAreaTags');
+            if (agentStatus.status === 'available' && selectedAreas.length) {
+                statusSpan.innerHTML = '<i class="fas fa-circle"></i> Available';
+                statusSpan.className = 'status-badge status-on';
+                toggle.checked = true;
+                areaDiv.style.display = 'block';
+                tags.innerHTML = selectedAreas.map(a => `<span class="area-tag">${a}</span>`).join('');
             } else {
-                statusSpan.innerHTML='<i class="fas fa-power-off"></i> Offline'; statusSpan.className='status-badge status-off';
-                toggle.checked=false; areaDiv.style.display='none';
+                statusSpan.innerHTML = '<i class="fas fa-power-off"></i> Offline';
+                statusSpan.className = 'status-badge status-off';
+                toggle.checked = false;
+                areaDiv.style.display = 'none';
             }
         }
-        
-        function restoreAgentStatus(){
-            const saved=localStorage.getItem(`suruhboy_agent_status_${currentUser.username}`);
-            if(saved){
-                try{ const s=JSON.parse(saved); if(s.status==='available' && s.areas && s.areas.length){ agentStatus.status=s.status; selectedAreas=s.areas; agentStatus.areas=s.areas; updateAgentStatusUI(); return true; } }catch(e){}
+
+        // Restore status dari localStorage saat login
+        function restoreAgentStatus() {
+            const saved = loadAgentStatusFromLocal(currentUser.username);
+            if (saved && saved.status === 'available' && saved.areas && saved.areas.length > 0) {
+                agentStatus.status = saved.status;
+                selectedAreas = saved.areas;
+                agentStatus.areas = saved.areas;
+                updateAgentStatusUI();
+                // Catat ke log bahwa status direstore (tanpa mengirim ulang ke sheet)
+                console.log(`Status restored for ${currentUser.username}: Online di ${selectedAreas.join(', ')}`);
+                return true;
             }
             return false;
         }
-        
+
         // ============================================
-        // ADMIN - LOAD AGENT STATUS FROM GID 1931290882
+        // ADMIN FUNCTIONS
         // ============================================
-        async function loadAgentStatusFromSheet() {
+        async function loadAgentList() {
             try {
-                const res = await fetch(AGENT_STATUS_URL);
-                const text = await res.text();
-                const json = JSON.parse(text.match(/({.*})/)[1]);
-                const rows = json.table.rows;
-                const cols = json.table.cols;
-                
-                // Mapping kolom berdasarkan label
-                let colMap = {
-                    timestamp: -1,
-                    namaAgent: -1,
-                    username: -1,
-                    action: -1,
-                    areas: -1
-                };
-                
-                for (let i = 0; i < cols.length; i++) {
-                    const label = cols[i].label?.toLowerCase() || '';
-                    if (label.includes('timestamp') || label === 'waktu') colMap.timestamp = i;
-                    if (label.includes('nama') || label === 'agent' || label === 'nama agent') colMap.namaAgent = i;
-                    if (label === 'username') colMap.username = i;
-                    if (label === 'action' || label.includes('status')) colMap.action = i;
-                    if (label === 'areas' || label.includes('area')) colMap.areas = i;
+                const agents = users.filter(u => !isAdminUser(u));
+                const container = document.getElementById('adminAgentList');
+                if (agents.length === 0) {
+                    container.innerHTML = '<div class="empty-state">Tidak ada agent terdaftar</div>';
+                    return;
                 }
-                
-                // Jika mapping gagal, gunakan index default (berdasarkan struktur yang umum)
-                if (colMap.timestamp === -1) colMap.timestamp = 0;
-                if (colMap.namaAgent === -1) colMap.namaAgent = 1;
-                if (colMap.username === -1) colMap.username = 2;
-                if (colMap.action === -1) colMap.action = 3;
-                if (colMap.areas === -1) colMap.areas = 4;
-                
-                // Kumpulkan semua log
-                const allLogs = [];
-                for (let i = 0; i < rows.length; i++) {
-                    const row = rows[i].c;
-                    if (!row) continue;
-                    
-                    const timestamp = row[colMap.timestamp]?.v || '';
-                    const namaAgent = row[colMap.namaAgent]?.v || '';
-                    const username = row[colMap.username]?.v || '';
-                    const actionRaw = row[colMap.action]?.v || '';
-                    const areasRaw = row[colMap.areas]?.v || '';
-                    
-                    // Skip baris kosong
-                    if (!username || !actionRaw) continue;
-                    
-                    let action = actionRaw.toString().toLowerCase();
-                    // Normalisasi action
-                    if (action === 'available' || action === 'online' || action === 'online (assigned by admin)' || action === 'online (by admin)') {
-                        action = 'online';
-                    } else if (action === 'offline' || action === 'offline (by admin)' || action === 'offline (assigned by admin)') {
-                        action = 'offline';
-                    }
-                    
-                    // Parse areas (bisa berupa array JSON atau string comma-separated)
-                    let areas = [];
-                    if (areasRaw && areasRaw !== '-') {
-                        try {
-                            // Coba parse sebagai JSON array
-                            if (areasRaw.startsWith('[')) {
-                                areas = JSON.parse(areasRaw);
-                            } else {
-                                // Split by comma
-                                areas = areasRaw.split(',').map(a => a.trim()).filter(a => a);
-                            }
-                        } catch(e) {
-                            areas = areasRaw.split(',').map(a => a.trim()).filter(a => a);
-                        }
-                    }
-                    
-                    allLogs.push({
-                        timestamp: timestamp,
-                        timestampDate: new Date(timestamp),
-                        namaAgent: namaAgent || username,
-                        username: username,
-                        action: action,
-                        areas: areas
-                    });
-                }
-                
-                // Group by username, ambil log terbaru untuk setiap agent
-                const latestStatus = new Map();
-                for (const log of allLogs) {
-                    const existing = latestStatus.get(log.username);
-                    if (!existing || new Date(log.timestamp) > new Date(existing.timestamp)) {
-                        latestStatus.set(log.username, log);
-                    }
-                }
-                
-                // Filter hanya yang statusnya 'online' dan tampilkan
-                onlineAgents = [];
-                for (const [username, status] of latestStatus) {
-                    if (status.action === 'online') {
-                        onlineAgents.push({
-                            username: username,
-                            namaAgent: status.namaAgent || username,
-                            areas: status.areas || [],
-                            lastActive: status.timestamp,
-                            lastActiveDate: status.timestampDate
-                        });
-                    }
-                }
-                
-                // Sort by lastActive (terbaru di atas)
-                onlineAgents.sort((a, b) => {
-                    const dateA = a.lastActiveDate || new Date(0);
-                    const dateB = b.lastActiveDate || new Date(0);
-                    return dateB - dateA;
-                });
-                
-                console.log(`Loaded ${onlineAgents.length} online agents from sheet GID ${AGENT_STATUS_GID}`);
-                return true;
-                
+                container.innerHTML = agents.map(agent => {
+                    const isOnline = onlineAgents[agent.username]?.status === 'online';
+                    const areas = onlineAgents[agent.username]?.areas || '-';
+                    const lastActive = onlineAgents[agent.username]?.lastActive ? new Date(onlineAgents[agent.username].lastActive).toLocaleString() : '-';
+                    return `
+                        <div class="agent-item-admin" data-agent="${agent.name}">
+                            <div class="agent-info">
+                                <h4>${agent.name}</h4>
+                                <div class="agent-areas">Area: ${areas}</div>
+                                <div class="agent-last-active">Terakhir aktif: ${lastActive}</div>
+                            </div>
+                            <div>
+                                <span class="agent-status ${isOnline ? 'status-online' : 'status-offline'}">
+                                    <i class="fas ${isOnline ? 'fa-circle' : 'fa-power-off'}"></i> ${isOnline ? 'Online' : 'Offline'}
+                                </span>
+                                ${isOnline ? `<button class="btn-offline" onclick="adminOfflineAgent('${agent.name}', '${agent.username}')"><i class="fas fa-power-off"></i> Offline</button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             } catch(e) {
-                console.error('Error loading agent status from sheet:', e);
-                onlineAgents = [];
-                return false;
+                console.error(e);
             }
         }
-        
-        function attachDropdownEvents() {
-            // Burger menu click
-            document.querySelectorAll('.burger-menu').forEach(burger => {
-                burger.removeEventListener('click', burger._listener);
-                const handler = (e) => {
-                    e.stopPropagation();
-                    const idx = burger.getAttribute('data-idx');
-                    const dropdown = document.getElementById(`adminDropdown-${idx}`);
-                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
-                        if (menu !== dropdown) menu.style.display = 'none';
-                    });
-                    dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-                };
-                burger.addEventListener('click', handler);
-                burger._listener = handler;
-            });
-            
-            // Dropdown item click
-            document.querySelectorAll('.dropdown-item').forEach(item => {
-                item.removeEventListener('click', item._listener);
-                const handler = async (e) => {
-                    e.stopPropagation();
-                    const action = item.getAttribute('data-action');
-                    const agentName = item.getAttribute('data-agent-name');
-                    const agentUsername = item.getAttribute('data-agent-username');
-                    const areasStr = item.getAttribute('data-areas');
-                    const areas = areasStr ? JSON.parse(areasStr) : [];
-                    
-                    if (action === 'offline') {
-                        if (confirm(`Offline-kan agent ${agentName}?`)) {
-                            await saveOnlineLog(agentName, agentUsername, 'Offline (by admin)', '-');
-                            localStorage.setItem(`suruhboy_agent_status_${agentUsername}`, 
-                                JSON.stringify({ status: 'offline', areas: [], timestamp: new Date().toISOString(), forcedByAdmin: true }));
-                            await refreshAdminData();
-                            alert(`✅ Agent ${agentName} telah di-offline-kan`);
-                        }
-                    } else if (action === 'assign') {
-                        selectedAgentForAssign = { name: agentName, username: agentUsername, areas: areas };
-                        const modal = document.getElementById('assignModal');
-                        const areaList = document.getElementById('assignAreaList');
-                        document.getElementById('assignAgentName').innerHTML = `Assign area untuk <strong>${escapeHtml(agentName)}</strong>`;
-                        areaList.innerHTML = KECAMATAN.map(k => `
-                            <label class="area-check">
-                                <input type="checkbox" value="${k}" ${areas.includes(k) ? 'checked' : ''}>
-                                <span>${k}</span>
-                            </label>
-                        `).join('');
-                        modal.style.display = 'flex';
-                    }
-                    
-                    const dropdown = item.closest('.dropdown-menu');
-                    if (dropdown) dropdown.style.display = 'none';
-                };
-                item.addEventListener('click', handler);
-                item._listener = handler;
-            });
-        }
-        
-        function renderAdminList() {
-            const container = document.getElementById('adminAgentList');
-            const totalSpan = document.getElementById('totalOnline');
-            
-            totalSpan.innerText = onlineAgents.length;
-            
-            if (onlineAgents.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-user-clock"></i>
-                        <div>Tidak ada agent online saat ini</div>
-                        <div class="debug-info">Pastikan sheet GID ${AGENT_STATUS_GID} memiliki data dengan action = "online"</div>
-                    </div>
-                `;
-                return;
+
+        window.adminOfflineAgent = async function(agentName, username) {
+            if (confirm(`Offline-kan agent ${agentName}?`)) {
+                await saveOnlineLog(agentName, username, 'Offline (by admin)', '-');
+                alert(`✅ Agent ${agentName} telah di-offline-kan`);
+                loadAgentList();
             }
-            
-            container.innerHTML = onlineAgents.map((agent, idx) => {
-                const areasDisplay = agent.areas && agent.areas.length 
-                    ? agent.areas.join(', ') 
-                    : '-';
-                const lastActiveFormatted = agent.lastActive 
-                    ? new Date(agent.lastActive).toLocaleString('id-ID')
-                    : 'Tidak diketahui';
-                
-                return `
-                    <div class="agent-item-admin" data-idx="${idx}">
-                        <div class="agent-info">
-                            <h4><i class="fas fa-user-circle"></i> ${escapeHtml(agent.namaAgent)}</h4>
-                            <div class="agent-areas">
-                                <i class="fas fa-map-marker-alt"></i> Area: ${escapeHtml(areasDisplay)}
-                            </div>
-                            <div class="agent-last-active">
-                                <i class="fas fa-clock"></i> Online sejak: ${escapeHtml(lastActiveFormatted)}
-                            </div>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span class="agent-status status-online">
-                                <i class="fas fa-circle"></i> Online
-                            </span>
-                            <div class="burger-menu" data-agent-name="${escapeHtml(agent.namaAgent)}" 
-                                 data-agent-username="${escapeHtml(agent.username)}" 
-                                 data-areas='${JSON.stringify(agent.areas)}' 
-                                 data-idx="${idx}">
-                                <i class="fas fa-ellipsis-v burger-icon"></i>
-                            </div>
-                            <div class="dropdown-menu" id="adminDropdown-${idx}" style="display:none;">
-                                <div class="dropdown-item" data-action="offline" 
-                                     data-agent-name="${escapeHtml(agent.namaAgent)}" 
-                                     data-agent-username="${escapeHtml(agent.username)}">
-                                    <i class="fas fa-power-off"></i> Offline-kan Agent
-                                </div>
-                                <div class="dropdown-item" data-action="assign" 
-                                     data-agent-name="${escapeHtml(agent.namaAgent)}" 
-                                     data-agent-username="${escapeHtml(agent.username)}" 
-                                     data-areas='${JSON.stringify(agent.areas)}'>
-                                    <i class="fas fa-map-marker-alt"></i> Assign Area
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            attachDropdownEvents();
-        }
-        
-        window.closeAssignModal = function() { 
-            document.getElementById('assignModal').style.display = 'none'; 
-            selectedAgentForAssign = null; 
         };
-        
-        window.confirmAssign = async function() {
-            if (!selectedAgentForAssign) return;
-            const selected = []; 
-            document.querySelectorAll('#assignAreaList input:checked').forEach(cb => selected.push(cb.value));
-            const action = selected.length > 0 ? 'Online (assigned by admin)' : 'Offline (assigned by admin)';
-            const areasText = selected.length > 0 ? selected.join(', ') : '-';
-            await saveOnlineLog(selectedAgentForAssign.name, selectedAgentForAssign.username, action, areasText);
-            localStorage.setItem(`suruhboy_agent_status_${selectedAgentForAssign.username}`, 
-                JSON.stringify({ status: selected.length > 0 ? 'available' : 'offline', areas: selected, timestamp: new Date().toISOString(), assignedByAdmin: true }));
-            await refreshAdminData();
-            closeAssignModal();
-            alert(`✅ Area untuk ${selectedAgentForAssign.name} telah diupdate`);
-        };
-        
-        async function refreshAdminData() {
-            const container = document.getElementById('adminAgentList');
-            if (container) {
-                container.innerHTML = '<div class="loading-small"><i class="fas fa-spinner fa-pulse"></i> Memuat data agent dari sheet...</div>';
-            }
-            await loadAgentStatusFromSheet();
-            renderAdminList();
-        }
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function() { 
-            document.querySelectorAll('.dropdown-menu').forEach(menu => menu.style.display = 'none'); 
-        });
-        
+
         // ============================================
-        // DASHBOARD CONTROLLER
+        // DASHBOARD & LOGIN
         // ============================================
-        function updateAgentUI(){ 
-            if(currentUser){ 
-                document.getElementById('agentName').innerText = currentUser.name; 
-                document.getElementById('agentAvatar').innerText = currentUser.name.charAt(0).toUpperCase(); 
-                updateAgentStatusUI(); 
-            } 
+        function updateAgentUI() {
+            if (!currentUser) return;
+            document.getElementById('agentName').innerText = currentUser.name;
+            document.getElementById('agentAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
+            updateAgentStatusUI();
         }
-        
-        function updateAdminUI(){ 
-            if(currentUser) document.getElementById('adminAvatar').innerText = currentUser.name.charAt(0).toUpperCase(); 
+
+        function updateAdminUI() {
+            if (!currentUser) return;
+            document.getElementById('adminAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
         }
-        
-        async function showAgentDashboard(){
+
+        async function showAgentDashboard() {
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('agentDashboard').classList.remove('hidden');
             document.getElementById('adminDashboard').classList.add('hidden');
             updateAgentUI();
-            restoreAgentStatus();
+            
+            // Restore status dari localStorage
+            const restored = restoreAgentStatus();
+            if (restored) {
+                // Jika status direstore, tetap catat di log tapi tanpa kirim ulang ke sheet
+                console.log('Status online restored from previous session');
+            }
+            
             await loadOrders();
             document.getElementById('weekSelect').addEventListener('change', onWeekChange);
         }
-        
-        async function showAdminDashboard(){
+
+        async function showAdminDashboard() {
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('agentDashboard').classList.add('hidden');
             document.getElementById('adminDashboard').classList.remove('hidden');
             updateAdminUI();
-            await refreshAdminData();
-            if(window.adminInterval) clearInterval(window.adminInterval);
-            window.adminInterval = setInterval(() => { if(isAdmin) refreshAdminData(); }, 15000);
+            await loadAgentList();
         }
-        
-        async function logout(){
-            if(window.adminInterval) clearInterval(window.adminInterval);
-            if(currentUser && !isAdmin && agentStatus.status === 'available'){
+
+        async function logout() {
+            if (currentUser && !isAdmin && agentStatus.status === 'available') {
                 await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', '));
             }
-            currentUser = null; 
-            isAdmin = false; 
-            agentStatus = { status: 'offline', areas: [] }; 
+            // Hapus status dari localStorage
+            if (currentUser) {
+                localStorage.removeItem(`suruhboy_agent_status_${currentUser.username}`);
+            }
+            currentUser = null;
+            isAdmin = false;
+            agentStatus = { status: 'offline', areas: [] };
             selectedAreas = [];
             document.getElementById('loginPage').classList.remove('hidden');
             document.getElementById('agentDashboard').classList.add('hidden');
@@ -1408,27 +957,31 @@
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
         }
-        
-        document.getElementById('loginForm').addEventListener('submit', async(e) => {
+
+        // Login Handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             const found = login(username, password);
-            if(found){
+            
+            if (found) {
                 currentUser = found;
                 await saveLoginLog(found.name, found.username, 'Berhasil');
-                if(isAdminUser(found)){ 
-                    isAdmin = true; 
-                    showAdminDashboard(); 
-                } else { 
-                    isAdmin = false; 
-                    showAgentDashboard(); 
+                if (isAdminUser(found)) {
+                    isAdmin = true;
+                    showAdminDashboard();
+                } else {
+                    isAdmin = false;
+                    showAgentDashboard();
                 }
-            } else { 
-                alert('❌ Login gagal! Username atau password salah.'); 
+            } else {
+                alert('❌ Login gagal! Username atau password salah.');
             }
         });
-        
+
+        // Load data awal
+        loadOnlineAgentsFromLocal();
         loadUsers();
     </script>
 </body>
