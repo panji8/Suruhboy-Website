@@ -146,9 +146,49 @@
 
         /* Admin Dashboard Specific */
         .admin-dashboard { max-width: 800px; margin: 0 auto; padding: 20px 16px 100px; }
-        .admin-title { margin-bottom: 20px; }
+        .admin-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
         .admin-title h2 { font-size: 24px; font-weight: 700; color: #0F172A; }
         .admin-title p { color: #64748B; }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .refresh-btn:active { transform: scale(0.97); }
+        .refresh-btn i { font-size: 14px; }
+        
+        .last-update {
+            font-size: 12px;
+            color: #94A3B8;
+            margin-top: 8px;
+            text-align: right;
+        }
+        
+        .online-count {
+            background: #10B981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
 
         .agent-list-card {
             background: white;
@@ -164,8 +204,13 @@
             align-items: center;
             padding: 16px;
             border-bottom: 1px solid #F1F5F9;
+            transition: background 0.2s;
         }
         .agent-item-admin:last-child { border-bottom: none; }
+        .agent-item-admin.online-agent {
+            background: #F0FDF4;
+            border-left: 4px solid #10B981;
+        }
         .agent-info h4 { font-size: 16px; font-weight: 700; color: #0F172A; }
         .agent-status {
             display: inline-flex;
@@ -188,8 +233,19 @@
             border-radius: 40px;
             font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s;
         }
         .btn-offline:active { transform: scale(0.96); background: #FECACA; }
+        
+        .online-badge {
+            background: #10B981;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
 
         /* Agent Dashboard */
         .welcome-card {
@@ -421,6 +477,21 @@
         .notification-toast i { font-size: 24px; }
         .notification-toast.warning { background: #92400E; border-left: 4px solid #FBBF24; }
         .notification-toast.info { background: #1E3A8A; border-left: 4px solid #60A5FA; }
+        .notification-toast.success { background: #065F46; border-left: 4px solid #34D399; }
+        
+        /* Spinner */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -517,8 +588,17 @@
         </div>
 
         <div class="admin-title">
-            <h2>👥 Daftar Agent</h2>
-            <p>Lihat status agent dan kelola koneksi</p>
+            <div>
+                <h2>👥 Daftar Agent <span id="onlineCount" class="online-count">0 Online</span></h2>
+                <p>Lihat status agent dan kelola koneksi</p>
+            </div>
+            <button class="refresh-btn" onclick="manualRefreshAdmin()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+        
+        <div class="last-update" id="lastUpdateTime">
+            Terakhir diperbarui: --
         </div>
 
         <div class="agent-list-card">
@@ -558,39 +638,12 @@
         let agentStatus = { status: 'offline', areas: [] };
         let isAdmin = false;
         let pollingInterval = null;
+        let adminRefreshInterval = null;
         
         // ============================================
-        // PERSISTENT STATUS - Google Sheets (Central Source of Truth)
+        // PERSISTENT STATUS
         // ============================================
         
-        // Membaca status agent dari Google Sheets
-        async function fetchAgentStatusFromSheet(username) {
-            try {
-                const params = new URLSearchParams();
-                params.append('type', 'getStatus');
-                params.append('username', username);
-                // Karena mode no-cors, kita tidak bisa membaca response
-                // Kita akan menggunakan pendekatan lain: menyimpan di localStorage dan sync periodik
-                // Alternatif: menggunakan sheet terpisah untuk status
-                
-                // Untuk sekarang, kita akan menggunakan localStorage + polling ke admin action
-                // Tapi kita tambahkan endpoint untuk membaca status dari sheet via JSONP
-                const response = await fetch(`${WEB_APP_URL}?type=getStatus&username=${username}&t=${Date.now()}`, {
-                    method: 'GET',
-                    mode: 'cors'
-                }).catch(() => null);
-                
-                if (response && response.ok) {
-                    const data = await response.json();
-                    return data;
-                }
-            } catch(e) {
-                console.log('Cannot fetch from sheet, using localStorage');
-            }
-            return null;
-        }
-        
-        // Menyimpan status agent ke Google Sheets
         async function saveAgentStatusToSheet(username, agentName, status, areas, action, triggeredBy = 'agent') {
             try {
                 const params = new URLSearchParams();
@@ -607,58 +660,6 @@
             } catch(e) { console.warn(e); }
         }
         
-        // Sync status dari sheet (polling untuk agent)
-        async function syncAgentStatusFromSheet() {
-            if (!currentUser || isAdmin) return;
-            
-            try {
-                // Coba baca dari sheet via Google Sheets langsung (sebagai source of truth)
-                // Kita buat sheet terpisah untuk status agent: 'AgentStatus'
-                const STATUS_SHEET_ID = SPREADSHEET_ID_LOGIN; // Gunakan sheet yang sama dengan sheet berbeda
-                const STATUS_URL = `https://docs.google.com/spreadsheets/d/${STATUS_SHEET_ID}/gviz/tq?tqx=out:json&sheet=AgentStatus`;
-                
-                const response = await fetch(STATUS_URL);
-                if (!response.ok) throw new Error();
-                const text = await response.text();
-                const jsonString = text.match(/({.*})/)[1];
-                const data = JSON.parse(jsonString);
-                const rows = data.table.rows;
-                
-                // Cari baris dengan username yang sama
-                for (let i = 0; i < rows.length; i++) {
-                    const row = rows[i].c;
-                    if (!row) continue;
-                    const sheetUsername = row[0]?.v;
-                    if (sheetUsername === currentUser.username) {
-                        const sheetStatus = row[1]?.v || 'offline';
-                        const sheetAreas = row[2]?.v ? row[2].v.split(',') : [];
-                        const forcedByAdmin = row[3]?.v === 'admin';
-                        const lastUpdate = row[4]?.v;
-                        
-                        // Jika status berbeda dan dipaksa oleh admin, update UI agent
-                        if (sheetStatus !== agentStatus.status && forcedByAdmin) {
-                            showNotification('⚠️ Admin mengubah status Anda menjadi OFFLINE', 'warning');
-                            agentStatus.status = 'offline';
-                            agentStatus.areas = [];
-                            selectedAreas = [];
-                            updateAgentStatusUI();
-                            
-                            // Nonaktifkan toggle sementara
-                            const toggle = document.getElementById('agentStatusToggle');
-                            if (toggle) toggle.disabled = true;
-                            setTimeout(() => { if(toggle) toggle.disabled = false; }, 3000);
-                        }
-                        break;
-                    }
-                }
-            } catch(e) {
-                console.log('Status sync error:', e);
-                // Fallback ke localStorage jika sheet tidak tersedia
-                checkAdminForceOffline();
-            }
-        }
-        
-        // Cek apakah admin memaksa offline dari localStorage (admin action disimpan)
         function checkAdminForceOffline() {
             const forcedOffline = localStorage.getItem(`suruhboy_force_offline_${currentUser?.username}`);
             if (forcedOffline === 'true' && agentStatus.status === 'available') {
@@ -669,7 +670,6 @@
                 updateAgentStatusUI();
                 localStorage.removeItem(`suruhboy_force_offline_${currentUser.username}`);
                 
-                // Simpan ke sheet juga
                 saveAgentStatusToSheet(currentUser.username, currentUser.name, 'offline', '', 'Offline by admin', 'admin');
             }
         }
@@ -684,7 +684,7 @@
             const notif = document.createElement('div');
             notif.className = `notification-toast ${type}`;
             notif.innerHTML = `
-                <i class="fas ${type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i>
+                <i class="fas ${type === 'warning' ? 'fa-exclamation-triangle' : type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>
                 <div style="flex:1">${message}</div>
                 <i class="fas fa-times" onclick="this.parentElement.remove()" style="cursor:pointer"></i>
             `;
@@ -719,7 +719,6 @@
                 params.append('areas', areas || '-');
                 await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
                 
-                // Simpan ke sheet status juga
                 const status = action === 'Online' ? 'online' : 'offline';
                 await saveAgentStatusToSheet(username, namaAgent, status, areas, action, 'agent');
                 
@@ -870,7 +869,7 @@
         }
 
         // ============================================
-        // AGENT STATUS (DENGAN SYNC KE SHEET)
+        // AGENT STATUS
         // ============================================
         function showAreaModal() {
             const modal = document.getElementById('areaModal');
@@ -898,13 +897,12 @@
             agentStatus.areas = selected;
             agentStatus.status = 'available';
             
-            // Simpan ke sheet (source of truth)
             await saveAgentStatusToSheet(currentUser.username, currentUser.name, 'online', selected.join(','), 'Online', 'agent');
             
             closeAreaModal();
             updateAgentStatusUI();
             await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selected.join(', '));
-            showNotification(`✅ ONLINE di ${selected.length} area: ${selected.join(', ')}`, 'info');
+            showNotification(`✅ ONLINE di ${selected.length} area: ${selected.join(', ')}`, 'success');
         };
 
         window.onAgentStatusToggle = async function() {
@@ -917,7 +915,7 @@
                     await saveAgentStatusToSheet(currentUser.username, currentUser.name, 'online', selectedAreas.join(','), 'Online', 'agent');
                     updateAgentStatusUI();
                     await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selectedAreas.join(', '));
-                    showNotification('✅ Anda ONLINE', 'info');
+                    showNotification('✅ Anda ONLINE', 'success');
                 }
             } else {
                 if (agentStatus.status === 'available') {
@@ -950,10 +948,22 @@
         }
 
         // ============================================
-        // ADMIN FUNCTIONS (dengan notifikasi ke agent)
+        // ADMIN FUNCTIONS (Dengan Sorting Online Teratas)
         // ============================================
-        async function loadAgentList() {
+        async function loadAgentList(isManual = false) {
             try {
+                if (isManual) {
+                    const refreshBtn = document.querySelector('.refresh-btn');
+                    const originalHtml = refreshBtn.innerHTML;
+                    refreshBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Refresh';
+                    refreshBtn.disabled = true;
+                    
+                    setTimeout(() => {
+                        refreshBtn.innerHTML = originalHtml;
+                        refreshBtn.disabled = false;
+                    }, 1000);
+                }
+                
                 const agents = users.filter(u => !isAdminUser(u));
                 const container = document.getElementById('adminAgentList');
                 if (agents.length === 0) {
@@ -961,29 +971,79 @@
                     return;
                 }
                 
-                // Load status dari localStorage untuk sementara (bisa diganti dengan sheet)
-                const agentStatuses = {};
+                // Kumpulkan status semua agent dari localStorage
+                const agentStatuses = [];
+                let onlineCount = 0;
+                
                 for (let agent of agents) {
                     const saved = localStorage.getItem(`suruhboy_agent_status_${agent.username}`);
+                    let status = 'offline';
+                    let areas = '-';
+                    let lastActive = '-';
+                    let timestamp = null;
+                    
                     if (saved) {
                         try {
                             const data = JSON.parse(saved);
-                            agentStatuses[agent.username] = data;
+                            status = data.status === 'available' ? 'online' : 'offline';
+                            areas = data.areas?.join(', ') || '-';
+                            timestamp = data.timestamp;
+                            lastActive = timestamp ? new Date(timestamp).toLocaleString('id-ID') : '-';
                         } catch(e) {}
                     }
+                    
+                    if (status === 'online') onlineCount++;
+                    
+                    agentStatuses.push({
+                        ...agent,
+                        status,
+                        areas,
+                        lastActive,
+                        timestamp
+                    });
                 }
                 
-                container.innerHTML = agents.map(agent => {
-                    const statusData = agentStatuses[agent.username];
-                    const isOnline = statusData?.status === 'available';
-                    const areas = statusData?.areas?.join(', ') || '-';
-                    const lastActive = statusData?.timestamp ? new Date(statusData.timestamp).toLocaleString() : '-';
+                // Update online count di header
+                const onlineCountSpan = document.getElementById('onlineCount');
+                if (onlineCountSpan) {
+                    onlineCountSpan.innerHTML = `${onlineCount} Online`;
+                    onlineCountSpan.style.background = onlineCount > 0 ? '#10B981' : '#64748B';
+                }
+                
+                // UPDATE LAST UPDATE TIME
+                const lastUpdateSpan = document.getElementById('lastUpdateTime');
+                if (lastUpdateSpan) {
+                    const now = new Date();
+                    lastUpdateSpan.innerHTML = `Terakhir diperbarui: ${now.toLocaleTimeString('id-ID')} ${now.toLocaleDateString('id-ID')}`;
+                }
+                
+                // SORTING: Agent online di atas, lalu berdasarkan lastActive terbaru
+                agentStatuses.sort((a, b) => {
+                    if (a.status === 'online' && b.status !== 'online') return -1;
+                    if (a.status !== 'online' && b.status === 'online') return 1;
+                    
+                    // Jika sama-sama online, urutkan berdasarkan lastActive terbaru
+                    if (a.status === 'online' && b.status === 'online') {
+                        const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
+                        const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
+                        return timeB - timeA;
+                    }
+                    
+                    // Jika sama-sama offline, urutkan berdasarkan nama
+                    return a.name.localeCompare(b.name);
+                });
+                
+                container.innerHTML = agentStatuses.map(agent => {
+                    const isOnline = agent.status === 'online';
                     return `
-                        <div class="agent-item-admin" data-agent="${agent.name}" data-username="${agent.username}">
+                        <div class="agent-item-admin ${isOnline ? 'online-agent' : ''}" data-agent="${agent.name}" data-username="${agent.username}">
                             <div class="agent-info">
-                                <h4>${agent.name}</h4>
-                                <div class="agent-areas">Area: ${areas}</div>
-                                <div class="agent-last-active">Terakhir aktif: ${lastActive}</div>
+                                <h4>
+                                    ${agent.name}
+                                    ${isOnline ? '<span class="online-badge"><i class="fas fa-circle"></i> ONLINE</span>' : ''}
+                                </h4>
+                                <div class="agent-areas"><i class="fas fa-map-marker-alt"></i> Area: ${agent.areas}</div>
+                                <div class="agent-last-active"><i class="fas fa-clock"></i> Terakhir aktif: ${agent.lastActive}</div>
                             </div>
                             <div>
                                 <span class="agent-status ${isOnline ? 'status-online' : 'status-offline'}">
@@ -994,23 +1054,31 @@
                         </div>
                     `;
                 }).join('');
+                
+                if (isManual) {
+                    showNotification('✅ Daftar agent berhasil diperbarui', 'success');
+                }
+                
             } catch(e) {
                 console.error(e);
+                if (isManual) {
+                    showNotification('❌ Gagal memperbarui daftar agent', 'warning');
+                }
             }
         }
+        
+        // Manual refresh
+        window.manualRefreshAdmin = async function() {
+            await loadAgentList(true);
+        };
 
         window.adminOfflineAgent = async function(agentName, username) {
             if (confirm(`Offline-kan agent ${agentName}? Agent akan menerima notifikasi dan statusnya akan berubah menjadi offline.`)) {
-                // Simpan flag bahwa admin memaksa offline
                 localStorage.setItem(`suruhboy_force_offline_${username}`, 'true');
                 
-                // Simpan ke sheet bahwa admin yang mematikan
                 await saveAgentStatusToSheet(username, agentName, 'offline', '', 'Offline by admin', 'admin');
-                
-                // Catat log
                 await saveOnlineLog(agentName, username, 'Offline (by admin)', '-');
                 
-                // Hapus status online dari localStorage agent
                 const savedStatus = localStorage.getItem(`suruhboy_agent_status_${username}`);
                 if (savedStatus) {
                     const statusData = JSON.parse(savedStatus);
@@ -1019,29 +1087,40 @@
                     localStorage.setItem(`suruhboy_agent_status_${username}`, JSON.stringify(statusData));
                 }
                 
-                showNotification(`✅ Agent ${agentName} telah di-offline-kan`, 'info');
+                showNotification(`✅ Agent ${agentName} telah di-offline-kan`, 'success');
                 
-                // Refresh daftar agent
-                setTimeout(() => loadAgentList(), 500);
+                setTimeout(() => loadAgentList(false), 500);
             }
         };
         
-        // Polling untuk agent (setiap 10 detik) - cek apakah admin force offline
+        // Polling untuk agent (cek admin force offline)
         function startPollingForAgent() {
             if (pollingInterval) clearInterval(pollingInterval);
             pollingInterval = setInterval(() => {
                 if (currentUser && !isAdmin) {
                     checkAdminForceOffline();
-                    // Juga sync dari sheet jika perlu
-                    syncAgentStatusFromSheet();
                 }
-            }, 10000); // setiap 10 detik
+            }, 10000);
+        }
+        
+        // Auto refresh untuk admin (setiap 10 detik)
+        function startAdminAutoRefresh() {
+            if (adminRefreshInterval) clearInterval(adminRefreshInterval);
+            adminRefreshInterval = setInterval(() => {
+                if (currentUser && isAdmin) {
+                    loadAgentList(false);
+                }
+            }, 10000);
         }
         
         function stopPolling() {
             if (pollingInterval) {
                 clearInterval(pollingInterval);
                 pollingInterval = null;
+            }
+            if (adminRefreshInterval) {
+                clearInterval(adminRefreshInterval);
+                adminRefreshInterval = null;
             }
         }
 
@@ -1066,7 +1145,6 @@
             document.getElementById('adminDashboard').classList.add('hidden');
             updateAgentUI();
             
-            // Load status dari localStorage
             const saved = localStorage.getItem(`suruhboy_agent_status_${currentUser.username}`);
             if (saved) {
                 try {
@@ -1077,7 +1155,6 @@
                         agentStatus.areas = data.areas;
                         updateAgentStatusUI();
                     } else {
-                        // Pastikan offline
                         agentStatus.status = 'offline';
                         selectedAreas = [];
                         updateAgentStatusUI();
@@ -1085,10 +1162,7 @@
                 } catch(e) {}
             }
             
-            // Cek apakah admin force offline
             checkAdminForceOffline();
-            
-            // Start polling untuk cek perubahan dari admin
             startPollingForAgent();
             
             await loadOrders();
@@ -1096,16 +1170,13 @@
         }
 
         async function showAdminDashboard() {
-            stopPolling(); // Stop polling untuk agent
+            stopPolling();
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('agentDashboard').classList.add('hidden');
             document.getElementById('adminDashboard').classList.remove('hidden');
             updateAdminUI();
-            await loadAgentList();
-            
-            // Auto refresh admin list setiap 15 detik
-            if (pollingInterval) clearInterval(pollingInterval);
-            pollingInterval = setInterval(() => loadAgentList(), 15000);
+            await loadAgentList(false);
+            startAdminAutoRefresh();
         }
 
         async function logout() {
@@ -1116,7 +1187,6 @@
                 await saveAgentStatusToSheet(currentUser.username, currentUser.name, 'offline', '', 'Offline', 'agent');
             }
             
-            // Hapus status dari localStorage
             if (currentUser) {
                 localStorage.removeItem(`suruhboy_agent_status_${currentUser.username}`);
             }
