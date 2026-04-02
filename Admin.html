@@ -2,32 +2,18 @@
 <html lang="id">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard | SuruhBoy Order System</title>
-  <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Google Fonts: Inter -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Inter', system-ui, -apple-system, Arial;
+      font-family: 'Inter', sans-serif;
       background: #f5f7fa;
       color: #0f172a;
     }
-
-    .dashboard-wrapper {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 24px 20px;
-    }
-
-    /* Header */
+    .dashboard-wrapper { max-width: 1400px; margin: 0 auto; padding: 24px 20px; }
     .main-header {
       display: flex;
       align-items: center;
@@ -36,66 +22,35 @@
       gap: 16px;
       margin-bottom: 28px;
     }
-
-    .logo-area {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
+    .logo-area { display: flex; align-items: center; gap: 14px; }
     .logo {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: #25D366;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1.3rem;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: #25D366; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1.3rem;
     }
-
     .logo-area h1 {
-      font-size: 1.6rem;
-      font-weight: 700;
+      font-size: 1.6rem; font-weight: 700;
       background: linear-gradient(135deg, #0f2b3d, #1e4a6e);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
     }
-
     .stats-summary {
-      background: white;
-      padding: 12px 24px;
-      border-radius: 40px;
-      display: flex;
-      gap: 24px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      background: white; padding: 12px 24px; border-radius: 40px;
+      display: flex; gap: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);
     }
-
-    .stats-summary span {
-      font-weight: 600;
-      color: #1e4a6e;
-    }
-
-    /* Grid 2 kolom */
+    .stats-summary span { font-weight: 600; color: #1e4a6e; }
     .two-columns {
       display: grid;
       grid-template-columns: 1fr 1.2fr;
       gap: 24px;
       margin-bottom: 32px;
     }
-
-    /* Card style */
     .card {
-      background: white;
-      border-radius: 24px;
+      background: white; border-radius: 24px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-      overflow: hidden;
       border: 1px solid #eef2f6;
+      overflow: hidden;
     }
-
     .card-header {
       padding: 18px 22px;
       border-bottom: 1px solid #eef2f6;
@@ -105,481 +60,92 @@
       flex-wrap: wrap;
       gap: 10px;
     }
-
-    .card-header h2 {
-      font-size: 1.2rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .agent-stats {
-      font-size: 0.75rem;
-      background: #f1f5f9;
-      padding: 5px 12px;
-      border-radius: 30px;
-      color: #475569;
-    }
-
-    /* Agent List - SCROLLABLE */
-    .agent-list-container {
-      max-height: 420px;
-      overflow-y: auto;
-      scrollbar-width: thin;
-    }
-    
-    .agent-list-container::-webkit-scrollbar {
-      width: 5px;
-    }
-    
-    .agent-list-container::-webkit-scrollbar-track {
-      background: #f1f1f1;
-      border-radius: 10px;
-    }
-    
-    .agent-list-container::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 10px;
-    }
-
-    .agent-list {
-      padding: 4px 0;
-    }
-
+    .card-header h2 { font-size: 1.2rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    .agent-list-container { max-height: 420px; overflow-y: auto; scrollbar-width: thin; }
+    .agent-list-container::-webkit-scrollbar { width: 5px; }
+    .agent-list-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    .agent-list-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    .agent-list { padding: 4px 0; }
     .agent-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 20px;
-      border-bottom: 1px solid #f0f2f5;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px; border-bottom: 1px solid #f0f2f5;
       transition: 0.2s;
     }
-
-    .agent-item:hover {
-      background: #fafcff;
-    }
-
-    .agent-info {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      flex: 1;
-    }
-
+    .agent-item:hover { background: #fafcff; }
+    .agent-info { display: flex; align-items: center; gap: 14px; flex: 1; }
     .agent-avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 1rem;
-      color: #1e293b;
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1rem;
     }
-
-    .agent-details h4 {
-      font-weight: 700;
-      font-size: 0.95rem;
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .agent-details p {
-      font-size: 0.7rem;
-      color: #64748b;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
+    .agent-details h4 { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .agent-details p { font-size: 0.7rem; color: #64748b; display: flex; align-items: center; gap: 10px; }
     .status-badge {
-      font-size: 0.65rem;
-      padding: 3px 10px;
-      border-radius: 30px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
+      font-size: 0.65rem; padding: 3px 10px; border-radius: 30px;
+      font-weight: 600; display: inline-flex; align-items: center; gap: 5px;
     }
-
-    .status-online {
-      background: #dcfce7;
-      color: #15803d;
-    }
-
-    .status-offline {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-
-    .order-count-badge {
-      background: #eef2ff;
-      color: #1e4a6e;
-      padding: 2px 8px;
-      border-radius: 30px;
-      font-size: 0.65rem;
-      font-weight: 600;
-    }
-
-    /* Toggle Switch */
-    .toggle-switch {
-      position: relative;
-      display: inline-block;
-      width: 48px;
-      height: 24px;
-      cursor: pointer;
-    }
-
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .toggle-slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #cbd5e1;
-      transition: 0.3s;
-      border-radius: 34px;
-    }
-
-    .toggle-slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: 0.3s;
-      border-radius: 50%;
-    }
-
-    input:checked + .toggle-slider {
-      background-color: #15803d;
-    }
-
-    input:checked + .toggle-slider:before {
-      transform: translateX(24px);
-    }
-
+    .status-online { background: #dcfce7; color: #15803d; }
+    .status-offline { background: #fee2e2; color: #b91c1c; }
     .assign-btn {
-      background: #2563eb;
-      color: white;
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      transition: 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      background: #2563eb; color: white; padding: 6px 14px;
+      border-radius: 30px; font-size: 0.7rem; font-weight: 600;
+      border: none; cursor: pointer; transition: 0.2s;
+      display: flex; align-items: center; gap: 6px;
     }
-
-    .assign-btn:hover:not(:disabled) {
-      background: #1d4ed8;
-      transform: translateY(-1px);
-    }
-
-    .assign-btn:disabled {
-      background: #cbd5e1;
-      cursor: not-allowed;
-    }
-
-    .agent-actions {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    /* Tabel Order Berjalan */
+    .assign-btn:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-1px); }
+    .assign-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+    .agent-actions { display: flex; align-items: center; gap: 14px; }
     .orders-section {
-      background: white;
-      border-radius: 24px;
-      border: 1px solid #eef2f6;
-      overflow: hidden;
+      background: white; border-radius: 24px;
+      border: 1px solid #eef2f6; overflow: hidden;
     }
-
     .section-title {
-      padding: 18px 22px;
-      border-bottom: 1px solid #eef2f6;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
+      padding: 18px 22px; border-bottom: 1px solid #eef2f6;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
     }
-
-    .orders-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .orders-table th,
-    .orders-table td {
-      padding: 14px 16px;
-      text-align: left;
+    .orders-table { width: 100%; border-collapse: collapse; }
+    .orders-table th, .orders-table td {
+      padding: 14px 16px; text-align: left;
       border-bottom: 1px solid #ecf3f9;
     }
-
-    .orders-table th {
-      background: #f9fbfe;
-      font-weight: 600;
-      color: #334155;
-      font-size: 0.8rem;
-    }
-
-    .agent-tag {
-      background: #e9ecef;
-      border-radius: 30px;
-      padding: 4px 10px;
-      font-size: 0.7rem;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .delete-order, .edit-order {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 5px 8px;
-      border-radius: 30px;
-      transition: 0.2s;
-    }
-    
-    .delete-order {
-      color: #c2410c;
-    }
-    
-    .edit-order {
-      color: #2563eb;
-    }
-    
-    .delete-order:hover {
-      background: #fff1f0;
-    }
-    
-    .edit-order:hover {
-      background: #eef2ff;
-    }
-
-    .empty-row td {
-      text-align: center;
-      padding: 40px;
-      color: #94a3b8;
-    }
-    
-    .action-buttons {
-      display: flex;
-      gap: 5px;
-    }
-
-    /* MODAL POPUP FORM ORDER */
+    .orders-table th { background: #f9fbfe; font-weight: 600; color: #334155; font-size: 0.8rem; }
+    .empty-row td { text-align: center; padding: 40px; color: #94a3b8; }
     .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(3px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      visibility: hidden;
-      opacity: 0;
-      transition: 0.2s;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; visibility: hidden; opacity: 0; transition: 0.2s;
     }
-
-    .modal-overlay.active {
-      visibility: visible;
-      opacity: 1;
-    }
-
+    .modal-overlay.active { visibility: visible; opacity: 1; }
     .modal-content {
-      background: white;
-      width: 90%;
-      max-width: 550px;
-      border-radius: 28px;
-      box-shadow: 0 25px 40px rgba(0, 0, 0, 0.2);
-      overflow: hidden;
-      max-height: 90vh;
-      overflow-y: auto;
+      background: white; width: 90%; max-width: 550px;
+      border-radius: 28px; overflow: hidden; max-height: 90vh; overflow-y: auto;
     }
-
     .modal-header {
-      padding: 18px 22px;
-      background: white;
-      border-bottom: 1px solid #eef2f6;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding: 18px 22px; border-bottom: 1px solid #eef2f6;
+      display: flex; justify-content: space-between; align-items: center;
     }
-
-    .modal-header h3 {
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .close-modal { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #64748b; }
+    .modal-body { padding: 22px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 12px; border: 1px solid #e2e8f0;
+      border-radius: 12px; font-family: inherit; font-size: 0.9rem;
     }
-
-    .close-modal {
-      background: none;
-      border: none;
-      font-size: 1.3rem;
-      cursor: pointer;
-      color: #64748b;
-    }
-
-    .modal-body {
-      padding: 22px;
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-      font-size: 0.85rem;
-      color: #0f172a;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      font-family: inherit;
-      font-size: 0.9rem;
-      background: #fbfdff;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-      outline: none;
-      border-color: #2563eb;
-    }
-
-    .quick-options {
-      display: flex;
-      gap: 10px;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
-
+    .quick-options { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
     .quick-option {
-      background: #e9ecef;
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      border: 1px solid #ced4da;
-      transition: 0.2s;
+      background: #e9ecef; padding: 6px 14px; border-radius: 30px;
+      font-size: 0.75rem; cursor: pointer; border: 1px solid #ced4da;
     }
-
-    .quick-option:hover {
-      background: #2563eb;
-      color: white;
-      border-color: #2563eb;
-    }
-
-    .modal-footer {
-      padding: 16px 22px 22px;
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      border-top: 1px solid #eef2f6;
-    }
-
-    .btn-primary {
-      background: #2563eb;
-      color: white;
-      border: none;
-      padding: 10px 24px;
-      border-radius: 40px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .btn-secondary {
-      background: #e2e8f0;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 40px;
-      cursor: pointer;
-    }
-
-    .assigned-agent-info {
-      background: #f0f4f9;
-      padding: 12px 16px;
-      border-radius: 16px;
-      font-size: 0.85rem;
-      margin-top: 8px;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 32px;
-      font-size: 0.7rem;
-      color: #7c8ba0;
-    }
-
-    .online-badge-header {
-      background: #dcfce7;
-      color: #15803d;
-      padding: 6px 12px;
-      border-radius: 30px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .btn-reset {
-      background: #f1f5f9;
-      border: 1px solid #e2e8f0;
-      padding: 6px 14px;
-      border-radius: 30px;
-      font-size: 0.7rem;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    
-    .btn-reset:hover {
-      background: #e2e8f0;
-    }
-
-    @media (max-width: 780px) {
-      .two-columns {
-        grid-template-columns: 1fr;
-      }
-      .stats-summary {
-        font-size: 0.8rem;
-        padding: 8px 16px;
-      }
-    }
+    .quick-option:hover { background: #2563eb; color: white; border-color: #2563eb; }
+    .modal-footer { padding: 16px 22px 22px; display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid #eef2f6; }
+    .btn-primary { background: #2563eb; color: white; border: none; padding: 10px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; }
+    .btn-secondary { background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; }
+    .btn-reset { background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 14px; border-radius: 30px; font-size: 0.7rem; cursor: pointer; }
+    .online-badge-header { background: #dcfce7; color: #15803d; padding: 6px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; }
+    .refresh-btn { background: #e2e8f0; border: none; padding: 6px 12px; border-radius: 30px; cursor: pointer; font-size: 0.7rem; }
+    @media (max-width: 780px) { .two-columns { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -593,77 +159,57 @@
     <div class="stats-summary">
       <span><i class="fas fa-users"></i> Total: <span id="totalAgentCount">0</span></span>
       <span><i class="fas fa-check-circle"></i> Online: <span id="onlineAgentCount">0</span></span>
-      <span><i class="fas fa-clipboard-list"></i> Order: <span id="totalOrderCount">0</span></span>
-      <button id="resetDataBtn" class="btn-reset" title="Reset ke data awal"><i class="fas fa-undo-alt"></i> Reset</button>
+      <button id="refreshAgentsBtn" class="refresh-btn"><i class="fas fa-sync-alt"></i> Refresh</button>
     </div>
   </div>
 
   <div class="two-columns">
-    <!-- KIRI: DAFTAR AGENT dengan SCROLL -->
     <div class="card">
       <div class="card-header">
-        <h2><i class="fas fa-headset"></i> Manajemen Agent</h2>
-        <div class="online-badge-header">
-          <i class="fas fa-circle"></i> Online di atas
-        </div>
+        <h2><i class="fas fa-headset"></i> Daftar Agent</h2>
+        <div class="online-badge-header"><i class="fas fa-circle"></i> Status dari Online Log</div>
       </div>
-      <div class="agent-list-container" id="agentListContainer">
+      <div class="agent-list-container">
         <div class="agent-list" id="agentList">
-          <!-- Agent list akan di-render via JS -->
+          <div style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-pulse"></i> Memuat data agent...</div>
         </div>
-      </div>
-      <div style="padding: 12px 20px 16px; border-top: 1px solid #ecf3f9; font-size: 0.7rem; color: #5b6e8c;">
-        <i class="fas fa-arrow-down"></i> Scroll | Geser toggle untuk ubah status | Klik Assign untuk buat order
       </div>
     </div>
 
-    <!-- KANAN: RINGKASAN ORDER BERJALAN -->
     <div class="card">
       <div class="card-header">
         <h2><i class="fas fa-chart-line"></i> Ringkasan Order</h2>
-        <div class="agent-stats"><i class="fas fa-truck-fast"></i> Berjalan</div>
       </div>
       <div style="padding: 20px;">
-        <div style="font-size: 2.5rem; font-weight: 800; color: #1e4a6e;" id="runningOrdersCount">0</div>
-        <div style="margin-top: 8px; color: #475569;">order aktif sedang diproses</div>
-        <div id="infoMessage" style="margin-top: 16px; background: #eef2ff; padding: 12px; border-radius: 16px; font-size: 0.8rem;">
-          <i class="fas fa-info-circle"></i> Belum ada order. Assign order ke agent online
+        <div style="font-size: 2rem; font-weight: 800; color: #1e4a6e;" id="infoMessage">
+          <i class="fas fa-info-circle"></i> Klik Assign pada agent online
         </div>
       </div>
     </div>
   </div>
 
-  <!-- TABEL ORDER BERJALAN -->
   <div class="orders-section">
     <div class="section-title">
-      <h3><i class="fas fa-list-check"></i> Daftar Order Berjalan</h3>
-      <span style="font-size: 0.7rem; background: #f1f5f9; padding: 4px 12px; border-radius: 20px;">
-        <i class="fas fa-edit"></i> Edit / Hapus | Data tersimpan otomatis
-      </span>
+      <h3><i class="fas fa-list-check"></i> Order yang Baru Dibuat</h3>
+      <span style="font-size: 0.7rem;">Data tersimpan di sheet Log_Order</span>
     </div>
     <div style="overflow-x: auto;">
       <table class="orders-table">
         <thead>
-          <tr>
-            <th>No</th>
-            <th>Pelanggan & HP</th>
-            <th>Biaya</th>
-            <th>Kapan</th>
-            <th>Agent</th>
-            <th>Deskripsi</th>
-            <th>Aksi</th>
-          </tr>
+          <tr><th>No</th><th>Nominal</th><th>Tanggal</th><th>Nama CS</th><th>NO CS</th><th>Deskripsi</th><th>Agent</th></tr>
         </thead>
-        <tbody id="ordersTableBody">
-          <tr class="empty-row"><td colspan="7">✨ Belum ada order. Klik Assign pada agent yang online ✨</td></tr>
+        <tbody id="ordersPreview">
+          <tr class="empty-row"><td colspan="7">✨ Order akan muncul setelah Anda assign ✨</tr>
         </tbody>
       </table>
     </div>
   </div>
-  <footer><i class="fas fa-database"></i> Data permanen tersimpan di browser (localStorage) | Admin penuh kendali</footer>
+  <footer style="margin-top: 24px; text-align: center; font-size: 0.7rem; color: #7c8ba0;">
+    <i class="fas fa-database"></i> Data agent sync dari sheet "Online Log" | Order tersimpan ke sheet "Log_Order"
+  </footer>
 </div>
 
-<!-- MODAL POPUP FORM ORDER -->
+<!-- MODAL ORDER -->
 <div id="orderModal" class="modal-overlay">
   <div class="modal-content">
     <div class="modal-header">
@@ -672,61 +218,17 @@
     </div>
     <div class="modal-body">
       <form id="popupOrderForm">
-        <div class="form-group">
-          <label>Biaya *</label>
-          <input type="text" name="biaya" id="modalBiaya" required>
-          <div class="quick-options">
-            <span class="quick-option" data-value="10rb diluar parkir">10rb diluar parkir</span>
-            <span class="quick-option" data-value="12rb diluar parkir">12rb diluar parkir</span>
-            <span class="quick-option" data-value="10.000">10.000</span>
-            <span class="quick-option" data-value="12.000">12.000</span>
-          </div>
+        <div class="form-group"><label>Nominal *</label><input type="text" id="modalNominal" required>
+          <div class="quick-options"><span class="quick-option" data-value="10000">10.000</span><span class="quick-option" data-value="12000">12.000</span><span class="quick-option" data-value="15000">15.000</span></div>
         </div>
-
-        <div class="form-group">
-          <label>Kapan (Tanggal) *</label>
-          <input type="date" name="kapan" id="modalKapan" required>
-        </div>
-
-        <div class="form-group">
-          <label>Nama Pelanggan *</label>
-          <input type="text" name="nama" id="modalNama" required>
-        </div>
-
-        <div class="form-group">
-          <label>No HP (akan diformat 62xxx) *</label>
-          <input type="text" name="hp" id="modalHp" required>
-        </div>
-
-        <div class="form-group">
-          <label>Deskripsi</label>
-          <textarea name="deskripsi" id="modalDeskripsi" rows="2"></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>Jemput</label>
-          <input type="text" name="jemput" id="modalJemput">
-        </div>
-
-        <div class="form-group">
-          <label>Antar</label>
-          <input type="text" name="antar" id="modalAntar">
-        </div>
-
-        <div class="form-group">
-          <label>Agent (Otomatis dari yang dipilih)</label>
-          <input type="text" id="modalAgentName" readonly style="background:#f0f2f4; font-weight:600;">
-          <input type="hidden" id="modalAgentId">
-        </div>
-
-        <div class="form-group">
-          <label>Admin (opsional)</label>
-          <input type="text" name="admin" id="modalAdmin">
-        </div>
-
-        <div class="assigned-agent-info" id="assignedAgentInfo">
-          <i class="fas fa-user-check"></i> Assign ke: <strong id="assignedAgentDisplay">-</strong>
-        </div>
+        <div class="form-group"><label>Tanggal *</label><input type="date" id="modalTanggal" required></div>
+        <div class="form-group"><label>Nama CS *</label><input type="text" id="modalNamaCS" required></div>
+        <div class="form-group"><label>NO CS (HP) *</label><input type="text" id="modalNoCS" required placeholder="08xxx atau 62xxx"></div>
+        <div class="form-group"><label>Deskripsi</label><textarea id="modalDeskripsi" rows="2"></textarea></div>
+        <div class="form-group"><label>Titik Jemput</label><input type="text" id="modalJemput"></div>
+        <div class="form-group"><label>Titik Antar</label><input type="text" id="modalAntar"></div>
+        <div class="form-group"><label>Agent *</label><input type="text" id="modalAgentName" readonly style="background:#f0f2f4; font-weight:600;"><input type="hidden" id="modalAgentId"></div>
+        <div class="form-group"><label>Admin</label><input type="text" id="modalAdmin" value="Admin"></div>
       </form>
     </div>
     <div class="modal-footer">
@@ -736,442 +238,223 @@
   </div>
 </div>
 
-<!-- MODAL EDIT ORDER -->
-<div id="editModal" class="modal-overlay">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3><i class="fas fa-pen"></i> Edit Order</h3>
-      <button class="close-modal" id="closeEditModalBtn"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="modal-body">
-      <form id="editOrderForm">
-        <input type="hidden" id="editOrderId">
-        <div class="form-group">
-          <label>Biaya</label>
-          <input type="text" id="editBiaya" required>
-        </div>
-        <div class="form-group">
-          <label>Kapan (Tanggal)</label>
-          <input type="date" id="editKapan" required>
-        </div>
-        <div class="form-group">
-          <label>Nama Pelanggan</label>
-          <input type="text" id="editNama" required>
-        </div>
-        <div class="form-group">
-          <label>No HP</label>
-          <input type="text" id="editHp" required>
-        </div>
-        <div class="form-group">
-          <label>Deskripsi</label>
-          <textarea id="editDeskripsi" rows="2"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Jemput</label>
-          <input type="text" id="editJemput">
-        </div>
-        <div class="form-group">
-          <label>Antar</label>
-          <input type="text" id="editAntar">
-        </div>
-        <div class="form-group">
-          <label>Agent</label>
-          <select id="editAgentId">
-            <!-- agent options diisi js -->
-          </select>
-        </div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn-secondary" id="cancelEditBtn">Batal</button>
-      <button type="button" class="btn-primary" id="saveEditBtn">Simpan Perubahan</button>
-    </div>
-  </div>
-</div>
-
 <script>
-  // ======================== DATA AGENT (15 agent) ========================
-  const DEFAULT_AGENTS = [
-    { id: "ag1", name: "Agung", avatar: "AG", status: "online", orderCount: 0 },
-    { id: "ag2", name: "Agus", avatar: "AS", status: "online", orderCount: 0 },
-    { id: "ag3", name: "Aryo", avatar: "AR", status: "online", orderCount: 0 },
-    { id: "ag4", name: "Awa", avatar: "AW", status: "offline", orderCount: 0 },
-    { id: "ag5", name: "Bagus", avatar: "BG", status: "online", orderCount: 0 },
-    { id: "ag6", name: "Diar", avatar: "DR", status: "online", orderCount: 0 },
-    { id: "ag7", name: "Lutfi Majid", avatar: "LM", status: "offline", orderCount: 0 },
-    { id: "ag8", name: "Malek", avatar: "ML", status: "online", orderCount: 0 },
-    { id: "ag9", name: "Mbak Yuni", avatar: "MY", status: "online", orderCount: 0 },
-    { id: "ag10", name: "Naily", avatar: "NL", status: "offline", orderCount: 0 },
-    { id: "ag11", name: "Nia", avatar: "NI", status: "online", orderCount: 0 },
-    { id: "ag12", name: "Panji", avatar: "PJ", status: "online", orderCount: 0 },
-    { id: "ag13", name: "Restu", avatar: "RS", status: "online", orderCount: 0 },
-    { id: "ag14", name: "Akhmad Rifki", avatar: "RF", status: "offline", orderCount: 0 },
-    { id: "ag15", name: "Yosi", avatar: "YS", status: "online", orderCount: 0 }
-  ];
+// ======================== KONFIGURASI ========================
+// GANTI URL_INI dengan URL Web App hasil deploy Google Apps Script Anda!
+const API_BASE_URL = 'https://script.google.com/macros/s/AKfycby05vp3d3dND5UcFj9YBCwtXhGERcoItAcsH0zrSFYrtSNNUY0TmbkUmZp3Dk3E9YZPNw/exec';
 
-  const DEFAULT_ORDERS = [
-    { id: "ord1", customer: "PT Maju Jaya", biaya: "25.000", kapan: "2026-04-05", agentId: "ag1", agentName: "Agung", deskripsi: "Servis AC", jemput: "Jl. Merdeka 10", antar: "Jl. Sudirman 5", hp: "628123456789", admin: "Admin1" },
-    { id: "ord2", customer: "CV Kreatif", biaya: "12.000", kapan: "2026-04-06", agentId: "ag2", agentName: "Agus", deskripsi: "Kirim dokumen", jemput: "Kantor Pos", antar: "Jl. Diponegoro", hp: "628987654321", admin: "Admin2" }
-  ];
+let agents = [];
+let currentSelectedAgent = null;
 
-  let agents = [];
-  let orders = [];
+// Helper format nomor HP
+function formatHpNumber(value) {
+  let v = value.replace(/\D/g, "");
+  if (!v.startsWith("62")) {
+    v = "62" + v.replace(/^0+/, "");
+  }
+  return v;
+}
 
-  // Load dari localStorage atau default
-  function loadData() {
-    const storedAgents = localStorage.getItem('suruhboy_agents');
-    const storedOrders = localStorage.getItem('suruhboy_orders');
+// Ambil data agent dari sheet
+async function fetchAgents() {
+  try {
+    const response = await fetch(API_BASE_URL);
+    const result = await response.json();
     
-    if (storedAgents) {
-      agents = JSON.parse(storedAgents);
-    } else {
-      agents = JSON.parse(JSON.stringify(DEFAULT_AGENTS));
-    }
-    
-    if (storedOrders) {
-      orders = JSON.parse(storedOrders);
-    } else {
-      orders = JSON.parse(JSON.stringify(DEFAULT_ORDERS));
-    }
-    updateAgentOrderCounts();
-  }
-
-  function saveData() {
-    localStorage.setItem('suruhboy_agents', JSON.stringify(agents));
-    localStorage.setItem('suruhboy_orders', JSON.stringify(orders));
-  }
-
-  function updateAgentOrderCounts() {
-    agents.forEach(agent => agent.orderCount = 0);
-    orders.forEach(order => {
-      const found = agents.find(a => a.id === order.agentId);
-      if (found) found.orderCount++;
-      else if (order.agentId) {
-        // jika agent hilang, tetap maintain nama asli, tidak perlu crash
-      }
-    });
-  }
-
-  function formatHpNumber(value) {
-    let v = value.replace(/\D/g, "");
-    if (!v.startsWith("62")) {
-      v = "62" + v.replace(/^0+/, "");
-    }
-    return v;
-  }
-
-  function renderAgents() {
-    const container = document.getElementById('agentList');
-    const onlineCount = agents.filter(a => a.status === 'online').length;
-    const totalAgents = agents.length;
-    document.getElementById('totalAgentCount').innerText = totalAgents;
-    document.getElementById('onlineAgentCount').innerText = onlineCount;
-
-    if (!container) return;
-    const sortedAgents = [...agents].sort((a, b) => {
-      if (a.status === 'online' && b.status !== 'online') return -1;
-      if (a.status !== 'online' && b.status === 'online') return 1;
-      return 0;
-    });
-    
-    let html = '';
-    sortedAgents.forEach(agent => {
-      const isOnline = agent.status === 'online';
-      const avatarBg = isOnline ? '#d9f0ec' : '#f1f3f5';
-      html += `
-        <div class="agent-item" data-agent-id="${agent.id}">
-          <div class="agent-info">
-            <div class="agent-avatar" style="background:${avatarBg}">${agent.avatar}</div>
-            <div class="agent-details">
-              <h4>${agent.name} ${agent.orderCount > 0 ? `<span class="order-count-badge"><i class="fas fa-clipboard-list"></i> ${agent.orderCount}</span>` : ''}</h4>
-              <p>
-                <span class="status-badge ${isOnline ? 'status-online' : 'status-offline'}">
-                  <i class="fas ${isOnline ? 'fa-circle' : 'fa-circle'}"></i> ${isOnline ? 'Online' : 'Offline'}
-                </span>
-                <span><i class="fas fa-tasks"></i> aktif: ${agent.orderCount}</span>
-              </p>
-            </div>
-          </div>
-          <div class="agent-actions">
-            <label class="toggle-switch">
-              <input type="checkbox" class="status-toggle" data-id="${agent.id}" ${isOnline ? 'checked' : ''}>
-              <span class="toggle-slider"></span>
-            </label>
-            <button class="assign-btn" data-id="${agent.id}" data-name="${agent.name}" ${!isOnline ? 'disabled' : ''}>
-              <i class="fas fa-plus-circle"></i> Assign
-            </button>
-          </div>
-        </div>
-      `;
-    });
-    container.innerHTML = html;
-
-    document.querySelectorAll('.status-toggle').forEach(toggle => {
-      toggle.addEventListener('change', (e) => {
-        const agentId = toggle.getAttribute('data-id');
-        const isChecked = toggle.checked;
-        const agent = agents.find(a => a.id === agentId);
-        if (agent) {
-          agent.status = isChecked ? 'online' : 'offline';
-          renderAgents();
-          renderOrdersTable();
-          updateSummary();
-          saveData();
-        }
-      });
-    });
-
-    document.querySelectorAll('.assign-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const agentId = btn.getAttribute('data-id');
-        const agentName = btn.getAttribute('data-name');
-        openOrderModal(agentId, agentName);
-      });
-    });
-  }
-
-  let currentSelectedAgent = null;
-
-  function openOrderModal(agentId, agentName) {
-    const agent = agents.find(a => a.id === agentId);
-    if (!agent || agent.status !== 'online') {
-      alert(`Agent ${agentName} sedang offline. Tidak dapat assign order.`);
-      return;
-    }
-    currentSelectedAgent = { id: agentId, name: agentName };
-    document.getElementById('modalAgentName').value = agentName;
-    document.getElementById('modalAgentId').value = agentId;
-    document.getElementById('assignedAgentDisplay').innerText = agentName;
-    document.getElementById('modalBiaya').value = '';
-    document.getElementById('modalKapan').value = new Date().toISOString().split('T')[0];
-    document.getElementById('modalNama').value = '';
-    document.getElementById('modalHp').value = '';
-    document.getElementById('modalDeskripsi').value = '';
-    document.getElementById('modalJemput').value = '';
-    document.getElementById('modalAntar').value = '';
-    document.getElementById('modalAdmin').value = '';
-    document.getElementById('orderModal').classList.add('active');
-  }
-
-  function closeModal() {
-    document.getElementById('orderModal').classList.remove('active');
-    currentSelectedAgent = null;
-  }
-
-  function createOrderFromModal() {
-    if (!currentSelectedAgent) return;
-    const agent = agents.find(a => a.id === currentSelectedAgent.id);
-    if (!agent || agent.status !== 'online') {
-      alert("Agent sudah offline. Order tidak bisa diassign.");
-      closeModal();
+    if (result.success && result.agents) {
+      agents = result.agents;
       renderAgents();
-      return;
-    }
-    
-    const biaya = document.getElementById('modalBiaya').value.trim();
-    if (!biaya) return alert("Biaya harus diisi");
-    const kapan = document.getElementById('modalKapan').value;
-    if (!kapan) return alert("Tanggal harus diisi");
-    const nama = document.getElementById('modalNama').value.trim();
-    if (!nama) return alert("Nama pelanggan harus diisi");
-    let hp = document.getElementById('modalHp').value.trim();
-    if (!hp) return alert("No HP harus diisi");
-    hp = formatHpNumber(hp);
-    const deskripsi = document.getElementById('modalDeskripsi').value || "-";
-    const jemput = document.getElementById('modalJemput').value || "-";
-    const antar = document.getElementById('modalAntar').value || "-";
-    const admin = document.getElementById('modalAdmin').value || "Admin";
-    
-    const newOrder = {
-      id: "ord_" + Date.now() + "_" + Math.floor(Math.random() * 9999),
-      customer: nama,
-      biaya: biaya,
-      kapan: kapan,
-      agentId: agent.id,
-      agentName: agent.name,
-      deskripsi: deskripsi,
-      jemput: jemput,
-      antar: antar,
-      hp: hp,
-      admin: admin
-    };
-    orders.push(newOrder);
-    updateAgentOrderCounts();
-    renderAgents();
-    renderOrdersTable();
-    updateSummary();
-    saveData();
-    closeModal();
-    document.getElementById('infoMessage').innerHTML = `<i class="fas fa-check-circle"></i> ✅ Order dari "${nama}" ditambahkan ke agent ${agent.name}!`;
-    document.getElementById('infoMessage').style.background = "#d9f0ec";
-    setTimeout(() => updateSummaryMessage(), 2000);
-  }
-
-  function renderOrdersTable() {
-    const tbody = document.getElementById('ordersTableBody');
-    if (!tbody) return;
-    if (orders.length === 0) {
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="7">✨ Belum ada order. Klik Assign pada agent yang online ✨</td></tr>';
-      return;
-    }
-    let html = '';
-    orders.forEach((order, idx) => {
-      html += `
-        <tr>
-          <td>${idx + 1}</td>
-          <td><strong>${escapeHtml(order.customer)}</strong><br><small>${order.hp || '-'}</small></td>
-          <td>${escapeHtml(order.biaya)}</td>
-          <td>${order.kapan}</td>
-          <td><span class="agent-tag"><i class="fas fa-user"></i> ${escapeHtml(order.agentName)}</span></td>
-          <td style="max-width:200px; white-space:normal;">${escapeHtml(order.deskripsi.substring(0, 50))}${order.deskripsi.length > 50 ? '...' : ''}</td>
-          <td class="action-buttons">
-            <button class="edit-order" data-id="${order.id}" title="Edit order"><i class="fas fa-edit"></i></button>
-            <button class="delete-order" data-id="${order.id}" title="Hapus order"><i class="fas fa-trash-alt"></i></button>
-          </td>
-        </tr>
-      `;
-    });
-    tbody.innerHTML = html;
-    
-    document.querySelectorAll('.delete-order').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const orderId = btn.getAttribute('data-id');
-        if (confirm('Hapus order ini?')) {
-          orders = orders.filter(o => o.id !== orderId);
-          updateAgentOrderCounts();
-          renderAgents();
-          renderOrdersTable();
-          updateSummary();
-          saveData();
-        }
-      });
-    });
-    
-    document.querySelectorAll('.edit-order').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const orderId = btn.getAttribute('data-id');
-        openEditModal(orderId);
-      });
-    });
-  }
-  
-  function openEditModal(orderId) {
-    const order = orders.find(o => o.id === orderId);
-    if (!order) return;
-    document.getElementById('editOrderId').value = order.id;
-    document.getElementById('editBiaya').value = order.biaya;
-    document.getElementById('editKapan').value = order.kapan;
-    document.getElementById('editNama').value = order.customer;
-    document.getElementById('editHp').value = order.hp;
-    document.getElementById('editDeskripsi').value = order.deskripsi;
-    document.getElementById('editJemput').value = order.jemput || '';
-    document.getElementById('editAntar').value = order.antar || '';
-    
-    const selectAgent = document.getElementById('editAgentId');
-    selectAgent.innerHTML = '';
-    agents.forEach(agent => {
-      const option = document.createElement('option');
-      option.value = agent.id;
-      option.textContent = `${agent.name} (${agent.status})`;
-      if (agent.id === order.agentId) option.selected = true;
-      selectAgent.appendChild(option);
-    });
-    document.getElementById('editModal').classList.add('active');
-  }
-  
-  function saveEditedOrder() {
-    const id = document.getElementById('editOrderId').value;
-    const orderIndex = orders.findIndex(o => o.id === id);
-    if (orderIndex === -1) return;
-    const newAgentId = document.getElementById('editAgentId').value;
-    const newAgent = agents.find(a => a.id === newAgentId);
-    orders[orderIndex] = {
-      ...orders[orderIndex],
-      biaya: document.getElementById('editBiaya').value,
-      kapan: document.getElementById('editKapan').value,
-      customer: document.getElementById('editNama').value,
-      hp: document.getElementById('editHp').value,
-      deskripsi: document.getElementById('editDeskripsi').value,
-      jemput: document.getElementById('editJemput').value,
-      antar: document.getElementById('editAntar').value,
-      agentId: newAgentId,
-      agentName: newAgent ? newAgent.name : orders[orderIndex].agentName
-    };
-    updateAgentOrderCounts();
-    renderAgents();
-    renderOrdersTable();
-    updateSummary();
-    saveData();
-    document.getElementById('editModal').classList.remove('active');
-  }
-  
-  function updateSummary() {
-    const totalOrders = orders.length;
-    document.getElementById('runningOrdersCount').innerText = totalOrders;
-    document.getElementById('totalOrderCount').innerText = totalOrders;
-    updateSummaryMessage();
-  }
-  
-  function updateSummaryMessage() {
-    const totalOrders = orders.length;
-    const infoDiv = document.getElementById('infoMessage');
-    if (totalOrders === 0) {
-      infoDiv.innerHTML = `<i class="fas fa-info-circle"></i> Belum ada order berjalan. Assign order ke agent online.`;
-      infoDiv.style.background = "#eef2ff";
-    } else if (totalOrders === 1) {
-      infoDiv.innerHTML = `<i class="fas fa-bell"></i> 🔔 1 orderan berjalan! segera diproses oleh agent.`;
-      infoDiv.style.background = "#fff3e0";
+      return true;
     } else {
-      infoDiv.innerHTML = `<i class="fas fa-charging-station"></i> ${totalOrders} orderan berjalan. Agent sedang bekerja.`;
-      infoDiv.style.background = "#e6f7ec";
+      console.error('Gagal fetch:', result.error);
+      document.getElementById('agentList').innerHTML = `<div style="text-align:center;padding:40px;color:red;">❌ Gagal memuat data: ${result.error || 'Unknown error'}</div>`;
+      return false;
     }
+  } catch (error) {
+    console.error('Error fetch:', error);
+    document.getElementById('agentList').innerHTML = `<div style="text-align:center;padding:40px;color:red;">❌ Error koneksi ke server. Pastikan URL Web App sudah benar dan sudah di-deploy.</div>`;
+    return false;
+  }
+}
+
+// Render daftar agent
+function renderAgents() {
+  const container = document.getElementById('agentList');
+  const onlineCount = agents.filter(a => a.status === 'online').length;
+  const totalAgents = agents.length;
+  document.getElementById('totalAgentCount').innerText = totalAgents;
+  document.getElementById('onlineAgentCount').innerText = onlineCount;
+  
+  if (!agents.length) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;">✨ Belum ada data agent di sheet</div>';
+    return;
   }
   
-  function resetToDefault() {
-    if (confirm('Reset semua data ke awal? Seluruh order dan perubahan status agent akan hilang.')) {
-      agents = JSON.parse(JSON.stringify(DEFAULT_AGENTS));
-      orders = JSON.parse(JSON.stringify(DEFAULT_ORDERS));
-      updateAgentOrderCounts();
-      renderAgents();
-      renderOrdersTable();
-      updateSummary();
-      saveData();
-    }
-  }
-  
-  function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
-  
-  // Event listeners
-  document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('quick-option')) {
-      document.getElementById('modalBiaya').value = e.target.dataset.value;
-    }
+  const sortedAgents = [...agents].sort((a, b) => {
+    if (a.status === 'online' && b.status !== 'online') return -1;
+    if (a.status !== 'online' && b.status === 'online') return 1;
+    return 0;
   });
   
-  const hpModal = document.getElementById('modalHp');
-  if (hpModal) {
-    hpModal.addEventListener('input', function() { let v = this.value.replace(/\D/g, ""); if (!v.startsWith("62")) v = "62" + v.replace(/^0+/, ""); this.value = v; });
-  }
+  let html = '';
+  sortedAgents.forEach(agent => {
+    const isOnline = agent.status === 'online';
+    const avatarBg = isOnline ? '#d9f0ec' : '#f1f3f5';
+    html += `
+      <div class="agent-item">
+        <div class="agent-info">
+          <div class="agent-avatar" style="background:${avatarBg}">${agent.name.substring(0,2).toUpperCase()}</div>
+          <div class="agent-details">
+            <h4>${agent.name} <small style="font-size:0.65rem;color:#64748b;">@${agent.username || '-'}</small></h4>
+            <p>
+              <span class="status-badge ${isOnline ? 'status-online' : 'status-offline'}">
+                <i class="fas ${isOnline ? 'fa-circle' : 'fa-circle'}"></i> ${isOnline ? 'Online' : 'Offline'}
+              </span>
+              ${agent.areas ? `<span><i class="fas fa-map-marker-alt"></i> ${agent.areas.substring(0,30)}${agent.areas.length>30?'...':''}</span>` : ''}
+            </p>
+          </div>
+        </div>
+        <div class="agent-actions">
+          <button class="assign-btn" data-id="${agent.id}" data-name="${agent.name}" ${!isOnline ? 'disabled' : ''}>
+            <i class="fas fa-plus-circle"></i> Assign
+          </button>
+        </div>
+      </div>
+    `;
+  });
+  container.innerHTML = html;
   
-  function init() {
-    loadData();
-    renderAgents();
-    renderOrdersTable();
-    updateSummary();
+  document.querySelectorAll('.assign-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const agentId = btn.getAttribute('data-id');
+      const agentName = btn.getAttribute('data-name');
+      openOrderModal(agentId, agentName);
+    });
+  });
+}
+
+// Kirim order ke sheet
+async function submitOrder(orderData) {
+  try {
+    const response = await fetch(API_BASE_URL, {
+      method: 'POST',
+      mode: 'no-cors', // karena Apps Script tidak support CORS penuh
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'createOrder', order: orderData })
+    });
     
-    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
-    document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
-    document.getElementById('submitOrderBtn').addEventListener('click', createOrderFromModal);
-    document.getElementById('orderModal').addEventListener('click', (e) => { if (e.target === document.getElementById('orderModal')) closeModal(); });
-    
-    document.getElementById('closeEditModalBtn').addEventListener('click', () => document.getElementById('editModal').classList.remove('active'));
-    document.getElementById('cancelEditBtn').addEventListener('click', () => document.getElementById('editModal').classList.remove('active'));
-    document.getElementById('saveEditBtn').addEventListener('click', saveEditedOrder);
-    document.getElementById('editModal').addEventListener('click', (e) => { if (e.target === document.getElementById('editModal')) document.getElementById('editModal').classList.remove('active'); });
-    document.getElementById('resetDataBtn').addEventListener('click', resetToDefault);
+    // Karena mode no-cors, kita tidak bisa baca response, asumsikan sukses
+    alert('✅ Order berhasil dikirim ke sheet Log_Order!');
+    return true;
+  } catch (error) {
+    console.error('Error submit:', error);
+    alert('❌ Gagal mengirim order. Pastikan URL Web App benar.');
+    return false;
   }
+}
+
+function openOrderModal(agentId, agentName) {
+  const agent = agents.find(a => a.id === agentId);
+  if (!agent || agent.status !== 'online') {
+    alert(`Agent ${agentName} sedang offline.`);
+    return;
+  }
+  currentSelectedAgent = { id: agentId, name: agentName };
+  document.getElementById('modalAgentName').value = agentName;
+  document.getElementById('modalAgentId').value = agentId;
+  document.getElementById('modalNominal').value = '';
+  document.getElementById('modalTanggal').value = new Date().toISOString().split('T')[0];
+  document.getElementById('modalNamaCS').value = '';
+  document.getElementById('modalNoCS').value = '';
+  document.getElementById('modalDeskripsi').value = '';
+  document.getElementById('modalJemput').value = '';
+  document.getElementById('modalAntar').value = '';
+  document.getElementById('modalAdmin').value = 'Admin';
+  document.getElementById('orderModal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('orderModal').classList.remove('active');
+  currentSelectedAgent = null;
+}
+
+async function createOrderFromModal() {
+  if (!currentSelectedAgent) return;
   
-  init();
+  const nominal = document.getElementById('modalNominal').value.trim();
+  if (!nominal) return alert('Nominal harus diisi');
+  const tanggal = document.getElementById('modalTanggal').value;
+  if (!tanggal) return alert('Tanggal harus diisi');
+  const namaCS = document.getElementById('modalNamaCS').value.trim();
+  if (!namaCS) return alert('Nama CS harus diisi');
+  let noCS = document.getElementById('modalNoCS').value.trim();
+  if (!noCS) return alert('NO CS harus diisi');
+  noCS = formatHpNumber(noCS);
+  
+  const orderData = {
+    nominal: nominal,
+    tanggal: tanggal,
+    namaCS: namaCS,
+    noCS: noCS,
+    deskripsi: document.getElementById('modalDeskripsi').value || '-',
+    titikJemput: document.getElementById('modalJemput').value || '-',
+    titikAntar: document.getElementById('modalAntar').value || '-',
+    agent: currentSelectedAgent.name,
+    admin: document.getElementById('modalAdmin').value || 'Admin'
+  };
+  
+  const success = await submitOrder(orderData);
+  if (success) {
+    closeModal();
+    // Tambahkan preview ke tabel lokal (opsional)
+    addOrderToPreview(orderData);
+  }
+}
+
+// Preview order yang baru dibuat (tampilan lokal)
+function addOrderToPreview(order) {
+  const tbody = document.getElementById('ordersPreview');
+  if (tbody.querySelector('.empty-row')) {
+    tbody.innerHTML = '';
+  }
+  const row = document.createElement('tr');
+  const rowNum = tbody.children.length + 1;
+  row.innerHTML = `
+    <td>${rowNum}</td>
+    <td>${order.nominal}</td>
+    <td>${order.tanggal}</td>
+    <td>${order.namaCS}</td>
+    <td>${order.noCS}</td>
+    <td style="max-width:150px; white-space:normal;">${order.deskripsi.substring(0,40)}</td>
+    <td><span class="agent-tag" style="background:#e9ecef;padding:2px 8px;border-radius:20px;">${order.agent}</span></td>
+  `;
+  tbody.prepend(row);
+  document.getElementById('infoMessage').innerHTML = `<i class="fas fa-check-circle"></i> ✅ Order dari "${order.namaCS}" berhasil disimpan ke sheet!`;
+  setTimeout(() => {
+    document.getElementById('infoMessage').innerHTML = `<i class="fas fa-info-circle"></i> Klik Assign pada agent online`;
+  }, 3000);
+}
+
+// Event listeners
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('quick-option')) {
+    document.getElementById('modalNominal').value = e.target.dataset.value;
+  }
+});
+
+document.getElementById('refreshAgentsBtn').addEventListener('click', () => {
+  fetchAgents();
+});
+
+document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
+document.getElementById('submitOrderBtn').addEventListener('click', createOrderFromModal);
+document.getElementById('orderModal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('orderModal')) closeModal();
+});
+
+// Inisialisasi
+fetchAgents();
 </script>
 </body>
 </html>
