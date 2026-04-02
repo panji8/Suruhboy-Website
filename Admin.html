@@ -21,11 +21,8 @@
     .card-header { padding: 18px 22px; border-bottom: 1px solid #eef2f6; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
     .card-header h2 { font-size: 1.2rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
     .agent-list-container { max-height: 420px; overflow-y: auto; scrollbar-width: thin; }
-    .agent-list-container::-webkit-scrollbar { width: 5px; }
-    .agent-list-container::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
-    .agent-list-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     .agent-list { padding: 4px 0; }
-    .agent-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #f0f2f5; transition: 0.2s; }
+    .agent-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #f0f2f5; }
     .agent-item:hover { background: #fafcff; }
     .agent-info { display: flex; align-items: center; gap: 14px; flex: 1; }
     .agent-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; }
@@ -35,8 +32,8 @@
     .status-online { background: #dcfce7; color: #15803d; }
     .status-offline { background: #fee2e2; color: #b91c1c; }
     .areas-badge { background: #f1f5f9; color: #475569; padding: 2px 8px; border-radius: 20px; font-size: 0.65rem; }
-    .assign-btn { background: #2563eb; color: white; padding: 6px 14px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; }
-    .assign-btn:hover:not(:disabled) { background: #1d4ed8; transform: translateY(-1px); }
+    .assign-btn { background: #2563eb; color: white; padding: 6px 14px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .assign-btn:hover:not(:disabled) { background: #1d4ed8; }
     .assign-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
     .agent-actions { display: flex; align-items: center; gap: 14px; }
     .orders-section { background: white; border-radius: 24px; border: 1px solid #eef2f6; overflow: hidden; margin-top: 24px; }
@@ -45,7 +42,7 @@
     .orders-table th, .orders-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #ecf3f9; }
     .orders-table th { background: #f9fbfe; font-weight: 600; color: #334155; font-size: 0.8rem; }
     .empty-row td { text-align: center; padding: 40px; color: #94a3b8; }
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; z-index: 1000; visibility: hidden; opacity: 0; transition: 0.2s; }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; z-index: 1000; visibility: hidden; opacity: 0; transition: 0.2s; }
     .modal-overlay.active { visibility: visible; opacity: 1; }
     .modal-content { background: white; width: 90%; max-width: 550px; border-radius: 28px; overflow: hidden; max-height: 90vh; overflow-y: auto; }
     .modal-header { padding: 18px 22px; border-bottom: 1px solid #eef2f6; display: flex; justify-content: space-between; align-items: center; }
@@ -56,7 +53,7 @@
     .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-family: inherit; font-size: 0.9rem; }
     .quick-options { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
     .quick-option { background: #e9ecef; padding: 6px 14px; border-radius: 30px; font-size: 0.75rem; cursor: pointer; border: 1px solid #ced4da; }
-    .quick-option:hover { background: #2563eb; color: white; border-color: #2563eb; }
+    .quick-option:hover { background: #2563eb; color: white; }
     .modal-footer { padding: 16px 22px 22px; display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid #eef2f6; }
     .btn-primary { background: #2563eb; color: white; border: none; padding: 10px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; }
     .btn-secondary { background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; }
@@ -104,11 +101,11 @@
       </div>
       <div style="padding: 20px;">
         <div id="areasSummary" style="font-size: 0.8rem; color: #475569;"></div>
-        <hr style="margin: 16px 0; border-color: #eef2f6;">
+        <hr style="margin: 16px 0;">
         <div style="font-size: 0.75rem; background: #f0fdf4; padding: 12px; border-radius: 12px;">
           <i class="fas fa-check-circle" style="color: #15803d;"></i> <strong>Ready!</strong><br>
-          Klik tombol Assign pada agent ONLINE untuk membuat order baru.<br>
-          Data akan langsung tersimpan ke sheet <strong>Log_Order</strong>.
+          Klik Assign pada agent ONLINE untuk membuat order.<br>
+          Data akan tersimpan ke sheet <strong>Log_Order</strong>.
         </div>
       </div>
     </div>
@@ -125,13 +122,13 @@
           <tr><th>No</th><th>Nominal</th><th>Tanggal</th><th>Nama CS</th><th>NO CS</th><th>Deskripsi</th><th>Agent</th><th>Waktu Submit</th></tr>
         </thead>
         <tbody id="ordersPreview">
-          <tr class="empty-row"><td colspan="8">✨ Order akan muncul setelah Anda klik Assign dan submit form ✨</tr>
+          <tr class="empty-row"><td colspan="8">✨ Order akan muncul setelah Anda klik Assign ✨</tr>
         </tbody>
-      </table>
+       </table>
     </div>
   </div>
-  <footer style="margin-top: 24px; text-align: center; font-size: 0.7rem; color: #7c8ba0;">
-    <i class="fas fa-cloud-download-alt"></i> Agent data dari sheet "Online Log" | Order dikirim ke sheet "Log_Order"
+  <footer style="margin-top: 24px; text-align: center; font-size: 0.7rem;">
+    Agent data dari sheet "Online Log" | Order dikirim ke sheet "Log_Order"
   </footer>
 </div>
 
@@ -144,12 +141,23 @@
     </div>
     <div class="modal-body">
       <form id="popupOrderForm">
-        <div class="form-group"><label>Nominal *</label><input type="text" id="modalNominal" required>
-          <div class="quick-options"><span class="quick-option" data-value="10000">10.000</span><span class="quick-option" data-value="12000">12.000</span><span class="quick-option" data-value="15000">15.000</span><span class="quick-option" data-value="20000">20.000</span></div>
+        <div class="form-group">
+          <label>Nominal *</label>
+          <input type="text" id="modalNominal" required>
+          <div class="quick-options">
+            <span class="quick-option" data-value="10000">10.000</span>
+            <span class="quick-option" data-value="12000">12.000</span>
+            <span class="quick-option" data-value="15000">15.000</span>
+            <span class="quick-option" data-value="20000">20.000</span>
+          </div>
         </div>
         <div class="form-group"><label>Tanggal *</label><input type="date" id="modalTanggal" required></div>
         <div class="form-group"><label>Nama CS *</label><input type="text" id="modalNamaCS" required></div>
-        <div class="form-group"><label>NO CS (HP) *</label><input type="text" id="modalNoCS" required placeholder="08xxx atau 62xxx"></div>
+        <div class="form-group">
+          <label>NO CS (HP) *</label>
+          <input type="tel" id="modalNoCS" required placeholder="08123456789 atau 628123456789">
+          <small style="font-size: 0.65rem; color: #64748b;">Akan otomatis diformat menjadi 62xxx (contoh: 08123456789 → 628123456789)</small>
+        </div>
         <div class="form-group"><label>Deskripsi</label><textarea id="modalDeskripsi" rows="2" placeholder="Detail pesanan..."></textarea></div>
         <div class="form-group"><label>Titik Jemput</label><input type="text" id="modalJemput" placeholder="Alamat jemput..."></div>
         <div class="form-group"><label>Titik Antar</label><input type="text" id="modalAntar" placeholder="Alamat antar..."></div>
@@ -167,7 +175,7 @@
 <script>
 // ======================== KONFIGURASI ========================
 // 🔴 GANTI URL_INI dengan URL Web App hasil deploy Google Apps Script!
-const API_POST_URL = 'https://script.google.com/macros/s/AKfycbxE58ib8vGoagjYSwkJfNc67EB9R7NQPHcu3nNKk4XY70Lih2ZfIqQtRPZ-rwTIOZ1R/exec';
+const API_POST_URL = 'https://script.google.com/macros/s/YOUR_APPS_SCRIPT_URL/exec';
 
 // Konfigurasi mirroring sheet
 const SHEET_ID = '1FgWiv56J2w7A0WprwqOKJMU7BO4mX3jotW3IC397rWg';
@@ -176,27 +184,27 @@ const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?forma
 
 let agents = [];
 let currentSelectedAgent = null;
-let recentOrders = []; // untuk preview order terakhir
 
-// Helper format nomor HP
+// ========== FORMAT NO HP (LANGSUNG BERUBAH SAAT DIKETIK) ==========
 function formatHpNumber(value) {
   let v = value.replace(/\D/g, "");
+  if (v === "") return "";
   if (!v.startsWith("62")) {
     v = "62" + v.replace(/^0+/, "");
   }
   return v;
 }
 
-// Tampilkan toast notifikasi
-function showToast(message, isError = false) {
-  const toast = document.createElement('div');
-  toast.className = `toast ${isError ? 'error' : ''}`;
-  toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
-}
+// Terapkan format otomatis saat user mengetik di field NO CS
+document.getElementById('modalNoCS').addEventListener('input', function(e) {
+  let raw = this.value;
+  let formatted = formatHpNumber(raw);
+  if (raw !== formatted) {
+    this.value = formatted;
+  }
+});
 
-// ========== MIRRORING DATA AGENT (baca dari sheet) ==========
+// ========== MIRRORING DATA AGENT ==========
 function parseCSV(csvText) {
   const rows = [];
   const lines = csvText.split(/\r?\n/);
@@ -219,7 +227,7 @@ function parseCSV(csvText) {
 
 async function fetchAgentsFromSheet() {
   try {
-    document.getElementById('agentList').innerHTML = '<div style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-pulse"></i> Mengambil data dari Google Sheet...</div>';
+    document.getElementById('agentList').innerHTML = '<div style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-pulse"></i> Mengambil data...</div>';
     
     const response = await fetch(CSV_URL);
     const csvText = await response.text();
@@ -230,46 +238,32 @@ async function fetchAgentsFromSheet() {
     const headers = rows[0];
     const dataRows = rows.slice(1);
     
-    // Cari index kolom
-    let timestampIdx = -1, namaIdx = -1, usernameIdx = -1, actionIdx = -1, areasIdx = -1;
+    let namaIdx = 1, usernameIdx = 2, actionIdx = 3, areasIdx = 4, timestampIdx = 0;
     for (let i = 0; i < headers.length; i++) {
       const h = headers[i].toString().toLowerCase().trim();
-      if (h.includes('timestamp')) timestampIdx = i;
-      else if (h.includes('nama agent')) namaIdx = i;
+      if (h.includes('nama agent')) namaIdx = i;
       else if (h.includes('username')) usernameIdx = i;
       else if (h.includes('action')) actionIdx = i;
       else if (h.includes('areas')) areasIdx = i;
+      else if (h.includes('timestamp')) timestampIdx = i;
     }
     
-    if (namaIdx === -1) namaIdx = 1;
-    if (usernameIdx === -1) usernameIdx = 2;
-    if (actionIdx === -1) actionIdx = 3;
-    if (areasIdx === -1) areasIdx = 4;
-    if (timestampIdx === -1) timestampIdx = 0;
-    
-    // Iterasi dari BAWAH ke ATAS (ambil data terbaru per agent)
     const agentStatusMap = new Map();
     
     for (let i = dataRows.length - 1; i >= 0; i--) {
       const row = dataRows[i];
-      if (row.length <= Math.max(namaIdx, timestampIdx, actionIdx)) continue;
-      
-      const timestampStr = row[timestampIdx];
       const namaAgent = row[namaIdx]?.toString().trim();
+      if (!namaAgent || agentStatusMap.has(namaAgent)) continue;
+      
       const username = row[usernameIdx]?.toString().trim() || '';
       const action = row[actionIdx]?.toString().trim().toLowerCase() || '';
       const areas = row[areasIdx]?.toString().trim() || '';
-      
-      if (!namaAgent) continue;
-      if (agentStatusMap.has(namaAgent)) continue;
-      
+      const timestampStr = row[timestampIdx];
       const isOnline = action === 'online' || action === 'on';
       
       let formattedTimestamp = timestampStr;
       if (timestampStr) {
-        try {
-          formattedTimestamp = timestampStr.replace(',', ' ').replace(/\./g, ':');
-        } catch(e) {}
+        try { formattedTimestamp = timestampStr.replace(',', ' ').replace(/\./g, ':'); } catch(e) {}
       }
       
       agentStatusMap.set(namaAgent, {
@@ -291,27 +285,19 @@ async function fetchAgentsFromSheet() {
     
     renderAgents();
     updateLastSyncTime();
-    
-    return true;
   } catch (error) {
-    console.error('Error:', error);
-    document.getElementById('agentList').innerHTML = `<div style="text-align:center;padding:40px;color:red;">
-      ❌ Gagal mirroring dari Google Sheet<br>
-      <small>${error.message}</small>
-    </div>`;
-    return false;
+    document.getElementById('agentList').innerHTML = `<div style="text-align:center;padding:40px;color:red;">❌ Gagal: ${error.message}</div>`;
   }
 }
 
 function renderAgents() {
   const container = document.getElementById('agentList');
   const onlineCount = agents.filter(a => a.status === 'online').length;
-  const totalAgents = agents.length;
-  document.getElementById('totalAgentCount').innerText = totalAgents;
+  document.getElementById('totalAgentCount').innerText = agents.length;
   document.getElementById('onlineAgentCount').innerText = onlineCount;
   
   if (!agents.length) {
-    container.innerHTML = '<div style="text-align:center;padding:40px;">✨ Belum ada data agent di sheet</div>';
+    container.innerHTML = '<div style="text-align:center;padding:40px;">✨ Belum ada data agent</div>';
     return;
   }
   
@@ -324,14 +310,12 @@ function renderAgents() {
         <div class="agent-info">
           <div class="agent-avatar" style="background:${avatarBg}">${agent.name.substring(0,2).toUpperCase()}</div>
           <div class="agent-details">
-            <h4>${agent.name} <small style="font-size:0.65rem;color:#64748b;">@${agent.username || '-'}</small></h4>
+            <h4>${agent.name} <small>@${agent.username || '-'}</small></h4>
             <p>
-              <span class="status-badge ${isOnline ? 'status-online' : 'status-offline'}">
-                <i class="fas ${isOnline ? 'fa-circle' : 'fa-circle'}"></i> ${isOnline ? 'Online' : 'Offline'}
-              </span>
+              <span class="status-badge ${isOnline ? 'status-online' : 'status-offline'}">${isOnline ? 'Online' : 'Offline'}</span>
               ${agent.areas ? `<span class="areas-badge"><i class="fas fa-map-marker-alt"></i> ${agent.areas.substring(0,40)}</span>` : ''}
             </p>
-            ${agent.lastSeen ? `<small style="color:#94a3b8;">🕐 Log terbaru: ${agent.lastSeen}</small>` : ''}
+            ${agent.lastSeen ? `<small>🕐 Log terbaru: ${agent.lastSeen}</small>` : ''}
           </div>
         </div>
         <div class="agent-actions">
@@ -344,19 +328,16 @@ function renderAgents() {
   });
   container.innerHTML = html;
   
-  // Ringkasan areas
   const areasSummary = document.getElementById('areasSummary');
   const onlineAgents = agents.filter(a => a.status === 'online');
   if (onlineAgents.length > 0) {
-    areasSummary.innerHTML = `<strong><i class="fas fa-map-marked-alt"></i> Agent Online (${onlineAgents.length}):</strong><br>
-      ${onlineAgents.map(a => `• ${a.name}: ${a.areas || '-'}`).join('<br>')}`;
+    areasSummary.innerHTML = `<strong>🟢 Agent Online (${onlineAgents.length}):</strong><br>${onlineAgents.map(a => `• ${a.name}: ${a.areas || '-'}`).join('<br>')}`;
   } else {
-    areasSummary.innerHTML = '<i class="fas fa-info-circle"></i> Tidak ada agent yang online saat ini';
+    areasSummary.innerHTML = '⚪ Tidak ada agent online';
   }
   
-  // Event assign button
   document.querySelectorAll('.assign-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', () => {
       const agentId = btn.getAttribute('data-id');
       const agentName = btn.getAttribute('data-name');
       openOrderModal(agentId, agentName);
@@ -367,10 +348,18 @@ function renderAgents() {
 function updateLastSyncTime() {
   const now = new Date();
   const formatted = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-  document.getElementById('lastSyncTime').innerHTML = `<i class="fas fa-sync-alt"></i> Last sync: ${formatted} | Status dari data TERBARU per agent`;
+  document.getElementById('lastSyncTime').innerHTML = `<i class="fas fa-sync-alt"></i> Last sync: ${formatted}`;
 }
 
-// ========== ORDER FORM (POST ke Apps Script) ==========
+// ========== ORDER FORM ==========
+function showToast(message, isError = false) {
+  const toast = document.createElement('div');
+  toast.className = `toast ${isError ? 'error' : ''}`;
+  toast.innerHTML = `<i class="fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i> ${message}`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
 function openOrderModal(agentId, agentName) {
   const agent = agents.find(a => a.id === agentId);
   if (!agent || agent.status !== 'online') {
@@ -379,7 +368,6 @@ function openOrderModal(agentId, agentName) {
   }
   currentSelectedAgent = { id: agentId, name: agentName };
   document.getElementById('modalAgentName').value = agentName;
-  document.getElementById('modalAgentId').value = agentId;
   document.getElementById('modalNominal').value = '';
   document.getElementById('modalTanggal').value = new Date().toISOString().split('T')[0];
   document.getElementById('modalNamaCS').value = '';
@@ -394,23 +382,6 @@ function openOrderModal(agentId, agentName) {
 function closeModal() {
   document.getElementById('orderModal').classList.remove('active');
   currentSelectedAgent = null;
-}
-
-async function submitOrderToSheet(orderData) {
-  try {
-    const response = await fetch(API_POST_URL, {
-      method: 'POST',
-      mode: 'cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData)
-    });
-    
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    console.error('Error submit:', error);
-    return { success: false, error: error.message };
-  }
 }
 
 async function createOrderFromModal() {
@@ -441,65 +412,70 @@ async function createOrderFromModal() {
     admin: document.getElementById('modalAdmin').value || 'Admin'
   };
   
-  // Tampilkan loading
   const submitBtn = document.getElementById('submitOrderBtn');
   const originalText = submitBtn.innerHTML;
   submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Menyimpan...';
   submitBtn.disabled = true;
   
-  const result = await submitOrderToSheet(orderData);
-  
-  submitBtn.innerHTML = originalText;
-  submitBtn.disabled = false;
-  
-  if (result.success) {
-    showToast(`✅ Order untuk ${namaCS} berhasil disimpan ke sheet Log_Order!`);
-    closeModal();
-    addOrderToPreview(orderData, result.data?.dateSubmit || new Date().toLocaleString());
-  } else {
-    showToast(`❌ Gagal: ${result.error}`, true);
+  try {
+    const response = await fetch(API_POST_URL, {
+      method: 'POST',
+      mode: 'cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      showToast(`✅ Order untuk ${namaCS} berhasil disimpan!`);
+      closeModal();
+      addOrderToPreview(orderData);
+    } else {
+      showToast(`❌ Gagal: ${result.error}`, true);
+    }
+  } catch (error) {
+    showToast(`❌ Gagal koneksi ke server: ${error.message}`, true);
+  } finally {
+    submitBtn.innerHTML = originalText;
+    submitBtn.disabled = false;
   }
 }
 
-// Preview order yang baru dibuat
-function addOrderToPreview(order, submitTime) {
+function addOrderToPreview(order) {
   const tbody = document.getElementById('ordersPreview');
-  if (tbody.querySelector('.empty-row')) {
-    tbody.innerHTML = '';
-  }
+  if (tbody.querySelector('.empty-row')) tbody.innerHTML = '';
   const row = document.createElement('tr');
   const rowNum = tbody.children.length + 1;
+  const now = new Date();
+  const submitTime = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
   row.innerHTML = `
     <td>${rowNum}</td>
     <td>${order.nominal}</td>
     <td>${order.tanggal}</td>
     <td>${order.namaCS}</td>
     <td>${order.noCS}</td>
-    <td style="max-width:150px; white-space:normal;">${order.deskripsi.substring(0,40)}</td>
+    <td style="max-width:150px;">${order.deskripsi.substring(0,40)}</td>
     <td><span style="background:#e9ecef;padding:2px 8px;border-radius:20px;">${order.agent}</span></td>
     <td><small>${submitTime}</small></td>
   `;
   tbody.prepend(row);
-  
-  // Hanya tampilkan 10 order terakhir
-  while (tbody.children.length > 10) {
-    tbody.removeChild(tbody.lastChild);
-  }
+  while (tbody.children.length > 10) tbody.removeChild(tbody.lastChild);
 }
 
 // Event listeners
-document.addEventListener('click', (e) => {
-  if (e.target.classList.contains('quick-option')) {
-    document.getElementById('modalNominal').value = e.target.dataset.value;
-  }
-});
-
 document.getElementById('refreshAgentsBtn').addEventListener('click', () => fetchAgentsFromSheet());
 document.getElementById('closeModalBtn').addEventListener('click', closeModal);
 document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
 document.getElementById('submitOrderBtn').addEventListener('click', createOrderFromModal);
 document.getElementById('orderModal').addEventListener('click', (e) => {
   if (e.target === document.getElementById('orderModal')) closeModal();
+});
+
+document.querySelectorAll('.quick-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.getElementById('modalNominal').value = opt.dataset.value;
+  });
 });
 
 // Inisialisasi
