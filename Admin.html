@@ -20,46 +20,148 @@
     .card { background: white; border-radius: 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border: 1px solid #eef2f6; overflow: hidden; }
     .card-header { padding: 18px 22px; border-bottom: 1px solid #eef2f6; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
     .card-header h2 { font-size: 1.2rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
-    .agent-list-container { max-height: 420px; overflow-y: auto; scrollbar-width: thin; }
+    .agent-list-container { max-height: 500px; overflow-y: auto; scrollbar-width: thin; }
     .agent-list { padding: 4px 0; }
-    .agent-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid #f0f2f5; }
+    .agent-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f2f5;
+      transition: 0.2s;
+    }
     .agent-item:hover { background: #fafcff; }
+    .agent-item.online-agent { background: #f0fdf4; border-left: 4px solid #10B981; }
     .agent-info { display: flex; align-items: center; gap: 14px; flex: 1; }
-    .agent-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; }
+    .agent-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 1rem;
+    }
     .agent-details h4 { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .agent-details p { font-size: 0.7rem; color: #64748b; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .status-badge { font-size: 0.65rem; padding: 3px 10px; border-radius: 30px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+    .agent-details p { font-size: 0.7rem; color: #64748b; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+    .status-badge {
+      font-size: 0.65rem; padding: 3px 10px; border-radius: 30px;
+      font-weight: 600; display: inline-flex; align-items: center; gap: 5px;
+    }
     .status-online { background: #dcfce7; color: #15803d; }
     .status-offline { background: #fee2e2; color: #b91c1c; }
     .areas-badge { background: #f1f5f9; color: #475569; padding: 2px 8px; border-radius: 20px; font-size: 0.65rem; }
-    .assign-btn { background: #2563eb; color: white; padding: 6px 14px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+    .assign-btn {
+      background: #2563eb; color: white; padding: 6px 14px;
+      border-radius: 30px; font-size: 0.7rem; font-weight: 600;
+      border: none; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    }
     .assign-btn:hover:not(:disabled) { background: #1d4ed8; }
     .assign-btn:disabled { background: #cbd5e1; cursor: not-allowed; }
     .agent-actions { display: flex; align-items: center; gap: 14px; }
+    
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 24px;
+      cursor: pointer;
+    }
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #cbd5e1;
+      transition: 0.3s;
+      border-radius: 34px;
+    }
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    input:checked + .toggle-slider {
+      background-color: #15803d;
+    }
+    input:checked + .toggle-slider:before {
+      transform: translateX(24px);
+    }
+    
     .orders-section { background: white; border-radius: 24px; border: 1px solid #eef2f6; overflow: hidden; margin-top: 24px; }
     .section-title { padding: 18px 22px; border-bottom: 1px solid #eef2f6; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
     .orders-table { width: 100%; border-collapse: collapse; }
     .orders-table th, .orders-table td { padding: 14px 16px; text-align: left; border-bottom: 1px solid #ecf3f9; }
     .orders-table th { background: #f9fbfe; font-weight: 600; color: #334155; font-size: 0.8rem; }
     .empty-row td { text-align: center; padding: 40px; color: #94a3b8; }
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); display: flex; align-items: center; justify-content: center; z-index: 1000; visibility: hidden; opacity: 0; transition: 0.2s; }
+    .last-sync { font-size: 0.7rem; color: #64748b; margin-top: 12px; text-align: center; padding-bottom: 12px; }
+    .refresh-btn { background: #e2e8f0; border: none; padding: 6px 12px; border-radius: 30px; cursor: pointer; font-size: 0.7rem; }
+    .online-badge-header { background: #dcfce7; color: #15803d; padding: 6px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.2s;
+    }
     .modal-overlay.active { visibility: visible; opacity: 1; }
-    .modal-content { background: white; width: 90%; max-width: 550px; border-radius: 28px; overflow: hidden; max-height: 90vh; overflow-y: auto; }
+    .modal-content {
+      background: white;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 24px;
+      overflow: hidden;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
     .modal-header { padding: 18px 22px; border-bottom: 1px solid #eef2f6; display: flex; justify-content: space-between; align-items: center; }
     .close-modal { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #64748b; }
     .modal-body { padding: 22px; }
-    .form-group { margin-bottom: 18px; }
-    .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.85rem; }
-    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; font-family: inherit; font-size: 0.9rem; }
-    .quick-options { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
-    .quick-option { background: #e9ecef; padding: 6px 14px; border-radius: 30px; font-size: 0.75rem; cursor: pointer; border: 1px solid #ced4da; }
-    .quick-option:hover { background: #2563eb; color: white; }
     .modal-footer { padding: 16px 22px 22px; display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid #eef2f6; }
     .btn-primary { background: #2563eb; color: white; border: none; padding: 10px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; }
     .btn-secondary { background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 40px; cursor: pointer; }
-    .refresh-btn { background: #e2e8f0; border: none; padding: 6px 12px; border-radius: 30px; cursor: pointer; font-size: 0.7rem; }
-    .online-badge-header { background: #dcfce7; color: #15803d; padding: 6px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; }
-    .last-sync { font-size: 0.7rem; color: #64748b; margin-top: 12px; text-align: center; padding-bottom: 12px; }
+    
+    label { display: block; margin-top: 10px; font-weight: 600; color: #0b1220; }
+    input, textarea, select { width: 100%; padding: 12px; margin-top: 6px; border-radius: 10px; border: 1px solid #e6eef6; background: #fbfdff; }
+    textarea { min-height: 90px; }
+    .quick-options { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+    .quick-option { background: #e9ecef; padding: 8px 12px; border-radius: 20px; font-size: 14px; cursor: pointer; border: 1px solid #ced4da; }
+    .quick-option:hover { background: #007bff; color: white; }
+    
+    .dropdown-wrapper { position: relative; width: 100%; }
+    .dropdown-input { width: 100%; padding: 12px; border: 1px solid #e6eef6; border-radius: 10px; background: #fbfdff; }
+    .dropdown-list { position: absolute; top: 100%; left: 0; right: 0; max-height: 200px; overflow-y: auto; background: white; border: 1px solid #e6eef6; border-radius: 10px; margin-top: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; z-index: 1000; }
+    .dropdown-list.show { display: block; }
+    .dropdown-item { padding: 10px 12px; cursor: pointer; }
+    .dropdown-item:hover { background: #f0f2f4; }
+    
+    .result-card { background: #f8fafc; border-radius: 16px; padding: 20px; margin-top: 20px; }
+    #templateBox { background: #f0f2f4; padding: 16px; border-radius: 10px; white-space: pre-wrap; font-size: 14px; line-height: 1.5; font-family: monospace; }
+    .btn-result { display: block; margin-top: 12px; padding: 10px; text-align: center; border-radius: 10px; font-weight: 600; cursor: pointer; }
+    #copyBtn { background: #28a745; color: white; border: none; }
+    #chatBtn { background: #007bff; color: white; text-decoration: none; }
+    
     .toast { position: fixed; bottom: 20px; right: 20px; background: #15803d; color: white; padding: 12px 20px; border-radius: 30px; font-size: 0.8rem; z-index: 1001; animation: fadeInOut 3s ease; }
     .toast.error { background: #b91c1c; }
     @keyframes fadeInOut { 0% { opacity: 0; transform: translateY(20px); } 10% { opacity: 1; transform: translateY(0); } 90% { opacity: 1; } 100% { opacity: 0; transform: translateY(20px); } }
@@ -85,7 +187,7 @@
     <div class="card">
       <div class="card-header">
         <h2><i class="fas fa-headset"></i> Daftar Agent</h2>
-        <div class="online-badge-header"><i class="fas fa-arrow-down"></i> Status dari data TERBARU</div>
+        <div class="online-badge-header"><i class="fas fa-arrow-down"></i> Toggle untuk ubah status</div>
       </div>
       <div class="agent-list-container">
         <div class="agent-list" id="agentList">
@@ -103,9 +205,10 @@
         <div id="areasSummary" style="font-size: 0.8rem; color: #475569;"></div>
         <hr style="margin: 16px 0;">
         <div style="font-size: 0.75rem; background: #f0fdf4; padding: 12px; border-radius: 12px;">
-          <i class="fas fa-check-circle" style="color: #15803d;"></i> <strong>Ready!</strong><br>
-          Klik Assign pada agent ONLINE untuk membuat order.<br>
-          Data akan tersimpan ke sheet <strong>Log_Order</strong>.
+          <i class="fas fa-check-circle" style="color: #15803d;"></i> <strong>Fitur:</strong><br>
+          • Toggle switch untuk mengubah status agent<br>
+          • Klik Assign untuk membuat order baru<br>
+          • Status otomatis sinkron dengan agent
         </div>
       </div>
     </div>
@@ -119,16 +222,16 @@
     <div style="overflow-x: auto;">
       <table class="orders-table">
         <thead>
-          <tr><th>No</th><th>Nominal</th><th>Tanggal</th><th>Nama CS</th><th>NO CS</th><th>Deskripsi</th><th>Agent</th><th>Waktu Submit</th></tr>
+          <tr><th>No</th><th>Biaya</th><th>Tanggal</th><th>Nama CS</th><th>No HP</th><th>Deskripsi</th><th>Agent</th><th>Waktu</th></tr>
         </thead>
         <tbody id="ordersPreview">
-          <tr class="empty-row"><td colspan="8">✨ Order akan muncul setelah Anda klik Assign ✨</tr>
+          <tr class="empty-row"><td colspan="8">✨ Order akan muncul setelah Anda klik Assign ✨</td></tr>
         </tbody>
-       </table>
+      </table>
     </div>
   </div>
   <footer style="margin-top: 24px; text-align: center; font-size: 0.7rem;">
-    Agent data dari sheet "Online Log" | Order dikirim ke sheet "Log_Order"
+    Agent data dari sheet "Online Log" | Toggle status akan menyimpan ke log
   </footer>
 </div>
 
@@ -140,69 +243,101 @@
       <button class="close-modal" id="closeModalBtn"><i class="fas fa-times"></i></button>
     </div>
     <div class="modal-body">
-      <form id="popupOrderForm">
-        <div class="form-group">
-          <label>Nominal *</label>
-          <input type="text" id="modalNominal" required>
-          <div class="quick-options">
-            <span class="quick-option" data-value="10000">10.000</span>
-            <span class="quick-option" data-value="12000">12.000</span>
-            <span class="quick-option" data-value="15000">15.000</span>
-            <span class="quick-option" data-value="20000">20.000</span>
-          </div>
+      <form id="orderForm">
+        <label>Biaya</label>
+        <input name="biaya" required id="biaya">
+        <div class="quick-options">
+          <span class="quick-option" data-value="10rb diluar parkir">10rb diluar parkir</span>
+          <span class="quick-option" data-value="12rb diluar parkir">12rb diluar parkir</span>
+          <span class="quick-option" data-value="10.000">10.000</span>
+          <span class="quick-option" data-value="12.000">12.000</span>
         </div>
-        <div class="form-group"><label>Tanggal *</label><input type="date" id="modalTanggal" required></div>
-        <div class="form-group"><label>Nama CS *</label><input type="text" id="modalNamaCS" required></div>
-        <div class="form-group">
-          <label>NO CS (HP) *</label>
-          <input type="tel" id="modalNoCS" required placeholder="08123456789 atau 628123456789">
-          <small style="font-size: 0.65rem; color: #64748b;">Akan otomatis diformat menjadi 62xxx (contoh: 08123456789 → 628123456789)</small>
+        <label>Kapan</label>
+        <input name="kapan" type="date" required id="kapan">
+        <label>Nama</label>
+        <input name="nama" required id="nama">
+        <label>No HP</label>
+        <input name="hp" required id="hp">
+        <label>Deskripsi</label>
+        <textarea name="deskripsi" id="deskripsi"></textarea>
+        <label>Jemput</label>
+        <input name="jemput" id="jemput">
+        <label>Antar</label>
+        <input name="antar" id="antar">
+        <label>Agent</label>
+        <div class="dropdown-wrapper" id="agentDropdown">
+          <input type="text" class="dropdown-input" id="agentInput" placeholder="Ketik atau pilih agent..." autocomplete="off" required>
+          <input type="hidden" name="agent" id="agentHidden">
+          <div class="dropdown-list" id="dropdownList"></div>
         </div>
-        <div class="form-group"><label>Deskripsi</label><textarea id="modalDeskripsi" rows="2" placeholder="Detail pesanan..."></textarea></div>
-        <div class="form-group"><label>Titik Jemput</label><input type="text" id="modalJemput" placeholder="Alamat jemput..."></div>
-        <div class="form-group"><label>Titik Antar</label><input type="text" id="modalAntar" placeholder="Alamat antar..."></div>
-        <div class="form-group"><label>Agent *</label><input type="text" id="modalAgentName" readonly style="background:#f0f2f4; font-weight:600;"><input type="hidden" id="modalAgentId"></div>
-        <div class="form-group"><label>Admin</label><input type="text" id="modalAdmin" value="Admin"></div>
+        <label>admin</label>
+        <input name="admin" id="admin" value="Admin">
       </form>
+      <div id="resultContainer" style="display:none;">
+        <div class="result-card">
+          <h4 style="margin-bottom:12px;">🟦 ORDER MASUK</h4>
+          <pre id="templateBox"></pre>
+          <button id="copyBtn" class="btn-result">COPY TEMPLATE</button>
+          <a id="chatBtn" class="btn-result" target="_blank">CHAT KE AGENT</a>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn-secondary" id="cancelModalBtn">Batal</button>
-      <button type="button" class="btn-primary" id="submitOrderBtn"><i class="fas fa-paper-plane"></i> Buat Order</button>
+      <button type="button" class="btn-primary" id="submitOrderBtn"><i class="fas fa-paper-plane"></i> SUBMIT</button>
     </div>
   </div>
 </div>
 
 <script>
 // ======================== KONFIGURASI ========================
-// 🔴 GANTI URL_INI dengan URL Web App hasil deploy Google Apps Script!
-const API_POST_URL = 'https://script.google.com/macros/s/AKfycbyiuDKgD7LrmJovb31WVVJ3AiCQWj69VQPyCTDII9xOJulmOBVXscqCpr2b0mdaW6EzPg/exec';
+// Web App URL untuk log online (sama dengan kode agent)
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyEyzeBKEsP_6PuAJDnuFmeqq0LBNNnIs97fnfQ6HZ_dpiUgrX9wdD0LNvbSyMKw0l06g/exec';
 
-// Konfigurasi mirroring sheet
+// Sheet Online Log untuk mirroring
 const SHEET_ID = '1FgWiv56J2w7A0WprwqOKJMU7BO4mX3jotW3IC397rWg';
 const GID_ONLINE_LOG = '1931290882';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID_ONLINE_LOG}`;
 
-let agents = [];
-let currentSelectedAgent = null;
+// Key untuk shared storage (sama dengan kode agent)
+const AGENT_STATUS_KEY = 'suruhboy_all_agents_status';
 
-// ========== FORMAT NO HP (LANGSUNG BERUBAH SAAT DIKETIK) ==========
-function formatHpNumber(value) {
-  let v = value.replace(/\D/g, "");
-  if (v === "") return "";
-  if (!v.startsWith("62")) {
-    v = "62" + v.replace(/^0+/, "");
-  }
-  return v;
+let agents = [];
+let masterAgentList = [];
+let currentSelectedAgent = null;
+let recentOrders = [];
+
+// ========== SHARED STORAGE FUNCTIONS (sama dengan kode agent) ==========
+function getAllAgentStatus() {
+  return JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
 }
 
-// Terapkan format otomatis saat user mengetik di field NO CS
-document.getElementById('modalNoCS').addEventListener('input', function(e) {
-  let raw = this.value;
-  let formatted = formatHpNumber(raw);
-  if (raw !== formatted) {
-    this.value = formatted;
-  }
-});
+function updateSharedAgentStatus(username, name, status, areas) {
+  const allStatus = JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
+  allStatus[username] = {
+    name: name,
+    status: status,
+    areas: areas,
+    lastActive: new Date().toISOString(),
+    lastActiveReadable: new Date().toLocaleString('id-ID')
+  };
+  localStorage.setItem(AGENT_STATUS_KEY, JSON.stringify(allStatus));
+}
+
+// Kirim log ke Web App (sama dengan kode agent)
+async function saveOnlineLog(namaAgent, username, action, areas) {
+  try {
+    const params = new URLSearchParams();
+    params.append('type', 'online');
+    params.append('timestamp', new Date().toLocaleString('id-ID'));
+    params.append('namaAgent', namaAgent);
+    params.append('username', username);
+    params.append('action', action);
+    params.append('areas', areas || '-');
+    await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
+    console.log(`Log saved: ${namaAgent} -> ${action}`);
+  } catch(e) { console.warn('Error saving log:', e); }
+}
 
 // ========== MIRRORING DATA AGENT ==========
 function parseCSV(csvText) {
@@ -249,11 +384,16 @@ async function fetchAgentsFromSheet() {
     }
     
     const agentStatusMap = new Map();
+    const agentNamesSet = new Set();
     
     for (let i = dataRows.length - 1; i >= 0; i--) {
       const row = dataRows[i];
       const namaAgent = row[namaIdx]?.toString().trim();
-      if (!namaAgent || agentStatusMap.has(namaAgent)) continue;
+      if (!namaAgent) continue;
+      
+      agentNamesSet.add(namaAgent);
+      
+      if (agentStatusMap.has(namaAgent)) continue;
       
       const username = row[usernameIdx]?.toString().trim() || '';
       const action = row[actionIdx]?.toString().trim().toLowerCase() || '';
@@ -283,8 +423,11 @@ async function fetchAgentsFromSheet() {
       return 0;
     });
     
+    masterAgentList = Array.from(agentNamesSet).sort();
+    
     renderAgents();
     updateLastSyncTime();
+    updateDropdownList();
   } catch (error) {
     document.getElementById('agentList').innerHTML = `<div style="text-align:center;padding:40px;color:red;">❌ Gagal: ${error.message}</div>`;
   }
@@ -292,34 +435,62 @@ async function fetchAgentsFromSheet() {
 
 function renderAgents() {
   const container = document.getElementById('agentList');
-  const onlineCount = agents.filter(a => a.status === 'online').length;
-  document.getElementById('totalAgentCount').innerText = agents.length;
+  const sharedStatus = getAllAgentStatus();
+  
+  // Gabungkan data dari sheet dengan shared storage
+  const enrichedAgents = agents.map(agent => {
+    const statusData = sharedStatus[agent.username];
+    if (statusData) {
+      return {
+        ...agent,
+        status: statusData.status === 'online' ? 'online' : 'offline',
+        areas: statusData.areas?.join(', ') || agent.areas,
+        lastActive: statusData.lastActiveReadable
+      };
+    }
+    return agent;
+  });
+  
+  const onlineCount = enrichedAgents.filter(a => a.status === 'online').length;
+  document.getElementById('totalAgentCount').innerText = enrichedAgents.length;
   document.getElementById('onlineAgentCount').innerText = onlineCount;
   
-  if (!agents.length) {
+  if (!enrichedAgents.length) {
     container.innerHTML = '<div style="text-align:center;padding:40px;">✨ Belum ada data agent</div>';
     return;
   }
   
+  enrichedAgents.sort((a, b) => {
+    if (a.status === 'online' && b.status !== 'online') return -1;
+    if (a.status !== 'online' && b.status === 'online') return 1;
+    return 0;
+  });
+  
   let html = '';
-  agents.forEach(agent => {
+  enrichedAgents.forEach(agent => {
     const isOnline = agent.status === 'online';
     const avatarBg = isOnline ? '#d9f0ec' : '#f1f3f5';
     html += `
-      <div class="agent-item">
+      <div class="agent-item ${isOnline ? 'online-agent' : ''}" data-agent="${agent.name}" data-username="${agent.username}">
         <div class="agent-info">
           <div class="agent-avatar" style="background:${avatarBg}">${agent.name.substring(0,2).toUpperCase()}</div>
           <div class="agent-details">
-            <h4>${agent.name} <small>@${agent.username || '-'}</small></h4>
+            <h4>${agent.name} <small style="font-size:0.65rem;color:#64748b;">@${agent.username || '-'}</small></h4>
             <p>
-              <span class="status-badge ${isOnline ? 'status-online' : 'status-offline'}">${isOnline ? 'Online' : 'Offline'}</span>
-              ${agent.areas ? `<span class="areas-badge"><i class="fas fa-map-marker-alt"></i> ${agent.areas.substring(0,40)}</span>` : ''}
+              <span class="status-badge ${isOnline ? 'status-online' : 'status-offline'}">
+                <i class="fas ${isOnline ? 'fa-circle' : 'fa-power-off'}"></i> ${isOnline ? 'Online' : 'Offline'}
+              </span>
+              ${agent.areas && agent.areas !== '-' ? `<span class="areas-badge"><i class="fas fa-map-marker-alt"></i> ${agent.areas.substring(0,40)}</span>` : ''}
             </p>
-            ${agent.lastSeen ? `<small>🕐 Log terbaru: ${agent.lastSeen}</small>` : ''}
+            ${agent.lastActive ? `<small><i class="fas fa-clock"></i> ${agent.lastActive}</small>` : (agent.lastSeen ? `<small>🕐 Log terbaru: ${agent.lastSeen}</small>` : '')}
           </div>
         </div>
         <div class="agent-actions">
-          <button class="assign-btn" data-id="${agent.id}" data-name="${agent.name}" ${!isOnline ? 'disabled' : ''}>
+          <label class="toggle-switch">
+            <input type="checkbox" class="status-toggle" data-username="${agent.username}" data-name="${agent.name}" ${isOnline ? 'checked' : ''}>
+            <span class="toggle-slider"></span>
+          </label>
+          <button class="assign-btn" data-name="${agent.name}" ${!isOnline ? 'disabled' : ''}>
             <i class="fas fa-plus-circle"></i> Assign
           </button>
         </div>
@@ -328,30 +499,59 @@ function renderAgents() {
   });
   container.innerHTML = html;
   
+  // Event listener untuk toggle
+  document.querySelectorAll('.status-toggle').forEach(toggle => {
+    toggle.addEventListener('change', async (e) => {
+      e.stopPropagation();
+      const username = toggle.getAttribute('data-username');
+      const agentName = toggle.getAttribute('data-name');
+      const isChecked = toggle.checked;
+      
+      await toggleAgentStatus(username, agentName, isChecked);
+    });
+  });
+  
+  // Event listener untuk assign button
+  document.querySelectorAll('.assign-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const agentName = btn.getAttribute('data-name');
+      openOrderModal(agentName);
+    });
+  });
+  
+  // Ringkasan areas
   const areasSummary = document.getElementById('areasSummary');
-  const onlineAgents = agents.filter(a => a.status === 'online');
+  const onlineAgents = enrichedAgents.filter(a => a.status === 'online');
   if (onlineAgents.length > 0) {
     areasSummary.innerHTML = `<strong>🟢 Agent Online (${onlineAgents.length}):</strong><br>${onlineAgents.map(a => `• ${a.name}: ${a.areas || '-'}`).join('<br>')}`;
   } else {
     areasSummary.innerHTML = '⚪ Tidak ada agent online';
   }
+}
+
+async function toggleAgentStatus(username, agentName, isOnline) {
+  const status = isOnline ? 'online' : 'offline';
+  const action = isOnline ? 'Online' : 'Offline';
+  const areas = isOnline ? (agents.find(a => a.username === username)?.areas || '-') : '-';
   
-  document.querySelectorAll('.assign-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const agentId = btn.getAttribute('data-id');
-      const agentName = btn.getAttribute('data-name');
-      openOrderModal(agentId, agentName);
-    });
-  });
+  // Simpan ke shared storage
+  updateSharedAgentStatus(username, agentName, status, isOnline ? (areas.split(', ') || []) : []);
+  
+  // Kirim log ke Web App (sama seperti kode agent)
+  await saveOnlineLog(agentName, username, action, areas);
+  
+  // Refresh tampilan
+  renderAgents();
+  
+  showToast(`✅ ${agentName} ${isOnline ? 'Online' : 'Offline'}`, !isOnline);
 }
 
 function updateLastSyncTime() {
   const now = new Date();
   const formatted = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
-  document.getElementById('lastSyncTime').innerHTML = `<i class="fas fa-sync-alt"></i> Last sync: ${formatted}`;
+  document.getElementById('lastSyncTime').innerHTML = `<i class="fas fa-sync-alt"></i> Last sync: ${formatted} | Status dari shared storage + sheet`;
 }
 
-// ========== ORDER FORM ==========
 function showToast(message, isError = false) {
   const toast = document.createElement('div');
   toast.className = `toast ${isError ? 'error' : ''}`;
@@ -360,89 +560,86 @@ function showToast(message, isError = false) {
   setTimeout(() => toast.remove(), 3000);
 }
 
-function openOrderModal(agentId, agentName) {
-  const agent = agents.find(a => a.id === agentId);
-  if (!agent || agent.status !== 'online') {
-    showToast(`Agent ${agentName} sedang offline!`, true);
-    return;
+// ========== DROPDOWN AGENT ==========
+const agentInput = document.getElementById("agentInput");
+const agentHidden = document.getElementById("agentHidden");
+const dropdownList = document.getElementById("dropdownList");
+const dropdownWrapper = document.getElementById("agentDropdown");
+
+function updateDropdownList() {
+  const filter = agentInput?.value || "";
+  const filteredAgents = masterAgentList.filter(agent => 
+    agent.toLowerCase().includes(filter.toLowerCase())
+  );
+  
+  if (!dropdownList) return;
+  
+  if (filteredAgents.length === 0) {
+    dropdownList.innerHTML = '<div class="no-results">Tidak ada agent</div>';
+  } else {
+    dropdownList.innerHTML = filteredAgents.map(agent => 
+      `<div class="dropdown-item" data-value="${agent}">${agent}</div>`
+    ).join('');
   }
-  currentSelectedAgent = { id: agentId, name: agentName };
-  document.getElementById('modalAgentName').value = agentName;
-  document.getElementById('modalNominal').value = '';
-  document.getElementById('modalTanggal').value = new Date().toISOString().split('T')[0];
-  document.getElementById('modalNamaCS').value = '';
-  document.getElementById('modalNoCS').value = '';
-  document.getElementById('modalDeskripsi').value = '';
-  document.getElementById('modalJemput').value = '';
-  document.getElementById('modalAntar').value = '';
-  document.getElementById('modalAdmin').value = 'Admin';
-  document.getElementById('orderModal').classList.add('active');
 }
 
-function closeModal() {
-  document.getElementById('orderModal').classList.remove('active');
-  currentSelectedAgent = null;
+function showDropdown(filter = "") {
+  const filteredAgents = masterAgentList.filter(agent => 
+    agent.toLowerCase().includes(filter.toLowerCase())
+  );
+  
+  if (filteredAgents.length === 0) {
+    dropdownList.innerHTML = '<div class="no-results">Tidak ada agent</div>';
+  } else {
+    dropdownList.innerHTML = filteredAgents.map(agent => 
+      `<div class="dropdown-item" data-value="${agent}">${agent}</div>`
+    ).join('');
+  }
+  dropdownList.classList.add('show');
 }
 
-async function createOrderFromModal() {
-  if (!currentSelectedAgent) return;
-  
-  const nominal = document.getElementById('modalNominal').value.trim();
-  if (!nominal) { showToast('Nominal harus diisi!', true); return; }
-  
-  const tanggal = document.getElementById('modalTanggal').value;
-  if (!tanggal) { showToast('Tanggal harus diisi!', true); return; }
-  
-  const namaCS = document.getElementById('modalNamaCS').value.trim();
-  if (!namaCS) { showToast('Nama CS harus diisi!', true); return; }
-  
-  let noCS = document.getElementById('modalNoCS').value.trim();
-  if (!noCS) { showToast('NO CS harus diisi!', true); return; }
-  noCS = formatHpNumber(noCS);
-  
-  const orderData = {
-    nominal: nominal,
-    tanggal: tanggal,
-    namaCS: namaCS,
-    noCS: noCS,
-    deskripsi: document.getElementById('modalDeskripsi').value || '-',
-    titikJemput: document.getElementById('modalJemput').value || '-',
-    titikAntar: document.getElementById('modalAntar').value || '-',
-    agent: currentSelectedAgent.name,
-    admin: document.getElementById('modalAdmin').value || 'Admin'
-  };
-  
-  const submitBtn = document.getElementById('submitOrderBtn');
-  const originalText = submitBtn.innerHTML;
-  submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Menyimpan...';
-  submitBtn.disabled = true;
-  
-  try {
-    const response = await fetch(API_POST_URL, {
-      method: 'POST',
-      mode: 'cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData)
-    });
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      showToast(`✅ Order untuk ${namaCS} berhasil disimpan!`);
-      closeModal();
-      addOrderToPreview(orderData);
-    } else {
-      showToast(`❌ Gagal: ${result.error}`, true);
+if (agentInput) {
+  agentInput.addEventListener('focus', () => showDropdown(agentInput.value));
+  agentInput.addEventListener('input', (e) => showDropdown(e.target.value));
+}
+
+document.addEventListener('click', (e) => {
+  if (dropdownWrapper && !dropdownWrapper.contains(e.target)) {
+    dropdownList.classList.remove('show');
+  }
+});
+
+if (dropdownList) {
+  dropdownList.addEventListener('click', (e) => {
+    const item = e.target.closest('.dropdown-item');
+    if (item) {
+      const value = item.dataset.value;
+      agentInput.value = value;
+      agentHidden.value = value;
+      dropdownList.classList.remove('show');
     }
-  } catch (error) {
-    showToast(`❌ Gagal koneksi ke server: ${error.message}`, true);
-  } finally {
-    submitBtn.innerHTML = originalText;
-    submitBtn.disabled = false;
-  }
+  });
 }
 
-function addOrderToPreview(order) {
+// ========== FORM ORDER ==========
+const hpInput = document.getElementById("hp");
+if (hpInput) {
+  hpInput.addEventListener("input", function () {
+    let v = this.value.replace(/\D/g, "");
+    if (!v.startsWith("62")) {
+      v = "62" + v.replace(/^0+/, "");
+    }
+    this.value = v;
+  });
+}
+
+document.querySelectorAll('.quick-option').forEach(option => {
+  option.addEventListener('click', function() {
+    document.getElementById('biaya').value = this.dataset.value;
+  });
+});
+
+function addOrderToPreview(data) {
   const tbody = document.getElementById('ordersPreview');
   if (tbody.querySelector('.empty-row')) tbody.innerHTML = '';
   const row = document.createElement('tr');
@@ -451,36 +648,123 @@ function addOrderToPreview(order) {
   const submitTime = `${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
   row.innerHTML = `
     <td>${rowNum}</td>
-    <td>${order.nominal}</td>
-    <td>${order.tanggal}</td>
-    <td>${order.namaCS}</td>
-    <td>${order.noCS}</td>
-    <td style="max-width:150px;">${order.deskripsi.substring(0,40)}</td>
-    <td><span style="background:#e9ecef;padding:2px 8px;border-radius:20px;">${order.agent}</span></td>
+    <td>${data.biaya || '-'}</td>
+    <td>${data.kapan || '-'}</td>
+    <td>${data.nama || '-'}</td>
+    <td>${data.hp || '-'}</td>
+    <td style="max-width:150px;">${(data.deskripsi || '-').substring(0,40)}</td>
+    <td><span style="background:#e9ecef;padding:2px 8px;border-radius:20px;">${data.agent || '-'}</span></td>
     <td><small>${submitTime}</small></td>
   `;
   tbody.prepend(row);
   while (tbody.children.length > 10) tbody.removeChild(tbody.lastChild);
 }
 
-// Event listeners
-document.getElementById('refreshAgentsBtn').addEventListener('click', () => fetchAgentsFromSheet());
+// ========== MODAL ==========
+function openOrderModal(agentName) {
+  const agent = agents.find(a => a.name === agentName);
+  if (!agent || agent.status !== 'online') {
+    showToast(`Agent ${agentName} sedang offline!`, true);
+    return;
+  }
+  
+  document.getElementById('orderForm').reset();
+  document.getElementById('resultContainer').style.display = 'none';
+  
+  agentInput.value = agentName;
+  agentHidden.value = agentName;
+  
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('kapan').value = today;
+  document.getElementById('admin').value = 'Admin';
+  
+  currentSelectedAgent = agentName;
+  document.getElementById('orderModal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('orderModal').classList.remove('active');
+  currentSelectedAgent = null;
+}
+
+document.getElementById('submitOrderBtn').addEventListener('click', async function() {
+  if (!agentInput.value.trim()) {
+    showToast("Pilih atau ketik nama agent!", true);
+    return;
+  }
+  agentHidden.value = agentInput.value;
+  
+  const submitBtn = document.getElementById('submitOrderBtn');
+  const originalText = submitBtn.innerHTML;
+  submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Mengirim...';
+  submitBtn.disabled = true;
+  
+  const form = document.getElementById('orderForm');
+  const formData = new FormData(form);
+  const data = {};
+  formData.forEach((v, k) => data[k] = v);
+  
+  try {
+    // Kirim ke Apps Script order (gunakan URL yang sudah ada)
+    const ORDER_API_URL = 'https://script.google.com/macros/s/AKfycbwinE9yP9HTE4WWdnvMpu0PJUGPnpBaWg9ENNdtQGMpaIE4bYcTHEyxRE1atiFWCTRv/exec';
+    await fetch(ORDER_API_URL, { method: "POST", mode: 'no-cors', body: formData });
+    
+    const template = `
+🟦 ORDER MASUK
+
+📦 Biaya: ${data.biaya || '-'}
+📅 Kapan: ${data.kapan || '-'}
+👤 Nama: ${data.nama || '-'}
+📱 https://wa.me/${data.hp || ''}?text=${encodeURIComponent("Hai kak, dengan Suruhboy disini")}
+📝 Deskripsi: ${data.deskripsi || '-'}
+
+📍 Jemput: ${data.jemput || '-'}
+📍 Antar: ${data.antar || '-'}
+
+🧑‍💼 Agent: ${data.agent || '-'}
+    `.trim();
+    
+    document.getElementById('templateBox').textContent = template;
+    document.getElementById('resultContainer').style.display = 'block';
+    document.getElementById('chatBtn').href = "https://chat.whatsapp.com/DlIfRxaICuRCXc1ZndEDTc";
+    document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth' });
+    
+    showToast(`✅ Order untuk ${data.nama} berhasil dikirim!`);
+    addOrderToPreview(data);
+    
+  } catch (error) {
+    showToast(`❌ Gagal: ${error.message}`, true);
+  }
+  
+  submitBtn.innerHTML = originalText;
+  submitBtn.disabled = false;
+});
+
+document.getElementById('copyBtn')?.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(document.getElementById('templateBox').textContent);
+    const copyBtn = document.getElementById('copyBtn');
+    copyBtn.textContent = "✔ TERSALIN!";
+    copyBtn.style.background = "#1e7c33";
+    setTimeout(() => {
+      copyBtn.textContent = "COPY TEMPLATE";
+      copyBtn.style.background = "#28a745";
+    }, 1500);
+  } catch {
+    alert("Gagal menyalin!");
+  }
+});
+
 document.getElementById('closeModalBtn').addEventListener('click', closeModal);
 document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
-document.getElementById('submitOrderBtn').addEventListener('click', createOrderFromModal);
 document.getElementById('orderModal').addEventListener('click', (e) => {
   if (e.target === document.getElementById('orderModal')) closeModal();
 });
+document.getElementById('refreshAgentsBtn').addEventListener('click', () => fetchAgentsFromSheet());
 
-document.querySelectorAll('.quick-option').forEach(opt => {
-  opt.addEventListener('click', () => {
-    document.getElementById('modalNominal').value = opt.dataset.value;
-  });
-});
-
-// Inisialisasi
+// Auto refresh setiap 15 detik
 fetchAgentsFromSheet();
-setInterval(() => fetchAgentsFromSheet(), 30000);
+setInterval(() => fetchAgentsFromSheet(), 15000);
 </script>
 </body>
 </html>
