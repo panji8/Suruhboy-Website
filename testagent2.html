@@ -668,6 +668,10 @@
         const ORDER_SHEET_NAME = 'Mirroring';
         const LOGIN_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_LOGIN}/gviz/tq?tqx=out:json&sheet=Sheet1`;
         const ORDER_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_ORDER}/gviz/tq?tqx=out:csv&sheet=${ORDER_SHEET_NAME}`;
+        
+        // URL untuk membaca Online Log (CSV)
+        const ONLINE_LOG_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_LOGIN}/gviz/tq?tqx=out:csv&sheet=Online Log`;
+        
         const COL = { TANGGAL: 2, CUSTOMER: 3, AGENT: 8, NOMINAL: 10, MINGGU: 15 };
         const KECAMATAN = ["Ampel","Andong","Banyudono","Boyolali Kota","Cepogo","Juwangi","Karanggede","Kemusu","Klego","Mojosongo","Musuk","Ngemplak","Nogosari","Sambi","Sawit","Selo","Simo","Tamansari","Teras","Wonosegoro"];
 
@@ -678,14 +682,140 @@
         let pollingInterval = null;
         let adminRefreshInterval = null;
         
-        // KEY untuk shared storage (agar admin bisa baca status agent)
+        // KEY untuk shared storage (sebagai fallback jika sheet tidak bisa dibaca)
         const AGENT_STATUS_KEY = 'suruhboy_all_agents_status';
         
         // ============================================
-        // SHARED STORAGE - Semua agent status disimpan di 1 tempat
+        // FUNGSI MEMBACA STATUS DARI SHEET ONLINE LOG
         // ============================================
         
-        // Update status semua agent ke shared storage
+        // Membaca sheet Online Log dan mendapatkan status terbaru untuk semua agent
+        // Baris terbaru adalah baris paling bawah (data terakhir)
+        async function fetchOnlineLogFromSheet() {
+            try {
+                const response = await fetch(ONLINE_LOG_CSV_URL);
+                if (!response.ok) throw new Error('Gagal fetch Online Log');
+                const csvText = await response.text();
+                
+                // Parse CSV manual
+                const lines = [];
+                let line = '', inQ = false;
+                for (let i = 0; i < csvText.length; i++) {
+                    const c = csvText[i];
+                    if (c === '"') inQ = !inQ;
+                    line += c;
+                    if (c === '\n' && !inQ) { lines.push(line); line = ''; }
+                }
+                if (line.trim()) lines.push(line);
+                
+                if (lines.length < 2) return {};
+                
+                // Ambil header dari baris pertama
+                const headers = parseCSVLine(lines[0]);
+                // Cari index kolom: timestamp, namaAgent, username, action, areas
+                let tsIdx = -1, namaIdx = -1, userIdx = -1, actionIdx = -1, areasIdx = -1;
+                for (let i = 0; i < headers.length; i++) {
+                    const h = headers[i].toLowerCase();
+                    if (h.includes('timestamp') || h.includes('waktu')) tsIdx = i;
+                    if (h.includes('namaagent') || h.includes('nama_agent') || h.includes('nama')) namaIdx = i;
+                    if (h.includes('username')) userIdx = i;
+                    if (h.includes('action')) actionIdx = i;
+                    if (h.includes('areas') || h.includes('area')) areasIdx = i;
+                }
+                
+                if (namaIdx === -1 && userIdx === -1) return {};
+                
+                // Kumpulkan data per agent, ambil baris terakhir untuk setiap agent
+                const agentLastStatus = new Map(); // key: username/nama, value: { status, areas, timestamp }
+                
+                // Loop dari baris ke-1 sampai akhir (data terbaru ada di bawah)
+                for (let i = 1; i < lines.length; i++) {
+                    if (!lines[i].trim()) continue;
+                    const cols = parseCSVLine(lines[i]);
+                    if (cols.length === 0) continue;
+                    
+                    const namaAgent = (namaIdx >= 0 && cols[namaIdx]) ? cols[namaIdx].trim() : '';
+                    const username = (userIdx >= 0 && cols[userIdx]) ? cols[userIdx].trim() : '';
+                    const action = (actionIdx >= 0 && cols[actionIdx]) ? cols[actionIdx].trim().toLowerCase() : '';
+                    const areas = (areasIdx >= 0 && cols[areasIdx]) ? cols[areasIdx].trim() : '';
+                    const timestamp = (tsIdx >= 0 && cols[tsIdx]) ? cols[tsIdx] : new Date().toISOString();
+                    
+                    const identifier = username || namaAgent;
+                    if (!identifier) continue;
+                    
+                    // Karena loop dari atas ke bawah, data terakhir akan overwrite
+                    // Ini sesuai karena baris terakhir adalah data terbaru
+                    let status = 'offline';
+                    if (action === 'online') status = 'online';
+                    else if (action === 'offline') status = 'offline';
+                    
+                    agentLastStatus.set(identifier, {
+                        status: status,
+                        areas: areas,
+                        timestamp: timestamp,
+                        name: namaAgent || identifier,
+                        username: username || identifier
+                    });
+                }
+                
+                return Object.fromEntries(agentLastStatus);
+                
+            } catch (error) {
+                console.error('Error membaca Online Log:', error);
+                return null;
+            }
+        }
+        
+        // Helper parse CSV line
+        function parseCSVLine(line) {
+            const cols = [];
+            let cur = '', inQuote = false;
+            for (let j = 0; j < line.length; j++) {
+                const c = line[j];
+                if (c === '"') inQuote = !inQuote;
+                else if (c === ',' && !inQuote) {
+                    cols.push(cur.trim());
+                    cur = '';
+                } else cur += c;
+            }
+            cols.push(cur.trim());
+            return cols.map(v => v.replace(/^"|"$/g, ''));
+        }
+        
+        // Fungsi untuk mengecek status agent dari sheet Online Log
+        // Mengembalikan { status, areas, forcedByAdmin }
+        async function checkAgentStatusFromSheet(username, agentName) {
+            try {
+                const allStatus = await fetchOnlineLogFromSheet();
+                if (!allStatus) return null;
+                
+                // Cari berdasarkan username atau nama
+                let statusData = allStatus[username];
+                if (!statusData && agentName) {
+                    statusData = allStatus[agentName];
+                }
+                if (!statusData) {
+                    // Coba cari dengan case insensitive
+                    for (const [key, val] of Object.entries(allStatus)) {
+                        if (key.toLowerCase() === username.toLowerCase() || 
+                            (agentName && key.toLowerCase() === agentName.toLowerCase())) {
+                            statusData = val;
+                            break;
+                        }
+                    }
+                }
+                
+                return statusData;
+            } catch (e) {
+                console.warn('Gagal cek status dari sheet:', e);
+                return null;
+            }
+        }
+        
+        // ============================================
+        // SHARED STORAGE (fallback)
+        // ============================================
+        
         function updateSharedAgentStatus(username, name, status, areas) {
             const allStatus = JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
             allStatus[username] = {
@@ -696,12 +826,9 @@
                 lastActiveReadable: new Date().toLocaleString('id-ID')
             };
             localStorage.setItem(AGENT_STATUS_KEY, JSON.stringify(allStatus));
-            
-            // Trigger event untuk admin yang sedang membuka dashboard
             window.dispatchEvent(new CustomEvent('agentStatusChanged', { detail: { username, status } }));
         }
         
-        // Hapus status agent dari shared storage (saat logout)
         function removeSharedAgentStatus(username) {
             const allStatus = JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
             delete allStatus[username];
@@ -709,7 +836,6 @@
             window.dispatchEvent(new CustomEvent('agentStatusChanged', { detail: { username, status: 'offline' } }));
         }
         
-        // Baca semua status agent dari shared storage
         function getAllAgentStatus() {
             return JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
         }
@@ -809,7 +935,7 @@
         // ============================================
         // LOAD ORDERS (untuk agent)
         // ============================================
-        function parseCSV(csv) {
+        function parseCSVOrder(csv) {
             const lines = [];
             let line = '', inQ = false;
             for (let i = 0; i < csv.length; i++) {
@@ -861,7 +987,7 @@
                 const res = await fetch(ORDER_CSV_URL);
                 if (!res.ok) throw new Error();
                 const csv = await res.text();
-                rawOrders = parseCSV(csv);
+                rawOrders = parseCSVOrder(csv);
                 if (rawOrders.length > 0) {
                     const { agg, details } = aggregate(rawOrders);
                     aggregated = agg;
@@ -904,7 +1030,6 @@
             if (!isNaN(val)) { weekIndex = val; renderWeek(weekIndex); }
         }
         
-        // Refresh functions untuk agent dashboard
         window.refreshAgentOrders = async function() {
             showNotification('🔄 Memuat ulang data order...', 'info');
             await loadOrders();
@@ -918,8 +1043,52 @@
         };
 
         // ============================================
-        // AGENT STATUS
+        // AGENT STATUS dengan pembacaan dari Sheet Online Log
         // ============================================
+        
+        // Fungsi untuk sinkronisasi status agent dari sheet (dipanggil setiap polling)
+        async function syncStatusFromSheet() {
+            if (!currentUser || isAdmin) return;
+            
+            try {
+                const sheetStatus = await checkAgentStatusFromSheet(currentUser.username, currentUser.name);
+                
+                if (sheetStatus) {
+                    // Jika di sheet tercatat offline, tapi agent sedang online -> force offline
+                    if (sheetStatus.status === 'offline' && agentStatus.status === 'available') {
+                        showNotification('⚠️ Anda telah di-offline-kan oleh Admin! Status diperbarui dari sistem.', 'warning');
+                        agentStatus.status = 'offline';
+                        selectedAreas = [];
+                        agentStatus.areas = [];
+                        updateAgentStatusUI();
+                        updateSharedAgentStatus(currentUser.username, currentUser.name, 'offline', []);
+                        
+                        // Matikan toggle
+                        const toggle = document.getElementById('agentStatusToggle');
+                        if (toggle) toggle.checked = false;
+                    }
+                    // Jika di sheet online, tapi agent offline secara lokal -> update lokal
+                    else if (sheetStatus.status === 'online' && agentStatus.status !== 'available') {
+                        // Parse areas dari sheet
+                        let areasFromSheet = [];
+                        if (sheetStatus.areas && sheetStatus.areas !== '-') {
+                            areasFromSheet = sheetStatus.areas.split(',').map(a => a.trim());
+                        }
+                        if (areasFromSheet.length > 0) {
+                            agentStatus.status = 'available';
+                            selectedAreas = areasFromSheet;
+                            agentStatus.areas = areasFromSheet;
+                            updateAgentStatusUI();
+                            updateSharedAgentStatus(currentUser.username, currentUser.name, 'online', selectedAreas);
+                            showNotification('✅ Status Anda disinkronkan: ONLINE', 'success');
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Sync status from sheet error:', e);
+            }
+        }
+        
         function showAreaModal() {
             const modal = document.getElementById('areaModal');
             const list = document.getElementById('areaList');
@@ -950,9 +1119,7 @@
             updateAgentStatusUI();
             await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selected.join(', '));
             
-            // Update shared storage
             updateSharedAgentStatus(currentUser.username, currentUser.name, 'online', selected);
-            
             showNotification(`✅ ONLINE di ${selected.length} area: ${selected.join(', ')}`, 'success');
         };
 
@@ -961,6 +1128,10 @@
             if (toggle.checked) {
                 if (agentStatus.status === 'offline' || !selectedAreas.length) {
                     showAreaModal();
+                    // Jika modal dibatalkan, toggle akan kembali ke posisi semula
+                    if (!selectedAreas.length) {
+                        toggle.checked = false;
+                    }
                 } else {
                     agentStatus.status = 'available';
                     updateAgentStatusUI();
@@ -987,19 +1158,19 @@
             if (agentStatus.status === 'available' && selectedAreas.length) {
                 statusSpan.innerHTML = '<i class="fas fa-circle"></i> Available';
                 statusSpan.className = 'status-badge status-on';
-                if (toggle) toggle.checked = true;
+                if (toggle && !toggle.checked) toggle.checked = true;
                 areaDiv.style.display = 'block';
                 tags.innerHTML = selectedAreas.map(a => `<span class="area-tag">${a}</span>`).join('');
             } else {
                 statusSpan.innerHTML = '<i class="fas fa-power-off"></i> Offline';
                 statusSpan.className = 'status-badge status-off';
-                if (toggle) toggle.checked = false;
+                if (toggle && toggle.checked) toggle.checked = false;
                 areaDiv.style.display = 'none';
             }
         }
 
         // ============================================
-        // ADMIN FUNCTIONS (Membaca dari Shared Storage)
+        // ADMIN FUNCTIONS
         // ============================================
         async function loadAgentList(isManual = false) {
             try {
@@ -1008,7 +1179,6 @@
                     const originalHtml = refreshBtn.innerHTML;
                     refreshBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Refresh';
                     refreshBtn.disabled = true;
-                    
                     setTimeout(() => {
                         refreshBtn.innerHTML = originalHtml;
                         refreshBtn.disabled = false;
@@ -1022,18 +1192,33 @@
                     return;
                 }
                 
-                // Baca semua status dari shared storage
-                const allStatus = getAllAgentStatus();
+                // Baca status dari sheet Online Log (prioritas utama)
+                let sheetStatuses = await fetchOnlineLogFromSheet();
+                const allStatus = getAllAgentStatus(); // fallback
                 
-                // Kumpulkan data agent dengan status dari shared storage
                 const agentStatuses = [];
                 let onlineCount = 0;
                 
                 for (let agent of agents) {
-                    const statusData = allStatus[agent.username];
-                    const isOnline = statusData?.status === 'online';
-                    const areas = statusData?.areas?.join(', ') || '-';
-                    const lastActive = statusData?.lastActiveReadable || '-';
+                    // Cari di sheet status berdasarkan username atau nama
+                    let sheetData = sheetStatuses ? (sheetStatuses[agent.username] || sheetStatuses[agent.name]) : null;
+                    let isOnline = false;
+                    let areas = '-';
+                    let lastActive = '-';
+                    
+                    if (sheetData) {
+                        isOnline = sheetData.status === 'online';
+                        areas = sheetData.areas || '-';
+                        lastActive = sheetData.timestamp || '-';
+                    } else {
+                        // fallback ke localStorage
+                        const localData = allStatus[agent.username];
+                        if (localData) {
+                            isOnline = localData.status === 'online';
+                            areas = localData.areas?.join(', ') || '-';
+                            lastActive = localData.lastActiveReadable || '-';
+                        }
+                    }
                     
                     if (isOnline) onlineCount++;
                     
@@ -1041,36 +1226,25 @@
                         ...agent,
                         status: isOnline ? 'online' : 'offline',
                         areas,
-                        lastActive,
-                        timestamp: statusData?.lastActive
+                        lastActive: typeof lastActive === 'string' ? lastActive : new Date(lastActive).toLocaleString('id-ID')
                     });
                 }
                 
-                // Update online count
                 const onlineCountSpan = document.getElementById('onlineCount');
                 if (onlineCountSpan) {
                     onlineCountSpan.innerHTML = `${onlineCount} Online`;
                     onlineCountSpan.style.background = onlineCount > 0 ? '#10B981' : '#64748B';
                 }
                 
-                // Update last update time
                 const lastUpdateSpan = document.getElementById('lastUpdateTime');
                 if (lastUpdateSpan) {
                     const now = new Date();
                     lastUpdateSpan.innerHTML = `Terakhir diperbarui: ${now.toLocaleTimeString('id-ID')} | ${now.toLocaleDateString('id-ID')}`;
                 }
                 
-                // SORTING: Online di atas, lalu berdasarkan lastActive terbaru
                 agentStatuses.sort((a, b) => {
                     if (a.status === 'online' && b.status !== 'online') return -1;
                     if (a.status !== 'online' && b.status === 'online') return 1;
-                    
-                    if (a.status === 'online' && b.status === 'online') {
-                        const timeA = a.timestamp ? new Date(a.timestamp).getTime() : 0;
-                        const timeB = b.timestamp ? new Date(b.timestamp).getTime() : 0;
-                        return timeB - timeA;
-                    }
-                    
                     return a.name.localeCompare(b.name);
                 });
                 
@@ -1090,7 +1264,6 @@
                                 <span class="agent-status ${isOnline ? 'status-online' : 'status-offline'}">
                                     <i class="fas ${isOnline ? 'fa-circle' : 'fa-power-off'}"></i> ${isOnline ? 'Online' : 'Offline'}
                                 </span>
-                                ${isOnline ? `<button class="btn-offline" onclick="adminOfflineAgent('${agent.name}', '${agent.username}')"><i class="fas fa-power-off"></i> Offline</button>` : ''}
                             </div>
                         </div>
                     `;
@@ -1108,55 +1281,22 @@
             }
         }
         
-        // Manual refresh
         window.manualRefreshAdmin = async function() {
             await loadAgentList(true);
         };
-
-        window.adminOfflineAgent = async function(agentName, username) {
-            if (confirm(`Offline-kan agent ${agentName}? Agent akan menerima notifikasi dan statusnya akan berubah menjadi offline.`)) {
-                // Update shared storage untuk agent tersebut
-                const allStatus = getAllAgentStatus();
-                if (allStatus[username]) {
-                    allStatus[username].status = 'offline';
-                    allStatus[username].areas = [];
-                    localStorage.setItem(AGENT_STATUS_KEY, JSON.stringify(allStatus));
-                }
-                
-                // Set flag force offline
-                localStorage.setItem(`suruhboy_force_offline_${username}`, 'true');
-                
-                await saveOnlineLog(agentName, username, 'Offline (by admin)', '-');
-                
-                showNotification(`✅ Agent ${agentName} telah di-offline-kan`, 'success');
-                
-                // Refresh daftar
-                setTimeout(() => loadAgentList(false), 500);
-            }
-        };
         
-        // Cek admin force offline untuk agent
-        function checkAdminForceOffline() {
-            const forcedOffline = localStorage.getItem(`suruhboy_force_offline_${currentUser?.username}`);
-            if (forcedOffline === 'true' && agentStatus.status === 'available') {
-                showNotification('⚠️ Anda telah di-offline-kan oleh Admin!', 'warning');
-                agentStatus.status = 'offline';
-                agentStatus.areas = [];
-                selectedAreas = [];
-                updateAgentStatusUI();
-                updateSharedAgentStatus(currentUser.username, currentUser.name, 'offline', []);
-                localStorage.removeItem(`suruhboy_force_offline_${currentUser.username}`);
-            }
-        }
+        // ============================================
+        // POLLING
+        // ============================================
         
-        // Polling untuk agent (cek admin force offline)
+        // Polling untuk agent: cek status dari sheet setiap 8 detik
         function startPollingForAgent() {
             if (pollingInterval) clearInterval(pollingInterval);
-            pollingInterval = setInterval(() => {
+            pollingInterval = setInterval(async () => {
                 if (currentUser && !isAdmin) {
-                    checkAdminForceOffline();
+                    await syncStatusFromSheet();
                 }
-            }, 10000);
+            }, 8000);
         }
         
         // Auto refresh untuk admin (setiap 10 detik)
@@ -1169,11 +1309,9 @@
             }, 10000);
         }
         
-        // Listener untuk perubahan status agent (real-time)
         function setupAgentStatusListener() {
             window.addEventListener('agentStatusChanged', (event) => {
                 if (currentUser && isAdmin) {
-                    // Jika admin sedang membuka dashboard, refresh list
                     loadAgentList(false);
                 }
             });
@@ -1211,24 +1349,36 @@
             document.getElementById('adminDashboard').classList.add('hidden');
             updateAgentUI();
             
-            // Load status dari shared storage
-            const allStatus = getAllAgentStatus();
-            const savedStatus = allStatus[currentUser.username];
+            // Load status dari sheet terlebih dahulu
+            const sheetStatus = await checkAgentStatusFromSheet(currentUser.username, currentUser.name);
             
-            if (savedStatus && savedStatus.status === 'online') {
+            if (sheetStatus && sheetStatus.status === 'online') {
+                let areasFromSheet = [];
+                if (sheetStatus.areas && sheetStatus.areas !== '-') {
+                    areasFromSheet = sheetStatus.areas.split(',').map(a => a.trim());
+                }
                 agentStatus.status = 'available';
-                selectedAreas = savedStatus.areas || [];
-                agentStatus.areas = savedStatus.areas || [];
+                selectedAreas = areasFromSheet;
+                agentStatus.areas = areasFromSheet;
                 updateAgentStatusUI();
+                updateSharedAgentStatus(currentUser.username, currentUser.name, 'online', selectedAreas);
             } else {
-                agentStatus.status = 'offline';
-                selectedAreas = [];
-                updateAgentStatusUI();
+                // Fallback ke localStorage
+                const allStatus = getAllAgentStatus();
+                const savedStatus = allStatus[currentUser.username];
+                if (savedStatus && savedStatus.status === 'online') {
+                    agentStatus.status = 'available';
+                    selectedAreas = savedStatus.areas || [];
+                    agentStatus.areas = savedStatus.areas || [];
+                    updateAgentStatusUI();
+                } else {
+                    agentStatus.status = 'offline';
+                    selectedAreas = [];
+                    updateAgentStatusUI();
+                }
             }
             
-            checkAdminForceOffline();
             startPollingForAgent();
-            
             await loadOrders();
             document.getElementById('weekSelect').addEventListener('change', onWeekChange);
         }
@@ -1288,10 +1438,7 @@
             }
         });
 
-        // Setup listener untuk real-time update
         setupAgentStatusListener();
-        
-        // Load data awal
         loadUsers();
     </script>
 </body>
