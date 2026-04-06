@@ -555,13 +555,15 @@
         // KONFIGURASI SHEET
         // ============================================
         const SPREADSHEET_ID = '1FgWiv56J2w7A0WprwqOKJMU7BO4mX3jotW3IC397rWg';
+        const ORDER_LOG_SPREADSHEET_ID = '1SPqTzbdLVsgAMBQ79fMInLIs4udTFxGr4c9_wWTwgBg';
         
-        // WEB APP URL - GANTI DENGAN URL HASIL DEPLOY ANDA
+        // WEB APP URL
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzfybo4oG8ue449-2qu-Vy8UoYFnfeTSwAsXttxK7lO5VnZ2l53ZNXtHJE_qS8yvDRWJQ/exec';
         
         // URL CSV
         const LOGIN_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
         const ORDER_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=896910808`;
+        const ORDER_LOG_CSV_URL = `https://docs.google.com/spreadsheets/d/${ORDER_LOG_SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=OrderLog`;
         
         // Variabel Global
         let users = [];
@@ -571,6 +573,9 @@
         let totalEarnings = 0;
         let pendingAction = null;
         let refreshInterval = null;
+        
+        // Map untuk menyimpan status dari OrderLog
+        let orderStatusMap = new Map();
         
         // ============================================
         // FUNGSI UTILITY
@@ -614,6 +619,37 @@
                 data.push(cols.map(col => col.replace(/^"|"$/g, '')));
             }
             return data;
+        }
+        
+        // ============================================
+        // LOAD STATUS DARI ORDER LOG SHEET
+        // ============================================
+        async function loadOrderStatusMap() {
+            try {
+                const response = await fetch(ORDER_LOG_CSV_URL);
+                if (!response.ok) throw new Error('Gagal load OrderLog');
+                const csv = await response.text();
+                const logData = parseCSV(csv);
+                
+                // Reset map
+                orderStatusMap.clear();
+                
+                // Kolom B (index 1) = Nomor Pesanan
+                // Kolom E (index 4) = Action / Status
+                for (const row of logData) {
+                    const orderNumber = row[1];
+                    const status = row[4];
+                    if (orderNumber && status) {
+                        orderStatusMap.set(orderNumber, status);
+                    }
+                }
+                
+                console.log('OrderStatusMap loaded:', orderStatusMap.size, 'entries');
+                return true;
+            } catch (error) {
+                console.error('Error loading OrderLog:', error);
+                return false;
+            }
         }
         
         // ============================================
@@ -661,7 +697,7 @@
         }
         
         // ============================================
-        // LOAD ORDER (HANYA YANG STATUS "Orderan Masuk")
+        // LOAD ORDER (BACA DARI ORDER LOG UNTUK STATUS)
         // ============================================
         async function loadOrders() {
             if (!currentUser) return;
@@ -669,6 +705,10 @@
             try {
                 showNotification('🔄 Memuat order...', 'info');
                 
+                // Load status dari OrderLog terlebih dahulu
+                await loadOrderStatusMap();
+                
+                // Load data order dari sheet utama
                 const response = await fetch(ORDER_CSV_URL);
                 if (!response.ok) throw new Error('Gagal load data');
                 const csv = await response.text();
@@ -686,8 +726,17 @@
                     if (agentName !== currentUser.name) continue;
                     
                     const orderNumber = order[16];     // Kolom Q (index 16) = Nomor Pesanan
-                    const status = (order[17] || '').trim(); // Kolom R (index 17) = Status Order
+                    
+                    // CEK STATUS DARI ORDER LOG MAP (menimpa status dari sheet utama)
+                    let status = orderStatusMap.get(orderNumber);
+                    
+                    // Jika tidak ada di OrderLog, gunakan status dari sheet utama
+                    if (!status) {
+                        status = (order[17] || '').trim(); // Kolom R (index 17)
+                    }
+                    
                     const isCompleted = status === 'Selesai' || status === 'Batal';
+                    const isRunning = status === 'Orderan Masuk' || status === 'Diterima' || (!status && order[17] === 'Orderan Masuk');
                     
                     const orderData = {
                         orderNumber: orderNumber,
@@ -697,16 +746,16 @@
                         description: order[5],       // Kolom F = Deskripsi
                         pickUpPoint: order[6],       // Kolom G = Titik Jemput
                         dropOffPoint: order[7],      // Kolom H = Titik Antar
-                        price: parseInt(order[1]?.replace(/[^0-9-]/g, '')) || 0, // Kolom B = Biaya
+                        price: parseInt(order[1]?.replace(/[^0-9-]/g, '')) || 0,
                         status: status
                     };
                     
-                    // HANYA yang statusnya "Orderan Masuk" yang masuk ke runningOrders
-                    if (status === 'Orderan Masuk') {
+                    // Order berjalan: status "Orderan Masuk" atau "Diterima"
+                    if (status === 'Orderan Masuk' || status === 'Diterima') {
                         newRunningOrders.push(orderData);
                     } 
-                    // Yang sudah Selesai atau Batal masuk ke riwayat
-                    else if (isCompleted) {
+                    // Order selesai/batal masuk riwayat
+                    else if (status === 'Selesai' || status === 'Batal') {
                         newCompletedOrders.push(orderData);
                         if (status === 'Selesai') {
                             newTotalEarnings += orderData.price;
@@ -898,7 +947,7 @@
                 if (currentUser) {
                     loadOrders();
                 }
-            }, 30000); // 30 detik
+            }, 30000);
         }
         
         function stopAutoRefresh() {
@@ -924,6 +973,7 @@
             runningOrders = [];
             completedOrders = [];
             totalEarnings = 0;
+            orderStatusMap.clear();
             
             document.getElementById('loginPage').classList.remove('hidden');
             document.getElementById('agentDashboard').classList.add('hidden');
