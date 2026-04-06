@@ -298,6 +298,7 @@
         .btn-accept { background: #10B981; color: white; }
         .btn-complete { background: #3B82F6; color: white; }
         .btn-cancel { background: #EF4444; color: white; }
+        .btn-hidden { display: none; }
 
         .empty-running {
             text-align: center;
@@ -697,7 +698,7 @@
         }
         
         // ============================================
-        // LOAD ORDER (BACA DARI ORDER LOG UNTUK STATUS)
+        // LOAD ORDER (DENGAN FLOW 2 STEP)
         // ============================================
         async function loadOrders() {
             if (!currentUser) return;
@@ -735,9 +736,6 @@
                         status = (order[17] || '').trim(); // Kolom R (index 17)
                     }
                     
-                    const isCompleted = status === 'Selesai' || status === 'Batal';
-                    const isRunning = status === 'Orderan Masuk' || status === 'Diterima' || (!status && order[17] === 'Orderan Masuk');
-                    
                     const orderData = {
                         orderNumber: orderNumber,
                         tanggal: order[2],           // Kolom C = Tanggal
@@ -750,11 +748,21 @@
                         status: status
                     };
                     
-                    // Order berjalan: status "Orderan Masuk" atau "Diterima"
-                    if (status === 'Orderan Masuk' || status === 'Diterima') {
+                    // FLOW 2 STEP:
+                    // - Status "Orderan Masuk" → tampilkan hanya tombol Diterima
+                    // - Status "Diterima" → tampilkan tombol Selesai dan Batal
+                    // - Status "Selesai" atau "Batal" → masuk riwayat
+                    
+                    if (status === 'Orderan Masuk') {
+                        // Step 1: hanya tombol Diterima
+                        orderData.step = 1;
                         newRunningOrders.push(orderData);
                     } 
-                    // Order selesai/batal masuk riwayat
+                    else if (status === 'Diterima') {
+                        // Step 2: tombol Selesai dan Batal
+                        orderData.step = 2;
+                        newRunningOrders.push(orderData);
+                    }
                     else if (status === 'Selesai' || status === 'Batal') {
                         newCompletedOrders.push(orderData);
                         if (status === 'Selesai') {
@@ -790,45 +798,60 @@
             }
             
             countSpan.innerText = runningOrders.length;
-            container.innerHTML = runningOrders.map(order => `
-                <div class="order-item">
-                    <div class="order-header">
-                        <span class="order-number"><i class="fas fa-hashtag"></i> ${order.orderNumber || '-'}</span>
-                        <span class="order-price">Rp${order.price.toLocaleString()}</span>
-                    </div>
-                    <div class="order-customer">
-                        <span class="customer-name"><i class="fas fa-user"></i> ${order.customerName || '-'}</span>
-                        <span class="customer-phone"><i class="fas fa-phone"></i> ${order.customerPhone || '-'}</span>
-                    </div>
-                    <div class="order-desc">
-                        <i class="fas fa-align-left"></i> ${order.description || 'Tidak ada deskripsi'}
-                    </div>
-                    <div class="order-location">
-                        <div class="location-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span><strong>Jemput:</strong> ${order.pickUpPoint || '-'}</span>
-                        </div>
-                        <div class="location-item">
-                            <i class="fas fa-flag-checkered"></i>
-                            <span><strong>Antar:</strong> ${order.dropOffPoint || '-'}</span>
-                        </div>
-                    </div>
-                    <div class="order-date">
-                        <i class="fas fa-calendar-alt"></i> ${order.tanggal || '-'}
-                    </div>
-                    <div class="order-actions">
+            container.innerHTML = runningOrders.map(order => {
+                // Tampilkan tombol sesuai step
+                let buttons = '';
+                if (order.step === 1) {
+                    // Step 1: Hanya tombol Diterima
+                    buttons = `
                         <button class="btn-action btn-accept" onclick="openConfirmModal('${order.orderNumber}', 'Diterima')">
                             <i class="fas fa-check"></i> Diterima
                         </button>
+                    `;
+                } else if (order.step === 2) {
+                    // Step 2: Tombol Selesai dan Batal
+                    buttons = `
                         <button class="btn-action btn-complete" onclick="openConfirmModal('${order.orderNumber}', 'Selesai')">
                             <i class="fas fa-flag-checkered"></i> Selesai
                         </button>
                         <button class="btn-action btn-cancel" onclick="openConfirmModal('${order.orderNumber}', 'Batal')">
                             <i class="fas fa-times"></i> Batal
                         </button>
+                    `;
+                }
+                
+                return `
+                    <div class="order-item">
+                        <div class="order-header">
+                            <span class="order-number"><i class="fas fa-hashtag"></i> ${order.orderNumber || '-'}</span>
+                            <span class="order-price">Rp${order.price.toLocaleString()}</span>
+                        </div>
+                        <div class="order-customer">
+                            <span class="customer-name"><i class="fas fa-user"></i> ${order.customerName || '-'}</span>
+                            <span class="customer-phone"><i class="fas fa-phone"></i> ${order.customerPhone || '-'}</span>
+                        </div>
+                        <div class="order-desc">
+                            <i class="fas fa-align-left"></i> ${order.description || 'Tidak ada deskripsi'}
+                        </div>
+                        <div class="order-location">
+                            <div class="location-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span><strong>Jemput:</strong> ${order.pickUpPoint || '-'}</span>
+                            </div>
+                            <div class="location-item">
+                                <i class="fas fa-flag-checkered"></i>
+                                <span><strong>Antar:</strong> ${order.dropOffPoint || '-'}</span>
+                            </div>
+                        </div>
+                        <div class="order-date">
+                            <i class="fas fa-calendar-alt"></i> ${order.tanggal || '-'}
+                        </div>
+                        <div class="order-actions">
+                            ${buttons}
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
         
         function updateStatsDisplay() {
@@ -888,8 +911,16 @@
         // ============================================
         function openConfirmModal(orderNumber, action) {
             pendingAction = { orderNumber, action };
+            let message = '';
+            if (action === 'Diterima') {
+                message = `Apakah Anda yakin ingin <strong>menerima</strong> order #${orderNumber}?`;
+            } else if (action === 'Selesai') {
+                message = `Apakah Anda yakin order #${orderNumber} sudah <strong>selesai</strong>?`;
+            } else if (action === 'Batal') {
+                message = `Apakah Anda yakin ingin <strong>membatalkan</strong> order #${orderNumber}?`;
+            }
             document.getElementById('confirmTitle').innerText = 'Konfirmasi';
-            document.getElementById('confirmMessage').innerHTML = `Apakah Anda yakin ingin <strong>${action}</strong> order #${orderNumber}?`;
+            document.getElementById('confirmMessage').innerHTML = message;
             document.getElementById('confirmModal').style.display = 'flex';
         }
         
