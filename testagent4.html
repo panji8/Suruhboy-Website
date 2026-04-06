@@ -7,12 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             background: #F7F9FC;
@@ -41,17 +36,12 @@
             width: 100%;
             max-width: 360px;
             padding: 40px 28px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
         }
 
-        .login-header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
+        .login-header { text-align: center; margin-bottom: 32px; }
         .login-icon {
-            width: 70px;
-            height: 70px;
+            width: 70px; height: 70px;
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
             border-radius: 28px;
             display: flex;
@@ -60,23 +50,10 @@
             margin: 0 auto 16px;
             font-size: 36px;
         }
+        .login-header h1 { font-size: 28px; font-weight: 800; color: #0F172A; }
+        .login-header p { color: #64748B; font-size: 14px; margin-top: 4px; }
 
-        .login-header h1 {
-            font-size: 28px;
-            font-weight: 800;
-            color: #0F172A;
-        }
-
-        .login-header p {
-            color: #64748B;
-            font-size: 14px;
-            margin-top: 4px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
+        .form-group { margin-bottom: 20px; }
         .form-group label {
             display: block;
             font-size: 13px;
@@ -84,7 +61,6 @@
             color: #334155;
             margin-bottom: 8px;
         }
-
         .form-group input {
             width: 100%;
             padding: 14px 16px;
@@ -94,11 +70,10 @@
             font-size: 15px;
             font-family: inherit;
         }
-
         .form-group input:focus {
             outline: none;
             border-color: #FF6B4A;
-            box-shadow: 0 0 0 3px rgba(255, 107, 74, 0.1);
+            box-shadow: 0 0 0 3px rgba(255,107,74,0.1);
         }
 
         .btn-login {
@@ -112,10 +87,7 @@
             color: white;
             cursor: pointer;
         }
-
-        .btn-login:active {
-            transform: scale(0.98);
-        }
+        .btn-login:active { transform: scale(0.98); }
 
         .message {
             padding: 12px;
@@ -124,30 +96,12 @@
             font-size: 13px;
             text-align: center;
         }
+        .info { background: #EFF6FF; color: #1E40AF; }
+        .success { background: #DCFCE7; color: #15803D; }
+        .error { background: #FEE2E2; color: #B91C1C; }
+        .warning { background: #FEF3C7; color: #92400E; }
 
-        .info {
-            background: #EFF6FF;
-            color: #1E40AF;
-        }
-
-        .success {
-            background: #DCFCE7;
-            color: #15803D;
-        }
-
-        .error {
-            background: #FEE2E2;
-            color: #B91C1C;
-        }
-
-        .warning {
-            background: #FEF3C7;
-            color: #92400E;
-        }
-
-        .hidden {
-            display: none;
-        }
+        .hidden { display: none; }
 
         /* Dashboard */
         .dashboard {
@@ -170,21 +124,11 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+        .logo-area p { font-size: 12px; color: #94A3B8; }
 
-        .logo-area p {
-            font-size: 12px;
-            color: #94A3B8;
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
+        .user-menu { display: flex; align-items: center; gap: 12px; }
         .user-avatar {
-            width: 48px;
-            height: 48px;
+            width: 48px; height: 48px;
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
             border-radius: 24px;
             display: flex;
@@ -194,10 +138,8 @@
             font-size: 18px;
             color: white;
         }
-
         .logout-icon {
-            width: 44px;
-            height: 44px;
+            width: 44px; height: 44px;
             background: #F1F5F9;
             border-radius: 22px;
             display: flex;
@@ -206,11 +148,7 @@
             color: #64748B;
             cursor: pointer;
         }
-
-        .logout-icon:active {
-            background: #E2E8F0;
-            transform: scale(0.95);
-        }
+        .logout-icon:active { background: #E2E8F0; transform: scale(0.95); }
 
         /* Welcome Card */
         .welcome-card {
@@ -220,23 +158,13 @@
             margin-bottom: 20px;
             color: white;
         }
-
-        .welcome-text {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
+        .welcome-text { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
         .welcome-text span {
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
-        .welcome-sub {
-            font-size: 13px;
-            color: #94A3B8;
-        }
+        .welcome-sub { font-size: 13px; color: #94A3B8; }
 
         /* Running Orders Card */
         .running-orders-card {
@@ -253,35 +181,18 @@
             gap: 12px;
             margin-bottom: 16px;
         }
-
         .running-header i {
             font-size: 28px;
             animation: pulse 2s infinite;
         }
-
         @keyframes pulse {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.7;
-                transform: scale(1.05);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
         }
-
-        .running-header h3 {
-            font-size: 18px;
-            font-weight: 700;
-            margin: 0;
-        }
-
+        .running-header h3 { font-size: 18px; font-weight: 700; margin: 0; }
         .running-count {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             padding: 4px 12px;
             border-radius: 40px;
             font-size: 24px;
@@ -291,7 +202,7 @@
 
         /* Order Item */
         .order-item {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255,255,255,0.15);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 16px;
@@ -304,21 +215,16 @@
             align-items: center;
             margin-bottom: 12px;
             padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
         }
-
         .order-number {
             font-size: 12px;
             font-family: monospace;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255,255,255,0.2);
             padding: 4px 10px;
             border-radius: 20px;
         }
-
-        .order-price {
-            font-weight: 800;
-            font-size: 18px;
-        }
+        .order-price { font-weight: 800; font-size: 18px; }
 
         .order-customer {
             display: flex;
@@ -327,7 +233,6 @@
             margin-bottom: 12px;
             flex-wrap: wrap;
         }
-
         .customer-name {
             font-weight: 700;
             font-size: 16px;
@@ -335,7 +240,6 @@
             align-items: center;
             gap: 6px;
         }
-
         .customer-phone {
             font-size: 12px;
             opacity: 0.8;
@@ -345,7 +249,7 @@
         }
 
         .order-desc {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0,0,0,0.2);
             border-radius: 12px;
             padding: 10px;
             margin-bottom: 12px;
@@ -359,17 +263,12 @@
             margin-bottom: 12px;
             font-size: 12px;
         }
-
         .location-item {
             display: flex;
             align-items: flex-start;
             gap: 8px;
         }
-
-        .location-item i {
-            margin-top: 2px;
-            font-size: 12px;
-        }
+        .location-item i { margin-top: 2px; font-size: 12px; }
 
         .order-date {
             font-size: 11px;
@@ -385,7 +284,6 @@
             gap: 10px;
             margin-top: 8px;
         }
-
         .btn-action {
             flex: 1;
             padding: 10px;
@@ -396,25 +294,10 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-
-        .btn-action:active {
-            transform: scale(0.97);
-        }
-
-        .btn-accept {
-            background: #10B981;
-            color: white;
-        }
-
-        .btn-complete {
-            background: #3B82F6;
-            color: white;
-        }
-
-        .btn-cancel {
-            background: #EF4444;
-            color: white;
-        }
+        .btn-action:active { transform: scale(0.97); }
+        .btn-accept { background: #10B981; color: white; }
+        .btn-complete { background: #3B82F6; color: white; }
+        .btn-cancel { background: #EF4444; color: white; }
 
         .empty-running {
             text-align: center;
@@ -430,7 +313,6 @@
             margin-bottom: 16px;
             border: 1px solid #EDF2F7;
         }
-
         .section-title {
             font-size: 16px;
             font-weight: 700;
@@ -440,7 +322,6 @@
             justify-content: space-between;
             align-items: center;
         }
-
         .refresh-btn {
             background: #F1F5F9;
             border: none;
@@ -453,10 +334,7 @@
             align-items: center;
             gap: 6px;
         }
-
-        .refresh-btn:active {
-            transform: scale(0.95);
-        }
+        .refresh-btn:active { transform: scale(0.95); }
 
         /* Stats */
         .stats-grid {
@@ -464,25 +342,14 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
         }
-
         .stat-block {
             background: #F8FAFE;
             border-radius: 20px;
             padding: 14px;
             text-align: center;
         }
-
-        .stat-number {
-            font-size: 24px;
-            font-weight: 800;
-            color: #0F172A;
-        }
-
-        .stat-label {
-            font-size: 11px;
-            color: #64748B;
-            margin-top: 4px;
-        }
+        .stat-number { font-size: 24px; font-weight: 800; color: #0F172A; }
+        .stat-label { font-size: 11px; color: #64748B; margin-top: 4px; }
 
         /* History List */
         .history-list {
@@ -490,60 +357,34 @@
             flex-direction: column;
             gap: 12px;
         }
-
         .history-item {
             background: #F8FAFE;
             border-radius: 20px;
             padding: 14px;
         }
-
         .history-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
         }
-
-        .history-customer {
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .history-price {
-            font-weight: 700;
-            color: #10B981;
-        }
-
+        .history-customer { font-weight: 700; font-size: 14px; }
+        .history-price { font-weight: 700; color: #10B981; }
         .history-detail {
             font-size: 12px;
             color: #64748B;
             display: flex;
             justify-content: space-between;
         }
-
         .history-action {
             font-size: 11px;
             margin-top: 6px;
             padding-top: 6px;
             border-top: 1px solid #E2E8F0;
         }
-
-        .history-action.accept {
-            color: #10B981;
-        }
-
-        .history-action.cancel {
-            color: #EF4444;
-        }
-
-        .history-action.complete {
-            color: #3B82F6;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #94A3B8;
-        }
+        .history-action.accept { color: #10B981; }
+        .history-action.cancel { color: #EF4444; }
+        .history-action.complete { color: #3B82F6; }
+        .empty-state { text-align: center; padding: 40px 20px; color: #94A3B8; }
 
         /* Modal */
         .modal {
@@ -553,14 +394,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0,0,0,0.6);
             backdrop-filter: blur(8px);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             padding: 20px;
         }
-
         .modal-container {
             background: white;
             border-radius: 32px;
@@ -569,28 +409,10 @@
             padding: 24px;
             text-align: center;
         }
-
-        .modal-container i {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-
-        .modal-container h3 {
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .modal-container p {
-            color: #64748B;
-            margin-bottom: 20px;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 12px;
-        }
-
+        .modal-container i { font-size: 48px; margin-bottom: 16px; }
+        .modal-container h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .modal-container p { color: #64748B; margin-bottom: 20px; }
+        .modal-buttons { display: flex; gap: 12px; }
         .modal-btn {
             flex: 1;
             padding: 12px;
@@ -599,16 +421,11 @@
             font-weight: 600;
             cursor: pointer;
         }
-
         .modal-btn.confirm {
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
             color: white;
         }
-
-        .modal-btn.cancel {
-            background: #F1F5F9;
-            color: #475569;
-        }
+        .modal-btn.cancel { background: #F1F5F9; color: #475569; }
 
         /* Notification */
         .notification-toast {
@@ -626,23 +443,11 @@
             z-index: 1100;
             animation: slideUp 0.3s ease;
         }
-
         @keyframes slideUp {
-            from {
-                transform: translateY(100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
-
-        .loading-small {
-            text-align: center;
-            padding: 30px;
-            color: #94A3B8;
-        }
+        .loading-small { text-align: center; padding: 30px; color: #94A3B8; }
     </style>
 </head>
 <body>
@@ -751,8 +556,8 @@
         // ============================================
         const SPREADSHEET_ID = '1FgWiv56J2w7A0WprwqOKJMU7BO4mX3jotW3IC397rWg';
         
-        // Web App URL (GANTI DENGAN URL WEB APP ANDA SETELAH DEPLOY)
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzuc1MeDPSx99h0rgCl6UwHccLWW8szTSWBL4X6bM1qWAmPg7_oEO0A-nvTOpAWYTKn0A/exec';
+        // WEB APP URL - GANTI DENGAN URL HASIL DEPLOY ANDA
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyEyzeBKEsP_6PuAJDnuFmeqq0LBNNnIs97fnfQ6HZ_dpiUgrX9wdD0LNvbSyMKw0l06g/exec';
         
         // URL CSV
         const LOGIN_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=Sheet1`;
@@ -856,7 +661,7 @@
         }
         
         // ============================================
-        // LOAD ORDER BERJALAN
+        // LOAD ORDER (HANYA YANG STATUS "Orderan Masuk")
         // ============================================
         async function loadOrders() {
             if (!currentUser) return;
@@ -869,41 +674,43 @@
                 const csv = await response.text();
                 const allOrders = parseCSV(csv);
                 
-                // Filter order untuk agent ini berdasarkan Kolom 9 (index 8) = Nama Agent
-                // Dan Kolom 18 (index 17) berisi "Orderan Masuk" atau status lainnya
-                const agentOrders = allOrders.filter(order => {
-                    const agentName = order[8]; // Kolom 9 = Nama Agent
-                    return agentName === currentUser.name;
-                });
-                
+                // Reset arrays
                 const newRunningOrders = [];
                 const newCompletedOrders = [];
                 let newTotalEarnings = 0;
                 
-                for (const order of agentOrders) {
-                    const orderNumber = order[16];      // Kolom 17 = Nomor Pesanan
-                    const status = (order[17] || '').toLowerCase(); // Kolom 18 = Status Order
-                    const isCompleted = status === 'selesai' || status === 'cancel' || status === 'batal';
+                for (const order of allOrders) {
+                    const agentName = order[8];      // Kolom I (index 8) = Nama Agent
+                    
+                    // Hanya untuk agent yang login
+                    if (agentName !== currentUser.name) continue;
+                    
+                    const orderNumber = order[16];     // Kolom Q (index 16) = Nomor Pesanan
+                    const status = (order[17] || '').trim(); // Kolom R (index 17) = Status Order
+                    const isCompleted = status === 'Selesai' || status === 'Batal';
                     
                     const orderData = {
                         orderNumber: orderNumber,
-                        tanggal: order[2],           // Kolom 3 = Tanggal
-                        customerName: order[3],      // Kolom 4 = Nama
-                        customerPhone: order[4],     // Kolom 5 = Nomor HP
-                        description: order[5],       // Kolom 6 = Deskripsi
-                        pickUpPoint: order[6],       // Kolom 7 = Titik Jemput
-                        dropOffPoint: order[7],      // Kolom 8 = Titik Antar
-                        price: parseInt(order[1]?.replace(/[^0-9-]/g, '')) || 0, // Kolom 2 = Biaya
+                        tanggal: order[2],           // Kolom C = Tanggal
+                        customerName: order[3],      // Kolom D = Nama
+                        customerPhone: order[4],     // Kolom E = Nomor HP
+                        description: order[5],       // Kolom F = Deskripsi
+                        pickUpPoint: order[6],       // Kolom G = Titik Jemput
+                        dropOffPoint: order[7],      // Kolom H = Titik Antar
+                        price: parseInt(order[1]?.replace(/[^0-9-]/g, '')) || 0, // Kolom B = Biaya
                         status: status
                     };
                     
-                    if (isCompleted) {
+                    // HANYA yang statusnya "Orderan Masuk" yang masuk ke runningOrders
+                    if (status === 'Orderan Masuk') {
+                        newRunningOrders.push(orderData);
+                    } 
+                    // Yang sudah Selesai atau Batal masuk ke riwayat
+                    else if (isCompleted) {
                         newCompletedOrders.push(orderData);
-                        if (status === 'selesai') {
+                        if (status === 'Selesai') {
                             newTotalEarnings += orderData.price;
                         }
-                    } else {
-                        newRunningOrders.push(orderData);
                     }
                 }
                 
@@ -945,7 +752,7 @@
                         <span class="customer-phone"><i class="fas fa-phone"></i> ${order.customerPhone || '-'}</span>
                     </div>
                     <div class="order-desc">
-                                        <i class="fas fa-align-left"></i> ${order.description || 'Tidak ada deskripsi'}
+                        <i class="fas fa-align-left"></i> ${order.description || 'Tidak ada deskripsi'}
                     </div>
                     <div class="order-location">
                         <div class="location-item">
@@ -976,30 +783,30 @@
         }
         
         function updateStatsDisplay() {
-            const completedCount = completedOrders.filter(o => o.status === 'selesai').length;
+            const completedCount = completedOrders.filter(o => o.status === 'Selesai').length;
             document.getElementById('totalOrders').innerText = completedCount;
             document.getElementById('totalEarnings').innerHTML = `Rp${totalEarnings.toLocaleString()}`;
         }
         
         function updateHistoryDisplay() {
             const container = document.getElementById('historyList');
-            const completedOnly = completedOrders.filter(o => o.status === 'selesai' || o.status === 'cancel' || o.status === 'batal');
+            const historyOrders = completedOrders.filter(o => o.status === 'Selesai' || o.status === 'Batal');
             
-            if (!completedOnly.length) {
+            if (!historyOrders.length) {
                 container.innerHTML = '<div class="empty-state">Belum ada riwayat order</div>';
                 return;
             }
             
-            container.innerHTML = completedOnly.map(order => {
+            container.innerHTML = historyOrders.map(order => {
                 let actionClass = '';
                 let actionIcon = '';
                 let actionText = '';
                 
-                if (order.status === 'selesai') {
+                if (order.status === 'Selesai') {
                     actionClass = 'complete';
                     actionIcon = 'fa-check-circle';
                     actionText = 'Selesai';
-                } else if (order.status === 'cancel' || order.status === 'batal') {
+                } else if (order.status === 'Batal') {
                     actionClass = 'cancel';
                     actionIcon = 'fa-times-circle';
                     actionText = 'Dibatalkan';
@@ -1059,12 +866,16 @@
                 params.append('username', currentUser.username);
                 params.append('timestamp', new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }));
                 
-                await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
+                const response = await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET' });
+                const result = await response.json();
                 
-                showNotification(`✅ Order ${action} berhasil!`, 'success');
-                
-                // Refresh data setelah update
-                setTimeout(() => loadOrders(), 1000);
+                if (result.status === 'success') {
+                    showNotification(`✅ Order ${action} berhasil!`, 'success');
+                    // Refresh data setelah update
+                    setTimeout(() => loadOrders(), 1000);
+                } else {
+                    showNotification(`❌ ${result.message || 'Gagal update order'}`, 'warning');
+                }
                 
             } catch (error) {
                 console.error(error);
