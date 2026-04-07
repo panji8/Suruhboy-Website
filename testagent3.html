@@ -227,17 +227,6 @@
         .status-offline { background: #FEE2E2; color: #B91C1C; }
         .agent-areas { font-size: 12px; color: #64748B; margin-top: 4px; }
         .agent-last-active { font-size: 11px; color: #94A3B8; margin-top: 2px; }
-        .btn-offline {
-            background: #FEE2E2;
-            color: #B91C1C;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-offline:active { transform: scale(0.96); background: #FECACA; }
         
         .online-badge {
             background: #10B981;
@@ -528,9 +517,9 @@
             align-items: center;
             margin-bottom: 10px;
         }
-        .customer-name { font-weight: 700; font-size: 15px; color: #0F172A; display: flex; align-items: center; gap: 8px; }
+        .history-customer-name { font-weight: 700; font-size: 15px; color: #0F172A; display: flex; align-items: center; gap: 8px; }
         .order-amount { font-weight: 700; font-size: 15px; color: #10B981; }
-        .order-date { font-size: 12px; color: #94A3B8; display: flex; align-items: center; gap: 6px; }
+        .order-date-small { font-size: 12px; color: #94A3B8; display: flex; align-items: center; gap: 6px; }
 
         .empty-state { text-align: center; padding: 40px 20px; color: #94A3B8; }
 
@@ -710,7 +699,7 @@
             </div>
         </div>
 
-        <!-- RUNNING ORDERS CARD (Section Order Berjalan) -->
+        <!-- RUNNING ORDERS CARD (Section Order Berjalan dari kode pertama) -->
         <div class="running-orders-card">
             <div class="running-header">
                 <i class="fas fa-tasks"></i>
@@ -812,10 +801,10 @@
     <!-- Confirmation Modal untuk Order Berjalan -->
     <div id="confirmOrderModal" class="modal">
         <div class="modal-container">
-            <i class="fas fa-question-circle" style="color: #FF6B4A;"></i>
-            <h3 id="confirmTitle">Konfirmasi</h3>
-            <p id="confirmMessage">Apakah Anda yakin?</p>
-            <div class="modal-buttons" style="display: flex; gap: 12px; margin-top: 20px;">
+            <i class="fas fa-question-circle" style="color: #FF6B4A; font-size: 48px; display: block; text-align: center; margin-bottom: 16px;"></i>
+            <h3 id="confirmTitle" style="text-align: center;">Konfirmasi</h3>
+            <p id="confirmMessage" style="text-align: center; margin: 16px 0;">Apakah Anda yakin?</p>
+            <div class="modal-buttons" style="display: flex; gap: 12px;">
                 <button class="modal-btn cancel" style="flex:1; background:#F1F5F9; border:none; padding:12px; border-radius:30px; font-weight:600; cursor:pointer;" onclick="closeConfirmOrderModal()">Batal</button>
                 <button class="modal-btn confirm" id="confirmActionBtn" style="flex:1; background:linear-gradient(135deg,#FF6B4A,#FF3B2F); border:none; padding:12px; border-radius:30px; font-weight:600; color:white; cursor:pointer;">Ya, Lanjutkan</button>
             </div>
@@ -826,19 +815,19 @@
         // ============================================
         // KONFIGURASI
         // ============================================
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyEyzeBKEsP_6PuAJDnuFmeqq0LBNNnIs97fnfQ6HZ_dpiUgrX9wdD0LNvbSyMKw0l06g/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzfybo4oG8ue449-2qu-Vy8UoYFnfeTSwAsXttxK7lO5VnZ2l53ZNXtHJE_qS8yvDRWJQ/exec';
         const SPREADSHEET_ID_LOGIN = '1FgWiv56J2w7A0WprwqOKJMU7BO4mX3jotW3IC397rWg';
         const SPREADSHEET_ID_ORDER = '1fDE1tj2mYanx9FA4deMPd-OLY6CdxWHZecMsdVtkc6c';
         const ORDER_SHEET_NAME = 'Mirroring';
         const LOGIN_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_LOGIN}/gviz/tq?tqx=out:json&sheet=Sheet1`;
         const ORDER_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_ORDER}/gviz/tq?tqx=out:csv&sheet=${ORDER_SHEET_NAME}`;
         
-        // URL untuk membaca Online Log (CSV)
-        const ONLINE_LOG_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_LOGIN}/gviz/tq?tqx=out:csv&sheet=Online Log`;
-        
         // URL untuk Order Log (untuk status order berjalan)
         const ORDER_LOG_SPREADSHEET_ID = '1SPqTzbdLVsgAMBQ79fMInLIs4udTFxGr4c9_wWTwgBg';
         const ORDER_LOG_CSV_URL = `https://docs.google.com/spreadsheets/d/${ORDER_LOG_SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=OrderLog`;
+        
+        // URL untuk membaca Online Log
+        const ONLINE_LOG_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_LOGIN}/gviz/tq?tqx=out:csv&sheet=Online Log`;
         
         const COL = { TANGGAL: 2, CUSTOMER: 3, AGENT: 8, NOMINAL: 10, MINGGU: 15 };
         const KECAMATAN = ["Ampel","Andong","Banyudono","Boyolali Kota","Cepogo","Juwangi","Karanggede","Kemusu","Klego","Mojosongo","Musuk","Ngemplak","Nogosari","Sambi","Sawit","Selo","Simo","Tamansari","Teras","Wonosegoro"];
@@ -850,7 +839,7 @@
         let pollingInterval = null;
         let adminRefreshInterval = null;
         
-        // Variabel untuk Order Berjalan
+        // Variabel untuk Order Berjalan (dari kode pertama)
         let runningOrders = [];
         let orderStatusMap = new Map();
         let pendingAction = null;
@@ -858,75 +847,21 @@
         const AGENT_STATUS_KEY = 'suruhboy_all_agents_status';
         
         // ============================================
-        // FUNGSI MEMBACA STATUS DARI SHEET ONLINE LOG
+        // FUNGSI UTILITY
         // ============================================
-        
-        async function fetchOnlineLogFromSheet() {
-            try {
-                const response = await fetch(ONLINE_LOG_CSV_URL);
-                if (!response.ok) throw new Error('Gagal fetch Online Log');
-                const csvText = await response.text();
-                
-                const lines = [];
-                let line = '', inQ = false;
-                for (let i = 0; i < csvText.length; i++) {
-                    const c = csvText[i];
-                    if (c === '"') inQ = !inQ;
-                    line += c;
-                    if (c === '\n' && !inQ) { lines.push(line); line = ''; }
-                }
-                if (line.trim()) lines.push(line);
-                
-                if (lines.length < 2) return {};
-                
-                const headers = parseCSVLine(lines[0]);
-                let tsIdx = -1, namaIdx = -1, userIdx = -1, actionIdx = -1, areasIdx = -1;
-                for (let i = 0; i < headers.length; i++) {
-                    const h = headers[i].toLowerCase();
-                    if (h.includes('timestamp') || h.includes('waktu')) tsIdx = i;
-                    if (h.includes('namaagent') || h.includes('nama_agent') || h.includes('nama')) namaIdx = i;
-                    if (h.includes('username')) userIdx = i;
-                    if (h.includes('action')) actionIdx = i;
-                    if (h.includes('areas') || h.includes('area')) areasIdx = i;
-                }
-                
-                if (namaIdx === -1 && userIdx === -1) return {};
-                
-                const agentLastStatus = new Map();
-                
-                for (let i = 1; i < lines.length; i++) {
-                    if (!lines[i].trim()) continue;
-                    const cols = parseCSVLine(lines[i]);
-                    if (cols.length === 0) continue;
-                    
-                    const namaAgent = (namaIdx >= 0 && cols[namaIdx]) ? cols[namaIdx].trim() : '';
-                    const username = (userIdx >= 0 && cols[userIdx]) ? cols[userIdx].trim() : '';
-                    const action = (actionIdx >= 0 && cols[actionIdx]) ? cols[actionIdx].trim().toLowerCase() : '';
-                    const areas = (areasIdx >= 0 && cols[areasIdx]) ? cols[areasIdx].trim() : '';
-                    const timestamp = (tsIdx >= 0 && cols[tsIdx]) ? cols[tsIdx] : new Date().toISOString();
-                    
-                    const identifier = username || namaAgent;
-                    if (!identifier) continue;
-                    
-                    let status = 'offline';
-                    if (action === 'online') status = 'online';
-                    else if (action === 'offline') status = 'offline';
-                    
-                    agentLastStatus.set(identifier, {
-                        status: status,
-                        areas: areas,
-                        timestamp: timestamp,
-                        name: namaAgent || identifier,
-                        username: username || identifier
-                    });
-                }
-                
-                return Object.fromEntries(agentLastStatus);
-                
-            } catch (error) {
-                console.error('Error membaca Online Log:', error);
-                return null;
-            }
+        function showNotification(message, type = 'info') {
+            const existing = document.querySelector('.notification-toast');
+            if (existing) existing.remove();
+            
+            const notif = document.createElement('div');
+            notif.className = `notification-toast ${type}`;
+            notif.innerHTML = `
+                <i class="fas ${type === 'warning' ? 'fa-exclamation-triangle' : type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>
+                <div style="flex:1">${message}</div>
+                <i class="fas fa-times" onclick="this.parentElement.remove()" style="cursor:pointer"></i>
+            `;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 5000);
         }
         
         function parseCSVLine(line) {
@@ -944,107 +879,30 @@
             return cols.map(v => v.replace(/^"|"$/g, ''));
         }
         
-        async function checkAgentStatusFromSheet(username, agentName) {
-            try {
-                const allStatus = await fetchOnlineLogFromSheet();
-                if (!allStatus) return null;
+        function parseCSVGeneral(csv) {
+            const lines = csv.split(/\r?\n/);
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
                 
-                let statusData = allStatus[username];
-                if (!statusData && agentName) {
-                    statusData = allStatus[agentName];
+                const cols = [];
+                let current = '';
+                let inQuotes = false;
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) {
+                        cols.push(current.trim());
+                        current = '';
+                    } else current += char;
                 }
-                if (!statusData) {
-                    for (const [key, val] of Object.entries(allStatus)) {
-                        if (key.toLowerCase() === username.toLowerCase() || 
-                            (agentName && key.toLowerCase() === agentName.toLowerCase())) {
-                            statusData = val;
-                            break;
-                        }
-                    }
-                }
-                
-                return statusData;
-            } catch (e) {
-                console.warn('Gagal cek status dari sheet:', e);
-                return null;
+                cols.push(current.trim());
+                data.push(cols.map(col => col.replace(/^"|"$/g, '')));
             }
+            return data;
         }
         
-        // ============================================
-        // SHARED STORAGE (fallback)
-        // ============================================
-        
-        function updateSharedAgentStatus(username, name, status, areas) {
-            const allStatus = JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
-            allStatus[username] = {
-                name: name,
-                status: status,
-                areas: areas,
-                lastActive: new Date().toISOString(),
-                lastActiveReadable: new Date().toLocaleString('id-ID')
-            };
-            localStorage.setItem(AGENT_STATUS_KEY, JSON.stringify(allStatus));
-            window.dispatchEvent(new CustomEvent('agentStatusChanged', { detail: { username, status } }));
-        }
-        
-        function removeSharedAgentStatus(username) {
-            const allStatus = JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
-            delete allStatus[username];
-            localStorage.setItem(AGENT_STATUS_KEY, JSON.stringify(allStatus));
-            window.dispatchEvent(new CustomEvent('agentStatusChanged', { detail: { username, status: 'offline' } }));
-        }
-        
-        function getAllAgentStatus() {
-            return JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
-        }
-        
-        // ============================================
-        // NOTIFICATION
-        // ============================================
-        function showNotification(message, type = 'info') {
-            const existing = document.querySelector('.notification-toast');
-            if (existing) existing.remove();
-            
-            const notif = document.createElement('div');
-            notif.className = `notification-toast ${type}`;
-            notif.innerHTML = `
-                <i class="fas ${type === 'warning' ? 'fa-exclamation-triangle' : type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>
-                <div style="flex:1">${message}</div>
-                <i class="fas fa-times" onclick="this.parentElement.remove()" style="cursor:pointer"></i>
-            `;
-            document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), 5000);
-        }
-        
-        // ============================================
-        // LOG FUNCTIONS
-        // ============================================
-        async function saveLoginLog(namaAgent, username, status, deviceInfo = '') {
-            try {
-                const params = new URLSearchParams();
-                params.append('type', 'login');
-                params.append('timestamp', new Date().toLocaleString('id-ID'));
-                params.append('namaAgent', namaAgent);
-                params.append('username', username);
-                params.append('status', status);
-                params.append('deviceInfo', deviceInfo || navigator.userAgent);
-                await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
-            } catch(e) { console.warn(e); }
-        }
-
-        async function saveOnlineLog(namaAgent, username, action, areas) {
-            try {
-                const params = new URLSearchParams();
-                params.append('type', 'online');
-                params.append('timestamp', new Date().toLocaleString('id-ID'));
-                params.append('namaAgent', namaAgent);
-                params.append('username', username);
-                params.append('action', action);
-                params.append('areas', areas || '-');
-                await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
-            } catch(e) { console.warn(e); }
-        }
-
         // ============================================
         // LOAD USERS
         // ============================================
@@ -1118,37 +976,15 @@
             }
         }
         
-        function parseCSVGeneral(csv) {
-            const lines = csv.split(/\r?\n/);
-            const data = [];
-            for (let i = 1; i < lines.length; i++) {
-                const line = lines[i].trim();
-                if (!line) continue;
-                
-                const cols = [];
-                let current = '';
-                let inQuotes = false;
-                for (let j = 0; j < line.length; j++) {
-                    const char = line[j];
-                    if (char === '"') inQuotes = !inQuotes;
-                    else if (char === ',' && !inQuotes) {
-                        cols.push(current.trim());
-                        current = '';
-                    } else current += char;
-                }
-                cols.push(current.trim());
-                data.push(cols.map(col => col.replace(/^"|"$/g, '')));
-            }
-            return data;
-        }
-        
         // ============================================
-        // LOAD ORDERS (UNTUK ORDER BERJALAN & RIWAYAT)
+        // LOAD RUNNING ORDERS (dari kode pertama)
         // ============================================
         async function loadRunningOrders() {
             if (!currentUser || isAdmin) return;
             
             try {
+                showNotification('🔄 Memuat order berjalan...', 'info');
+                
                 await loadOrderStatusMap();
                 
                 const response = await fetch(ORDER_CSV_URL);
@@ -1194,6 +1030,8 @@
                 
                 runningOrders = newRunningOrders;
                 updateRunningOrdersDisplay();
+                
+                showNotification(`✅ ${runningOrders.length} order berjalan`, 'success');
                 
             } catch (error) {
                 console.error(error);
@@ -1325,7 +1163,7 @@
         }
         
         // ============================================
-        // LOAD ORDERS (untuk agent)
+        // LOAD ORDERS (untuk riwayat agent)
         // ============================================
         function parseCSVOrder(csv) {
             const lines = [];
@@ -1407,7 +1245,7 @@
             if (!orders.length) {
                 container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><div>Tidak ada order minggu ini</div></div>';
             } else {
-                container.innerHTML = orders.map(o => `<div class="order-card"><div class="order-top"><div class="customer-name"><i class="fas fa-user"></i> ${o.customer}</div><div class="order-amount">Rp${o.nominal.toLocaleString()}</div></div><div class="order-date"><i class="fas fa-calendar-alt"></i> ${o.tanggal || o.week}</div></div>`).join('');
+                container.innerHTML = orders.map(o => `<div class="order-card"><div class="order-top"><div class="history-customer-name"><i class="fas fa-user"></i> ${o.customer}</div><div class="order-amount">Rp${o.nominal.toLocaleString()}</div></div><div class="order-date-small"><i class="fas fa-calendar-alt"></i> ${o.tanggal || o.week}</div></div>`).join('');
             }
         }
 
@@ -1436,9 +1274,155 @@
         };
 
         // ============================================
-        // AGENT STATUS dengan pembacaan dari Sheet Online Log
+        // ONLINE LOG FUNCTIONS
         // ============================================
+        async function fetchOnlineLogFromSheet() {
+            try {
+                const response = await fetch(ONLINE_LOG_CSV_URL);
+                if (!response.ok) throw new Error('Gagal fetch Online Log');
+                const csvText = await response.text();
+                
+                const lines = [];
+                let line = '', inQ = false;
+                for (let i = 0; i < csvText.length; i++) {
+                    const c = csvText[i];
+                    if (c === '"') inQ = !inQ;
+                    line += c;
+                    if (c === '\n' && !inQ) { lines.push(line); line = ''; }
+                }
+                if (line.trim()) lines.push(line);
+                
+                if (lines.length < 2) return {};
+                
+                const headers = parseCSVLine(lines[0]);
+                let tsIdx = -1, namaIdx = -1, userIdx = -1, actionIdx = -1, areasIdx = -1;
+                for (let i = 0; i < headers.length; i++) {
+                    const h = headers[i].toLowerCase();
+                    if (h.includes('timestamp') || h.includes('waktu')) tsIdx = i;
+                    if (h.includes('namaagent') || h.includes('nama_agent') || h.includes('nama')) namaIdx = i;
+                    if (h.includes('username')) userIdx = i;
+                    if (h.includes('action')) actionIdx = i;
+                    if (h.includes('areas') || h.includes('area')) areasIdx = i;
+                }
+                
+                if (namaIdx === -1 && userIdx === -1) return {};
+                
+                const agentLastStatus = new Map();
+                
+                for (let i = 1; i < lines.length; i++) {
+                    if (!lines[i].trim()) continue;
+                    const cols = parseCSVLine(lines[i]);
+                    if (cols.length === 0) continue;
+                    
+                    const namaAgent = (namaIdx >= 0 && cols[namaIdx]) ? cols[namaIdx].trim() : '';
+                    const username = (userIdx >= 0 && cols[userIdx]) ? cols[userIdx].trim() : '';
+                    const action = (actionIdx >= 0 && cols[actionIdx]) ? cols[actionIdx].trim().toLowerCase() : '';
+                    const areas = (areasIdx >= 0 && cols[areasIdx]) ? cols[areasIdx].trim() : '';
+                    const timestamp = (tsIdx >= 0 && cols[tsIdx]) ? cols[tsIdx] : new Date().toISOString();
+                    
+                    const identifier = username || namaAgent;
+                    if (!identifier) continue;
+                    
+                    let status = 'offline';
+                    if (action === 'online') status = 'online';
+                    else if (action === 'offline') status = 'offline';
+                    
+                    agentLastStatus.set(identifier, {
+                        status: status,
+                        areas: areas,
+                        timestamp: timestamp,
+                        name: namaAgent || identifier,
+                        username: username || identifier
+                    });
+                }
+                
+                return Object.fromEntries(agentLastStatus);
+                
+            } catch (error) {
+                console.error('Error membaca Online Log:', error);
+                return null;
+            }
+        }
         
+        async function checkAgentStatusFromSheet(username, agentName) {
+            try {
+                const allStatus = await fetchOnlineLogFromSheet();
+                if (!allStatus) return null;
+                
+                let statusData = allStatus[username];
+                if (!statusData && agentName) {
+                    statusData = allStatus[agentName];
+                }
+                if (!statusData) {
+                    for (const [key, val] of Object.entries(allStatus)) {
+                        if (key.toLowerCase() === username.toLowerCase() || 
+                            (agentName && key.toLowerCase() === agentName.toLowerCase())) {
+                            statusData = val;
+                            break;
+                        }
+                    }
+                }
+                
+                return statusData;
+            } catch (e) {
+                console.warn('Gagal cek status dari sheet:', e);
+                return null;
+            }
+        }
+        
+        function updateSharedAgentStatus(username, name, status, areas) {
+            const allStatus = JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
+            allStatus[username] = {
+                name: name,
+                status: status,
+                areas: areas,
+                lastActive: new Date().toISOString(),
+                lastActiveReadable: new Date().toLocaleString('id-ID')
+            };
+            localStorage.setItem(AGENT_STATUS_KEY, JSON.stringify(allStatus));
+            window.dispatchEvent(new CustomEvent('agentStatusChanged', { detail: { username, status } }));
+        }
+        
+        function removeSharedAgentStatus(username) {
+            const allStatus = JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
+            delete allStatus[username];
+            localStorage.setItem(AGENT_STATUS_KEY, JSON.stringify(allStatus));
+            window.dispatchEvent(new CustomEvent('agentStatusChanged', { detail: { username, status: 'offline' } }));
+        }
+        
+        function getAllAgentStatus() {
+            return JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
+        }
+        
+        async function saveLoginLog(namaAgent, username, status, deviceInfo = '') {
+            try {
+                const params = new URLSearchParams();
+                params.append('type', 'login');
+                params.append('timestamp', new Date().toLocaleString('id-ID'));
+                params.append('namaAgent', namaAgent);
+                params.append('username', username);
+                params.append('status', status);
+                params.append('deviceInfo', deviceInfo || navigator.userAgent);
+                await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
+            } catch(e) { console.warn(e); }
+        }
+
+        async function saveOnlineLog(namaAgent, username, action, areas) {
+            try {
+                const params = new URLSearchParams();
+                params.append('type', 'online');
+                params.append('timestamp', new Date().toLocaleString('id-ID'));
+                params.append('namaAgent', namaAgent);
+                params.append('username', username);
+                params.append('action', action);
+                params.append('areas', areas || '-');
+                await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
+            } catch(e) { console.warn(e); }
+        }
+
+        // ============================================
+        // AGENT STATUS
+        // ============================================
         async function syncStatusFromSheet() {
             if (!currentUser || isAdmin) return;
             
@@ -1672,7 +1656,6 @@
         // ============================================
         // POLLING
         // ============================================
-        
         function startPollingForAgent() {
             if (pollingInterval) clearInterval(pollingInterval);
             pollingInterval = setInterval(async () => {
