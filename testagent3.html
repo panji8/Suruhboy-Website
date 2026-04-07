@@ -144,7 +144,7 @@
         }
         .logout-icon:active { background: #E2E8F0; transform: scale(0.95); }
 
-        /* Running Orders Card - Diambil dari kode pertama */
+        /* Running Orders Card */
         .running-orders-card {
             background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
             border-radius: 28px;
@@ -177,6 +177,22 @@
             font-weight: 800;
             margin-left: auto;
         }
+        .running-refresh {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 8px;
+        }
+        .running-refresh:active { transform: scale(0.9); background: rgba(255,255,255,0.3); }
+        .running-refresh i { font-size: 16px; animation: none; }
 
         /* Order Item */
         .order-item {
@@ -552,8 +568,7 @@
             background: white;
             border-radius: 32px;
             width: 100%;
-            max-width: 380px;
-            max-height: 80vh;
+            max-width: 340px;
             overflow: hidden;
             animation: modalIn 0.2s ease;
         }
@@ -561,8 +576,69 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
+        
+        /* Modal Konfirmasi Order - ukuran lebih proporsional */
+        .confirm-modal-container {
+            max-width: 300px;
+            text-align: center;
+            padding: 28px 24px;
+        }
+        .confirm-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+        .confirm-icon i { font-size: 56px; }
+        .confirm-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0F172A;
+            margin-bottom: 8px;
+        }
+        .confirm-message {
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.4;
+            margin-bottom: 24px;
+            word-break: break-word;
+        }
+        .confirm-message strong {
+            color: #FF3B2F;
+            font-weight: 700;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .confirm-btn {
+            flex: 1;
+            padding: 12px 0;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .confirm-btn:active { transform: scale(0.97); }
+        .confirm-btn.cancel {
+            background: #F1F5F9;
+            color: #475569;
+        }
+        .confirm-btn.confirm {
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            color: white;
+        }
+        
+        /* Modal Area */
+        .area-modal-container {
+            max-width: 380px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
         .modal-header { padding: 24px 20px 12px; text-align: center; }
         .modal-header h3 { font-size: 20px; font-weight: 700; color: #0F172A; }
+        .modal-header p { font-size: 13px; color: #64748B; margin-top: 4px; }
         .area-list {
             padding: 8px 20px;
             display: grid;
@@ -648,6 +724,15 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+        /* Loading kecil untuk tombol refresh */
+        .fa-spinner.fa-spin {
+            animation: fa-spin 1s infinite linear;
+        }
+        @keyframes fa-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -710,11 +795,14 @@
             </div>
         </div>
 
-        <!-- ORDER BERJALAN CARD - Diambil dari kode pertama -->
+        <!-- ORDER BERJALAN CARD dengan tombol refresh -->
         <div class="running-orders-card">
             <div class="running-header">
                 <i class="fas fa-tasks"></i>
                 <h3>Order Berjalan</h3>
+                <button class="running-refresh" onclick="refreshRunningOrders()" id="runningRefreshBtn">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
                 <div class="running-count" id="runningOrderCount">0</div>
             </div>
             <div id="runningOrdersList">
@@ -799,8 +887,11 @@
 
     <!-- Modal Area untuk Agent -->
     <div id="areaModal" class="modal">
-        <div class="modal-container">
-            <div class="modal-header"><h3><i class="fas fa-location-dot"></i> Pilih Area Kerja</h3><p>Pilih kecamatan tempat Anda bertugas</p></div>
+        <div class="modal-container area-modal-container">
+            <div class="modal-header">
+                <h3><i class="fas fa-location-dot"></i> Pilih Area Kerja</h3>
+                <p>Pilih kecamatan tempat Anda bertugas</p>
+            </div>
             <div class="area-list" id="areaList"></div>
             <div class="modal-footer">
                 <button class="btn-primary-modal" onclick="confirmAreas()">Konfirmasi</button>
@@ -809,15 +900,17 @@
         </div>
     </div>
 
-    <!-- Modal Konfirmasi untuk Order Berjalan -->
+    <!-- Modal Konfirmasi untuk Order Berjalan - ukuran lebih proporsional -->
     <div id="confirmModal" class="modal">
-        <div class="modal-container">
-            <i class="fas fa-question-circle" style="color: #FF6B4A;"></i>
-            <h3 id="confirmTitle">Konfirmasi</h3>
-            <p id="confirmMessage">Apakah Anda yakin?</p>
-            <div class="modal-buttons" style="display: flex; gap: 12px; margin-top: 20px;">
-                <button class="btn-secondary-modal" onclick="closeConfirmModal()">Batal</button>
-                <button class="btn-primary-modal" id="confirmActionBtn">Ya, Lanjutkan</button>
+        <div class="modal-container confirm-modal-container">
+            <div class="confirm-icon" id="confirmIcon">
+                <i class="fas fa-question-circle" style="color: #FF6B4A;"></i>
+            </div>
+            <div class="confirm-title" id="confirmTitle">Konfirmasi</div>
+            <div class="confirm-message" id="confirmMessage">Apakah Anda yakin?</div>
+            <div class="confirm-buttons">
+                <button class="confirm-btn cancel" onclick="closeConfirmModal()">Batal</button>
+                <button class="confirm-btn confirm" id="confirmActionBtn">Ya, Lanjutkan</button>
             </div>
         </div>
     </div>
@@ -853,7 +946,6 @@
         let isAdmin = false;
         let pollingInterval = null;
         let adminRefreshInterval = null;
-        let runningOrdersRefreshInterval = null;
         
         // Variabel untuk Order Berjalan
         let runningOrders = [];
@@ -1046,20 +1138,46 @@
             }).join('');
         }
         
+        // Fungsi refresh khusus untuk order berjalan
+        window.refreshRunningOrders = async function() {
+            const refreshBtn = document.getElementById('runningRefreshBtn');
+            const originalIcon = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            refreshBtn.disabled = true;
+            
+            showNotification('🔄 Memuat ulang order berjalan...', 'info');
+            await loadRunningOrders();
+            
+            refreshBtn.innerHTML = originalIcon;
+            refreshBtn.disabled = false;
+            showNotification('✅ Order berjalan diperbarui', 'success');
+        };
+        
         // ============================================
         // UPDATE STATUS ORDER VIA WEB APP
         // ============================================
         function openConfirmModal(orderNumber, action) {
             pendingAction = { orderNumber, action };
+            let iconHtml = '<i class="fas fa-question-circle" style="color: #FF6B4A;"></i>';
+            let title = 'Konfirmasi';
             let message = '';
+            
             if (action === 'Diterima') {
-                message = `Apakah Anda yakin ingin <strong>menerima</strong> order #${orderNumber}?`;
+                iconHtml = '<i class="fas fa-check-circle" style="color: #10B981;"></i>';
+                title = 'Terima Order';
+                message = `Anda akan <strong>menerima</strong> order <strong>#${orderNumber}</strong>. Lanjutkan?`;
             } else if (action === 'Selesai') {
-                message = `Apakah Anda yakin order #${orderNumber} sudah <strong>selesai</strong>?`;
+                iconHtml = '<i class="fas fa-flag-checkered" style="color: #3B82F6;"></i>';
+                title = 'Selesaikan Order';
+                message = `Pastikan order <strong>#${orderNumber}</strong> sudah selesai dikerjakan. Lanjutkan?`;
             } else if (action === 'Batal') {
-                message = `Apakah Anda yakin ingin <strong>membatalkan</strong> order #${orderNumber}?`;
+                iconHtml = '<i class="fas fa-times-circle" style="color: #EF4444;"></i>';
+                title = 'Batalkan Order';
+                message = `Anda akan <strong>membatalkan</strong> order <strong>#${orderNumber}</strong>. Lanjutkan?`;
             }
-            document.getElementById('confirmTitle').innerText = 'Konfirmasi';
+            
+            document.getElementById('confirmIcon').innerHTML = iconHtml;
+            document.getElementById('confirmTitle').innerText = title;
             document.getElementById('confirmMessage').innerHTML = message;
             document.getElementById('confirmModal').style.display = 'flex';
         }
@@ -1701,10 +1819,6 @@
             if (adminRefreshInterval) {
                 clearInterval(adminRefreshInterval);
                 adminRefreshInterval = null;
-            }
-            if (runningOrdersRefreshInterval) {
-                clearInterval(runningOrdersRefreshInterval);
-                runningOrdersRefreshInterval = null;
             }
         }
 
