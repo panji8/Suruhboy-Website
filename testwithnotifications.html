@@ -1,0 +1,2124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>SuruhBoy - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: #F7F9FC;
+            min-height: 100vh;
+        }
+
+        /* Login Page */
+        .login-page {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #0A0C10 0%, #12161C 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 40px;
+            width: 100%;
+            max-width: 360px;
+            padding: 40px 28px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        .login-header { text-align: center; margin-bottom: 32px; }
+        .login-icon {
+            width: 70px; height: 70px;
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 36px;
+        }
+        .login-header h1 { font-size: 28px; font-weight: 800; color: #0F172A; }
+        .login-header p { color: #64748B; font-size: 14px; margin-top: 4px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: #F8FAFE;
+            border: 1px solid #E2E8F0;
+            border-radius: 20px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #FF6B4A;
+            box-shadow: 0 0 0 3px rgba(255,107,74,0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border: none;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+        }
+        .btn-login:active { transform: scale(0.98); }
+
+        .message {
+            padding: 12px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            text-align: center;
+        }
+        .info { background: #EFF6FF; color: #1E40AF; }
+        .success { background: #DCFCE7; color: #15803D; }
+        .error { background: #FEE2E2; color: #B91C1C; }
+        .warning { background: #FEF3C7; color: #92400E; }
+
+        .hidden { display: none; }
+
+        /* Dashboard Common */
+        .dashboard { max-width: 480px; margin: 0 auto; padding: 20px 16px 100px; }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .logo-area h2 {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .logo-area p { font-size: 12px; color: #94A3B8; }
+        .user-menu { display: flex; align-items: center; gap: 12px; }
+        .user-avatar {
+            width: 48px; height: 48px;
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+        }
+        .logout-icon {
+            width: 44px; height: 44px;
+            background: #F1F5F9;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748B;
+            cursor: pointer;
+        }
+        .logout-icon:active { background: #E2E8F0; transform: scale(0.95); }
+
+        /* Running Orders Card */
+        .running-orders-card {
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 16px;
+            color: white;
+        }
+
+        .running-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .running-header i {
+            font-size: 28px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .running-header h3 { font-size: 18px; font-weight: 700; margin: 0; }
+        .running-count {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 24px;
+            font-weight: 800;
+            margin-left: auto;
+        }
+        .running-refresh {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 8px;
+        }
+        .running-refresh:active { transform: scale(0.9); background: rgba(255,255,255,0.3); }
+        .running-refresh i { font-size: 16px; animation: none; }
+
+        /* Order Item */
+        .order-item {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        .order-number {
+            font-size: 12px;
+            font-family: monospace;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        .order-price { font-weight: 800; font-size: 18px; }
+
+        .order-customer {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .customer-name {
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .customer-phone {
+            font-size: 12px;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .order-desc {
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .order-location {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+        .location-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .location-item i { margin-top: 2px; font-size: 12px; }
+
+        .order-date {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-action:active { transform: scale(0.97); }
+        .btn-accept { background: #10B981; color: white; }
+        .btn-complete { background: #3B82F6; color: white; }
+        .btn-cancel { background: #EF4444; color: white; }
+
+        .empty-running {
+            text-align: center;
+            padding: 30px;
+            opacity: 0.8;
+        }
+
+        /* Admin Dashboard Specific */
+        .admin-dashboard { max-width: 800px; margin: 0 auto; padding: 20px 16px 100px; }
+        .admin-title { 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .admin-title h2 { font-size: 24px; font-weight: 700; color: #0F172A; }
+        .admin-title p { color: #64748B; }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+        .refresh-btn:active { transform: scale(0.97); }
+        .refresh-btn i { font-size: 14px; }
+        .refresh-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .last-update {
+            font-size: 12px;
+            color: #94A3B8;
+            margin-top: 8px;
+            margin-bottom: 16px;
+            text-align: right;
+        }
+        
+        .online-count {
+            background: #10B981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .agent-list-card {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #EDF2F7;
+        }
+
+        .agent-item-admin {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #F1F5F9;
+            transition: background 0.2s;
+        }
+        .agent-item-admin:last-child { border-bottom: none; }
+        .agent-item-admin.online-agent {
+            background: #F0FDF4;
+            border-left: 4px solid #10B981;
+        }
+        .agent-info h4 { font-size: 16px; font-weight: 700; color: #0F172A; }
+        .agent-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-online { background: #DCFCE7; color: #15803D; }
+        .status-offline { background: #FEE2E2; color: #B91C1C; }
+        .agent-areas { font-size: 12px; color: #64748B; margin-top: 4px; }
+        .agent-last-active { font-size: 11px; color: #94A3B8; margin-top: 2px; }
+        .btn-offline {
+            background: #FEE2E2;
+            color: #B91C1C;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-offline:active { transform: scale(0.96); background: #FECACA; }
+        
+        .online-badge {
+            background: #10B981;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* Agent Dashboard */
+        .welcome-card {
+            background: linear-gradient(135deg, #0F172A, #1E293B);
+            border-radius: 32px;
+            padding: 24px;
+            margin-bottom: 20px;
+            color: white;
+        }
+        .welcome-text { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .welcome-text span {
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .welcome-sub { font-size: 13px; color: #94A3B8; margin-bottom: 20px; }
+
+        .status-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .status-on { background: rgba(16,185,129,0.2); color: #34D399; }
+        .status-off { background: rgba(239,68,68,0.2); color: #F87171; }
+
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 26px;
+        }
+        .toggle input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #475569;
+            transition: 0.3s;
+            border-radius: 34px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider { background-color: #10B981; }
+        input:checked + .toggle-slider:before { transform: translateX(22px); }
+
+        .area-section { margin-top: 16px; }
+        .area-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+        .area-tag { background: rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 20px; font-size: 12px; color: #CBD5E1; }
+
+        .section-card {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #EDF2F7;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0F172A;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-title .title-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title i { color: #FF6B4A; }
+        .small-refresh {
+            background: #F1F5F9;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #64748B;
+        }
+        .small-refresh:active { transform: scale(0.95); }
+
+        .week-select {
+            width: 100%;
+            padding: 14px 16px;
+            background: #F8FAFE;
+            border: 1px solid #E9EDF2;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        .stat-block {
+            background: #F8FAFE;
+            border-radius: 20px;
+            padding: 14px 8px;
+            text-align: center;
+        }
+        .stat-number { font-size: 20px; font-weight: 800; color: #0F172A; }
+        .stat-label { font-size: 11px; color: #64748B; margin-top: 4px; }
+
+        .order-list { display: flex; flex-direction: column; gap: 12px; }
+        .order-card {
+            background: #F8FAFE;
+            border-radius: 20px;
+            padding: 16px;
+        }
+        .order-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .order-customer-name { font-weight: 700; font-size: 15px; color: #0F172A; display: flex; align-items: center; gap: 8px; }
+        .order-amount { font-weight: 700; font-size: 15px; color: #10B981; }
+        .order-date { font-size: 12px; color: #94A3B8; display: flex; align-items: center; gap: 6px; }
+
+        .empty-state { text-align: center; padding: 40px 20px; color: #94A3B8; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-container {
+            background: white;
+            border-radius: 32px;
+            width: 100%;
+            max-width: 340px;
+            overflow: hidden;
+            animation: modalIn 0.2s ease;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .confirm-modal-container {
+            max-width: 300px;
+            text-align: center;
+            padding: 28px 24px;
+        }
+        .confirm-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+        }
+        .confirm-icon i { font-size: 56px; }
+        .confirm-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0F172A;
+            margin-bottom: 8px;
+        }
+        .confirm-message {
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.4;
+            margin-bottom: 24px;
+            word-break: break-word;
+        }
+        .confirm-message strong {
+            color: #FF3B2F;
+            font-weight: 700;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .confirm-btn {
+            flex: 1;
+            padding: 12px 0;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .confirm-btn:active { transform: scale(0.97); }
+        .confirm-btn.cancel {
+            background: #F1F5F9;
+            color: #475569;
+        }
+        .confirm-btn.confirm {
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            color: white;
+        }
+        
+        .area-modal-container {
+            max-width: 380px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .modal-header { padding: 24px 20px 12px; text-align: center; }
+        .modal-header h3 { font-size: 20px; font-weight: 700; color: #0F172A; }
+        .modal-header p { font-size: 13px; color: #64748B; margin-top: 4px; }
+        .area-list {
+            padding: 8px 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .area-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: #F8FAFE;
+            border-radius: 40px;
+            cursor: pointer;
+        }
+        .area-option input { width: 18px; height: 18px; accent-color: #FF6B4A; cursor: pointer; }
+        .modal-footer {
+            padding: 16px 20px 24px;
+            display: flex;
+            gap: 12px;
+            border-top: 1px solid #F1F5F9;
+        }
+        .btn-primary-modal {
+            flex: 2;
+            background: linear-gradient(135deg, #FF6B4A, #FF3B2F);
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+        }
+        .btn-secondary-modal {
+            flex: 1;
+            background: #F1F5F9;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+        }
+        .loading-small { text-align: center; padding: 30px; color: #94A3B8; }
+        
+        /* Notification */
+        .notification-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: #1E293B;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 1100;
+            animation: slideUp 0.3s ease;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .notification-toast i { font-size: 24px; }
+        .notification-toast.warning { background: #92400E; border-left: 4px solid #FBBF24; }
+        .notification-toast.info { background: #1E3A8A; border-left: 4px solid #60A5FA; }
+        .notification-toast.success { background: #065F46; border-left: 4px solid #34D399; }
+        
+        /* Push Notification Permission Button */
+        .push-permission-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 8px;
+        }
+        .push-permission-btn:active { transform: scale(0.95); }
+        
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .fa-spinner.fa-spin {
+            animation: fa-spin 1s infinite linear;
+        }
+        @keyframes fa-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-page">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-icon">🤖</div>
+                <h1>SuruhBoy</h1>
+                <p>Agent Dashboard</p>
+            </div>
+            <div class="login-content">
+                <div id="loginStatus" class="message info">⏳ Menghubungkan ke database...</div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="username" placeholder="Masukkan username" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="password" placeholder="Masukkan password" required>
+                    </div>
+                    <button type="submit" class="btn-login">Masuk</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agent Dashboard -->
+    <div id="agentDashboard" class="dashboard hidden">
+        <div class="dashboard-header">
+            <div class="logo-area">
+                <h2>SuruhBoy</h2>
+                <p>Agent Portal</p>
+            </div>
+            <div class="user-menu">
+                <div class="user-avatar" id="agentAvatar">👤</div>
+                <div class="logout-icon" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="welcome-card">
+            <div class="welcome-text">Halo, <span id="agentName"></span></div>
+            <div class="welcome-sub">Kelola order dan pantau penghasilan Anda</div>
+            <div class="status-container">
+                <span class="status-label"><i class="fas fa-circle"></i> Status Siap Kerja</span>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span id="agentStatusText" class="status-badge status-off"><i class="fas fa-power-off"></i> Offline</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="agentStatusToggle" onchange="onAgentStatusToggle()">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <button id="pushPermissionBtn" class="push-permission-btn" onclick="requestPushPermission()">
+                        <i class="fas fa-bell"></i> Notif
+                    </button>
+                </div>
+            </div>
+            <div id="agentAreaDisplay" class="area-section" style="display: none;">
+                <div class="area-label"><i class="fas fa-map-marker-alt"></i> Area kerja aktif</div>
+                <div class="area-tags" id="agentAreaTags"></div>
+            </div>
+        </div>
+
+        <!-- ORDER BERJALAN CARD dengan tombol refresh -->
+        <div class="running-orders-card">
+            <div class="running-header">
+                <i class="fas fa-tasks"></i>
+                <h3>Order Berjalan</h3>
+                <button class="running-refresh" onclick="refreshRunningOrders()" id="runningRefreshBtn">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <div class="running-count" id="runningOrderCount">0</div>
+            </div>
+            <div id="runningOrdersList">
+                <div class="empty-running">✨ Tidak ada order berjalan</div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">
+                <div class="title-left">
+                    <i class="fas fa-calendar-week"></i> Periode Minggu
+                </div>
+                <button class="small-refresh" onclick="refreshAgentOrders()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <select class="week-select" id="weekSelect"><option>Loading...</option></select>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">
+                <div class="title-left">
+                    <i class="fas fa-chart-simple"></i> Ringkasan Penghasilan
+                </div>
+                <button class="small-refresh" onclick="refreshAgentStats()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-block"><div class="stat-number" id="totalOrders">0</div><div class="stat-label">Total Order</div></div>
+                <div class="stat-block"><div class="stat-number" id="totalAdminFee">Rp0</div><div class="stat-label">Admin Fee</div></div>
+                <div class="stat-block"><div class="stat-number" id="totalEarnings">Rp0</div><div class="stat-label">Pendapatan</div></div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title">
+                <div class="title-left">
+                    <i class="fas fa-clock"></i> Riwayat Order
+                </div>
+                <button class="small-refresh" onclick="refreshAgentOrders()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+            <div id="historyList" class="order-list"><div class="loading-small">Pilih minggu untuk melihat data</div></div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="admin-dashboard hidden">
+        <div class="dashboard-header">
+            <div class="logo-area">
+                <h2>SuruhBoy Admin</h2>
+                <p>Monitor Agent</p>
+            </div>
+            <div class="user-menu">
+                <div class="user-avatar" id="adminAvatar">👤</div>
+                <div class="logout-icon" onclick="logout()"><i class="fas fa-sign-out-alt"></i></div>
+            </div>
+        </div>
+
+        <div class="admin-title">
+            <div>
+                <h2>👥 Daftar Agent <span id="onlineCount" class="online-count">0 Online</span></h2>
+                <p>Lihat status agent dan kelola koneksi</p>
+            </div>
+            <button class="refresh-btn" onclick="manualRefreshAdmin()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+        
+        <div class="last-update" id="lastUpdateTime">
+            Terakhir diperbarui: --
+        </div>
+
+        <div class="agent-list-card">
+            <div id="adminAgentList" class="agent-list">
+                <div class="loading-small">Memuat data agent...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Area untuk Agent -->
+    <div id="areaModal" class="modal">
+        <div class="modal-container area-modal-container">
+            <div class="modal-header">
+                <h3><i class="fas fa-location-dot"></i> Pilih Area Kerja</h3>
+                <p>Pilih kecamatan tempat Anda bertugas</p>
+            </div>
+            <div class="area-list" id="areaList"></div>
+            <div class="modal-footer">
+                <button class="btn-primary-modal" onclick="confirmAreas()">Konfirmasi</button>
+                <button class="btn-secondary-modal" onclick="closeAreaModal()">Batal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi untuk Order Berjalan -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-container confirm-modal-container">
+            <div class="confirm-icon" id="confirmIcon">
+                <i class="fas fa-question-circle" style="color: #FF6B4A;"></i>
+            </div>
+            <div class="confirm-title" id="confirmTitle">Konfirmasi</div>
+            <div class="confirm-message" id="confirmMessage">Apakah Anda yakin?</div>
+            <div class="confirm-buttons">
+                <button class="confirm-btn cancel" onclick="closeConfirmModal()">Batal</button>
+                <button class="confirm-btn confirm" id="confirmActionBtn">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // KONFIGURASI
+        // ============================================
+        const WEB_APP_URL_ORDER = 'https://script.google.com/macros/s/AKfycbzfybo4oG8ue449-2qu-Vy8UoYFnfeTSwAsXttxK7lO5VnZ2l53ZNXtHJE_qS8yvDRWJQ/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyEyzeBKEsP_6PuAJDnuFmeqq0LBNNnIs97fnfQ6HZ_dpiUgrX9wdD0LNvbSyMKw0l06g/exec';
+        
+        const SPREADSHEET_ID_LOGIN = '1FgWiv56J2w7A0WprwqOKJMU7BO4mX3jotW3IC397rWg';
+        const SPREADSHEET_ID_ORDER = '1fDE1tj2mYanx9FA4deMPd-OLY6CdxWHZecMsdVtkc6c';
+        const ORDER_SHEET_NAME = 'Mirroring';
+        
+        const RUNNING_ORDER_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_LOGIN}/gviz/tq?tqx=out:csv&gid=896910808`;
+        const ORDER_LOG_CSV_URL = `https://docs.google.com/spreadsheets/d/1SPqTzbdLVsgAMBQ79fMInLIs4udTFxGr4c9_wWTwgBg/gviz/tq?tqx=out:csv&sheet=OrderLog`;
+        
+        const LOGIN_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_LOGIN}/gviz/tq?tqx=out:json&sheet=Sheet1`;
+        const ORDER_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_ORDER}/gviz/tq?tqx=out:csv&sheet=${ORDER_SHEET_NAME}`;
+        const ONLINE_LOG_CSV_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_LOGIN}/gviz/tq?tqx=out:csv&sheet=Online Log`;
+        
+        const COL = { TANGGAL: 2, CUSTOMER: 3, AGENT: 8, NOMINAL: 10, MINGGU: 15 };
+        const KECAMATAN = ["Ampel","Andong","Banyudono","Boyolali Kota","Cepogo","Juwangi","Karanggede","Kemusu","Klego","Mojosongo","Musuk","Ngemplak","Nogosari","Sambi","Sawit","Selo","Simo","Tamansari","Teras","Wonosegoro"];
+
+        let users = [], currentUser = null, selectedAreas = [];
+        let rawOrders = [], aggregated = {}, weeks = [], weekIndex = 0, orderDetails = {};
+        let agentStatus = { status: 'offline', areas: [] };
+        let isAdmin = false;
+        let pollingInterval = null;
+        let adminRefreshInterval = null;
+        
+        let runningOrders = [];
+        let orderStatusMap = new Map();
+        let pendingAction = null;
+        let previousRunningOrderIds = new Set();
+        
+        const AGENT_STATUS_KEY = 'suruhboy_all_agents_status';
+        
+        // Push Notification variables
+        let pushSubscription = null;
+        const VAPID_PUBLIC_KEY = 'BBqgsSqWYwvXr7tA3z5c7d9f1g3h5j7k9l1m3n5p7q9r1s3t5u7v9w1x3z5'; // Contoh key, ganti dengan key asli dari server Anda
+        
+        // ============================================
+        // WEB PUSH NOTIFICATION FUNCTIONS
+        // ============================================
+        async function registerServiceWorker() {
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registration = await navigator.serviceWorker.register('/sw.js');
+                    console.log('Service Worker registered:', registration);
+                    return registration;
+                }
+            } catch (error) {
+                console.error('Service Worker registration failed:', error);
+            }
+            return null;
+        }
+        
+        async function requestPushPermission() {
+            if (!('Notification' in window)) {
+                showNotification('Browser Anda tidak mendukung notifikasi desktop', 'warning');
+                return;
+            }
+            
+            if (Notification.permission === 'granted') {
+                showNotification('Notifikasi sudah diizinkan', 'success');
+                subscribeToPush();
+                return;
+            }
+            
+            if (Notification.permission !== 'denied') {
+                const permission = await Notification.requestPermission();
+                if (permission === 'granted') {
+                    showNotification('Notifikasi diaktifkan! Anda akan menerima notifikasi order masuk', 'success');
+                    subscribeToPush();
+                } else {
+                    showNotification('Notifikasi ditolak. Aktifkan di pengaturan browser untuk menerima notifikasi', 'warning');
+                }
+            } else {
+                showNotification('Notifikasi diblokir. Silakan izinkan notifikasi di pengaturan browser', 'warning');
+            }
+        }
+        
+        async function subscribeToPush() {
+            try {
+                const registration = await registerServiceWorker();
+                if (!registration) return;
+                
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+                });
+                
+                pushSubscription = subscription;
+                console.log('Push subscription:', subscription);
+                
+                // Simpan subscription ke server (opsional)
+                await savePushSubscription(subscription);
+                
+                showNotification('Notifikasi push siap!', 'success');
+                updatePushButtonUI(true);
+                
+            } catch (error) {
+                console.error('Push subscription failed:', error);
+                showNotification('Gagal mengaktifkan notifikasi push', 'warning');
+            }
+        }
+        
+        async function savePushSubscription(subscription) {
+            try {
+                const params = new URLSearchParams();
+                params.append('type', 'saveSubscription');
+                params.append('endpoint', subscription.endpoint);
+                params.append('p256dh', btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('p256dh')))));
+                params.append('auth', btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('auth')))));
+                params.append('username', currentUser?.username || '');
+                params.append('agentName', currentUser?.name || '');
+                
+                await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
+            } catch(e) { console.warn(e); }
+        }
+        
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+            const rawData = window.atob(base64);
+            const outputArray = new Uint8Array(rawData.length);
+            for (let i = 0; i < rawData.length; ++i) {
+                outputArray[i] = rawData.charCodeAt(i);
+            }
+            return outputArray;
+        }
+        
+        function updatePushButtonUI(isSubscribed) {
+            const btn = document.getElementById('pushPermissionBtn');
+            if (btn) {
+                if (isSubscribed || Notification.permission === 'granted') {
+                    btn.innerHTML = '<i class="fas fa-bell"></i> Notif Aktif';
+                    btn.style.background = 'rgba(16,185,129,0.3)';
+                } else {
+                    btn.innerHTML = '<i class="fas fa-bell-slash"></i> Aktifkan Notif';
+                    btn.style.background = 'rgba(255,255,255,0.15)';
+                }
+            }
+        }
+        
+        function checkNotificationPermission() {
+            if (Notification.permission === 'granted') {
+                updatePushButtonUI(true);
+            } else {
+                updatePushButtonUI(false);
+            }
+        }
+        
+        function showPushNotification(orderData) {
+            if (!('Notification' in window) || Notification.permission !== 'granted') return;
+            
+            const options = {
+                body: `📦 ${orderData.customerName || 'Pelanggan'} - ${orderData.description || orderData.orderNumber || 'Order Baru'}`,
+                icon: 'https://cdn-icons-png.flaticon.com/512/190/190411.png',
+                badge: 'https://cdn-icons-png.flaticon.com/512/190/190411.png',
+                vibrate: [200, 100, 200],
+                requireInteraction: true,
+                tag: `order-${orderData.orderNumber}`,
+                data: {
+                    url: window.location.href,
+                    orderNumber: orderData.orderNumber
+                }
+            };
+            
+            const notification = new Notification(`🛵 Order Baru untuk ${currentUser?.name || 'Anda'}`, options);
+            
+            notification.onclick = function(event) {
+                event.preventDefault();
+                window.focus();
+                notification.close();
+                // Scroll ke order berjalan
+                document.querySelector('.running-orders-card')?.scrollIntoView({ behavior: 'smooth' });
+                refreshRunningOrders();
+            };
+        }
+        
+        // ============================================
+        // DETECT NEW ORDERS & SEND NOTIFICATION
+        // ============================================
+        async function loadRunningOrdersWithNotification() {
+            if (!currentUser || isAdmin) return;
+            
+            try {
+                await loadOrderStatusMap();
+                
+                const response = await fetch(RUNNING_ORDER_CSV_URL);
+                if (!response.ok) throw new Error('Gagal load data order berjalan');
+                const csv = await response.text();
+                const allOrders = parseCSV(csv);
+                
+                const newRunningOrders = [];
+                const currentOrderIds = new Set();
+                
+                for (const order of allOrders) {
+                    const agentName = order[8];
+                    if (agentName !== currentUser.name) continue;
+                    
+                    const orderNumber = order[16];
+                    let status = orderStatusMap.get(orderNumber);
+                    if (!status) status = (order[17] || '').trim();
+                    
+                    if (status === 'Orderan Masuk' || status === 'Diterima') {
+                        const orderData = {
+                            orderNumber: orderNumber,
+                            tanggal: order[2],
+                            customerName: order[3],
+                            customerPhone: order[4],
+                            description: order[5],
+                            pickUpPoint: order[6],
+                            dropOffPoint: order[7],
+                            price: parseInt(order[1]?.replace(/[^0-9-]/g, '')) || 0,
+                            status: status,
+                            step: status === 'Orderan Masuk' ? 1 : 2
+                        };
+                        currentOrderIds.add(orderNumber);
+                        
+                        // Cek apakah order baru (belum ada di previousRunningOrderIds)
+                        if (!previousRunningOrderIds.has(orderNumber) && status === 'Orderan Masuk') {
+                            console.log('New order detected:', orderNumber);
+                            
+                            // Kirim notifikasi
+                            if (Notification.permission === 'granted') {
+                                showPushNotification(orderData);
+                            }
+                            
+                            // Tampilkan notifikasi di dalam aplikasi
+                            showNotification(`🛵 ORDER BARU! #${orderNumber} dari ${orderData.customerName}`, 'info');
+                            
+                            // Play suara notifikasi (opsional)
+                            try {
+                                const audio = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
+                                audio.volume = 0.3;
+                                audio.play().catch(e => console.log('Audio play failed:', e));
+                            } catch(e) {}
+                        }
+                        
+                        newRunningOrders.push(orderData);
+                    }
+                }
+                
+                previousRunningOrderIds = currentOrderIds;
+                runningOrders = newRunningOrders;
+                updateRunningOrdersDisplay();
+                
+            } catch (error) {
+                console.error('Error loading running orders:', error);
+            }
+        }
+        
+        // Override fungsi refreshRunningOrders untuk menggunakan fungsi dengan notifikasi
+        window.refreshRunningOrders = async function() {
+            const refreshBtn = document.getElementById('runningRefreshBtn');
+            const originalIcon = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            refreshBtn.disabled = true;
+            
+            showNotification('🔄 Memuat ulang order berjalan...', 'info');
+            await loadRunningOrdersWithNotification();
+            
+            refreshBtn.innerHTML = originalIcon;
+            refreshBtn.disabled = false;
+            showNotification('✅ Order berjalan diperbarui', 'success');
+        };
+        
+        // Update fungsi loadRunningOrders yang lama
+        async function loadRunningOrders() {
+            return loadRunningOrdersWithNotification();
+        }
+        
+        // ============================================
+        // FUNGSI UTILITY
+        // ============================================
+        function showNotification(message, type = 'info') {
+            const existing = document.querySelector('.notification-toast');
+            if (existing) existing.remove();
+            
+            const notif = document.createElement('div');
+            notif.className = `notification-toast ${type}`;
+            notif.innerHTML = `
+                <i class="fas ${type === 'warning' ? 'fa-exclamation-triangle' : type === 'success' ? 'fa-check-circle' : 'fa-info-circle'}"></i>
+                <div style="flex:1">${message}</div>
+                <i class="fas fa-times" onclick="this.parentElement.remove()" style="cursor:pointer"></i>
+            `;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 5000);
+        }
+        
+        function parseCSV(csv) {
+            const lines = csv.split(/\r?\n/);
+            const data = [];
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                const cols = [];
+                let current = '';
+                let inQuotes = false;
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) {
+                        cols.push(current.trim());
+                        current = '';
+                    } else current += char;
+                }
+                cols.push(current.trim());
+                data.push(cols.map(col => col.replace(/^"|"$/g, '')));
+            }
+            return data;
+        }
+        
+        async function loadOrderStatusMap() {
+            try {
+                const response = await fetch(ORDER_LOG_CSV_URL);
+                if (!response.ok) throw new Error('Gagal load OrderLog');
+                const csv = await response.text();
+                const logData = parseCSV(csv);
+                
+                orderStatusMap.clear();
+                
+                for (const row of logData) {
+                    const orderNumber = row[1];
+                    const status = row[4];
+                    if (orderNumber && status) {
+                        orderStatusMap.set(orderNumber, status);
+                    }
+                }
+                
+                console.log('OrderStatusMap loaded:', orderStatusMap.size, 'entries');
+                return true;
+            } catch (error) {
+                console.error('Error loading OrderLog:', error);
+                return false;
+            }
+        }
+        
+        function updateRunningOrdersDisplay() {
+            const container = document.getElementById('runningOrdersList');
+            const countSpan = document.getElementById('runningOrderCount');
+            
+            if (!runningOrders.length) {
+                container.innerHTML = '<div class="empty-running">✨ Tidak ada order berjalan</div>';
+                countSpan.innerText = '0';
+                return;
+            }
+            
+            countSpan.innerText = runningOrders.length;
+            container.innerHTML = runningOrders.map(order => {
+                let buttons = '';
+                if (order.step === 1) {
+                    buttons = `
+                        <button class="btn-action btn-accept" onclick="openConfirmModal('${order.orderNumber}', 'Diterima')">
+                            <i class="fas fa-check"></i> Diterima
+                        </button>
+                    `;
+                } else if (order.step === 2) {
+                    buttons = `
+                        <button class="btn-action btn-complete" onclick="openConfirmModal('${order.orderNumber}', 'Selesai')">
+                            <i class="fas fa-flag-checkered"></i> Selesai
+                        </button>
+                        <button class="btn-action btn-cancel" onclick="openConfirmModal('${order.orderNumber}', 'Batal')">
+                            <i class="fas fa-times"></i> Batal
+                        </button>
+                    `;
+                }
+                
+                return `
+                    <div class="order-item">
+                        <div class="order-header">
+                            <span class="order-number"><i class="fas fa-hashtag"></i> ${order.orderNumber || '-'}</span>
+                            <span class="order-price">Rp${order.price.toLocaleString()}</span>
+                        </div>
+                        <div class="order-customer">
+                            <span class="customer-name"><i class="fas fa-user"></i> ${order.customerName || '-'}</span>
+                            <span class="customer-phone"><i class="fas fa-phone"></i> ${order.customerPhone || '-'}</span>
+                        </div>
+                        <div class="order-desc">
+                            <i class="fas fa-align-left"></i> ${order.description || 'Tidak ada deskripsi'}
+                        </div>
+                        <div class="order-location">
+                            <div class="location-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span><strong>Jemput:</strong> ${order.pickUpPoint || '-'}</span>
+                            </div>
+                            <div class="location-item">
+                                <i class="fas fa-flag-checkered"></i>
+                                <span><strong>Antar:</strong> ${order.dropOffPoint || '-'}</span>
+                            </div>
+                        </div>
+                        <div class="order-date">
+                            <i class="fas fa-calendar-alt"></i> ${order.tanggal || '-'}
+                        </div>
+                        <div class="order-actions">
+                            ${buttons}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // ============================================
+        // UPDATE STATUS ORDER VIA WEB APP
+        // ============================================
+        function openConfirmModal(orderNumber, action) {
+            pendingAction = { orderNumber, action };
+            let iconHtml = '<i class="fas fa-question-circle" style="color: #FF6B4A;"></i>';
+            let title = 'Konfirmasi';
+            let message = '';
+            
+            if (action === 'Diterima') {
+                iconHtml = '<i class="fas fa-check-circle" style="color: #10B981;"></i>';
+                title = 'Terima Order';
+                message = `Anda akan <strong>menerima</strong> order <strong>#${orderNumber}</strong>. Lanjutkan?`;
+            } else if (action === 'Selesai') {
+                iconHtml = '<i class="fas fa-flag-checkered" style="color: #3B82F6;"></i>';
+                title = 'Selesaikan Order';
+                message = `Pastikan order <strong>#${orderNumber}</strong> sudah selesai dikerjakan. Lanjutkan?`;
+            } else if (action === 'Batal') {
+                iconHtml = '<i class="fas fa-times-circle" style="color: #EF4444;"></i>';
+                title = 'Batalkan Order';
+                message = `Anda akan <strong>membatalkan</strong> order <strong>#${orderNumber}</strong>. Lanjutkan?`;
+            }
+            
+            document.getElementById('confirmIcon').innerHTML = iconHtml;
+            document.getElementById('confirmTitle').innerText = title;
+            document.getElementById('confirmMessage').innerHTML = message;
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+        
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+            pendingAction = null;
+        }
+        
+        async function executeOrderAction() {
+            if (!pendingAction) return;
+            
+            const { orderNumber, action } = pendingAction;
+            closeConfirmModal();
+            
+            showNotification(`🔄 Memproses ${action}...`, 'info');
+            
+            try {
+                const params = new URLSearchParams();
+                params.append('type', 'updateOrderStatus');
+                params.append('orderNumber', orderNumber);
+                params.append('action', action);
+                params.append('namaAgent', currentUser.name);
+                params.append('username', currentUser.username);
+                params.append('timestamp', new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }));
+                
+                const response = await fetch(`${WEB_APP_URL_ORDER}?${params.toString()}`, { method: 'GET' });
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showNotification(`✅ Order ${action} berhasil!`, 'success');
+                    setTimeout(() => {
+                        loadRunningOrdersWithNotification();
+                        loadOrders();
+                    }, 1000);
+                } else {
+                    showNotification(`❌ ${result.message || 'Gagal update order'}`, 'warning');
+                }
+                
+            } catch (error) {
+                console.error(error);
+                showNotification(`❌ Gagal ${action} order`, 'warning');
+            }
+        }
+        
+        document.getElementById('confirmActionBtn').onclick = executeOrderAction;
+        
+        // ============================================
+        // MEMBACA STATUS DARI SHEET ONLINE LOG
+        // ============================================
+        async function fetchOnlineLogFromSheet() {
+            try {
+                const response = await fetch(ONLINE_LOG_CSV_URL);
+                if (!response.ok) throw new Error('Gagal fetch Online Log');
+                const csvText = await response.text();
+                
+                const lines = [];
+                let line = '', inQ = false;
+                for (let i = 0; i < csvText.length; i++) {
+                    const c = csvText[i];
+                    if (c === '"') inQ = !inQ;
+                    line += c;
+                    if (c === '\n' && !inQ) { lines.push(line); line = ''; }
+                }
+                if (line.trim()) lines.push(line);
+                
+                if (lines.length < 2) return {};
+                
+                const headers = parseCSVLine(lines[0]);
+                let tsIdx = -1, namaIdx = -1, userIdx = -1, actionIdx = -1, areasIdx = -1;
+                for (let i = 0; i < headers.length; i++) {
+                    const h = headers[i].toLowerCase();
+                    if (h.includes('timestamp') || h.includes('waktu')) tsIdx = i;
+                    if (h.includes('namaagent') || h.includes('nama_agent') || h.includes('nama')) namaIdx = i;
+                    if (h.includes('username')) userIdx = i;
+                    if (h.includes('action')) actionIdx = i;
+                    if (h.includes('areas') || h.includes('area')) areasIdx = i;
+                }
+                
+                if (namaIdx === -1 && userIdx === -1) return {};
+                
+                const agentLastStatus = new Map();
+                
+                for (let i = 1; i < lines.length; i++) {
+                    if (!lines[i].trim()) continue;
+                    const cols = parseCSVLine(lines[i]);
+                    if (cols.length === 0) continue;
+                    
+                    const namaAgent = (namaIdx >= 0 && cols[namaIdx]) ? cols[namaIdx].trim() : '';
+                    const username = (userIdx >= 0 && cols[userIdx]) ? cols[userIdx].trim() : '';
+                    const action = (actionIdx >= 0 && cols[actionIdx]) ? cols[actionIdx].trim().toLowerCase() : '';
+                    const areas = (areasIdx >= 0 && cols[areasIdx]) ? cols[areasIdx].trim() : '';
+                    const timestamp = (tsIdx >= 0 && cols[tsIdx]) ? cols[tsIdx] : new Date().toISOString();
+                    
+                    const identifier = username || namaAgent;
+                    if (!identifier) continue;
+                    
+                    let status = 'offline';
+                    if (action === 'online') status = 'online';
+                    else if (action === 'offline') status = 'offline';
+                    
+                    agentLastStatus.set(identifier, {
+                        status: status,
+                        areas: areas,
+                        timestamp: timestamp,
+                        name: namaAgent || identifier,
+                        username: username || identifier
+                    });
+                }
+                
+                return Object.fromEntries(agentLastStatus);
+                
+            } catch (error) {
+                console.error('Error membaca Online Log:', error);
+                return null;
+            }
+        }
+        
+        function parseCSVLine(line) {
+            const cols = [];
+            let cur = '', inQuote = false;
+            for (let j = 0; j < line.length; j++) {
+                const c = line[j];
+                if (c === '"') inQuote = !inQuote;
+                else if (c === ',' && !inQuote) {
+                    cols.push(cur.trim());
+                    cur = '';
+                } else cur += c;
+            }
+            cols.push(cur.trim());
+            return cols.map(v => v.replace(/^"|"$/g, ''));
+        }
+        
+        async function checkAgentStatusFromSheet(username, agentName) {
+            try {
+                const allStatus = await fetchOnlineLogFromSheet();
+                if (!allStatus) return null;
+                
+                let statusData = allStatus[username];
+                if (!statusData && agentName) {
+                    statusData = allStatus[agentName];
+                }
+                if (!statusData) {
+                    for (const [key, val] of Object.entries(allStatus)) {
+                        if (key.toLowerCase() === username.toLowerCase() || 
+                            (agentName && key.toLowerCase() === agentName.toLowerCase())) {
+                            statusData = val;
+                            break;
+                        }
+                    }
+                }
+                
+                return statusData;
+            } catch (e) {
+                console.warn('Gagal cek status dari sheet:', e);
+                return null;
+            }
+        }
+        
+        // ============================================
+        // SHARED STORAGE (fallback)
+        // ============================================
+        function updateSharedAgentStatus(username, name, status, areas) {
+            const allStatus = JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
+            allStatus[username] = {
+                name: name,
+                status: status,
+                areas: areas,
+                lastActive: new Date().toISOString(),
+                lastActiveReadable: new Date().toLocaleString('id-ID')
+            };
+            localStorage.setItem(AGENT_STATUS_KEY, JSON.stringify(allStatus));
+            window.dispatchEvent(new CustomEvent('agentStatusChanged', { detail: { username, status } }));
+        }
+        
+        function removeSharedAgentStatus(username) {
+            const allStatus = JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
+            delete allStatus[username];
+            localStorage.setItem(AGENT_STATUS_KEY, JSON.stringify(allStatus));
+            window.dispatchEvent(new CustomEvent('agentStatusChanged', { detail: { username, status: 'offline' } }));
+        }
+        
+        function getAllAgentStatus() {
+            return JSON.parse(localStorage.getItem(AGENT_STATUS_KEY) || '{}');
+        }
+        
+        // ============================================
+        // LOG FUNCTIONS
+        // ============================================
+        async function saveLoginLog(namaAgent, username, status, deviceInfo = '') {
+            try {
+                const params = new URLSearchParams();
+                params.append('type', 'login');
+                params.append('timestamp', new Date().toLocaleString('id-ID'));
+                params.append('namaAgent', namaAgent);
+                params.append('username', username);
+                params.append('status', status);
+                params.append('deviceInfo', deviceInfo || navigator.userAgent);
+                await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
+            } catch(e) { console.warn(e); }
+        }
+
+        async function saveOnlineLog(namaAgent, username, action, areas) {
+            try {
+                const params = new URLSearchParams();
+                params.append('type', 'online');
+                params.append('timestamp', new Date().toLocaleString('id-ID'));
+                params.append('namaAgent', namaAgent);
+                params.append('username', username);
+                params.append('action', action);
+                params.append('areas', areas || '-');
+                await fetch(`${WEB_APP_URL}?${params.toString()}`, { method: 'GET', mode: 'no-cors' });
+            } catch(e) { console.warn(e); }
+        }
+
+        // ============================================
+        // LOAD USERS
+        // ============================================
+        async function loadUsers() {
+            const statusDiv = document.getElementById('loginStatus');
+            try {
+                const response = await fetch(LOGIN_URL);
+                const text = await response.text();
+                const jsonString = text.match(/({.*})/)[1];
+                const data = JSON.parse(jsonString);
+                const rows = data.table.rows, cols = data.table.cols;
+                let nameIdx = 0, usernameIdx = 1, passwordIdx = 2;
+                for (let i = 0; i < cols.length; i++) {
+                    const label = cols[i].label?.toLowerCase() || '';
+                    if (label === 'user' || label === 'nama') nameIdx = i;
+                    if (label === 'username') usernameIdx = i;
+                    if (label === 'password') passwordIdx = i;
+                }
+                users = [];
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i].c;
+                    if (!row) continue;
+                    const name = row[nameIdx]?.v || '';
+                    const username = row[usernameIdx]?.v || '';
+                    const password = row[passwordIdx]?.v || '';
+                    if (username && password && username !== 'Username' && username !== 'username') {
+                        users.push({ name: String(name), username: String(username).toLowerCase(), password: String(password) });
+                    }
+                }
+                statusDiv.innerHTML = '✅ Siap login';
+                statusDiv.className = 'message success';
+            } catch(error) {
+                statusDiv.innerHTML = '❌ Gagal mengambil data login';
+                statusDiv.className = 'message error';
+            }
+        }
+
+        function login(username, password) {
+            return users.find(u => u.username === username.toLowerCase() && u.password === password);
+        }
+
+        function isAdminUser(user) {
+            return user.username === 'admin' || user.name === 'Admin Suruhboy' || user.username === 'adminsuruhboy';
+        }
+
+        // ============================================
+        // LOAD ORDERS (untuk agent - riwayat & penghasilan)
+        // ============================================
+        function parseCSVOrder(csv) {
+            const lines = [];
+            let line = '', inQ = false;
+            for (let i = 0; i < csv.length; i++) {
+                const c = csv[i];
+                if (c === '"') inQ = !inQ;
+                line += c;
+                if (c === '\n' && !inQ) { lines.push(line); line = ''; }
+            }
+            if (line.trim()) lines.push(line);
+            const data = [];
+            for (let i = 0; i < lines.length; i++) {
+                try {
+                    let cols = [], cur = '', inQuote = false;
+                    for (let j = 0; j < lines[i].length; j++) {
+                        const c = lines[i][j];
+                        if (c === '"') inQuote = !inQuote;
+                        else if (c === ',' && !inQuote) { cols.push(cur.trim()); cur = ''; }
+                        else cur += c;
+                    }
+                    cols.push(cur.trim());
+                    cols = cols.map(v => v.replace(/^"|"$/g, ''));
+                    if (i > 0 && cols.length > COL.MINGGU) {
+                        const agent = cols[COL.AGENT];
+                        const nominal = parseInt(cols[COL.NOMINAL]?.replace(/[^0-9-]/g, '')) || 0;
+                        const week = cols[COL.MINGGU];
+                        if (agent && agent.trim() && week && week.trim()) {
+                            data.push({ agent: agent.trim(), nominal, week: week.trim(), customer: cols[COL.CUSTOMER] || '-', tanggal: cols[COL.TANGGAL] || '-' });
+                        }
+                    }
+                } catch(e) {}
+            }
+            return data;
+        }
+
+        function aggregate(data) {
+            const agg = {}, details = {};
+            data.forEach(({ agent, nominal, week, customer, tanggal }) => {
+                if (!week) return;
+                if (!agg[week]) agg[week] = {};
+                agg[week][agent] = (agg[week][agent] || 0) + nominal;
+                if (!details[week]) details[week] = [];
+                details[week].push({ agent, nominal, customer, tanggal, week });
+            });
+            return { agg, details };
+        }
+
+        async function loadOrders() {
+            try {
+                const res = await fetch(ORDER_CSV_URL);
+                if (!res.ok) throw new Error();
+                const csv = await res.text();
+                rawOrders = parseCSVOrder(csv);
+                if (rawOrders.length > 0) {
+                    const { agg, details } = aggregate(rawOrders);
+                    aggregated = agg;
+                    orderDetails = details;
+                    weeks = Object.keys(agg).sort((a,b) => a.localeCompare(b));
+                    if (weeks.length) {
+                        weekIndex = weeks.length - 1;
+                        populateWeekSelect();
+                        renderCurrentWeek();
+                    }
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        function renderWeek(idx) {
+            if (!weeks.length || !currentUser) return;
+            const week = weeks[idx];
+            if (!week) return;
+            const fee = aggregated[week]?.[currentUser.name] || 0;
+            document.getElementById('totalOrders').innerText = fee.toLocaleString();
+            document.getElementById('totalAdminFee').innerText = `Rp${fee.toLocaleString()}`;
+            document.getElementById('totalEarnings').innerText = `Rp${fee.toLocaleString()}`;
+            const orders = (orderDetails[week] || []).filter(o => o.agent === currentUser.name);
+            const container = document.getElementById('historyList');
+            if (!orders.length) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-calendar-times"></i><div>Tidak ada order minggu ini</div></div>';
+            } else {
+                container.innerHTML = orders.map(o => `<div class="order-card"><div class="order-top"><div class="order-customer-name"><i class="fas fa-user"></i> ${o.customer}</div><div class="order-amount">Rp${o.nominal.toLocaleString()}</div></div><div class="order-date"><i class="fas fa-calendar-alt"></i> ${o.tanggal || o.week}</div></div>`).join('');
+            }
+        }
+
+        function renderCurrentWeek() { if (weeks.length && currentUser) renderWeek(weekIndex); }
+        function populateWeekSelect() {
+            const sel = document.getElementById('weekSelect');
+            if (sel) sel.innerHTML = weeks.map((w,i) => `<option value="${i}" ${i===weekIndex?'selected':''}>${w}</option>`).join('');
+        }
+        function onWeekChange() {
+            const sel = document.getElementById('weekSelect');
+            const val = parseInt(sel?.value);
+            if (!isNaN(val)) { weekIndex = val; renderWeek(weekIndex); }
+        }
+        
+        window.refreshAgentOrders = async function() {
+            showNotification('🔄 Memuat ulang data order...', 'info');
+            await loadOrders();
+            await loadRunningOrdersWithNotification();
+            showNotification('✅ Data order berhasil diperbarui', 'success');
+        };
+        
+        window.refreshAgentStats = async function() {
+            showNotification('🔄 Memuat ulang statistik...', 'info');
+            await loadOrders();
+            showNotification('✅ Statistik berhasil diperbarui', 'success');
+        };
+
+        // ============================================
+        // AGENT STATUS
+        // ============================================
+        async function syncStatusFromSheet() {
+            if (!currentUser || isAdmin) return;
+            
+            try {
+                const sheetStatus = await checkAgentStatusFromSheet(currentUser.username, currentUser.name);
+                
+                if (sheetStatus) {
+                    if (sheetStatus.status === 'offline' && agentStatus.status === 'available') {
+                        showNotification('⚠️ Anda telah di-offline-kan oleh Admin! Status diperbarui dari sistem.', 'warning');
+                        agentStatus.status = 'offline';
+                        selectedAreas = [];
+                        agentStatus.areas = [];
+                        updateAgentStatusUI();
+                        updateSharedAgentStatus(currentUser.username, currentUser.name, 'offline', []);
+                        const toggle = document.getElementById('agentStatusToggle');
+                        if (toggle) toggle.checked = false;
+                    }
+                    else if (sheetStatus.status === 'online' && agentStatus.status !== 'available') {
+                        let areasFromSheet = [];
+                        if (sheetStatus.areas && sheetStatus.areas !== '-') {
+                            areasFromSheet = sheetStatus.areas.split(',').map(a => a.trim());
+                        }
+                        if (areasFromSheet.length > 0) {
+                            agentStatus.status = 'available';
+                            selectedAreas = areasFromSheet;
+                            agentStatus.areas = areasFromSheet;
+                            updateAgentStatusUI();
+                            updateSharedAgentStatus(currentUser.username, currentUser.name, 'online', selectedAreas);
+                            showNotification('✅ Status Anda disinkronkan: ONLINE', 'success');
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('Sync status from sheet error:', e);
+            }
+        }
+        
+        function showAreaModal() {
+            const modal = document.getElementById('areaModal');
+            const list = document.getElementById('areaList');
+            list.innerHTML = KECAMATAN.map(k => `<div class="area-option" onclick="toggleArea('${k}')"><input type="checkbox" id="chk_${k.replace(/\s/g,'_')}" ${selectedAreas.includes(k) ? 'checked' : ''}><label>${k}</label></div>`).join('');
+            modal.style.display = 'flex';
+        }
+
+        window.toggleArea = function(area) {
+            const chk = document.getElementById(`chk_${area.replace(/\s/g,'_')}`);
+            if (chk) chk.checked = !chk.checked;
+        };
+
+        function closeAreaModal() {
+            document.getElementById('areaModal').style.display = 'none';
+            if (selectedAreas.length === 0 && agentStatus.status === 'offline') {
+                document.getElementById('agentStatusToggle').checked = false;
+            }
+        }
+
+        window.confirmAreas = async function() {
+            const selected = KECAMATAN.filter(k => document.getElementById(`chk_${k.replace(/\s/g,'_')}`)?.checked);
+            if (!selected.length) { alert('Pilih minimal 1 area'); return; }
+            selectedAreas = selected;
+            agentStatus.areas = selected;
+            agentStatus.status = 'available';
+            
+            closeAreaModal();
+            updateAgentStatusUI();
+            await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selected.join(', '));
+            
+            updateSharedAgentStatus(currentUser.username, currentUser.name, 'online', selected);
+            showNotification(`✅ ONLINE di ${selected.length} area: ${selected.join(', ')}`, 'success');
+        };
+
+        window.onAgentStatusToggle = async function() {
+            const toggle = document.getElementById('agentStatusToggle');
+            if (toggle.checked) {
+                if (agentStatus.status === 'offline' || !selectedAreas.length) {
+                    showAreaModal();
+                    if (!selectedAreas.length) {
+                        toggle.checked = false;
+                    }
+                } else {
+                    agentStatus.status = 'available';
+                    updateAgentStatusUI();
+                    await saveOnlineLog(currentUser.name, currentUser.username, 'Online', selectedAreas.join(', '));
+                    updateSharedAgentStatus(currentUser.username, currentUser.name, 'online', selectedAreas);
+                    showNotification('✅ Anda ONLINE', 'success');
+                }
+            } else {
+                if (agentStatus.status === 'available') {
+                    await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', '));
+                }
+                agentStatus.status = 'offline';
+                updateAgentStatusUI();
+                updateSharedAgentStatus(currentUser.username, currentUser.name, 'offline', []);
+                showNotification('⚫ Anda OFFLINE', 'info');
+            }
+        };
+
+        function updateAgentStatusUI() {
+            const statusSpan = document.getElementById('agentStatusText');
+            const toggle = document.getElementById('agentStatusToggle');
+            const areaDiv = document.getElementById('agentAreaDisplay');
+            const tags = document.getElementById('agentAreaTags');
+            if (agentStatus.status === 'available' && selectedAreas.length) {
+                statusSpan.innerHTML = '<i class="fas fa-circle"></i> Available';
+                statusSpan.className = 'status-badge status-on';
+                if (toggle && !toggle.checked) toggle.checked = true;
+                areaDiv.style.display = 'block';
+                tags.innerHTML = selectedAreas.map(a => `<span class="area-tag">${a}</span>`).join('');
+            } else {
+                statusSpan.innerHTML = '<i class="fas fa-power-off"></i> Offline';
+                statusSpan.className = 'status-badge status-off';
+                if (toggle && toggle.checked) toggle.checked = false;
+                areaDiv.style.display = 'none';
+            }
+        }
+
+        // ============================================
+        // ADMIN FUNCTIONS
+        // ============================================
+        async function loadAgentList(isManual = false) {
+            try {
+                if (isManual) {
+                    const refreshBtn = document.querySelector('.refresh-btn');
+                    const originalHtml = refreshBtn.innerHTML;
+                    refreshBtn.innerHTML = '<i class="fas fa-spinner spinner"></i> Refresh';
+                    refreshBtn.disabled = true;
+                    setTimeout(() => {
+                        refreshBtn.innerHTML = originalHtml;
+                        refreshBtn.disabled = false;
+                    }, 1000);
+                }
+                
+                const agents = users.filter(u => !isAdminUser(u));
+                const container = document.getElementById('adminAgentList');
+                if (agents.length === 0) {
+                    container.innerHTML = '<div class="empty-state">Tidak ada agent terdaftar</div>';
+                    return;
+                }
+                
+                let sheetStatuses = await fetchOnlineLogFromSheet();
+                const allStatus = getAllAgentStatus();
+                
+                const agentStatuses = [];
+                let onlineCount = 0;
+                
+                for (let agent of agents) {
+                    let sheetData = sheetStatuses ? (sheetStatuses[agent.username] || sheetStatuses[agent.name]) : null;
+                    let isOnline = false;
+                    let areas = '-';
+                    let lastActive = '-';
+                    
+                    if (sheetData) {
+                        isOnline = sheetData.status === 'online';
+                        areas = sheetData.areas || '-';
+                        lastActive = sheetData.timestamp || '-';
+                    } else {
+                        const localData = allStatus[agent.username];
+                        if (localData) {
+                            isOnline = localData.status === 'online';
+                            areas = localData.areas?.join(', ') || '-';
+                            lastActive = localData.lastActiveReadable || '-';
+                        }
+                    }
+                    
+                    if (isOnline) onlineCount++;
+                    
+                    agentStatuses.push({
+                        ...agent,
+                        status: isOnline ? 'online' : 'offline',
+                        areas,
+                        lastActive: typeof lastActive === 'string' ? lastActive : new Date(lastActive).toLocaleString('id-ID')
+                    });
+                }
+                
+                const onlineCountSpan = document.getElementById('onlineCount');
+                if (onlineCountSpan) {
+                    onlineCountSpan.innerHTML = `${onlineCount} Online`;
+                    onlineCountSpan.style.background = onlineCount > 0 ? '#10B981' : '#64748B';
+                }
+                
+                const lastUpdateSpan = document.getElementById('lastUpdateTime');
+                if (lastUpdateSpan) {
+                    const now = new Date();
+                    lastUpdateSpan.innerHTML = `Terakhir diperbarui: ${now.toLocaleTimeString('id-ID')} | ${now.toLocaleDateString('id-ID')}`;
+                }
+                
+                agentStatuses.sort((a, b) => {
+                    if (a.status === 'online' && b.status !== 'online') return -1;
+                    if (a.status !== 'online' && b.status === 'online') return 1;
+                    return a.name.localeCompare(b.name);
+                });
+                
+                container.innerHTML = agentStatuses.map(agent => {
+                    const isOnline = agent.status === 'online';
+                    return `
+                        <div class="agent-item-admin ${isOnline ? 'online-agent' : ''}" data-agent="${agent.name}" data-username="${agent.username}">
+                            <div class="agent-info">
+                                <h4>
+                                    ${agent.name}
+                                    ${isOnline ? '<span class="online-badge"><i class="fas fa-circle"></i> ONLINE</span>' : ''}
+                                </h4>
+                                <div class="agent-areas"><i class="fas fa-map-marker-alt"></i> Area: ${agent.areas}</div>
+                                <div class="agent-last-active"><i class="fas fa-clock"></i> Terakhir aktif: ${agent.lastActive}</div>
+                            </div>
+                            <div>
+                                <span class="agent-status ${isOnline ? 'status-online' : 'status-offline'}">
+                                    <i class="fas ${isOnline ? 'fa-circle' : 'fa-power-off'}"></i> ${isOnline ? 'Online' : 'Offline'}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                if (isManual) {
+                    showNotification('✅ Daftar agent berhasil diperbarui', 'success');
+                }
+                
+            } catch(e) {
+                console.error(e);
+                if (isManual) {
+                    showNotification('❌ Gagal memperbarui daftar agent', 'warning');
+                }
+            }
+        }
+        
+        window.manualRefreshAdmin = async function() {
+            await loadAgentList(true);
+        };
+        
+        // ============================================
+        // POLLING
+        // ============================================
+        function startPollingForAgent() {
+            if (pollingInterval) clearInterval(pollingInterval);
+            pollingInterval = setInterval(async () => {
+                if (currentUser && !isAdmin) {
+                    await syncStatusFromSheet();
+                    await loadRunningOrdersWithNotification();
+                }
+            }, 8000);
+        }
+        
+        function startAdminAutoRefresh() {
+            if (adminRefreshInterval) clearInterval(adminRefreshInterval);
+            adminRefreshInterval = setInterval(() => {
+                if (currentUser && isAdmin) {
+                    loadAgentList(false);
+                }
+            }, 10000);
+        }
+        
+        function setupAgentStatusListener() {
+            window.addEventListener('agentStatusChanged', (event) => {
+                if (currentUser && isAdmin) {
+                    loadAgentList(false);
+                }
+            });
+        }
+        
+        function stopPolling() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+            if (adminRefreshInterval) {
+                clearInterval(adminRefreshInterval);
+                adminRefreshInterval = null;
+            }
+        }
+
+        // ============================================
+        // DASHBOARD & LOGIN
+        // ============================================
+        function updateAgentUI() {
+            if (!currentUser) return;
+            document.getElementById('agentName').innerText = currentUser.name;
+            document.getElementById('agentAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
+            updateAgentStatusUI();
+            checkNotificationPermission();
+        }
+
+        function updateAdminUI() {
+            if (!currentUser) return;
+            document.getElementById('adminAvatar').innerText = currentUser.name.charAt(0).toUpperCase();
+        }
+
+        async function showAgentDashboard() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('agentDashboard').classList.remove('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            updateAgentUI();
+            
+            const sheetStatus = await checkAgentStatusFromSheet(currentUser.username, currentUser.name);
+            
+            if (sheetStatus && sheetStatus.status === 'online') {
+                let areasFromSheet = [];
+                if (sheetStatus.areas && sheetStatus.areas !== '-') {
+                    areasFromSheet = sheetStatus.areas.split(',').map(a => a.trim());
+                }
+                agentStatus.status = 'available';
+                selectedAreas = areasFromSheet;
+                agentStatus.areas = areasFromSheet;
+                updateAgentStatusUI();
+                updateSharedAgentStatus(currentUser.username, currentUser.name, 'online', selectedAreas);
+            } else {
+                const allStatus = getAllAgentStatus();
+                const savedStatus = allStatus[currentUser.username];
+                if (savedStatus && savedStatus.status === 'online') {
+                    agentStatus.status = 'available';
+                    selectedAreas = savedStatus.areas || [];
+                    agentStatus.areas = savedStatus.areas || [];
+                    updateAgentStatusUI();
+                } else {
+                    agentStatus.status = 'offline';
+                    selectedAreas = [];
+                    updateAgentStatusUI();
+                }
+            }
+            
+            startPollingForAgent();
+            await loadOrders();
+            await loadRunningOrdersWithNotification();
+            document.getElementById('weekSelect').addEventListener('change', onWeekChange);
+            
+            // Register service worker untuk push notification
+            await registerServiceWorker();
+        }
+
+        async function showAdminDashboard() {
+            stopPolling();
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('agentDashboard').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.remove('hidden');
+            updateAdminUI();
+            await loadAgentList(false);
+            startAdminAutoRefresh();
+        }
+
+        async function logout() {
+            stopPolling();
+            
+            if (currentUser && !isAdmin && agentStatus.status === 'available') {
+                await saveOnlineLog(currentUser.name, currentUser.username, 'Offline', selectedAreas.join(', '));
+                updateSharedAgentStatus(currentUser.username, currentUser.name, 'offline', []);
+            }
+            
+            if (currentUser && !isAdmin) {
+                removeSharedAgentStatus(currentUser.username);
+            }
+            
+            currentUser = null;
+            isAdmin = false;
+            agentStatus = { status: 'offline', areas: [] };
+            selectedAreas = [];
+            runningOrders = [];
+            previousRunningOrderIds.clear();
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.getElementById('agentDashboard').classList.add('hidden');
+            document.getElementById('adminDashboard').classList.add('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Login Handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const found = login(username, password);
+            
+            if (found) {
+                currentUser = found;
+                await saveLoginLog(found.name, found.username, 'Berhasil');
+                if (isAdminUser(found)) {
+                    isAdmin = true;
+                    showAdminDashboard();
+                } else {
+                    isAdmin = false;
+                    showAgentDashboard();
+                }
+            } else {
+                alert('❌ Login gagal! Username atau password salah.');
+            }
+        });
+
+        setupAgentStatusListener();
+        loadUsers();
+    </script>
+</body>
+</html>
