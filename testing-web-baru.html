@@ -2,207 +2,844 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Suruhboy - CS UI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
+<title>Suruhboy - Customer Service</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:#F5F6FA;color:#1B2A4A;min-height:100vh}
-.page{max-width:430px;margin:0 auto;position:relative;min-height:100vh;padding-bottom:80px}
-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px}
-header h1{font-size:20px;font-weight:800;letter-spacing:-0.5px}
-header p{font-size:12px;color:#7A8BA0}
-.menu-btn{width:40px;height:40px;border-radius:12px;border:1px solid #E2E6ED;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer}
-.hero{margin:0 16px;border-radius:16px;overflow:hidden;position:relative;background:linear-gradient(135deg,#E8F0FE 0%,#FFF3E0 100%);min-height:180px}
-.hero-content{padding:20px 20px 100px;position:relative;z-index:2}
-.hero h2{font-size:24px;font-weight:800;line-height:1.2}
-.hero .star{color:#E88D2A}
-.hero p{font-size:14px;color:#7A8BA0;margin-top:8px;line-height:1.6}
-.hero-pin{position:absolute;top:16px;right:16px;width:32px;height:40px;border-radius:50%;background:#E88D2A;display:flex;align-items:center;justify-content:center;z-index:3}
-/* HERO SHAPE - Gradasi ORANYE sebagai background */
-.hero-shape{
-  position:absolute;
-  bottom:0;
-  right:0;
-  width:192px;
-  height:160px;
-  border-top-left-radius:60px;
-  background:linear-gradient(135deg,#E88D2A 0%,#F5A623 50%,#D4781E 100%);
-  z-index:1;
-  overflow:hidden;
-}
-/* Gambar PNG di atas background oranye - TANPA efek blend, warna asli */
-.hero-shape-img{
-  position:absolute;
-  bottom:0;
-  right:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  z-index:2;
-}
-.services{margin:0 16px;margin-top:-16px;position:relative;z-index:5;background:#fff;border-radius:16px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
-.search-wrapper{display:flex;align-items:center;gap:12px;background:#F5F6FA;border-radius:16px;padding:12px 16px;margin-bottom:20px}
-.search-icon{flex-shrink:0}
-.search-text{flex:1}
-.search-title{font-size:14px;font-weight:700;color:#1B2A4A}
-.search-desc{font-size:12px;color:#7A8BA0;margin-top:2px}
-.search-arrow-small{width:32px;height:32px;border-radius:50%;background:#1B2A4A;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.svc-btn{display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;transition:transform 0.2s ease}
-.svc-btn:active{transform:scale(0.95)}
-.svc-icon{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#FFF8F0,#FFE8D6);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 6px 12px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);transition:all 0.2s ease}
-.gradient-icon{filter:drop-shadow(0 2px 3px rgba(0,0,0,0.1));transition:all 0.3s ease}
-.svc-btn:hover .gradient-icon{filter:drop-shadow(0 4px 6px rgba(0,0,0,0.15))}
-.svc-label{font-size:11px;font-weight:600;text-align:center;white-space:pre-line;line-height:1.3;color:#1B2A4A}
-.dots{display:flex;justify-content:center;gap:6px;margin-top:16px}
-.dot{width:8px;height:8px;border-radius:4px;background:#E2E6ED}
-.dot.active{width:24px;background:#E88D2A}
-.gradient-card{margin:0 16px;margin-top:12px;border-radius:16px;padding:20px;display:flex;align-items:center;gap:12px;transition:transform 0.2s ease;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
-.gradient-card:active{transform:scale(0.98)}
-.gradient-card .card-icon{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.gradient-card .card-text{flex:1}
-.gradient-card .card-title{font-size:14px;font-weight:700;color:#fff}
-.gradient-card .card-desc{font-size:12px;color:rgba(255,255,255,0.8);margin-top:2px}
-.wa-card{margin:0 16px;margin-top:12px;border-radius:16px;padding:20px;background:linear-gradient(135deg,#1B3A5C 0%,#E88D2A 100%);transition:transform 0.2s ease;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
-.wa-card:active{transform:scale(0.98)}
-.wa-card .top{display:flex;align-items:flex-start;gap:12px}
-.wa-icon{width:48px;height:48px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.wa-card .title{font-size:14px;font-weight:700;color:#fff}
-.wa-card .desc{font-size:12px;color:rgba(255,255,255,0.8);margin-top:2px}
-.wa-btn{margin-top:12px;padding:8px 16px;background:#fff;border-radius:50px;border:none;font-size:14px;font-weight:600;color:#1B2A4A;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-family:inherit;transition:all 0.2s ease}
-.wa-btn:active{transform:scale(0.96)}
-.three-cards{margin:0 16px;margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.info-card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,0.06);transition:transform 0.2s ease}
-.info-card:active{transform:scale(0.97)}
-.info-card .ic-circle{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#FFF3E0,#FFE0B5);display:flex;align-items:center;justify-content:center;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,0.05)}
-.info-card .ic-title{font-size:14px;font-weight:700;white-space:pre-line;line-height:1.3}
-.info-card .ic-desc{font-size:10px;color:#7A8BA0;margin-top:4px;line-height:1.3}
-.socials{text-align:center;margin-top:24px;padding:0 16px}
-.socials h3{font-size:14px;font-weight:700}
-.socials p{font-size:12px;color:#7A8BA0;margin-top:4px}
-.socials .icons{display:flex;justify-content:center;gap:16px;margin-top:16px}
-.socials .s-icon{width:40px;height:40px;border-radius:50%;background:#fff;border:1px solid #E2E6ED;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.2s ease}
-.socials .s-icon:active{transform:scale(0.9);background:#E88D2A;color:#fff}
-footer{margin-top:24px;padding:20px 16px;background:#1B2A4A;text-align:center}
-footer p{font-size:12px;color:rgba(255,255,255,0.7)}
-footer .links{font-size:10px;color:rgba(255,255,255,0.5);margin-top:8px}
-.fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#1B3A5C,#E88D2A);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.3);cursor:pointer;z-index:50;transition:all 0.2s ease}
-.fab:active{transform:scale(0.92)}
-svg{display:block}
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: linear-gradient(135deg, #F0F4F8 0%, #E8EEF5 100%);
+    color: #1B2A4A;
+    min-height: 100vh;
+  }
+
+  /* Container responsive */
+  .app-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+  }
+
+  /* ========== HEADER ========== */
+  .main-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    background: white;
+    padding: 16px 28px;
+    border-radius: 28px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 24px;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #E88D2A, #F5A623);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: white;
+  }
+
+  .logo-area h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #1B3A5C, #E88D2A);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .header-badge {
+    background: #dcfce7;
+    padding: 8px 18px;
+    border-radius: 40px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #15803d;
+  }
+
+  /* ========== HERO SECTION ========== */
+  .hero-section {
+    background: white;
+    border-radius: 28px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  .hero-content {
+    padding: 40px 48px;
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(135deg, #E8F0FE 0%, #FFF3E0 100%);
+  }
+
+  .hero-content h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .hero-content .star {
+    color: #E88D2A;
+  }
+
+  .hero-content p {
+    font-size: 1rem;
+    color: #5A6B8A;
+    margin-top: 12px;
+    max-width: 400px;
+  }
+
+  .hero-pin {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #E88D2A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+    box-shadow: 0 4px 12px rgba(232, 141, 42, 0.3);
+  }
+
+  .hero-pin i {
+    font-size: 24px;
+    color: white;
+  }
+
+  .hero-shape {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 280px;
+    height: 220px;
+    border-top-left-radius: 80px;
+    background: linear-gradient(135deg, #E88D2A 0%, #F5A623 50%, #D4781E 100%);
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .hero-shape-img {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 2;
+  }
+
+  /* ========== SEARCH SECTION ========== */
+  .search-card {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  }
+
+  .search-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .search-sub {
+    color: #7A8BA0;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+
+  .search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #F5F7FB;
+    border-radius: 60px;
+    padding: 8px 16px 8px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid #E2E8F0;
+  }
+
+  .search-wrapper:hover {
+    border-color: #E88D2A;
+    box-shadow: 0 2px 8px rgba(232, 141, 42, 0.1);
+  }
+
+  .search-wrapper i {
+    color: #E88D2A;
+    font-size: 18px;
+  }
+
+  .search-input-home {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+    color: #1B2A4A;
+    cursor: pointer;
+  }
+
+  .search-input-home::placeholder {
+    color: #94A3B8;
+  }
+
+  .search-arrow {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #1B2A4A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ========== SERVICES GRID ========== */
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .section-header h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .service-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid #EEF2F6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+    border-color: #E88D2A;
+  }
+
+  .service-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #FFF8F0, #FFE8D6);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+  }
+
+  .service-icon svg {
+    width: 34px;
+    height: 34px;
+  }
+
+  .service-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1B2A4A;
+    line-height: 1.3;
+  }
+
+  /* ========== 3 CARDS ========== */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .feature-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .feature-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #FFF3E0, #FFE0B5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feature-icon i {
+    font-size: 26px;
+    color: #E88D2A;
+  }
+
+  .feature-info h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .feature-info p {
+    font-size: 0.75rem;
+    color: #7A8BA0;
+  }
+
+  /* ========== WHATSAPP CARD ========== */
+  .wa-card {
+    background: linear-gradient(135deg, #1B3A5C 0%, #E88D2A 100%);
+    border-radius: 24px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .wa-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .wa-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #25D366;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .wa-icon i {
+    font-size: 30px;
+    color: white;
+  }
+
+  .wa-text h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+  }
+
+  .wa-text p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 4px;
+  }
+
+  .wa-btn {
+    background: white;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1B2A4A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+  }
+
+  .wa-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  /* ========== SOCIALS ========== */
+  .socials {
+    text-align: center;
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    margin-bottom: 24px;
+  }
+
+  .socials h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .socials p {
+    font-size: 0.85rem;
+    color: #7A8BA0;
+    margin-bottom: 20px;
+  }
+
+  .social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .social-icons .s-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #F5F7FB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .social-icons .s-icon:hover {
+    background: #E88D2A;
+    color: white;
+    transform: translateY(-3px);
+  }
+
+  /* ========== FOOTER ========== */
+  footer {
+    background: #1B2A4A;
+    border-radius: 24px;
+    padding: 32px;
+    text-align: center;
+  }
+
+  footer p {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  footer .links {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 12px;
+  }
+
+  /* ========== SEARCH RESULT PAGE ========== */
+  .result-page {
+    display: none;
+    background: #F5F7FB;
+    border-radius: 28px;
+    min-height: 80vh;
+  }
+
+  .result-header {
+    background: white;
+    padding: 20px 24px;
+    border-radius: 24px 24px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .back-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #F5F7FB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .back-btn:hover {
+    background: #E88D2A;
+    color: white;
+  }
+
+  .result-search-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #F5F7FB;
+    border-radius: 50px;
+    padding: 10px 20px;
+  }
+
+  .result-search-wrapper input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-family: inherit;
+    outline: none;
+  }
+
+  .result-stats {
+    padding: 20px 24px;
+    background: white;
+    margin-top: 4px;
+  }
+
+  .result-list {
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .result-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .result-card:hover {
+    transform: translateX(4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .result-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #FFF8F0, #FFE8D6);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .result-info {
+    flex: 1;
+  }
+
+  .result-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 4px;
+  }
+
+  .result-desc {
+    font-size: 0.8rem;
+    color: #7A8BA0;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 60px;
+    background: white;
+    border-radius: 24px;
+    grid-column: 1 / -1;
+  }
+
+  /* ========== FAB ========== */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.2s ease;
+  }
+
+  .fab:hover {
+    transform: scale(1.05);
+  }
+
+  .fab i {
+    font-size: 28px;
+    color: white;
+  }
+
+  /* ========== RESPONSIVE ========== */
+  @media (max-width: 768px) {
+    .app-container {
+      padding: 16px;
+    }
+
+    .hero-content {
+      padding: 24px 20px;
+    }
+
+    .hero-content h2 {
+      font-size: 1.6rem;
+    }
+
+    .hero-shape {
+      width: 160px;
+      height: 140px;
+    }
+
+    .hero-pin {
+      width: 36px;
+      height: 36px;
+      top: 16px;
+      right: 16px;
+    }
+
+    .hero-pin i {
+      font-size: 18px;
+    }
+
+    .services-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .service-card {
+      padding: 16px 8px;
+    }
+
+    .service-icon {
+      width: 52px;
+      height: 52px;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .wa-card {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .wa-left {
+      flex-direction: column;
+    }
+
+    .result-list {
+      grid-template-columns: 1fr;
+    }
+
+    .main-header {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .services-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
 </style>
 </head>
 <body>
-<div class="page">
-  <header>
-    <div><h1>SURUHBOY</h1><p>CS UI • Customer Service</p></div>
-    <button class="menu-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg></button>
-  </header>
 
-  <div class="hero">
-    <div class="hero-content">
-      <h2>Layanan <span class="star">✦</span><br/>Suruhboy</h2>
-      <p>Semua bisa disuruh,<br/>cepat, aman, terpercaya.</p>
-    </div>
-    <div class="hero-pin"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div>
-    
-    <!-- HERO SHAPE dengan GRADASI ORANYE + GAMBAR PNG (warna asli) -->
-    <div class="hero-shape">
-      <img class="hero-shape-img" src="Desain tanpa judul (3).png" alt="hero illustration"/>
-    </div>
-  </div>
-
-  <div class="services">
-    <div class="search-wrapper">
-      <div class="search-icon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
+<div class="app-container">
+  <!-- HOME PAGE -->
+  <div id="homePage">
+    <!-- Header -->
+    <div class="main-header">
+      <div class="logo-area">
+        <div class="logo">SB</div>
+        <h1>Suruhboy</h1>
       </div>
-      <div class="search-text">
-        <p class="search-title">Cek apa aja yang bisa disuruh...</p>
-        <p class="search-desc">Contoh: "antar makanan", "jemput anak"</p>
-      </div>
-      <div class="search-arrow-small">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="5" y1="12" x2="19" y2="12"/>
-          <polyline points="12 5 19 12 12 19"/>
-        </svg>
+      <div class="header-badge">
+        <i class="fas fa-map-marker-alt"></i> Customer Service
       </div>
     </div>
 
-    <div class="grid" id="svc-grid"></div>
-    <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    <!-- Hero Section -->
+    <div class="hero-section">
+      <div class="hero-content">
+        <h2>Layanan <span class="star">✦</span><br/>Suruhboy</h2>
+        <p>Semua bisa disuruh, cepat, aman, terpercaya.</p>
+      </div>
+      <div class="hero-pin">
+        <i class="fas fa-map-pin"></i>
+      </div>
+      <div class="hero-shape">
+        <img class="hero-shape-img" src="Desain tanpa judul (3).png" alt="hero illustration"/>
+      </div>
+    </div>
+
+    <!-- Search Card -->
+    <div class="search-card">
+      <div class="search-title">
+        <i class="fas fa-search" style="color: #E88D2A;"></i>
+        <span>Cari Layanan</span>
+      </div>
+      <div class="search-sub">Klik untuk mencari layanan yang Anda butuhkan</div>
+      <div class="search-wrapper" id="homeSearchWrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" class="search-input-home" id="homeSearchInput" placeholder="Cari layanan..." readonly/>
+        <div class="search-arrow">
+          <i class="fas fa-arrow-right" style="color: white; font-size: 14px;"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Services Grid -->
+    <div class="section-header">
+      <h2><i class="fas fa-th-large" style="color: #E88D2A;"></i> Layanan Populer</h2>
+      <span style="font-size: 0.75rem; color: #7A8BA0;" id="serviceCount"></span>
+    </div>
+    <div class="services-grid" id="servicesGrid">
+      <div style="text-align: center; grid-column: span 4; padding: 40px;">
+        <i class="fas fa-spinner fa-pulse"></i> Memuat layanan...
+      </div>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-users"></i></div>
+        <div class="feature-info">
+          <h4>Cek Ketersediaan Agent</h4>
+          <p>Lihat agent terdekat & estimasi waktu</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-store"></i></div>
+        <div class="feature-info">
+          <h4>Info UMKM</h4>
+          <p>Dukungan & kolaborasi UMKM</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-headset"></i></div>
+        <div class="feature-info">
+          <h4>Pusat Bantuan</h4>
+          <p>FAQ & Panduan lengkap</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- WhatsApp Card -->
+    <div class="wa-card">
+      <div class="wa-left">
+        <div class="wa-icon"><i class="fab fa-whatsapp"></i></div>
+        <div class="wa-text">
+          <h3>Chat langsung ke Admin</h3>
+          <p>Butuh bantuan cepat? Hubungi CS kami</p>
+        </div>
+      </div>
+      <button class="wa-btn" id="waChatBtn">
+        <i class="fab fa-whatsapp"></i> Chat via WhatsApp
+        <i class="fas fa-arrow-right"></i>
+      </button>
+    </div>
+
+    <!-- Social Media -->
+    <div class="socials">
+      <h3>Ikuti Suruhboy di Sosmed</h3>
+      <p>Tetap update promo & info terbaru</p>
+      <div class="social-icons">
+        <div class="s-icon"><i class="fab fa-instagram"></i></div>
+        <div class="s-icon"><i class="fab fa-twitter"></i></div>
+        <div class="s-icon"><i class="fab fa-facebook-f"></i></div>
+        <div class="s-icon"><i class="fab fa-youtube"></i></div>
+        <div class="s-icon"><i class="fab fa-linkedin-in"></i></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>© 2025 Suruhboy. Semua hak dilindungi.</p>
+      <p class="links">Kebijakan Privasi • Syarat & Ketentuan • Hubungi Kami</p>
+    </footer>
   </div>
 
-  <div class="gradient-card" style="background:linear-gradient(135deg,#1B4A3A 0%,#2E8B57 100%)">
-    <div class="card-icon" style="background:rgba(255,255,255,0.2)">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-      </svg>
+  <!-- SEARCH RESULT PAGE -->
+  <div id="resultPage" class="result-page">
+    <div class="result-header">
+      <div class="back-btn" id="backToHomeBtn">
+        <i class="fas fa-arrow-left"></i>
+      </div>
+      <div class="result-search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" id="resultSearchInput" placeholder="Cari layanan..." autocomplete="off" autofocus/>
+      </div>
     </div>
-    <div class="card-text">
-      <p class="card-title">Cek Ketersediaan Agent</p>
-      <p class="card-desc">Lihat agent terdekat & estimasi waktu</p>
+    <div class="result-stats">
+      <p>Menampilkan hasil untuk "<strong id="searchQueryDisplay">semua layanan</strong>"</p>
     </div>
-    <div class="arrow-icon">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="9 18 15 12 9 6"/>
-      </svg>
-    </div>
+    <div id="resultListContainer" class="result-list"></div>
   </div>
-
-  <div class="wa-card">
-    <div class="top">
-      <div class="wa-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
-      <div style="flex:1"><p class="title">Chat langsung ke Admin</p><p class="desc">Butuh bantuan cepat? Hubungi CS kami</p></div>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>
-    <button class="wa-btn">Chat via WhatsApp <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
-  </div>
-
-  <div class="three-cards">
-    <div class="info-card">
-      <div class="ic-circle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B3A5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-      <p class="ic-title">Daftar
-Agent</p>
-      <p class="ic-desc">Gabung jadi partner Suruhboy</p>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:8px"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>
-    <div class="info-card">
-      <div class="ic-circle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B3A5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><polyline points="4 9 12 15 20 9"/></svg></div>
-      <p class="ic-title">Info
-UMKM</p>
-      <p class="ic-desc">Dukungan & kolaborasi UMKM</p>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:8px"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>
-    <div class="info-card">
-      <div class="ic-circle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B3A5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-      <p class="ic-title">Pusat
-Bantuan</p>
-      <p class="ic-desc">FAQ & Panduan</p>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:8px"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>
-  </div>
-
-  <div class="socials">
-    <h3>Ikuti Suruhboy di Sosmed</h3>
-    <p>Tetap update promo & info terbaru</p>
-    <div class="icons"><div class="s-icon">📷</div><div class="s-icon">🐦</div><div class="s-icon">📘</div><div class="s-icon">▶️</div><div class="s-icon">💼</div></div>
-  </div>
-
-  <footer>
-    <p>© 2025 Suruhboy. Semua hak dilindungi.</p>
-    <p class="links">Kebijakan Privasi • Syarat & Ketentuan • Hubungi Kami</p>
-  </footer>
 </div>
 
-<div class="fab"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+<!-- FAB WhatsApp -->
+<div class="fab" id="fabBtn">
+  <i class="fab fa-whatsapp"></i>
+</div>
 
 <script>
+// ======================== KONFIGURASI GOOGLE SHEET ========================
+const SHEET_ID = '1ia6zeUJZv2Wp1OkO2XbJQFoJfiUnseN9HpEyIEDazTE';
+const GID = '1142979216';
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+
+let servicesData = [];
+
+// SVG Gradients untuk ikon
 const svgGradients = `
 <defs>
   <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -213,38 +850,232 @@ const svgGradients = `
 </defs>
 `;
 
-const services = [
-  {label:"Antar\nMakanan", icon:`<path d="M4 4v6a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3V4" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><path d="M9 4v10" stroke="#1B2A4A" stroke-width="2.5"/><path d="M18 8a4 4 0 0 1-4 4" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><path d="M18 8v6a2 2 0 0 1-2 2" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><line x1="2" y1="4" x2="20" y2="4" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/>`},
-  {label:"Kirim\nBarang", icon:`<rect x="4" y="6" width="16" height="14" rx="2" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><polyline points="8 10 12 13 16 10" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 13v5" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><line x1="4" y1="6" x2="20" y2="6" stroke="#1B2A4A" stroke-width="2.5"/>`},
-  {label:"Antar\nOrang", icon:`<circle cx="12" cy="8" r="3.5" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><path d="M5 20v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><path d="M16 5.13a4 4 0 0 1 0 7.75" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><rect x="3" y="14" width="18" height="5" rx="1.5" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><circle cx="7.5" cy="19" r="1.5" fill="#fff" stroke="#1B2A4A" stroke-width="2"/><circle cx="16.5" cy="19" r="1.5" fill="#fff" stroke="#1B2A4A" stroke-width="2"/>`},
-  {label:"Titip\nBelanja", icon:`<circle cx="9" cy="16" r="2" fill="#fff" stroke="#1B2A4A" stroke-width="2.5"/><circle cx="17" cy="16" r="2" fill="#fff" stroke="#1B2A4A" stroke-width="2.5"/><path d="M3 6h4l1 10h12l2-7H8" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 6v3" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/>`},
-  {label:"Bersih-\nBersih", icon:`<rect x="6" y="8" width="12" height="12" rx="2" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><line x1="8" y1="12" x2="16" y2="12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="8" y1="16" x2="13" y2="16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M10 4v4M14 4v4" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><line x1="18" y1="20" x2="20" y2="20" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/>`},
-  {label:"Caregiver/\nJaga RS", icon:`<rect x="4" y="6" width="16" height="14" rx="2" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><path d="M8 6V4h8v2" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="10" x2="12" y2="16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="9" y1="13" x2="15" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="13" r="1" fill="#1B2A4A"/>`},
-  {label:"Jasa\nNemenin", icon:`<circle cx="9" cy="8" r="3" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><circle cx="17" cy="8" r="3" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><path d="M4 20v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><path d="M14 20v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><polyline points="19 5 21 7 24 4" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`},
-  {label:"Custom\nRequest", icon:`<path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5" stroke-linejoin="round"/><circle cx="12" cy="18" r="2.5" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><line x1="12" y1="15.5" x2="12" y2="16.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="19.5" x2="12" y2="20.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`},
+// Ikon SVG untuk setiap layanan
+const defaultIcons = [
+  `<path d="M4 4v6a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3V4" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><path d="M9 4v10" stroke="#1B2A4A" stroke-width="2.5"/><path d="M18 8a4 4 0 0 1-4 4" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><path d="M18 8v6a2 2 0 0 1-2 2" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><line x1="2" y1="4" x2="20" y2="4" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/>`,
+  `<rect x="4" y="6" width="16" height="14" rx="2" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><polyline points="8 10 12 13 16 10" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 13v5" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><line x1="4" y1="6" x2="20" y2="6" stroke="#1B2A4A" stroke-width="2.5"/>`,
+  `<circle cx="12" cy="8" r="3.5" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><path d="M5 20v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><path d="M16 5.13a4 4 0 0 1 0 7.75" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><rect x="3" y="14" width="18" height="5" rx="1.5" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><circle cx="7.5" cy="19" r="1.5" fill="#fff" stroke="#1B2A4A" stroke-width="2"/><circle cx="16.5" cy="19" r="1.5" fill="#fff" stroke="#1B2A4A" stroke-width="2"/>`,
+  `<circle cx="9" cy="16" r="2" fill="#fff" stroke="#1B2A4A" stroke-width="2.5"/><circle cx="17" cy="16" r="2" fill="#fff" stroke="#1B2A4A" stroke-width="2.5"/><path d="M3 6h4l1 10h12l2-7H8" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 6v3" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/>`,
+  `<rect x="6" y="8" width="12" height="12" rx="2" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><line x1="8" y1="12" x2="16" y2="12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="8" y1="16" x2="13" y2="16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M10 4v4M14 4v4" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><line x1="18" y1="20" x2="20" y2="20" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/>`,
+  `<rect x="4" y="6" width="16" height="14" rx="2" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><path d="M8 6V4h8v2" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="10" x2="12" y2="16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="9" y1="13" x2="15" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="13" r="1" fill="#1B2A4A"/>`,
+  `<circle cx="9" cy="8" r="3" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><circle cx="17" cy="8" r="3" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><path d="M4 20v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><path d="M14 20v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><polyline points="19 5 21 7 24 4" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`,
+  `<path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5" stroke-linejoin="round"/><circle cx="12" cy="18" r="2.5" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><line x1="12" y1="15.5" x2="12" y2="16.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="19.5" x2="12" y2="20.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`,
 ];
 
-const grid = document.getElementById('svc-grid');
-grid.innerHTML = '';
+// Fungsi baca CSV dari Google Sheet
+async function loadServicesFromSheet() {
+  try {
+    const response = await fetch(CSV_URL);
+    const csvText = await response.text();
+    
+    const rows = [];
+    const lines = csvText.split(/\r?\n/);
+    for (const line of lines) {
+      if (line.trim() === '') continue;
+      let row = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          row.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      row.push(current.trim());
+      rows.push(row);
+    }
+    
+    if (rows.length === 0) throw new Error('Data kosong');
+    
+    const headers = rows[0];
+    const keywordRows = rows.slice(1);
+    
+    const services = [];
+    for (let i = 0; i < headers.length; i++) {
+      const label = headers[i];
+      if (!label || label.trim() === '') continue;
+      
+      const keywords = [];
+      for (let j = 0; j < keywordRows.length; j++) {
+        let keyword = keywordRows[j][i];
+        if (keyword && keyword.trim() !== '') {
+          keyword = keyword.replace(/^"|"$/g, '').trim();
+          const parts = keyword.split(/[,;]+/);
+          for (const part of parts) {
+            const cleanPart = part.trim().toLowerCase();
+            if (cleanPart.length > 0) {
+              keywords.push(cleanPart);
+            }
+          }
+        }
+      }
+      
+      services.push({
+        label: label,
+        keywords: keywords,
+        desc: `Layanan ${label} oleh Suruhboy`,
+        icon: defaultIcons[i % defaultIcons.length]
+      });
+    }
+    
+    return services;
+    
+  } catch (error) {
+    console.error('Gagal load sheet:', error);
+    return [
+      {label:"Antar Makanan", keywords:["antar","makanan","food"], desc:"Pesan antar makanan", icon:defaultIcons[0]},
+      {label:"Kirim Barang", keywords:["kirim","barang","paket"], desc:"Kirim paket", icon:defaultIcons[1]},
+      {label:"Antar Orang", keywords:["antar","orang","jemput"], desc:"Jemput antar orang", icon:defaultIcons[2]},
+      {label:"Titip Belanja", keywords:["titip","belanja"], desc:"Titip belanja", icon:defaultIcons[3]},
+      {label:"Bersih-Bersih", keywords:["bersih","cleaning"], desc:"Layanan bersih", icon:defaultIcons[4]},
+      {label:"Caregiver/Jaga RS", keywords:["caregiver","rs","sakit"], desc:"Pendamping RS", icon:defaultIcons[5]},
+      {label:"Jasa Nemenin", keywords:["nemenin","temani"], desc:"Teman pendamping", icon:defaultIcons[6]},
+      {label:"Custom Request", keywords:["custom","request"], desc:"Request khusus", icon:defaultIcons[7]}
+    ];
+  }
+}
 
-services.forEach(s => {
-  const btn = document.createElement('button');
-  btn.className = 'svc-btn';
-  btn.innerHTML = `
-    <div class="svc-icon">
-      <svg width="34" height="34" viewBox="0 0 24 24" class="gradient-icon">
-        ${s.icon}
-      </svg>
+// DOM Elements
+const homePage = document.getElementById('homePage');
+const resultPage = document.getElementById('resultPage');
+const homeSearchWrapper = document.getElementById('homeSearchWrapper');
+const resultSearchInput = document.getElementById('resultSearchInput');
+const backToHomeBtn = document.getElementById('backToHomeBtn');
+const resultListContainer = document.getElementById('resultListContainer');
+const searchQueryDisplay = document.getElementById('searchQueryDisplay');
+const servicesGrid = document.getElementById('servicesGrid');
+const serviceCountSpan = document.getElementById('serviceCount');
+
+// Buka halaman pencarian
+function openSearchPage() {
+  homePage.style.display = 'none';
+  resultPage.style.display = 'block';
+  setTimeout(() => {
+    resultSearchInput.focus();
+    performResultSearch('');
+  }, 50);
+}
+
+// Kembali ke home
+function backToHome() {
+  homePage.style.display = 'block';
+  resultPage.style.display = 'none';
+  resultSearchInput.value = '';
+}
+
+// Fungsi pencarian real-time
+function performResultSearch(query) {
+  if (!servicesData.length) return;
+  
+  const lowerQuery = query.toLowerCase().trim();
+  
+  let filteredServices = servicesData;
+  if (lowerQuery !== '') {
+    filteredServices = servicesData.filter(service => {
+      if (service.label.toLowerCase().includes(lowerQuery)) return true;
+      return service.keywords.some(kw => kw.toLowerCase().includes(lowerQuery));
+    });
+  }
+  
+  searchQueryDisplay.textContent = lowerQuery === '' ? 'semua layanan' : query;
+  
+  if (filteredServices.length === 0) {
+    resultListContainer.innerHTML = `
+      <div class="no-results">
+        <i class="fas fa-search" style="font-size: 48px; color: #CBD5E1; margin-bottom: 16px; display: block;"></i>
+        <p>Tidak ada layanan yang cocok dengan "<strong>${query}</strong>"</p>
+        <p style="font-size: 0.8rem; margin-top: 8px;">Coba kata kunci lain seperti "antar", "kirim", "bersih"</p>
+      </div>
+    `;
+    return;
+  }
+  
+  resultListContainer.innerHTML = filteredServices.map(service => `
+    <div class="result-card" data-service="${service.label}">
+      <div class="result-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24">
+          ${service.icon}
+        </svg>
+      </div>
+      <div class="result-info">
+        <div class="result-title">${service.label}</div>
+        <div class="result-desc">${service.desc}</div>
+      </div>
+      <i class="fas fa-chevron-right" style="color: #CBD5E1;"></i>
     </div>
-    <span class="svc-label">${s.label}</span>
-  `;
-  grid.appendChild(btn);
-});
+  `).join('');
+  
+  document.querySelectorAll('.result-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const serviceName = card.getAttribute('data-service');
+      alert(`Anda memilih layanan: ${serviceName}\nFitur ini akan segera terhubung ke agent.`);
+    });
+  });
+}
 
-const svgDefs = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-svgDefs.setAttribute("style", "position:absolute; width:0; height:0;");
-svgDefs.innerHTML = svgGradients;
-document.body.prepend(svgDefs);
+// Render grid di home
+function renderServicesGrid() {
+  if (!servicesGrid) return;
+  if (!servicesData.length) {
+    servicesGrid.innerHTML = '<div style="text-align: center; grid-column: span 4; padding: 40px;">Gagal memuat data. Cek koneksi.</div>';
+    return;
+  }
+  
+  serviceCountSpan.textContent = `${servicesData.length} layanan tersedia`;
+  
+  servicesGrid.innerHTML = servicesData.map(service => `
+    <div class="service-card" data-service="${service.label}">
+      <div class="service-icon">
+        <svg width="34" height="34" viewBox="0 0 24 24">
+          ${service.icon}
+        </svg>
+      </div>
+      <div class="service-label">${service.label.length > 18 ? service.label.substring(0, 15) + '…' : service.label}</div>
+    </div>
+  `).join('');
+  
+  document.querySelectorAll('.service-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const serviceName = card.getAttribute('data-service');
+      homePage.style.display = 'none';
+      resultPage.style.display = 'block';
+      setTimeout(() => {
+        resultSearchInput.value = serviceName;
+        performResultSearch(serviceName);
+        resultSearchInput.focus();
+      }, 50);
+    });
+  });
+}
+
+// Inisialisasi
+async function init() {
+  servicesData = await loadServicesFromSheet();
+  renderServicesGrid();
+  
+  homeSearchWrapper.addEventListener('click', openSearchPage);
+  backToHomeBtn.addEventListener('click', backToHome);
+  resultSearchInput.addEventListener('input', (e) => performResultSearch(e.target.value));
+  
+  document.getElementById('waChatBtn').addEventListener('click', () => {
+    window.open('https://wa.me/6281234567890?text=Halo%20Suruhboy%2C%20saya%20butuh%20bantuan', '_blank');
+  });
+  document.getElementById('fabBtn').addEventListener('click', () => {
+    window.open('https://wa.me/6281234567890?text=Halo%20Suruhboy%2C%20saya%20butuh%20bantuan', '_blank');
+  });
+  
+  const svgDefs = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svgDefs.setAttribute("style", "position:absolute; width:0; height:0;");
+  svgDefs.innerHTML = svgGradients;
+  document.body.prepend(svgDefs);
+}
+
+init();
 </script>
 </body>
 </html>
