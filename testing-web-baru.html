@@ -62,64 +62,71 @@ header p{font-size:12px;color:#7A8BA0}
 .search-arrow-small{width:32px;height:32px;border-radius:50%;background:#1B2A4A;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .search-arrow-small:hover{background:#E88D2A}
 
-/* GRID LAYANAN - TULISAN TIDAK TERPOTONG */
-.grid{
+/* ========== GRID MENU (BARU - DARI KODE YANG ANDA BERIKAN) ========== */
+.grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 15px;
+  margin-bottom: 20px;
 }
-.svc-btn{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  padding: 4px;
-}
-.svc-btn:hover{transform:translateY(-2px)}
-.svc-btn:active{transform:scale(0.95)}
-.svc-icon{
-  width: 70px;
-  height: 70px;
+
+.card {
+  background: #fff;
   border-radius: 20px;
-  background: linear-gradient(135deg,#FFF8F0,#FFE8D6);
+  padding: 15px 10px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+}
+
+.icon {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 10px;
+  background: linear-gradient(135deg, #FFF8F0, #FFE8D6);
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
 }
-.svc-icon img{
-  width: 44px;
-  height: 44px;
+
+.icon img {
+  width: 32px;
+  height: 32px;
   object-fit: contain;
 }
-.svc-label{
-  font-size: 11px;
+
+.title {
+  font-size: 12px;
   font-weight: 600;
-  text-align: center;
-  line-height: 1.4;
-  color: #1B2A4A;
-  max-width: 100%;
-  word-wrap: break-word;
-  white-space: normal;
+  color: #1f2d3d;
+  line-height: 1.3;
 }
 
-/* Tablet */
-@media (min-width: 768px) {
-  .svc-icon{width: 80px;height: 80px}
-  .svc-icon img{width: 50px;height: 50px}
-  .svc-label{font-size: 12px}
-}
-
-/* Mobile kecil - tetap baca utuh */
+/* Responsif mobile kecil */
 @media (max-width: 480px) {
-  .grid{gap: 12px}
-  .svc-icon{width: 60px;height: 60px}
-  .svc-icon img{width: 38px;height: 38px}
-  .svc-label{font-size: 10px;line-height: 1.3}
+  .grid {
+    gap: 12px;
+  }
+  .card {
+    padding: 12px 8px;
+  }
+  .icon {
+    width: 44px;
+    height: 44px;
+  }
+  .icon img {
+    width: 28px;
+    height: 28px;
+  }
+  .title {
+    font-size: 11px;
+  }
 }
 
 .dots{display:flex;justify-content:center;gap:6px;margin-top:16px}
@@ -202,8 +209,8 @@ footer .links{font-size:10px;color:rgba(255,255,255,0.5);margin-top:8px}
 .result-card{background:#fff;border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;transition:all 0.2s ease}
 .result-card:hover{transform:translateX(4px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
 .result-card:active{transform:scale(0.98)}
-.result-icon{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#FFF8F0,#FFE8D6);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 8px rgba(0,0,0,0.05)}
-.result-icon img{width:38px;height:38px;object-fit:contain}
+.result-icon{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#FFF8F0,#FFE8D6);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 8px rgba(0,0,0,0.05)}
+.result-icon img{width:34px;height:34px;object-fit:contain}
 .result-info{flex:1}
 .result-title{font-size:15px;font-weight:700;color:#1B2A4A;margin-bottom:4px}
 .result-desc{font-size:12px;color:#7A8BA0}
@@ -250,9 +257,11 @@ svg{display:block}
         </div>
       </div>
 
-      <div class="grid" id="svc-grid">
+      <!-- GRID MENU BARU -->
+      <div class="grid" id="menuGrid">
         <div style="grid-column:span 4; text-align:center; padding:20px;">Memuat layanan...</div>
       </div>
+      
       <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
     </div>
 
@@ -453,7 +462,7 @@ const resultSearchInput = document.getElementById('resultSearchInput');
 const backToHomeBtn = document.getElementById('backToHomeBtn');
 const resultListContainer = document.getElementById('resultListContainer');
 const searchQueryDisplay = document.getElementById('searchQueryDisplay');
-const gridContainer = document.getElementById('svc-grid');
+const menuGrid = document.getElementById('menuGrid');
 
 // Buka halaman pencarian
 function openSearchPage() {
@@ -527,43 +536,34 @@ function performResultSearch(query) {
   });
 }
 
-// Render home grid
-function renderHomeGrid() {
-  if (!gridContainer) return;
+// Render menu grid (dengan desain baru)
+function renderMenuGrid() {
+  if (!menuGrid) return;
   if (!servicesData.length) {
-    gridContainer.innerHTML = '<div style="grid-column:span 4; text-align:center; padding:20px;">Gagal memuat data. Cek koneksi.</div>';
+    menuGrid.innerHTML = '<div style="grid-column:span 4; text-align:center; padding:20px;">Memuat layanan...</div>';
     return;
   }
   
-  gridContainer.innerHTML = '';
+  menuGrid.innerHTML = '';
   servicesData.forEach(service => {
-    const btn = document.createElement('button');
-    btn.className = 'svc-btn';
-    btn.setAttribute('data-service', service.label);
-    
-    // Format label multi-baris untuk tampilan yang rapi
-    let formattedLabel = service.label;
+    // Format label untuk tampilan (2 baris jika perlu)
+    let displayLabel = service.label;
     if (service.label === "Caregiver/Jaga RS") {
-      formattedLabel = "Caregiver/\nJaga RS";
+      displayLabel = "Caregiver/\nJaga RS";
     } else if (service.label === "Bersih-Bersih") {
-      formattedLabel = "Bersih-\nBersih";
-    } else if (service.label.length > 10) {
-      // Untuk label panjang lainnya, potong dengan cerdas
-      const words = service.label.split(' ');
-      if (words.length > 1) {
-        formattedLabel = words.join('\n');
-      } else if (service.label.length > 12) {
-        formattedLabel = service.label.substring(0, 10) + '…';
-      }
+      displayLabel = "Bersih-\nBersih";
     }
     
-    btn.innerHTML = `
-      <div class="svc-icon">
-        <img src="${service.iconFile}" alt="${service.label}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23E88D2A%22><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2212%22>${service.label.charAt(0)}</text></svg>'">
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.setAttribute('data-service', service.label);
+    card.innerHTML = `
+      <div class="icon">
+        <img src="${service.iconFile}" alt="${service.label}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Ctext x=%2750%%27 y=%2750%%27 text-anchor=%27middle%27 dy=%27.3em%27 fill=%27%23E88D2A%27 font-size=%2712%27%3E${service.label.charAt(0)}%3C/text%3E%3C/svg%3E'">
       </div>
-      <span class="svc-label">${formattedLabel}</span>
+      <div class="title">${displayLabel}</div>
     `;
-    btn.addEventListener('click', () => {
+    card.addEventListener('click', () => {
       homePage.style.display = 'none';
       searchResultPage.style.display = 'block';
       setTimeout(() => {
@@ -572,14 +572,14 @@ function renderHomeGrid() {
         resultSearchInput.focus();
       }, 50);
     });
-    gridContainer.appendChild(btn);
+    menuGrid.appendChild(card);
   });
 }
 
 // Inisialisasi
 async function init() {
   servicesData = await loadServicesFromSheet();
-  renderHomeGrid();
+  renderMenuGrid();
   
   homeSearchWrapper.addEventListener('click', openSearchPage);
   homeSearchInput.addEventListener('click', openSearchPage);
