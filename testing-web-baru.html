@@ -9,7 +9,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#F5F6FA;color:#1B2A4A;min-height:100vh}
 
-/* Container responsif - di desktop jadi lebih lebar tapi tetap proporsional */
+/* Container responsif */
 .page{
   max-width: 500px;
   margin: 0 auto;
@@ -19,14 +19,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F5F6FA;color:#1B2A4A
   background: #F5F6FA;
 }
 
-/* Untuk tablet dan desktop, tampilan lebih lebar */
 @media (min-width: 768px) {
   .page {
     max-width: 700px;
     box-shadow: 0 0 40px rgba(0,0,0,0.08);
     border-radius: 32px;
     margin: 20px auto;
-    background: #F5F6FA;
   }
 }
 
@@ -50,10 +48,10 @@ header p{font-size:12px;color:#7A8BA0}
 .hero .star{color:#E88D2A}
 .hero p{font-size:14px;color:#7A8BA0;margin-top:8px;line-height:1.6}
 .hero-pin{position:absolute;top:16px;right:16px;width:32px;height:40px;border-radius:50%;background:#E88D2A;display:flex;align-items:center;justify-content:center;z-index:3}
+.hero-pin svg{width:20px;height:20px;stroke:#fff}
 .hero-shape{position:absolute;bottom:0;right:0;width:192px;height:160px;border-top-left-radius:60px;background:linear-gradient(135deg,#E88D2A 0%,#F5A623 50%,#D4781E 100%);z-index:1;overflow:hidden}
 .hero-shape-img{position:absolute;bottom:0;right:0;width:100%;height:100%;object-fit:cover;z-index:2}
 
-/* Tablet/Desktop - hero lebih besar */
 @media (min-width: 768px) {
   .hero{min-height: 220px}
   .hero-content{padding:28px 28px 120px}
@@ -75,28 +73,26 @@ header p{font-size:12px;color:#7A8BA0}
 .search-arrow-small{width:32px;height:32px;border-radius:50%;background:#1B2A4A;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .search-arrow-small:hover{background:#E88D2A}
 
-/* Grid layanan - responsif */
+/* Grid layanan */
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .svc-btn{display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;transition:transform 0.2s ease}
 .svc-btn:hover{transform:translateY(-2px)}
 .svc-btn:active{transform:scale(0.95)}
 .svc-icon{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#FFF8F0,#FFE8D6);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 6px 12px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)}
-.gradient-icon{filter:drop-shadow(0 2px 3px rgba(0,0,0,0.1))}
+.svc-icon img{width:34px;height:34px;object-fit:contain}
 .svc-label{font-size:11px;font-weight:600;text-align:center;white-space:pre-line;line-height:1.3;color:#1B2A4A}
 
-/* Tablet */
 @media (min-width: 768px) {
   .grid{gap:16px}
-  .svc-icon{width:70px;height:70px;border-radius:20px}
-  .svc-icon svg{width:38px;height:38px}
+  .svc-icon{width:70px;height:70px}
+  .svc-icon img{width:38px;height:38px}
   .svc-label{font-size:12px}
 }
 
-/* Mobile kecil */
 @media (max-width: 480px) {
   .grid{gap:8px}
-  .svc-icon{width:52px;height:52px;border-radius:16px}
-  .svc-icon svg{width:30px;height:30px}
+  .svc-icon{width:52px;height:52px}
+  .svc-icon img{width:30px;height:30px}
   .svc-label{font-size:10px}
 }
 
@@ -134,12 +130,10 @@ header p{font-size:12px;color:#7A8BA0}
 .info-card .ic-title{font-size:14px;font-weight:700;white-space:pre-line;line-height:1.3}
 .info-card .ic-desc{font-size:10px;color:#7A8BA0;margin-top:4px;line-height:1.3}
 
-/* Mobile kecil - three cards */
 @media (max-width: 480px) {
   .three-cards{gap:8px}
   .info-card{padding:12px}
   .info-card .ic-circle{width:36px;height:36px}
-  .info-card .ic-circle svg{width:18px;height:18px}
   .info-card .ic-title{font-size:12px}
   .info-card .ic-desc{font-size:9px}
 }
@@ -151,7 +145,6 @@ header p{font-size:12px;color:#7A8BA0}
 .socials .icons{display:flex;justify-content:center;gap:16px;margin-top:16px;flex-wrap:wrap}
 .socials .s-icon{width:40px;height:40px;border-radius:50%;background:#fff;border:1px solid #E2E6ED;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.2s ease;cursor:pointer}
 .socials .s-icon:hover{background:#E88D2A;color:#fff;border-color:#E88D2A;transform:translateY(-2px)}
-.socials .s-icon:active{transform:scale(0.9)}
 
 /* ========== FOOTER ========== */
 footer{margin-top:24px;padding:20px 16px;background:#1B2A4A;text-align:center}
@@ -160,10 +153,9 @@ footer .links{font-size:10px;color:rgba(255,255,255,0.5);margin-top:8px}
 
 /* ========== FAB ========== */
 .fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#1B3A5C,#E88D2A);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.3);cursor:pointer;z-index:50;transition:all 0.2s ease}
-.fab:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,0.4)}
+.fab:hover{transform:scale(1.05)}
 .fab:active{transform:scale(0.92)}
 
-/* Desktop - FAB lebih besar sedikit */
 @media (min-width: 768px) {
   .fab{width:60px;height:60px;bottom:32px;right:32px}
   .fab svg{width:26px;height:26px}
@@ -185,6 +177,7 @@ footer .links{font-size:10px;color:rgba(255,255,255,0.5);margin-top:8px}
 .result-card:hover{transform:translateX(4px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
 .result-card:active{transform:scale(0.98)}
 .result-icon{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#FFF8F0,#FFE8D6);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 8px rgba(0,0,0,0.05)}
+.result-icon img{width:32px;height:32px;object-fit:contain}
 .result-info{flex:1}
 .result-title{font-size:16px;font-weight:700;color:#1B2A4A;margin-bottom:4px}
 .result-desc{font-size:12px;color:#7A8BA0}
@@ -335,28 +328,17 @@ const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?forma
 
 let servicesData = [];
 
-// SVG Gradients untuk ikon
-const svgGradients = `
-<defs>
-  <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-    <stop offset="0%" style="stop-color:#F5A623"/>
-    <stop offset="50%" style="stop-color:#E88D2A"/>
-    <stop offset="100%" style="stop-color:#D4781E"/>
-  </linearGradient>
-</defs>
-`;
-
-// Ikon SVG untuk setiap layanan
-const defaultIcons = [
-  `<path d="M4 4v6a3 3 0 0 0 3 3h4a3 3 0 0 0 3-3V4" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><path d="M9 4v10" stroke="#1B2A4A" stroke-width="2.5"/><path d="M18 8a4 4 0 0 1-4 4" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><path d="M18 8v6a2 2 0 0 1-2 2" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><line x1="2" y1="4" x2="20" y2="4" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/>`,
-  `<rect x="4" y="6" width="16" height="14" rx="2" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><polyline points="8 10 12 13 16 10" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 13v5" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><line x1="4" y1="6" x2="20" y2="6" stroke="#1B2A4A" stroke-width="2.5"/>`,
-  `<circle cx="12" cy="8" r="3.5" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><path d="M5 20v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><path d="M16 5.13a4 4 0 0 1 0 7.75" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><rect x="3" y="14" width="18" height="5" rx="1.5" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><circle cx="7.5" cy="19" r="1.5" fill="#fff" stroke="#1B2A4A" stroke-width="2"/><circle cx="16.5" cy="19" r="1.5" fill="#fff" stroke="#1B2A4A" stroke-width="2"/>`,
-  `<circle cx="9" cy="16" r="2" fill="#fff" stroke="#1B2A4A" stroke-width="2.5"/><circle cx="17" cy="16" r="2" fill="#fff" stroke="#1B2A4A" stroke-width="2.5"/><path d="M3 6h4l1 10h12l2-7H8" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 6v3" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/>`,
-  `<rect x="6" y="8" width="12" height="12" rx="2" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><line x1="8" y1="12" x2="16" y2="12" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="8" y1="16" x2="13" y2="16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M10 4v4M14 4v4" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><line x1="18" y1="20" x2="20" y2="20" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/>`,
-  `<rect x="4" y="6" width="16" height="14" rx="2" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><path d="M8 6V4h8v2" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><line x1="12" y1="10" x2="12" y2="16" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><line x1="9" y1="13" x2="15" y2="13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><circle cx="12" cy="13" r="1" fill="#1B2A4A"/>`,
-  `<circle cx="9" cy="8" r="3" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><circle cx="17" cy="8" r="3" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><path d="M4 20v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><path d="M14 20v-2a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v2" fill="none" stroke="#1B2A4A" stroke-width="2.5" stroke-linecap="round"/><polyline points="19 5 21 7 24 4" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`,
-  `<path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5" stroke-linejoin="round"/><circle cx="12" cy="18" r="2.5" fill="url(#orangeGrad)" stroke="#1B2A4A" stroke-width="2.5"/><line x1="12" y1="15.5" x2="12" y2="16.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="19.5" x2="12" y2="20.5" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`,
-];
+// Mapping nama file SVG untuk setiap layanan
+const svgIconMap = {
+  "Antar Makanan": "makan.svg",
+  "Kirim Barang": "barang.svg",
+  "Antar Orang": "orang.svg",
+  "Titip Belanja": "belanja.svg",
+  "Bersih-Bersih": "bersih.svg",
+  "Caregiver/Jaga RS": "caregiver.svg",
+  "Jasa Nemenin": "nemenin.svg",
+  "Custom Request": "custom.svg"
+};
 
 // Fungsi baca CSV dari Google Sheet
 async function loadServicesFromSheet() {
@@ -411,28 +393,38 @@ async function loadServicesFromSheet() {
         }
       }
       
+      // Tentukan nama file SVG berdasarkan label
+      let svgFile = svgIconMap[label];
+      if (!svgFile) {
+        // Fallback: gunakan nama file berdasarkan label yang sudah diformat
+        const fallbackName = label.toLowerCase().replace(/[^a-z]/g, '');
+        svgFile = `${fallbackName}.svg`;
+      }
+      
       services.push({
         label: label,
         labelMulti: label.length > 12 ? label.substring(0, 10) + '…' : label,
         keywords: keywords,
         desc: `Layanan ${label} oleh Suruhboy`,
-        icon: defaultIcons[i % defaultIcons.length]
+        svgFile: svgFile
       });
     }
     
+    console.log('Data dari sheet:', services);
     return services;
     
   } catch (error) {
     console.error('Gagal load sheet:', error);
+    // Fallback data
     return [
-      {label:"Antar Makanan", labelMulti:"Antar\nMakanan", keywords:["antar","makanan","food"], desc:"Pesan antar makanan", icon:defaultIcons[0]},
-      {label:"Kirim Barang", labelMulti:"Kirim\nBarang", keywords:["kirim","barang","paket"], desc:"Kirim paket", icon:defaultIcons[1]},
-      {label:"Antar Orang", labelMulti:"Antar\nOrang", keywords:["antar","orang","jemput"], desc:"Jemput antar orang", icon:defaultIcons[2]},
-      {label:"Titip Belanja", labelMulti:"Titip\nBelanja", keywords:["titip","belanja"], desc:"Titip belanja", icon:defaultIcons[3]},
-      {label:"Bersih-Bersih", labelMulti:"Bersih-\nBersih", keywords:["bersih","cleaning"], desc:"Layanan bersih", icon:defaultIcons[4]},
-      {label:"Caregiver/Jaga RS", labelMulti:"Caregiver/\nJaga RS", keywords:["caregiver","rs","sakit"], desc:"Pendamping RS", icon:defaultIcons[5]},
-      {label:"Jasa Nemenin", labelMulti:"Jasa\nNemenin", keywords:["nemenin","temani"], desc:"Teman pendamping", icon:defaultIcons[6]},
-      {label:"Custom Request", labelMulti:"Custom\nRequest", keywords:["custom","request"], desc:"Request khusus", icon:defaultIcons[7]}
+      {label:"Antar Makanan", labelMulti:"Antar\nMakanan", keywords:["antar","makanan","food"], desc:"Pesan antar makanan", svgFile:"makan.svg"},
+      {label:"Kirim Barang", labelMulti:"Kirim\nBarang", keywords:["kirim","barang","paket"], desc:"Kirim paket", svgFile:"barang.svg"},
+      {label:"Antar Orang", labelMulti:"Antar\nOrang", keywords:["antar","orang","jemput"], desc:"Jemput antar orang", svgFile:"orang.svg"},
+      {label:"Titip Belanja", labelMulti:"Titip\nBelanja", keywords:["titip","belanja"], desc:"Titip belanja", svgFile:"belanja.svg"},
+      {label:"Bersih-Bersih", labelMulti:"Bersih-\nBersih", keywords:["bersih","cleaning"], desc:"Layanan bersih", svgFile:"bersih.svg"},
+      {label:"Caregiver/Jaga RS", labelMulti:"Caregiver/\nJaga RS", keywords:["caregiver","rs","sakit"], desc:"Pendamping RS", svgFile:"caregiver.svg"},
+      {label:"Jasa Nemenin", labelMulti:"Jasa\nNemenin", keywords:["nemenin","temani"], desc:"Teman pendamping", svgFile:"nemenin.svg"},
+      {label:"Custom Request", labelMulti:"Custom\nRequest", keywords:["custom","request"], desc:"Request khusus", svgFile:"custom.svg"}
     ];
   }
 }
@@ -498,9 +490,7 @@ function performResultSearch(query) {
   resultListContainer.innerHTML = filteredServices.map(service => `
     <div class="result-card" data-service="${service.label}">
       <div class="result-icon">
-        <svg width="32" height="32" viewBox="0 0 24 24">
-          ${service.icon}
-        </svg>
+        <img src="${service.svgFile}" alt="${service.label}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23E88D2A%22><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2212%22>${service.label.charAt(0)}</text></svg>'">
       </div>
       <div class="result-info">
         <div class="result-title">${service.label}</div>
@@ -522,7 +512,7 @@ function performResultSearch(query) {
   });
 }
 
-// Render home grid
+// Render home grid dengan SVG eksternal
 function renderHomeGrid() {
   if (!gridContainer) return;
   if (!servicesData.length) {
@@ -537,9 +527,7 @@ function renderHomeGrid() {
     btn.setAttribute('data-service', service.label);
     btn.innerHTML = `
       <div class="svc-icon">
-        <svg width="34" height="34" viewBox="0 0 24 24" class="gradient-icon">
-          ${service.icon}
-        </svg>
+        <img src="${service.svgFile}" alt="${service.label}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23E88D2A%22><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2212%22>${service.label.charAt(0)}</text></svg>'">
       </div>
       <span class="svc-label">${service.labelMulti}</span>
     `;
@@ -572,11 +560,6 @@ async function init() {
   document.getElementById('fabBtn').addEventListener('click', () => {
     window.open('https://wa.me/6281234567890?text=Halo%20Suruhboy%2C%20saya%20butuh%20bantuan', '_blank');
   });
-  
-  const svgDefs = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svgDefs.setAttribute("style", "position:absolute; width:0; height:0;");
-  svgDefs.innerHTML = svgGradients;
-  document.body.prepend(svgDefs);
 }
 
 init();
