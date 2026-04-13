@@ -9,7 +9,6 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#F5F6FA;color:#1B2A4A;min-height:100vh}
 
-/* Container responsif */
 .page{
   max-width: 500px;
   margin: 0 auto;
@@ -28,12 +27,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#F5F6FA;color:#1B2A4A
   }
 }
 
-@media (min-width: 1024px) {
-  .page {
-    max-width: 800px;
-  }
-}
-
 /* ========== HEADER ========== */
 header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px}
 header h1{font-size:20px;font-weight:800;letter-spacing:-0.5px}
@@ -48,7 +41,6 @@ header p{font-size:12px;color:#7A8BA0}
 .hero .star{color:#E88D2A}
 .hero p{font-size:14px;color:#7A8BA0;margin-top:8px;line-height:1.6}
 .hero-pin{position:absolute;top:16px;right:16px;width:32px;height:40px;border-radius:50%;background:#E88D2A;display:flex;align-items:center;justify-content:center;z-index:3}
-.hero-pin svg{width:20px;height:20px;stroke:#fff}
 .hero-shape{position:absolute;bottom:0;right:0;width:192px;height:160px;border-top-left-radius:60px;background:linear-gradient(135deg,#E88D2A 0%,#F5A623 50%,#D4781E 100%);z-index:1;overflow:hidden}
 .hero-shape-img{position:absolute;bottom:0;right:0;width:100%;height:100%;object-fit:cover;z-index:2}
 
@@ -56,10 +48,7 @@ header p{font-size:12px;color:#7A8BA0}
   .hero{min-height: 220px}
   .hero-content{padding:28px 28px 120px}
   .hero h2{font-size:28px}
-  .hero p{font-size:15px}
   .hero-shape{width:240px;height:200px}
-  .hero-pin{width:40px;height:48px;top:20px;right:24px}
-  .hero-pin svg{width:24px;height:24px}
 }
 
 /* ========== SERVICES SECTION ========== */
@@ -73,27 +62,64 @@ header p{font-size:12px;color:#7A8BA0}
 .search-arrow-small{width:32px;height:32px;border-radius:50%;background:#1B2A4A;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .search-arrow-small:hover{background:#E88D2A}
 
-/* Grid layanan */
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.svc-btn{display:flex;flex-direction:column;align-items:center;gap:8px;background:none;border:none;cursor:pointer;transition:transform 0.2s ease}
+/* GRID LAYANAN - TULISAN TIDAK TERPOTONG */
+.grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.svc-btn{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  padding: 4px;
+}
 .svc-btn:hover{transform:translateY(-2px)}
 .svc-btn:active{transform:scale(0.95)}
-.svc-icon{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#FFF8F0,#FFE8D6);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 6px 12px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)}
-.svc-icon img{width:34px;height:34px;object-fit:contain}
-.svc-label{font-size:11px;font-weight:600;text-align:center;white-space:pre-line;line-height:1.3;color:#1B2A4A}
-
-@media (min-width: 768px) {
-  .grid{gap:16px}
-  .svc-icon{width:70px;height:70px}
-  .svc-icon img{width:38px;height:38px}
-  .svc-label{font-size:12px}
+.svc-icon{
+  width: 70px;
+  height: 70px;
+  border-radius: 20px;
+  background: linear-gradient(135deg,#FFF8F0,#FFE8D6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+}
+.svc-icon img{
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+.svc-label{
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.4;
+  color: #1B2A4A;
+  max-width: 100%;
+  word-wrap: break-word;
+  white-space: normal;
 }
 
+/* Tablet */
+@media (min-width: 768px) {
+  .svc-icon{width: 80px;height: 80px}
+  .svc-icon img{width: 50px;height: 50px}
+  .svc-label{font-size: 12px}
+}
+
+/* Mobile kecil - tetap baca utuh */
 @media (max-width: 480px) {
-  .grid{gap:8px}
-  .svc-icon{width:52px;height:52px}
-  .svc-icon img{width:30px;height:30px}
-  .svc-label{font-size:10px}
+  .grid{gap: 12px}
+  .svc-icon{width: 60px;height: 60px}
+  .svc-icon img{width: 38px;height: 38px}
+  .svc-label{font-size: 10px;line-height: 1.3}
 }
 
 .dots{display:flex;justify-content:center;gap:6px;margin-top:16px}
@@ -145,6 +171,7 @@ header p{font-size:12px;color:#7A8BA0}
 .socials .icons{display:flex;justify-content:center;gap:16px;margin-top:16px;flex-wrap:wrap}
 .socials .s-icon{width:40px;height:40px;border-radius:50%;background:#fff;border:1px solid #E2E6ED;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all 0.2s ease;cursor:pointer}
 .socials .s-icon:hover{background:#E88D2A;color:#fff;border-color:#E88D2A;transform:translateY(-2px)}
+.socials .s-icon:active{transform:scale(0.9)}
 
 /* ========== FOOTER ========== */
 footer{margin-top:24px;padding:20px 16px;background:#1B2A4A;text-align:center}
@@ -158,7 +185,6 @@ footer .links{font-size:10px;color:rgba(255,255,255,0.5);margin-top:8px}
 
 @media (min-width: 768px) {
   .fab{width:60px;height:60px;bottom:32px;right:32px}
-  .fab svg{width:26px;height:26px}
 }
 
 /* ========== SEARCH RESULT PAGE ========== */
@@ -176,10 +202,10 @@ footer .links{font-size:10px;color:rgba(255,255,255,0.5);margin-top:8px}
 .result-card{background:#fff;border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 4px rgba(0,0,0,0.06);cursor:pointer;transition:all 0.2s ease}
 .result-card:hover{transform:translateX(4px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
 .result-card:active{transform:scale(0.98)}
-.result-icon{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#FFF8F0,#FFE8D6);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 8px rgba(0,0,0,0.05)}
-.result-icon img{width:32px;height:32px;object-fit:contain}
+.result-icon{width:60px;height:60px;border-radius:18px;background:linear-gradient(135deg,#FFF8F0,#FFE8D6);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 8px rgba(0,0,0,0.05)}
+.result-icon img{width:38px;height:38px;object-fit:contain}
 .result-info{flex:1}
-.result-title{font-size:16px;font-weight:700;color:#1B2A4A;margin-bottom:4px}
+.result-title{font-size:15px;font-weight:700;color:#1B2A4A;margin-bottom:4px}
 .result-desc{font-size:12px;color:#7A8BA0}
 .no-result-search{text-align:center;padding:60px 20px;background:#fff;border-radius:16px}
 .no-result-search p{color:#7A8BA0;margin-top:12px}
@@ -328,8 +354,8 @@ const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?forma
 
 let servicesData = [];
 
-// Mapping nama file SVG untuk setiap layanan
-const svgIconMap = {
+// Mapping nama file PNG untuk setiap layanan
+const iconMap = {
   "Antar Makanan": "makan.png",
   "Kirim Barang": "barang.png",
   "Antar Orang": "orang.png",
@@ -393,38 +419,27 @@ async function loadServicesFromSheet() {
         }
       }
       
-      // Tentukan nama file SVG berdasarkan label
-      let svgFile = svgIconMap[label];
-      if (!svgFile) {
-        // Fallback: gunakan nama file berdasarkan label yang sudah diformat
-        const fallbackName = label.toLowerCase().replace(/[^a-z]/g, '');
-        svgFile = `${fallbackName}.svg`;
-      }
-      
       services.push({
         label: label,
-        labelMulti: label.length > 12 ? label.substring(0, 10) + '…' : label,
         keywords: keywords,
         desc: `Layanan ${label} oleh Suruhboy`,
-        svgFile: svgFile
+        iconFile: iconMap[label] || `${label.toLowerCase().replace(/[^a-z]/g, '')}.png`
       });
     }
     
-    console.log('Data dari sheet:', services);
     return services;
     
   } catch (error) {
     console.error('Gagal load sheet:', error);
-    // Fallback data
     return [
-      {label:"Antar Makanan", labelMulti:"Antar\nMakanan", keywords:["antar","makanan","food"], desc:"Pesan antar makanan", svgFile:"makan.svg"},
-      {label:"Kirim Barang", labelMulti:"Kirim\nBarang", keywords:["kirim","barang","paket"], desc:"Kirim paket", svgFile:"barang.svg"},
-      {label:"Antar Orang", labelMulti:"Antar\nOrang", keywords:["antar","orang","jemput"], desc:"Jemput antar orang", svgFile:"orang.svg"},
-      {label:"Titip Belanja", labelMulti:"Titip\nBelanja", keywords:["titip","belanja"], desc:"Titip belanja", svgFile:"belanja.svg"},
-      {label:"Bersih-Bersih", labelMulti:"Bersih-\nBersih", keywords:["bersih","cleaning"], desc:"Layanan bersih", svgFile:"bersih.svg"},
-      {label:"Caregiver/Jaga RS", labelMulti:"Caregiver/\nJaga RS", keywords:["caregiver","rs","sakit"], desc:"Pendamping RS", svgFile:"caregiver.svg"},
-      {label:"Jasa Nemenin", labelMulti:"Jasa\nNemenin", keywords:["nemenin","temani"], desc:"Teman pendamping", svgFile:"nemenin.svg"},
-      {label:"Custom Request", labelMulti:"Custom\nRequest", keywords:["custom","request"], desc:"Request khusus", svgFile:"custom.svg"}
+      {label:"Antar Makanan", keywords:["antar","makanan","food"], desc:"Pesan antar makanan", iconFile:"makan.png"},
+      {label:"Kirim Barang", keywords:["kirim","barang","paket"], desc:"Kirim paket", iconFile:"barang.png"},
+      {label:"Antar Orang", keywords:["antar","orang","jemput"], desc:"Jemput antar orang", iconFile:"orang.png"},
+      {label:"Titip Belanja", keywords:["titip","belanja"], desc:"Titip belanja", iconFile:"belanja.png"},
+      {label:"Bersih-Bersih", keywords:["bersih","cleaning"], desc:"Layanan bersih", iconFile:"bersih.png"},
+      {label:"Caregiver/Jaga RS", keywords:["caregiver","rs","sakit"], desc:"Pendamping RS", iconFile:"caregiver.png"},
+      {label:"Jasa Nemenin", keywords:["nemenin","temani"], desc:"Teman pendamping", iconFile:"nemenin.png"},
+      {label:"Custom Request", keywords:["custom","request"], desc:"Request khusus", iconFile:"custom.png"}
     ];
   }
 }
@@ -490,7 +505,7 @@ function performResultSearch(query) {
   resultListContainer.innerHTML = filteredServices.map(service => `
     <div class="result-card" data-service="${service.label}">
       <div class="result-icon">
-        <img src="${service.svgFile}" alt="${service.label}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23E88D2A%22><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2212%22>${service.label.charAt(0)}</text></svg>'">
+        <img src="${service.iconFile}" alt="${service.label}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23E88D2A%22><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2212%22>${service.label.charAt(0)}</text></svg>'">
       </div>
       <div class="result-info">
         <div class="result-title">${service.label}</div>
@@ -512,7 +527,7 @@ function performResultSearch(query) {
   });
 }
 
-// Render home grid dengan SVG eksternal
+// Render home grid
 function renderHomeGrid() {
   if (!gridContainer) return;
   if (!servicesData.length) {
@@ -525,11 +540,28 @@ function renderHomeGrid() {
     const btn = document.createElement('button');
     btn.className = 'svc-btn';
     btn.setAttribute('data-service', service.label);
+    
+    // Format label multi-baris untuk tampilan yang rapi
+    let formattedLabel = service.label;
+    if (service.label === "Caregiver/Jaga RS") {
+      formattedLabel = "Caregiver/\nJaga RS";
+    } else if (service.label === "Bersih-Bersih") {
+      formattedLabel = "Bersih-\nBersih";
+    } else if (service.label.length > 10) {
+      // Untuk label panjang lainnya, potong dengan cerdas
+      const words = service.label.split(' ');
+      if (words.length > 1) {
+        formattedLabel = words.join('\n');
+      } else if (service.label.length > 12) {
+        formattedLabel = service.label.substring(0, 10) + '…';
+      }
+    }
+    
     btn.innerHTML = `
       <div class="svc-icon">
-        <img src="${service.svgFile}" alt="${service.label}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23E88D2A%22><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2212%22>${service.label.charAt(0)}</text></svg>'">
+        <img src="${service.iconFile}" alt="${service.label}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23E88D2A%22><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2212%22>${service.label.charAt(0)}</text></svg>'">
       </div>
-      <span class="svc-label">${service.labelMulti}</span>
+      <span class="svc-label">${formattedLabel}</span>
     `;
     btn.addEventListener('click', () => {
       homePage.style.display = 'none';
