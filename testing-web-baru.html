@@ -62,7 +62,7 @@ header p{font-size:12px;color:#7A8BA0}
 .search-arrow-small{width:32px;height:32px;border-radius:50%;background:#1B2A4A;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .search-arrow-small:hover{background:#E88D2A}
 
-/* ========== GRID MENU (BARU - DARI KODE YANG ANDA BERIKAN) ========== */
+/* ========== GRID MENU (DESAIN BARU - BACKGROUND IKON TRANSPARAN) ========== */
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -88,7 +88,7 @@ header p{font-size:12px;color:#7A8BA0}
   width: 50px;
   height: 50px;
   margin: 0 auto 10px;
-  background: linear-gradient(135deg, #FFF8F0, #FFE8D6);
+  background: transparent;  /* TIDAK ADA ORANYE, BACKGROUND TRANSPARAN */
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -96,8 +96,8 @@ header p{font-size:12px;color:#7A8BA0}
 }
 
 .icon img {
-  width: 32px;
-  height: 32px;
+  width: 42px;
+  height: 42px;
   object-fit: contain;
 }
 
@@ -121,8 +121,8 @@ header p{font-size:12px;color:#7A8BA0}
     height: 44px;
   }
   .icon img {
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
   }
   .title {
     font-size: 11px;
@@ -257,7 +257,7 @@ svg{display:block}
         </div>
       </div>
 
-      <!-- GRID MENU BARU -->
+      <!-- GRID MENU (DESAIN BARU) -->
       <div class="grid" id="menuGrid">
         <div style="grid-column:span 4; text-align:center; padding:20px;">Memuat layanan...</div>
       </div>
@@ -536,7 +536,7 @@ function performResultSearch(query) {
   });
 }
 
-// Render menu grid (dengan desain baru)
+// Render menu grid (desain baru - background ikon transparan)
 function renderMenuGrid() {
   if (!menuGrid) return;
   if (!servicesData.length) {
