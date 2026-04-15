@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
-/* CSS SAMA SEPERTI SEBELUMNYA - tidak berubah */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#F5F6FA;color:#1B2A4A;min-height:100vh}
 
@@ -134,7 +133,7 @@ header p{font-size:12px;color:#7A8BA0}
 .dot{width:8px;height:8px;border-radius:4px;background:#E2E6ED}
 .dot.active{width:24px;background:#E88D2A}
 
-/* ========== GRADIENT CARD ========== */
+/* ========== GRADIENT CARD (CEK AGENT) ========== */
 .gradient-card {
   margin:0 16px;
   margin-top:12px;
@@ -228,6 +227,308 @@ footer .links{font-size:10px;color:rgba(255,255,255,0.5);margin-top:8px}
 .result-desc{font-size:12px;color:#7A8BA0}
 .no-result-search{text-align:center;padding:60px 20px;background:#fff;border-radius:16px}
 .no-result-search p{color:#7A8BA0;margin-top:12px}
+
+/* ========== AGENT CHECK PAGE ========== */
+.agent-check-page {
+  display: none;
+  min-height: 100vh;
+  background: #F5F6FA;
+}
+
+.agent-check-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.agent-check-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-top: 12px;
+}
+
+.agent-back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #E2E6ED;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.agent-back-btn:hover {
+  background: #F5F6FA;
+  border-color: #E88D2A;
+}
+
+.agent-check-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.agent-check-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.agent-check-sub {
+  font-size: 13px;
+  color: #7A8BA0;
+  margin-bottom: 20px;
+}
+
+.agent-form-group {
+  margin-bottom: 20px;
+}
+
+.agent-form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1B2A4A;
+  margin-bottom: 8px;
+}
+
+.agent-select {
+  width: 100%;
+  padding: 14px 16px;
+  background: #F5F6FA;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  font-size: 14px;
+  font-family: inherit;
+  color: #1B2A4A;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.agent-select:focus {
+  outline: none;
+  border-color: #E88D2A;
+  box-shadow: 0 0 0 3px rgba(232, 141, 42, 0.1);
+}
+
+.btn-check-agent {
+  width: 100%;
+  padding: 14px;
+  background: #25D366;
+  border: none;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-check-agent:hover {
+  background: #128C7E;
+}
+
+.btn-check-agent:active {
+  transform: scale(0.98);
+}
+
+.btn-check-agent:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.agent-result-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  text-align: center;
+}
+
+.agent-status-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  margin: 0 auto 16px;
+}
+
+.agent-status-ready {
+  background: #DCFCE7;
+  color: #15803D;
+}
+
+.agent-status-none {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+
+.agent-result-message {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.agent-result-detail {
+  font-size: 13px;
+  color: #7A8BA0;
+  line-height: 1.5;
+}
+
+.agent-badge-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #F1F5F9;
+  padding: 6px 12px;
+  border-radius: 40px;
+  font-size: 12px;
+  color: #475569;
+  margin-top: 12px;
+}
+
+.agent-action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.btn-order-agent {
+  flex: 1;
+  background: #E88D2A;
+  border: none;
+  padding: 12px;
+  border-radius: 40px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-reset-agent {
+  flex: 1;
+  background: #F1F5F9;
+  border: none;
+  padding: 12px;
+  border-radius: 40px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.agent-info-box {
+  background: #EFF6FF;
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: #1E40AF;
+}
+
+.agent-footer {
+  text-align: center;
+  padding: 20px;
+  color: #94A3B8;
+  font-size: 12px;
+  margin-top: auto;
+}
+
+.hidden {
+  display: none;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+}
+
+.loading-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.loading-content {
+  background: white;
+  border-radius: 28px;
+  padding: 32px 40px;
+  text-align: center;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #F1F5F9;
+  border-top: 4px solid #E88D2A;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-content p {
+  color: #334155;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.loading-text {
+  font-size: 12px;
+  color: #94A3B8;
+  margin-top: 8px;
+}
 
 /* ========== SERVICE DETAIL PAGE ========== */
 .service-detail-page {
@@ -452,10 +753,6 @@ footer .links{font-size:10px;color:rgba(255,255,255,0.5);margin-top:8px}
   margin-top: auto;
 }
 
-.hidden {
-  display: none;
-}
-
 svg{display:block}
 </style>
 </head>
@@ -503,6 +800,7 @@ svg{display:block}
       <div class="dots"><div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
     </div>
 
+    <!-- GRADIENT CARD - CEK KETERSEDIAAN AGENT -->
     <div class="gradient-card" id="checkAgentCard" style="background:linear-gradient(135deg,#1B4A3A 0%,#2E8B57 100%)">
       <div class="card-icon" style="background:rgba(255,255,255,0.2)">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -590,11 +888,61 @@ svg{display:block}
     <div id="resultListContainer" class="result-list"></div>
   </div>
 
+  <!-- AGENT CHECK PAGE -->
+  <div id="agentCheckPage" class="agent-check-page">
+    <div class="agent-check-container">
+      <div class="agent-check-header">
+        <div class="agent-back-btn" id="backFromAgentBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </div>
+        <div>
+          <h2 style="font-size:18px; font-weight:700;">Cek Ketersediaan Agent</h2>
+          <p style="font-size:12px; color:#7A8BA0;">Lihat agent online di kecamatan Anda</p>
+        </div>
+      </div>
+
+      <div class="agent-check-card">
+        <div class="agent-check-title">
+          <i class="fas fa-map-marker-alt" style="color:#E88D2A;"></i>
+          <span>Pilih Area Jemput</span>
+        </div>
+        <div class="agent-check-sub">Pastikan area jemput adalah titik pertama untuk pick up barang/jemput Anda</div>
+
+        <div class="agent-form-group">
+          <label><i class="fas fa-map-pin"></i> Kecamatan</label>
+          <select id="areaSelect" class="agent-select">
+            <option value="" disabled selected>-- Pilih Kecamatan --</option>
+          </select>
+        </div>
+
+        <button class="btn-check-agent" id="checkAgentBtn">
+          <i class="fas fa-search"></i> Cek Ketersediaan Agent
+        </button>
+      </div>
+
+      <div id="agentResultSection" class="hidden"></div>
+
+      <div class="agent-footer">
+        <i class="fas fa-clock"></i> Data ketersediaan diperbarui secara real-time dari database agent
+      </div>
+    </div>
+  </div>
+
   <!-- SERVICE DETAIL PAGES -->
   <div id="serviceDetailContainer"></div>
 </div>
 
 <div class="fab" id="fabBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="loading-content">
+    <div class="spinner"></div>
+    <p>Mencari agent terdekat...</p>
+    <p class="loading-text" id="loadingText">Menghubungkan ke database</p>
+  </div>
+</div>
 
 <script>
 // ======================== KONFIGURASI ========================
@@ -602,7 +950,29 @@ const SHEET_ID = '1ia6zeUJZv2Wp1OkO2XbJQFoJfiUnseN9HpEyIEDazTE';
 const GID = '1142979216';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
 
+// ======================== KONFIGURASI AGENT STATUS ========================
+const AGENT_SPREADSHEET_ID = '1FgWiv56J2w7A0WprwqOKJMU7BO4mX3jotW3IC397rWg';
+const AGENT_SHEET_GID = '1931290882';
+const AGENT_CSV_URL = `https://docs.google.com/spreadsheets/d/${AGENT_SPREADSHEET_ID}/export?format=csv&gid=${AGENT_SHEET_GID}`;
+
 let servicesData = [];
+let onlineAgents = [];
+let allAgents = [];
+let isLoadingAgent = false;
+let loadingInterval;
+
+const KECAMATAN = [
+  "Ampel", "Andong", "Banyudono", "Boyolali Kota", "Cepogo",
+  "Juwangi", "Karanggede", "Kemusu", "Klego", "Mojosongo",
+  "Musuk", "Ngemplak", "Nogosari", "Sambi", "Sawit",
+  "Selo", "Simo", "Tamansari", "Teras", "Wonosegoro"
+];
+
+const loadingTexts = [
+  "Membaca data dari Google Sheets",
+  "Mencari agent aktif di area",
+  "Memeriksa ketersediaan..."
+];
 
 // Mapping nama file PNG
 const iconMap = {
@@ -616,7 +986,7 @@ const iconMap = {
   "Custom Request": "custom.png"
 };
 
-// Data detail untuk setiap layanan - DIPERBAIKI untuk Caregiver
+// Data detail untuk setiap layanan
 const serviceDetails = {
   "Antar Makanan": {
     icon: "makan.png",
@@ -696,6 +1066,127 @@ const serviceDetails = {
   }
 };
 
+// ======================== PARSE TIMESTAMP ========================
+function parseTimestamp(str) {
+  if (!str) return new Date(0);
+  const match = String(str).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})[,.\s]+(\d{1,2})[.:](\d{2})[.:](\d{2})/);
+  if (match) {
+    return new Date(match[3], match[2]-1, match[1], match[4], match[5], match[6]);
+  }
+  return new Date(str);
+}
+
+// ======================== LOAD AGENT STATUS ========================
+async function loadAgentStatusFromSheet() {
+  try {
+    console.log('📡 Mengambil data agent dari Google Sheets...');
+    
+    const response = await fetch(AGENT_CSV_URL);
+    const csvText = await response.text();
+    
+    const lines = csvText.split(/\r?\n/);
+    if (lines.length < 2) throw new Error('Data kosong');
+    
+    const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim());
+    
+    let idxTimestamp = 0, idxNama = 1, idxUsername = 2, idxAction = 3, idxAreas = 4;
+    for (let i = 0; i < headers.length; i++) {
+      const h = headers[i].toLowerCase();
+      if (h.includes('timestamp')) idxTimestamp = i;
+      if (h.includes('nama') && h.includes('agent')) idxNama = i;
+      if (h === 'username') idxUsername = i;
+      if (h === 'action') idxAction = i;
+      if (h.includes('area')) idxAreas = i;
+    }
+    
+    const allRows = [];
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      const cells = [];
+      let inQuote = false;
+      let current = '';
+      for (let j = 0; j < line.length; j++) {
+        const char = line[j];
+        if (char === '"') {
+          inQuote = !inQuote;
+        } else if (char === ',' && !inQuote) {
+          cells.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      cells.push(current.trim());
+      
+      if (cells.length < 5) continue;
+      
+      const timestamp = cells[idxTimestamp]?.replace(/^"|"$/g, '') || '';
+      const namaAgent = cells[idxNama]?.replace(/^"|"$/g, '') || '';
+      const username = cells[idxUsername]?.replace(/^"|"$/g, '') || '';
+      const action = cells[idxAction]?.replace(/^"|"$/g, '') || '';
+      let areasRaw = cells[idxAreas]?.replace(/^"|"$/g, '') || '';
+      
+      if (!namaAgent || namaAgent === 'Nama Agent') continue;
+      
+      let areas = [];
+      if (areasRaw && areasRaw !== '-') {
+        areas = areasRaw.split(',').map(a => a.trim()).filter(a => a);
+      }
+      
+      allRows.push({
+        timestamp: timestamp,
+        timestampObj: parseTimestamp(timestamp),
+        namaAgent: namaAgent,
+        username: username,
+        action: action.toLowerCase(),
+        areas: areas
+      });
+    }
+    
+    console.log(`📊 Total rows agent: ${allRows.length}`);
+    
+    const latestPerAgent = new Map();
+    allRows.forEach(row => {
+      const key = row.username;
+      const existing = latestPerAgent.get(key);
+      if (!existing || row.timestampObj > existing.timestampObj) {
+        latestPerAgent.set(key, row);
+      }
+    });
+    
+    allAgents = [];
+    onlineAgents = [];
+    
+    for (const [_, agent] of latestPerAgent) {
+      const isOnline = agent.action === 'online';
+      allAgents.push({
+        namaAgent: agent.namaAgent,
+        username: agent.username,
+        isOnline: isOnline,
+        areas: agent.areas,
+        lastTimestamp: agent.timestamp
+      });
+      
+      if (isOnline && agent.areas.length > 0) {
+        onlineAgents.push({
+          namaAgent: agent.namaAgent,
+          areas: agent.areas,
+          lastActive: agent.timestamp
+        });
+      }
+    }
+    
+    console.log(`✅ Online agents: ${onlineAgents.length}`);
+    return true;
+    
+  } catch (error) {
+    console.error('❌ Error loading agent status:', error);
+    return false;
+  }
+}
+
 // ======================== LOAD SERVICES FROM SHEET ========================
 async function loadServicesFromSheet() {
   try {
@@ -774,15 +1265,172 @@ async function loadServicesFromSheet() {
   }
 }
 
+// ======================== AGENT CHECK FUNCTIONS ========================
+function getAgentAvailability(area) {
+  const availableAgents = onlineAgents.filter(agent => 
+    agent.areas.some(a => a.toLowerCase() === area.toLowerCase())
+  );
+  
+  const agentCount = availableAgents.length;
+  
+  if (agentCount === 0) {
+    return {
+      status: 'none',
+      message: 'Maaf, belum ada agent yang siap di area ini',
+      detail: 'Saat ini belum ada agent yang sedang online di area ini. Silakan coba lagi nanti atau pilih area lain.',
+      agentCount: 0
+    };
+  } else {
+    return {
+      status: 'ready',
+      message: 'Ada agent yang siap bantu!',
+      detail: `Tersedia ${agentCount} agent siap di area ${area}. Agent akan segera menjemput pesanan Anda.`,
+      agentCount: agentCount,
+      isReady: true,
+      agents: availableAgents
+    };
+  }
+}
+
+function startLoading() {
+  const overlay = document.getElementById('loadingOverlay');
+  const loadingText = document.getElementById('loadingText');
+  let idx = 0;
+  loadingText.textContent = loadingTexts[0];
+  loadingInterval = setInterval(() => {
+    idx = (idx + 1) % loadingTexts.length;
+    loadingText.textContent = loadingTexts[idx];
+  }, 800);
+  overlay.classList.add('show');
+}
+
+function stopLoading() {
+  const overlay = document.getElementById('loadingOverlay');
+  if (loadingInterval) clearInterval(loadingInterval);
+  overlay.classList.remove('show');
+}
+
+function showAgentResult(area, availability) {
+  const resultSection = document.getElementById('agentResultSection');
+  const { status, message, detail, agentCount } = availability;
+  
+  let statusIcon = '';
+  let statusClass = '';
+  let actionButtons = '';
+  
+  if (status === 'ready') {
+    statusIcon = 'fas fa-check-circle';
+    statusClass = 'agent-status-ready';
+    actionButtons = `
+      <div class="agent-action-buttons">
+        <button class="btn-order-agent" onclick="orderNowAgent('${area}')">
+          <i class="fas fa-shopping-cart"></i> Pesan Sekarang
+        </button>
+        <button class="btn-reset-agent" onclick="resetAgentCheck()">
+          <i class="fas fa-undo"></i> Cek Area Lain
+        </button>
+      </div>
+    `;
+  } else {
+    statusIcon = 'fas fa-times-circle';
+    statusClass = 'agent-status-none';
+    actionButtons = `
+      <div class="agent-action-buttons">
+        <button class="btn-reset-agent" onclick="resetAgentCheck()">
+          <i class="fas fa-undo"></i> Cek Area Lain
+        </button>
+      </div>
+    `;
+  }
+  
+  resultSection.innerHTML = `
+    <div class="agent-result-card">
+      <div class="agent-status-icon ${statusClass}">
+        <i class="${statusIcon}"></i>
+      </div>
+      <div class="agent-result-message">${message}</div>
+      <div class="agent-result-detail">${detail}</div>
+      ${agentCount > 0 ? `<div class="agent-badge-count"><i class="fas fa-user-check"></i> ${agentCount} agent aktif di area ini</div>` : ''}
+      ${status === 'ready' ? `<div class="agent-info-box"><i class="fas fa-bolt"></i> Estimasi waktu tunggu: 10-15 menit</div>` : ''}
+      ${actionButtons}
+    </div>
+  `;
+  
+  resultSection.classList.remove('hidden');
+  resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function checkAgentAvailability() {
+  const areaSelect = document.getElementById('areaSelect');
+  const selectedArea = areaSelect.value;
+  
+  if (!selectedArea) {
+    alert('Silakan pilih area jemput terlebih dahulu');
+    return;
+  }
+  
+  if (isLoadingAgent) return;
+  isLoadingAgent = true;
+  
+  startLoading();
+  
+  try {
+    const success = await loadAgentStatusFromSheet();
+    if (!success) throw new Error('Gagal load data');
+    
+    await new Promise(resolve => setTimeout(resolve, 500));
+    const availability = getAgentAvailability(selectedArea);
+    stopLoading();
+    showAgentResult(selectedArea, availability);
+    
+  } catch (error) {
+    console.error('Error checking availability:', error);
+    stopLoading();
+    const resultSection = document.getElementById('agentResultSection');
+    resultSection.innerHTML = `
+      <div class="agent-result-card">
+        <div style="color:#B91C1C; text-align:center; padding:20px;">
+          <i class="fas fa-exclamation-triangle fa-2x"></i>
+          <p>Gagal mengambil data ketersediaan agent. Silakan coba lagi.</p>
+        </div>
+        <button class="btn-reset-agent" onclick="resetAgentCheck()" style="width:100%;">Coba Lagi</button>
+      </div>
+    `;
+    resultSection.classList.remove('hidden');
+  }
+  
+  isLoadingAgent = false;
+}
+
+function orderNowAgent(area) {
+  alert(`🛵 Pesanan Anda akan segera diproses!\n\n📍 Area: ${area}\n✅ Agent akan segera menjemput pesanan Anda.\n\nTerima kasih telah menggunakan SuruhBoy!`);
+}
+
+function resetAgentCheck() {
+  const resultSection = document.getElementById('agentResultSection');
+  resultSection.classList.add('hidden');
+  const areaSelect = document.getElementById('areaSelect');
+  areaSelect.value = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function populateAreaSelect() {
+  const select = document.getElementById('areaSelect');
+  select.innerHTML = '<option value="" disabled selected>-- Pilih Kecamatan --</option>' + 
+    KECAMATAN.map(area => `<option value="${area}">${area}</option>`).join('');
+}
+
 // ======================== SERVICE DETAIL PAGE ========================
 function showServiceDetail(serviceName) {
   const homePage = document.getElementById('homePage');
   const searchResultPage = document.getElementById('searchResultPage');
+  const agentCheckPage = document.getElementById('agentCheckPage');
   const serviceDetailContainer = document.getElementById('serviceDetailContainer');
   
   // Sembunyikan halaman lain
   homePage.style.display = 'none';
   searchResultPage.style.display = 'none';
+  agentCheckPage.style.display = 'none';
   serviceDetailContainer.style.display = 'block';
   
   const detail = serviceDetails[serviceName];
@@ -882,29 +1530,44 @@ function showServiceDetail(serviceName) {
 // ======================== DOM ELEMENTS & NAVIGATION ========================
 const homePage = document.getElementById('homePage');
 const searchResultPage = document.getElementById('searchResultPage');
+const agentCheckPage = document.getElementById('agentCheckPage');
+const serviceDetailContainer = document.getElementById('serviceDetailContainer');
 const homeSearchWrapper = document.getElementById('homeSearchWrapper');
 const homeSearchInput = document.getElementById('homeSearchInput');
 const resultSearchInput = document.getElementById('resultSearchInput');
 const backToHomeBtn = document.getElementById('backToHomeBtn');
+const backFromAgentBtn = document.getElementById('backFromAgentBtn');
 const resultListContainer = document.getElementById('resultListContainer');
 const searchQueryDisplay = document.getElementById('searchQueryDisplay');
 const menuGrid = document.getElementById('menuGrid');
-const serviceDetailContainer = document.getElementById('serviceDetailContainer');
 
 // Navigasi ke halaman pencarian
 function openSearchPage() {
   homePage.style.display = 'none';
   searchResultPage.style.display = 'block';
+  agentCheckPage.style.display = 'none';
+  serviceDetailContainer.style.display = 'none';
   setTimeout(() => {
     resultSearchInput.focus();
     performResultSearch('');
   }, 50);
 }
 
-// Kembali ke home dari search
+// Navigasi ke halaman agent check
+function openAgentCheckPage() {
+  homePage.style.display = 'none';
+  searchResultPage.style.display = 'none';
+  agentCheckPage.style.display = 'block';
+  serviceDetailContainer.style.display = 'none';
+  populateAreaSelect();
+}
+
+// Kembali ke home
 function backToHome() {
   homePage.style.display = 'block';
   searchResultPage.style.display = 'none';
+  agentCheckPage.style.display = 'none';
+  serviceDetailContainer.style.display = 'none';
   resultSearchInput.value = '';
 }
 
@@ -996,29 +1659,45 @@ function renderMenuGrid() {
   });
 }
 
+// Auto refresh agent status
+let autoRefreshInterval;
+function startAutoRefresh() {
+  autoRefreshInterval = setInterval(async () => {
+    if (!isLoadingAgent) {
+      await loadAgentStatusFromSheet();
+      console.log('🔄 Auto-refresh: Agent status updated');
+    }
+  }, 15000);
+}
+
 // Inisialisasi
 async function init() {
   servicesData = await loadServicesFromSheet();
   renderMenuGrid();
+  await loadAgentStatusFromSheet();
+  startAutoRefresh();
+  
+  // Sembunyikan semua halaman selain home
+  searchResultPage.style.display = 'none';
+  agentCheckPage.style.display = 'none';
+  serviceDetailContainer.style.display = 'none';
   
   homeSearchWrapper.addEventListener('click', openSearchPage);
   homeSearchInput.addEventListener('click', openSearchPage);
   backToHomeBtn.addEventListener('click', backToHome);
-  resultSearchInput.addEventListener('input', (e) => performResultSearch(e.target.value));
+  backFromAgentBtn.addEventListener('click', backToHome);
   
-  // Sembunyikan service detail container awal
-  serviceDetailContainer.style.display = 'none';
+  // Cek Agent Card
+  document.getElementById('checkAgentCard').addEventListener('click', openAgentCheckPage);
+  document.getElementById('checkAgentBtn').addEventListener('click', checkAgentAvailability);
+  
+  resultSearchInput.addEventListener('input', (e) => performResultSearch(e.target.value));
   
   document.getElementById('waChatBtn').addEventListener('click', () => {
     window.open('https://wa.me/6281234567890?text=Halo%20Suruhboy%2C%20saya%20butuh%20bantuan', '_blank');
   });
   document.getElementById('fabBtn').addEventListener('click', () => {
     window.open('https://wa.me/6281234567890?text=Halo%20Suruhboy%2C%20saya%20butuh%20bantuan', '_blank');
-  });
-  
-  // Cek Agent Card
-  document.getElementById('checkAgentCard').addEventListener('click', () => {
-    alert('Fitur Cek Ketersediaan Agent akan segera hadir!');
   });
 }
 
