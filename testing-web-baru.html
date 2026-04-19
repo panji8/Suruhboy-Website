@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 <style>
+/* ========== CSS SAMA SEPERTI SEBELUMNYA (dipertahankan) ========== */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#F5F6FA;color:#1B2A4A;min-height:100vh}
 
@@ -133,7 +134,7 @@ header p{font-size:12px;color:#7A8BA0}
 .dot{width:8px;height:8px;border-radius:4px;background:#E2E6ED}
 .dot.active{width:24px;background:#E88D2A}
 
-/* ========== GRADIENT CARD (CEK AGENT) ========== */
+/* ========== GRADIENT CARD ========== */
 .gradient-card {
   margin:0 16px;
   margin-top:12px;
@@ -195,6 +196,8 @@ header p{font-size:12px;color:#7A8BA0}
 footer{margin-top:24px;padding:20px 16px;background:#1B2A4A;text-align:center}
 footer p{font-size:12px;color:rgba(255,255,255,0.7)}
 footer .links{font-size:10px;color:rgba(255,255,255,0.5);margin-top:8px}
+footer .links span{cursor:pointer;margin:0 8px}
+footer .links span:hover{color:#E88D2A;text-decoration:underline}
 
 /* ========== FAB ========== */
 .fab{position:fixed;bottom:24px;right:24px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#1B3A5C,#E88D2A);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.3);cursor:pointer;z-index:50;transition:all 0.2s ease}
@@ -753,6 +756,306 @@ footer .links{font-size:10px;color:rgba(255,255,255,0.5);margin-top:8px}
   margin-top: auto;
 }
 
+/* ========== INFO PAGES ========== */
+.info-page {
+  display: none;
+  min-height: 100vh;
+  background: #F5F6FA;
+}
+
+.info-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-top: 12px;
+}
+
+.info-back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #E2E6ED;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.info-back-btn:hover {
+  background: #F5F6FA;
+  border-color: #E88D2A;
+}
+
+.info-content {
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.info-content h2 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  color: #1B2A4A;
+}
+
+.info-content .last-update {
+  font-size: 11px;
+  color: #7A8BA0;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #EEF2F6;
+}
+
+.info-content h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 20px 0 10px;
+  color: #1B2A4A;
+}
+
+.info-content p {
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.info-content ul {
+  margin: 10px 0 10px 20px;
+}
+
+.info-content li {
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+
+/* ========== FAQ PAGE (PUSAT BANTUAN) ========== */
+.faq-item {
+  margin-bottom: 16px;
+  border-bottom: 1px solid #EEF2F6;
+}
+
+.faq-question {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1B2A4A;
+  padding: 12px 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faq-question i {
+  color: #E88D2A;
+  transition: transform 0.2s;
+}
+
+.faq-question.active i {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  font-size: 13px;
+  color: #7A8BA0;
+  line-height: 1.5;
+  padding: 0 0 12px 0;
+  display: none;
+}
+
+.faq-answer.show {
+  display: block;
+}
+
+/* ========== MARKETPLACE PAGE (INFO JASA LAIN) ========== */
+.marketplace-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.marketplace-item {
+  background: #F8FAFE;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.marketplace-item:hover {
+  background: #F1F5F9;
+  transform: translateX(4px);
+}
+
+.marketplace-icon {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B5);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marketplace-icon i {
+  font-size: 24px;
+  color: #E88D2A;
+}
+
+.marketplace-info {
+  flex: 1;
+}
+
+.marketplace-info h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.marketplace-info p {
+  font-size: 11px;
+  color: #7A8BA0;
+}
+
+.marketplace-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #E88D2A;
+}
+
+.join-marketplace-card {
+  background: linear-gradient(135deg, #1B4A3A, #2E8B57);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  margin-top: 20px;
+  color: white;
+}
+
+.join-marketplace-card h4 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.join-marketplace-card p {
+  font-size: 12px;
+  margin-bottom: 16px;
+  opacity: 0.9;
+}
+
+.join-marketplace-btn {
+  background: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 40px;
+  font-weight: 600;
+  color: #1B4A3A;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ========== DAFTAR AGENT PAGE (FORM PENDAFTARAN) ========== */
+.register-form {
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+}
+
+.register-form .form-group {
+  margin-bottom: 20px;
+}
+
+.register-form label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1B2A4A;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.register-form input,
+.register-form select,
+.register-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: #F5F6FA;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.register-form input:focus,
+.register-form select:focus,
+.register-form textarea:focus {
+  outline: none;
+  border-color: #E88D2A;
+  box-shadow: 0 0 0 3px rgba(232, 141, 42, 0.1);
+}
+
+.register-btn {
+  width: 100%;
+  padding: 14px;
+  background: #25D366;
+  border: none;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  margin-top: 16px;
+}
+
+.register-btn:hover {
+  background: #128C7E;
+}
+
+.area-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.area-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.area-checkbox input {
+  width: auto;
+  margin: 0;
+}
+
 svg{display:block}
 </style>
 </head>
@@ -829,36 +1132,69 @@ svg{display:block}
       <button class="wa-btn" id="waChatBtn">Chat via WhatsApp <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
     </div>
 
+    <!-- THREE CARDS (BARU) -->
     <div class="three-cards">
-      <div class="info-card">
-        <div class="ic-circle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B3A5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
-        <p class="ic-title">Daftar Agent</p>
-        <p class="ic-desc">Gabung jadi partner Suruhboy</p>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:8px"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-      <div class="info-card">
-        <div class="ic-circle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B3A5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><polyline points="4 9 12 15 20 9"/></svg></div>
-        <p class="ic-title">Info UMKM</p>
-        <p class="ic-desc">Dukungan & kolaborasi UMKM</p>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:8px"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-      <div class="info-card">
-        <div class="ic-circle"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B3A5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
+      <!-- 1. Pusat Bantuan -->
+      <div class="info-card" id="helpCenterCard">
+        <div class="ic-circle">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B3A5C" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </div>
         <p class="ic-title">Pusat Bantuan</p>
         <p class="ic-desc">FAQ & Panduan</p>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-top:8px"><polyline points="9 18 15 12 9 6"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0" stroke-width="2" style="margin-top:8px"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <!-- 2. Info Jasa Lain / Marketplace -->
+      <div class="info-card" id="marketplaceCard">
+        <div class="ic-circle">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B3A5C" stroke-width="2">
+            <path d="M4 4h16v16H4z"/>
+            <polyline points="4 9 12 15 20 9"/>
+          </svg>
+        </div>
+        <p class="ic-title">Info Jasa Lain</p>
+        <p class="ic-desc">Temukan berbagai jasa dari mitra</p>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0" stroke-width="2" style="margin-top:8px"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+
+      <!-- 3. Daftar Agent -->
+      <div class="info-card" id="registerAgentCard">
+        <div class="ic-circle">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B3A5C" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <p class="ic-title">Daftar Agent</p>
+        <p class="ic-desc">Gabung jadi partner Suruhboy</p>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0" stroke-width="2" style="margin-top:8px"><polyline points="9 18 15 12 9 6"/></svg>
       </div>
     </div>
 
     <div class="socials">
       <h3>Ikuti Suruhboy di Sosmed</h3>
       <p>Tetap update promo & info terbaru</p>
-      <div class="icons"><div class="s-icon">📷</div><div class="s-icon">🐦</div><div class="s-icon">📘</div><div class="s-icon">▶️</div><div class="s-icon">💼</div></div>
+      <div class="icons">
+        <div class="s-icon" id="instagramBtn">📷</div>
+        <div class="s-icon" id="tiktokBtn">🐦</div>
+        <div class="s-icon" id="emailBtn">📧</div>
+        <div class="s-icon" id="youtubeBtn">▶️</div>
+        <div class="s-icon" id="linkedinBtn">💼</div>
+      </div>
     </div>
 
     <footer>
       <p>© 2025 Suruhboy. Semua hak dilindungi.</p>
-      <p class="links">Kebijakan Privasi • Syarat & Ketentuan • Hubungi Kami</p>
+      <p class="links">
+        <span id="privacyLink">Kebijakan Privasi</span> • 
+        <span id="termsLink">Syarat & Ketentuan</span> • 
+        <span id="contactLink">Hubungi Kami</span>
+      </p>
     </footer>
   </div>
 
@@ -930,7 +1266,293 @@ svg{display:block}
     </div>
   </div>
 
-  <!-- SERVICE DETAIL PAGES -->
+  <!-- PUSAT BANTUAN (FAQ) PAGE -->
+  <div id="helpCenterPage" class="info-page">
+    <div class="info-container">
+      <div class="info-header">
+        <div class="info-back-btn" id="backFromHelpCenterBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </div>
+        <div>
+          <h2 style="font-size:18px; font-weight:700;">Pusat Bantuan</h2>
+          <p style="font-size:12px; color:#7A8BA0;">Pertanyaan yang sering diajukan</p>
+        </div>
+      </div>
+      <div class="info-content">
+        <h2>FAQ - Pertanyaan Umum</h2>
+        <div class="faq-item">
+          <div class="faq-question">
+            Bagaimana cara memesan layanan?
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">Anda bisa langsung memilih layanan yang diinginkan dari halaman utama, isi form pemesanan, lalu klik "Pesan via WhatsApp". Admin akan segera memproses pesanan Anda.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Berapa lama estimasi waktu pengiriman?
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">Estimasi waktu tergantung jarak dan jenis layanan. Umumnya 15-30 menit untuk area sekitar, dan 1-2 jam untuk area luar kota.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Apakah ada garansi jika barang rusak?
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">Ya, kami memberikan garansi hingga 100% jika barang rusak karena kelalaian agent. Pastikan Anda melaporkan segera setelah barang diterima.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Bagaimana cara menjadi agent Suruhboy?
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">Klik tombol "Daftar Agent" di halaman utama, isi formulir pendaftaran, lalu tim kami akan menghubungi Anda untuk proses selanjutnya.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Apakah bisa pesan untuk orang lain?
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">Tentu bisa. Cukup masukkan nama dan nomor WhatsApp penerima di form pemesanan, dan tulis keterangan "untuk orang lain" di detail pesanan.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            Metode pembayaran apa saja yang tersedia?
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div class="faq-answer">Pembayaran bisa dilakukan secara tunai (COD) kepada agent, transfer bank (BCA, Mandiri, BRI), atau via QRIS.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MARKETPLACE PAGE (INFO JASA LAIN) -->
+  <div id="marketplacePage" class="info-page">
+    <div class="info-container">
+      <div class="info-header">
+        <div class="info-back-btn" id="backFromMarketplaceBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </div>
+        <div>
+          <h2 style="font-size:18px; font-weight:700;">Info Jasa Lain</h2>
+          <p style="font-size:12px; color:#7A8BA0;">Temukan berbagai jasa dari mitra kami</p>
+        </div>
+      </div>
+      <div class="info-content">
+        <h2>Jasa Lain dari Mitra Suruhboy</h2>
+        <p>Selain layanan utama Suruhboy, mitra kami juga menawarkan berbagai jasa menarik lainnya.</p>
+        
+        <div class="marketplace-grid">
+          <div class="marketplace-item" data-service="Fotografi">
+            <div class="marketplace-icon"><i class="fas fa-camera"></i></div>
+            <div class="marketplace-info">
+              <h4>Jasa Fotografi</h4>
+              <p>Pre-wedding, event, produk, poto studio</p>
+            </div>
+            <div class="marketplace-price">Mulai Rp 200k</div>
+          </div>
+          <div class="marketplace-item" data-service="Les Privat">
+            <div class="marketplace-icon"><i class="fas fa-chalkboard-user"></i></div>
+            <div class="marketplace-info">
+              <h4>Les Privat</h4>
+              <p>Matematika, Bahasa Inggris, SD/SMP/SMA</p>
+            </div>
+            <div class="marketplace-price">Rp 50k/jam</div>
+          </div>
+          <div class="marketplace-item" data-service="Service Elektronik">
+            <div class="marketplace-icon"><i class="fas fa-microchip"></i></div>
+            <div class="marketplace-info">
+              <h4>Service Elektronik</h4>
+              <p>HP, laptop, AC, kulkas, mesin cuci</p>
+            </div>
+            <div class="marketplace-price">Mulai Rp 50k</div>
+          </div>
+          <div class="marketplace-item" data-service="Laundry">
+            <div class="marketplace-icon"><i class="fas fa-tshirt"></i></div>
+            <div class="marketplace-info">
+              <h4>Laundry Express</h4>
+              <p>Cuci setrika, antar jemput gratis</p>
+            </div>
+            <div class="marketplace-price">Rp 7k/kg</div>
+          </div>
+          <div class="marketplace-item" data-service="Tukang Bangunan">
+            <div class="marketplace-icon"><i class="fas fa-hammer"></i></div>
+            <div class="marketplace-info">
+              <h4>Tukang Bangunan</h4>
+              <p>Renovasi, perbaikan rumah, cat</p>
+            </div>
+            <div class="marketplace-price">Harga nego</div>
+          </div>
+        </div>
+        
+        <div class="join-marketplace-card">
+          <h4>Punya Jasa Lain?</h4>
+          <p>Bergabunglah menjadi mitra Suruhboy dan tawarkan jasa Anda!</p>
+          <button class="join-marketplace-btn" id="joinMarketplaceBtn">
+            <i class="fas fa-handshake"></i> Gabung Sekarang
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAFTAR AGENT PAGE (FORM PENDAFTARAN) -->
+  <div id="registerAgentPage" class="info-page">
+    <div class="info-container">
+      <div class="info-header">
+        <div class="info-back-btn" id="backFromRegisterBtn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </div>
+        <div>
+          <h2 style="font-size:18px; font-weight:700;">Daftar Agent</h2>
+          <p style="font-size:12px; color:#7A8BA0;">Gabung jadi partner Suruhboy</p>
+        </div>
+      </div>
+      <div class="info-content">
+        <h2>Form Pendaftaran Agent</h2>
+        <p>Isi data berikut untuk mendaftar menjadi agent Suruhboy. Tim kami akan menghubungi Anda dalam 1x24 jam.</p>
+        
+        <form id="agentRegisterForm" class="register-form">
+          <div class="form-group">
+            <label>Nama Lengkap *</label>
+            <input type="text" id="regNama" placeholder="Masukkan nama lengkap" required>
+          </div>
+          <div class="form-group">
+            <label>Nomor WhatsApp *</label>
+            <input type="tel" id="regWhatsapp" placeholder="08123456789" required>
+          </div>
+          <div class="form-group">
+            <label>Alamat Lengkap *</label>
+            <textarea id="regAlamat" rows="2" placeholder="Masukkan alamat lengkap" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>Kecamatan *</label>
+            <select id="regKecamatan" required>
+              <option value="">Pilih Kecamatan</option>
+              <option value="Ampel">Ampel</option>
+              <option value="Andong">Andong</option>
+              <option value="Banyudono">Banyudono</option>
+              <option value="Boyolali Kota">Boyolali Kota</option>
+              <option value="Cepogo">Cepogo</option>
+              <option value="Juwangi">Juwangi</option>
+              <option value="Karanggede">Karanggede</option>
+              <option value="Kemusu">Kemusu</option>
+              <option value="Klego">Klego</option>
+              <option value="Mojosongo">Mojosongo</option>
+              <option value="Musuk">Musuk</option>
+              <option value="Ngemplak">Ngemplak</option>
+              <option value="Nogosari">Nogosari</option>
+              <option value="Sambi">Sambi</option>
+              <option value="Sawit">Sawit</option>
+              <option value="Selo">Selo</option>
+              <option value="Simo">Simo</option>
+              <option value="Teras">Teras</option>
+              <option value="Wonosegoro">Wonosegoro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Area Operasional *</label>
+            <div class="area-checkboxes" id="areaCheckboxes">
+              <label class="area-checkbox"><input type="checkbox" value="Ampel"> Ampel</label>
+              <label class="area-checkbox"><input type="checkbox" value="Andong"> Andong</label>
+              <label class="area-checkbox"><input type="checkbox" value="Banyudono"> Banyudono</label>
+              <label class="area-checkbox"><input type="checkbox" value="Boyolali Kota"> Boyolali Kota</label>
+              <label class="area-checkbox"><input type="checkbox" value="Cepogo"> Cepogo</label>
+              <label class="area-checkbox"><input type="checkbox" value="Juwangi"> Juwangi</label>
+              <label class="area-checkbox"><input type="checkbox" value="Karanggede"> Karanggede</label>
+              <label class="area-checkbox"><input type="checkbox" value="Kemusu"> Kemusu</label>
+              <label class="area-checkbox"><input type="checkbox" value="Klego"> Klego</label>
+              <label class="area-checkbox"><input type="checkbox" value="Mojosongo"> Mojosongo</label>
+              <label class="area-checkbox"><input type="checkbox" value="Musuk"> Musuk</label>
+              <label class="area-checkbox"><input type="checkbox" value="Ngemplak"> Ngemplak</label>
+              <label class="area-checkbox"><input type="checkbox" value="Nogosari"> Nogosari</label>
+              <label class="area-checkbox"><input type="checkbox" value="Sambi"> Sambi</label>
+              <label class="area-checkbox"><input type="checkbox" value="Sawit"> Sawit</label>
+              <label class="area-checkbox"><input type="checkbox" value="Selo"> Selo</label>
+              <label class="area-checkbox"><input type="checkbox" value="Simo"> Simo</label>
+              <label class="area-checkbox"><input type="checkbox" value="Teras"> Teras</label>
+              <label class="area-checkbox"><input type="checkbox" value="Wonosegoro"> Wonosegoro</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Jenis Kendaraan</label>
+            <select id="regKendaraan">
+              <option value="">Pilih Kendaraan</option>
+              <option value="Motor">Motor</option>
+              <option value="Mobil">Mobil</option>
+              <option value="Sepeda">Sepeda</option>
+              <option value="Jalan Kaki">Jalan Kaki</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Pengalaman (opsional)</label>
+            <textarea id="regPengalaman" rows="2" placeholder="Ceritakan pengalaman Anda"></textarea>
+          </div>
+          <button type="button" class="register-btn" id="submitRegisterBtn">
+            <i class="fab fa-whatsapp"></i> Daftar via WhatsApp
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIVACY, TERMS, CONTACT PAGES (sederhana) -->
+  <div id="privacyPage" class="info-page">
+    <div class="info-container">
+      <div class="info-header">
+        <div class="info-back-btn" id="backFromPrivacyBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <div><h2 style="font-size:18px; font-weight:700;">Kebijakan Privasi</h2></div>
+      </div>
+      <div class="info-content">
+        <h2>Kebijakan Privasi Suruhboy</h2>
+        <p>Kami melindungi data pribadi Anda. Informasi yang dikumpulkan hanya digunakan untuk memproses pesanan dan tidak akan dibagikan ke pihak ketiga.</p>
+        <h3>Informasi yang Dikumpulkan</h3>
+        <ul><li>Nama lengkap</li><li>Nomor WhatsApp</li><li>Alamat</li><li>Detail pesanan</li></ul>
+        <h3>Kontak</h3>
+        <p>Email: suruhboy.id@gmail.com</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="termsPage" class="info-page">
+    <div class="info-container">
+      <div class="info-header">
+        <div class="info-back-btn" id="backFromTermsBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <div><h2 style="font-size:18px; font-weight:700;">Syarat & Ketentuan</h2></div>
+      </div>
+      <div class="info-content">
+        <h2>Syarat & Ketentuan Suruhboy</h2>
+        <p>Dengan menggunakan layanan Suruhboy, Anda menyetujui syarat dan ketentuan yang berlaku.</p>
+        <ul><li>Pengguna wajib memberikan informasi yang akurat</li><li>Pembayaran dilakukan sesuai kesepakatan</li><li>Suruhboy berhak menolak pesanan yang tidak sesuai</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="contactPage" class="info-page">
+    <div class="info-container">
+      <div class="info-header">
+        <div class="info-back-btn" id="backFromContactBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <div><h2 style="font-size:18px; font-weight:700;">Hubungi Kami</h2></div>
+      </div>
+      <div class="info-content">
+        <h2>Hubungi Suruhboy</h2>
+        <div class="contact-list">
+          <div class="contact-item" id="contactWhatsapp"><i class="fab fa-whatsapp"></i><div><h4>WhatsApp</h4><p>+62 882-0076-70299</p></div></div>
+          <div class="contact-item" id="contactEmail"><i class="fas fa-envelope"></i><div><h4>Email</h4><p>suruhboy.id@gmail.com</p></div></div>
+          <div class="contact-item" id="contactInstagram"><i class="fab fa-instagram"></i><div><h4>Instagram</h4><p>@suruhboy.id</p></div></div>
+          <div class="contact-item" id="contactTiktok"><i class="fab fa-tiktok"></i><div><h4>TikTok</h4><p>jasasuruhboyolali</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICE DETAIL CONTAINER -->
   <div id="serviceDetailContainer"></div>
 </div>
 
@@ -949,6 +1571,14 @@ svg{display:block}
 const SHEET_ID = '1ia6zeUJZv2Wp1OkO2XbJQFoJfiUnseN9HpEyIEDazTE';
 const GID = '1142979216';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+
+// Kontak
+const CONTACTS = {
+  whatsapp: '62882007670299',
+  email: 'suruhboy.id@gmail.com',
+  instagram: 'https://instagram.com/suruhboy.id',
+  tiktok: 'https://tiktok.com/@jasasuruhboyolali'
+};
 
 // ======================== KONFIGURASI AGENT STATUS ========================
 const AGENT_SPREADSHEET_ID = '1FgWiv56J2w7A0WprwqOKJMU7BO4mX3jotW3IC397rWg';
@@ -1427,7 +2057,13 @@ function showServiceDetail(serviceName) {
   const agentCheckPage = document.getElementById('agentCheckPage');
   const serviceDetailContainer = document.getElementById('serviceDetailContainer');
   
-  // Sembunyikan halaman lain
+  // Sembunyikan semua halaman lain
+  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage'];
+  allPages.forEach(page => {
+    const el = document.getElementById(page);
+    if (el) el.style.display = 'none';
+  });
+  
   homePage.style.display = 'none';
   searchResultPage.style.display = 'none';
   agentCheckPage.style.display = 'none';
@@ -1436,78 +2072,46 @@ function showServiceDetail(serviceName) {
   const detail = serviceDetails[serviceName];
   if (!detail) return;
   
-  // Buat halaman detail
   serviceDetailContainer.innerHTML = `
     <div class="service-detail-page" style="display:block">
       <div class="service-detail-container">
         <div class="service-detail-header">
           <div class="service-back-btn" id="backFromServiceBtn">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="15 18 9 12 15 6"/>
-            </svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
           </div>
-          <div>
-            <h2 style="font-size:18px; font-weight:700;">${serviceName}</h2>
-            <p style="font-size:12px; color:#7A8BA0;">Detail layanan & pemesanan</p>
-          </div>
+          <div><h2 style="font-size:18px; font-weight:700;">${serviceName}</h2><p style="font-size:12px; color:#7A8BA0;">Detail layanan & pemesanan</p></div>
         </div>
-
         <div class="service-detail-hero">
-          <div class="service-detail-icon">
-            <img src="${detail.icon}" alt="${serviceName}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Ctext x=%2750%%27 y=%2750%%27 text-anchor=%27middle%27 dy=%27.3em%27 fill=%27%23E88D2A%27 font-size=%2714%27%3E${serviceName.charAt(0)}%3C/text%3E%3C/svg%3E'">
-          </div>
+          <div class="service-detail-icon"><img src="${detail.icon}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Ctext x=%2750%%27 y=%2750%%27 fill=%27%23E88D2A%27 font-size=%2714%27%3E${serviceName.charAt(0)}%3C/text%3E%3C/svg%3E'"></div>
           <h2>${serviceName}</h2>
           <p>${detail.description}</p>
         </div>
-
         <div class="service-info-card">
           <h3><i class="fas fa-check-circle" style="color:#E88D2A;"></i> Yang Didapatkan</h3>
-          <ul>
-            ${detail.features.map(f => `<li><i class="fas fa-check"></i> ${f}</li>`).join('')}
-          </ul>
+          <ul>${detail.features.map(f => `<li><i class="fas fa-check"></i> ${f}</li>`).join('')}</ul>
           <div class="price-tag">${detail.price}</div>
           <div class="price-note">${detail.priceNote}</div>
         </div>
-
         <div class="order-form-card">
           <h3><i class="fas fa-clipboard-list" style="color:#E88D2A;"></i> Form Pemesanan</h3>
           <form id="serviceOrderForm">
-            <div class="form-group">
-              <label>Nama Lengkap</label>
-              <input type="text" id="orderName" placeholder="Masukkan nama Anda" required>
-            </div>
-            <div class="form-group">
-              <label>Nomor WhatsApp</label>
-              <input type="tel" id="orderPhone" placeholder="08123456789" required>
-            </div>
-            <div class="form-group">
-              <label>Alamat Lengkap</label>
-              <textarea id="orderAddress" placeholder="Masukkan alamat lengkap" required></textarea>
-            </div>
-            <div class="form-group">
-              <label>Detail Pesanan</label>
-              <textarea id="orderDetails" placeholder="Jelaskan detail pesanan Anda" required></textarea>
-            </div>
-            <button type="button" class="btn-order-service" id="submitServiceOrder">
-              <i class="fab fa-whatsapp"></i> Pesan via WhatsApp
-            </button>
+            <div class="form-group"><label>Nama Lengkap</label><input type="text" id="orderName" placeholder="Masukkan nama Anda" required></div>
+            <div class="form-group"><label>Nomor WhatsApp</label><input type="tel" id="orderPhone" placeholder="08123456789" required></div>
+            <div class="form-group"><label>Alamat Lengkap</label><textarea id="orderAddress" placeholder="Masukkan alamat lengkap" required></textarea></div>
+            <div class="form-group"><label>Detail Pesanan</label><textarea id="orderDetails" placeholder="Jelaskan detail pesanan Anda" required></textarea></div>
+            <button type="button" class="btn-order-service" id="submitServiceOrder"><i class="fab fa-whatsapp"></i> Pesan via WhatsApp</button>
           </form>
         </div>
-
-        <div class="service-footer">
-          <i class="fas fa-shield-alt"></i> Aman & Terpercaya
-        </div>
+        <div class="service-footer"><i class="fas fa-shield-alt"></i> Aman & Terpercaya</div>
       </div>
     </div>
   `;
   
-  // Event listener untuk back button
   document.getElementById('backFromServiceBtn').addEventListener('click', () => {
     serviceDetailContainer.style.display = 'none';
     document.getElementById('homePage').style.display = 'block';
   });
   
-  // Event listener untuk submit order
   document.getElementById('submitServiceOrder').addEventListener('click', () => {
     const name = document.getElementById('orderName').value.trim();
     const phone = document.getElementById('orderPhone').value.trim();
@@ -1520,10 +2124,92 @@ function showServiceDetail(serviceName) {
     }
     
     const message = `🛵 ORDER SURUHBOY 🛵\n\n📋 Layanan: ${serviceName}\n👤 Nama: ${name}\n📱 WhatsApp: ${phone}\n📍 Alamat: ${address}\n📝 Detail: ${details}\n\n✅ Mohon konfirmasi pesanan ini.`;
-    const encodedMsg = encodeURIComponent(message);
-    const waLink = `https://wa.me/6281234567890?text=${encodedMsg}`;
+    window.open(`https://wa.me/62882007670299?text=${encodeURIComponent(message)}`, '_blank');
+  });
+}
+
+// ======================== NAVIGATION FUNCTIONS ========================
+function showInfoPage(pageId) {
+  const homePage = document.getElementById('homePage');
+  const searchResultPage = document.getElementById('searchResultPage');
+  const agentCheckPage = document.getElementById('agentCheckPage');
+  const serviceDetailContainer = document.getElementById('serviceDetailContainer');
+  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage'];
+  
+  allPages.forEach(page => {
+    const el = document.getElementById(page);
+    if (el) el.style.display = 'none';
+  });
+  
+  homePage.style.display = 'none';
+  searchResultPage.style.display = 'none';
+  agentCheckPage.style.display = 'none';
+  serviceDetailContainer.style.display = 'none';
+  
+  document.getElementById(pageId).style.display = 'block';
+}
+
+function hideAllInfoPages() {
+  const homePage = document.getElementById('homePage');
+  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage'];
+  allPages.forEach(page => {
+    const el = document.getElementById(page);
+    if (el) el.style.display = 'none';
+  });
+  homePage.style.display = 'block';
+}
+
+// ======================== FAQ ACCORDION ========================
+function setupFaqAccordion() {
+  const faqQuestions = document.querySelectorAll('.faq-question');
+  faqQuestions.forEach(question => {
+    question.addEventListener('click', () => {
+      question.classList.toggle('active');
+      const answer = question.nextElementSibling;
+      answer.classList.toggle('show');
+    });
+  });
+}
+
+// ======================== MARKETPLACE ========================
+function setupMarketplace() {
+  const items = document.querySelectorAll('.marketplace-item');
+  items.forEach(item => {
+    item.addEventListener('click', () => {
+      const service = item.getAttribute('data-service');
+      alert(`💼 Jasa "${service}"\n\nSilakan hubungi kami via WhatsApp untuk informasi lebih lanjut!`);
+    });
+  });
+  
+  document.getElementById('joinMarketplaceBtn')?.addEventListener('click', () => {
+    const message = `Halo Suruhboy, saya tertarik untuk bergabung menjadi mitra dan menawarkan jasa saya. Mohon informasinya.`;
+    window.open(`https://wa.me/62882007670299?text=${encodeURIComponent(message)}`, '_blank');
+  });
+}
+
+// ======================== REGISTER AGENT ========================
+function setupRegisterAgent() {
+  document.getElementById('submitRegisterBtn')?.addEventListener('click', () => {
+    const nama = document.getElementById('regNama')?.value.trim();
+    const wa = document.getElementById('regWhatsapp')?.value.trim();
+    const alamat = document.getElementById('regAlamat')?.value.trim();
+    const kecamatan = document.getElementById('regKecamatan')?.value;
+    const kendaraan = document.getElementById('regKendaraan')?.value;
+    const pengalaman = document.getElementById('regPengalaman')?.value.trim();
     
-    window.open(waLink, '_blank');
+    const selectedAreas = [];
+    document.querySelectorAll('#areaCheckboxes input:checked').forEach(cb => {
+      selectedAreas.push(cb.value);
+    });
+    
+    if (!nama || !wa || !alamat || !kecamatan || selectedAreas.length === 0) {
+      alert('Harap lengkapi semua data yang diperlukan (Nama, WhatsApp, Alamat, Kecamatan, Area Operasional)');
+      return;
+    }
+    
+    const message = `📋 PENDAFTARAN AGENT SURUHBOY 📋\n\n👤 Nama: ${nama}\n📱 WhatsApp: ${wa}\n📍 Alamat: ${alamat}\n🏘️ Kecamatan: ${kecamatan}\n🗺️ Area Operasional: ${selectedAreas.join(', ')}\n🛵 Kendaraan: ${kendaraan || '-'}\n📝 Pengalaman: ${pengalaman || '-'}\n\n✅ Mohon verifikasi data pendaftaran ini.`;
+    
+    window.open(`https://wa.me/62882007670299?text=${encodeURIComponent(message)}`, '_blank');
   });
 }
 
@@ -1541,29 +2227,42 @@ const resultListContainer = document.getElementById('resultListContainer');
 const searchQueryDisplay = document.getElementById('searchQueryDisplay');
 const menuGrid = document.getElementById('menuGrid');
 
-// Navigasi ke halaman pencarian
+// Navigasi
 function openSearchPage() {
+  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage'];
+  allPages.forEach(page => {
+    const el = document.getElementById(page);
+    if (el) el.style.display = 'none';
+  });
   homePage.style.display = 'none';
-  searchResultPage.style.display = 'block';
   agentCheckPage.style.display = 'none';
   serviceDetailContainer.style.display = 'none';
+  searchResultPage.style.display = 'block';
   setTimeout(() => {
     resultSearchInput.focus();
     performResultSearch('');
   }, 50);
 }
 
-// Navigasi ke halaman agent check
 function openAgentCheckPage() {
+  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage'];
+  allPages.forEach(page => {
+    const el = document.getElementById(page);
+    if (el) el.style.display = 'none';
+  });
   homePage.style.display = 'none';
   searchResultPage.style.display = 'none';
-  agentCheckPage.style.display = 'block';
   serviceDetailContainer.style.display = 'none';
+  agentCheckPage.style.display = 'block';
   populateAreaSelect();
 }
 
-// Kembali ke home
 function backToHome() {
+  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage'];
+  allPages.forEach(page => {
+    const el = document.getElementById(page);
+    if (el) el.style.display = 'none';
+  });
   homePage.style.display = 'block';
   searchResultPage.style.display = 'none';
   agentCheckPage.style.display = 'none';
@@ -1571,12 +2270,10 @@ function backToHome() {
   resultSearchInput.value = '';
 }
 
-// Fungsi pencarian real-time
+// Pencarian
 function performResultSearch(query) {
   if (!servicesData.length) return;
-  
   const lowerQuery = query.toLowerCase().trim();
-  
   let filteredServices = servicesData;
   if (lowerQuery !== '') {
     filteredServices = servicesData.filter(service => {
@@ -1584,45 +2281,23 @@ function performResultSearch(query) {
       return service.keywords.some(kw => kw.toLowerCase().includes(lowerQuery));
     });
   }
-  
   searchQueryDisplay.textContent = lowerQuery === '' ? 'semua layanan' : query;
   
   if (filteredServices.length === 0) {
-    resultListContainer.innerHTML = `
-      <div class="no-result-search">
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0" stroke-width="1.5">
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <p>Tidak ada layanan yang cocok dengan "<strong>${query}</strong>"</p>
-        <p style="font-size:12px; margin-top:8px">Coba kata kunci lain seperti "antar", "kirim", "bersih"</p>
-      </div>
-    `;
+    resultListContainer.innerHTML = `<div class="no-result-search"><svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Tidak ada layanan yang cocok dengan "<strong>${query}</strong>"</p></div>`;
     return;
   }
   
   resultListContainer.innerHTML = filteredServices.map(service => `
     <div class="result-card" data-service="${service.label}">
-      <div class="result-icon">
-        <img src="${service.iconFile}" alt="${service.label}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%23E88D2A%22><text x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2212%22>${service.label.charAt(0)}</text></svg>'">
-      </div>
-      <div class="result-info">
-        <div class="result-title">${service.label}</div>
-        <div class="result-desc">${service.desc}</div>
-      </div>
-      <div class="result-arrow">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="9 18 15 12 9 6"/>
-        </svg>
-      </div>
+      <div class="result-icon"><img src="${service.iconFile}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Ctext x=%2750%%27 y=%2750%%27 fill=%27%23E88D2A%27 font-size=%2712%27%3E${service.label.charAt(0)}%3C/text%3E%3C/svg%3E'"></div>
+      <div class="result-info"><div class="result-title">${service.label}</div><div class="result-desc">${service.desc}</div></div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A8BA0"><polyline points="9 18 15 12 9 6"/></svg>
     </div>
   `).join('');
   
   document.querySelectorAll('.result-card').forEach(card => {
-    card.addEventListener('click', () => {
-      const serviceName = card.getAttribute('data-service');
-      showServiceDetail(serviceName);
-    });
+    card.addEventListener('click', () => showServiceDetail(card.getAttribute('data-service')));
   });
 }
 
@@ -1637,25 +2312,58 @@ function renderMenuGrid() {
   menuGrid.innerHTML = '';
   servicesData.forEach(service => {
     let displayLabel = service.label;
-    if (service.label === "Caregiver/Jaga RS") {
-      displayLabel = "Caregiver/\nJaga RS";
-    } else if (service.label === "Bersih-Bersih") {
-      displayLabel = "Bersih-\nBersih";
-    }
+    if (service.label === "Caregiver/Jaga RS") displayLabel = "Caregiver/\nJaga RS";
+    else if (service.label === "Bersih-Bersih") displayLabel = "Bersih-\nBersih";
     
     const card = document.createElement('div');
     card.className = 'card';
     card.setAttribute('data-service', service.label);
-    card.innerHTML = `
-      <div class="icon">
-        <img src="${service.iconFile}" alt="${service.label}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Ctext x=%2750%%27 y=%2750%%27 text-anchor=%27middle%27 dy=%27.3em%27 fill=%27%23E88D2A%27 font-size=%2712%27%3E${service.label.charAt(0)}%3C/text%3E%3C/svg%3E'">
-      </div>
-      <div class="title">${displayLabel}</div>
-    `;
-    card.addEventListener('click', () => {
-      showServiceDetail(service.label);
-    });
+    card.innerHTML = `<div class="icon"><img src="${service.iconFile}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27%3E%3Ctext x=%2750%%27 y=%2750%%27 fill=%27%23E88D2A%27 font-size=%2712%27%3E${service.label.charAt(0)}%3C/text%3E%3C/svg%3E'"></div><div class="title">${displayLabel}</div>`;
+    card.addEventListener('click', () => showServiceDetail(service.label));
     menuGrid.appendChild(card);
+  });
+}
+
+// Setup contact buttons
+function setupContactButtons() {
+  document.getElementById('waChatBtn').addEventListener('click', () => window.open(`https://wa.me/${CONTACTS.whatsapp}?text=Halo%20Suruhboy%2C%20saya%20butuh%20bantuan`, '_blank'));
+  document.getElementById('fabBtn').addEventListener('click', () => window.open(`https://wa.me/${CONTACTS.whatsapp}?text=Halo%20Suruhboy%2C%20saya%20butuh%20bantuan`, '_blank'));
+  document.getElementById('instagramBtn').addEventListener('click', () => window.open(CONTACTS.instagram, '_blank'));
+  document.getElementById('tiktokBtn').addEventListener('click', () => window.open(CONTACTS.tiktok, '_blank'));
+  document.getElementById('emailBtn').addEventListener('click', () => window.location.href = `mailto:${CONTACTS.email}`);
+  
+  // Contact page
+  document.getElementById('contactWhatsapp')?.addEventListener('click', () => window.open(`https://wa.me/${CONTACTS.whatsapp}?text=Halo%20Suruhboy`, '_blank'));
+  document.getElementById('contactEmail')?.addEventListener('click', () => window.location.href = `mailto:${CONTACTS.email}`);
+  document.getElementById('contactInstagram')?.addEventListener('click', () => window.open(CONTACTS.instagram, '_blank'));
+  document.getElementById('contactTiktok')?.addEventListener('click', () => window.open(CONTACTS.tiktok, '_blank'));
+}
+
+// Setup info page links
+function setupInfoPageLinks() {
+  document.getElementById('privacyLink').addEventListener('click', () => showInfoPage('privacyPage'));
+  document.getElementById('termsLink').addEventListener('click', () => showInfoPage('termsPage'));
+  document.getElementById('contactLink').addEventListener('click', () => showInfoPage('contactPage'));
+  
+  document.getElementById('backFromPrivacyBtn').addEventListener('click', hideAllInfoPages);
+  document.getElementById('backFromTermsBtn').addEventListener('click', hideAllInfoPages);
+  document.getElementById('backFromContactBtn').addEventListener('click', hideAllInfoPages);
+  document.getElementById('backFromHelpCenterBtn').addEventListener('click', hideAllInfoPages);
+  document.getElementById('backFromMarketplaceBtn').addEventListener('click', hideAllInfoPages);
+  document.getElementById('backFromRegisterBtn').addEventListener('click', hideAllInfoPages);
+  
+  // Three cards
+  document.getElementById('helpCenterCard').addEventListener('click', () => {
+    showInfoPage('helpCenterPage');
+    setTimeout(setupFaqAccordion, 100);
+  });
+  document.getElementById('marketplaceCard').addEventListener('click', () => {
+    showInfoPage('marketplacePage');
+    setTimeout(setupMarketplace, 100);
+  });
+  document.getElementById('registerAgentCard').addEventListener('click', () => {
+    showInfoPage('registerAgentPage');
+    setTimeout(setupRegisterAgent, 100);
   });
 }
 
@@ -1677,28 +2385,27 @@ async function init() {
   await loadAgentStatusFromSheet();
   startAutoRefresh();
   
-  // Sembunyikan semua halaman selain home
   searchResultPage.style.display = 'none';
   agentCheckPage.style.display = 'none';
   serviceDetailContainer.style.display = 'none';
+  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage'];
+  allPages.forEach(page => {
+    const el = document.getElementById(page);
+    if (el) el.style.display = 'none';
+  });
   
   homeSearchWrapper.addEventListener('click', openSearchPage);
   homeSearchInput.addEventListener('click', openSearchPage);
   backToHomeBtn.addEventListener('click', backToHome);
   backFromAgentBtn.addEventListener('click', backToHome);
   
-  // Cek Agent Card
   document.getElementById('checkAgentCard').addEventListener('click', openAgentCheckPage);
   document.getElementById('checkAgentBtn').addEventListener('click', checkAgentAvailability);
   
   resultSearchInput.addEventListener('input', (e) => performResultSearch(e.target.value));
   
-  document.getElementById('waChatBtn').addEventListener('click', () => {
-    window.open('https://wa.me/6281234567890?text=Halo%20Suruhboy%2C%20saya%20butuh%20bantuan', '_blank');
-  });
-  document.getElementById('fabBtn').addEventListener('click', () => {
-    window.open('https://wa.me/6281234567890?text=Halo%20Suruhboy%2C%20saya%20butuh%20bantuan', '_blank');
-  });
+  setupContactButtons();
+  setupInfoPageLinks();
 }
 
 init();
