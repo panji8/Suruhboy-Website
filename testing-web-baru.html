@@ -1453,17 +1453,7 @@ const SHEET_ID = '1ia6zeUJZv2Wp1OkO2XbJQFoJfiUnseN9HpEyIEDazTE';
 const GID = '1142979216';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
 
-// Konfigurasi Slider - GAMBAR DARI GITHUB
-// ======================================================
-// TODO: GANTI DENGAN USERNAME DAN REPO GITHUB ANDA
-// ======================================================
-const GITHUB_USERNAME = 'suruhboy';  // Ganti dengan username GitHub Anda
-const GITHUB_REPO = 'suruhboy-assets';  // Ganti dengan nama repository Anda
-const GITHUB_BRANCH = 'main';  // main atau master
-
-const GITHUB_IMAGE_URL = `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${GITHUB_REPO}/${GITHUB_BRANCH}/`;
-
-// Konfigurasi Slider dari Google Sheet (gid=800306065)
+// Konfigurasi Slider - GAMBAR DARI FOLDER LOKAL
 const SLIDER_GID = '800306065';
 const SLIDER_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SLIDER_GID}`;
 
@@ -1518,9 +1508,9 @@ const serviceDetails = {
 };
 
 // ======================== FUNGSI SLIDER ========================
-function getGithubImageUrl(index) {
-  // slider1.jpg, slider2.jpg, slider3.jpg, slider4.jpg
-  return `${GITHUB_IMAGE_URL}slider${index + 1}.jpg`;
+function getSliderImageUrl(index) {
+  // slider1.jpg, slider2.jpg, slider3.jpg, slider4.jpg dari folder yang sama
+  return `slider${index + 1}.jpg`;
 }
 
 async function loadSliderFromSheet() {
@@ -1566,20 +1556,20 @@ async function loadSliderFromSheet() {
       const subJudul = row[subJudulIdx] || '';
       const badge = row[badgeIdx] || '';
       
-      slides.push({ judul, subJudul, badge, imageUrl: getGithubImageUrl(i) });
+      slides.push({ judul, subJudul, badge, imageUrl: getSliderImageUrl(i) });
     }
     
-    console.log('📊 Slider data loaded from sheet + GitHub:', slides);
+    console.log('📊 Slider data loaded from sheet + local images:', slides);
     return slides;
     
   } catch (error) {
     console.error('❌ Error loading slider data:', error);
     // Fallback data
     return [
-      { judul: "Promo Spesial", subJudul: "Diskon 50% untuk pengguna baru", badge: "HOT", imageUrl: getGithubImageUrl(0) },
-      { judul: "Layanan 24 Jam", subJudul: "Siap melayani kapan saja", badge: "NEW", imageUrl: getGithubImageUrl(1) },
-      { judul: "Gratis Ongkir", subJudul: "Minimal belanja Rp 50.000", badge: "PROMO", imageUrl: getGithubImageUrl(2) },
-      { judul: "Cashback 10%", subJudul: "Setiap transaksi via aplikasi", badge: "DISKON", imageUrl: getGithubImageUrl(3) }
+      { judul: "Promo Spesial", subJudul: "Diskon 50% untuk pengguna baru", badge: "HOT", imageUrl: getSliderImageUrl(0) },
+      { judul: "Layanan 24 Jam", subJudul: "Siap melayani kapan saja", badge: "NEW", imageUrl: getSliderImageUrl(1) },
+      { judul: "Gratis Ongkir", subJudul: "Minimal belanja Rp 50.000", badge: "PROMO", imageUrl: getSliderImageUrl(2) },
+      { judul: "Cashback 10%", subJudul: "Setiap transaksi via aplikasi", badge: "DISKON", imageUrl: getSliderImageUrl(3) }
     ];
   }
 }
