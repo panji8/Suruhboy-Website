@@ -35,7 +35,7 @@ header p{font-size:12px;color:#7A8BA0}
 .menu-btn{width:40px;height:40px;border-radius:12px;border:1px solid #E2E6ED;display:flex;align-items:center;justify-content:center;background:none;cursor:pointer}
 .menu-btn:hover{background:#F5F6FA}
 
-/* ========== SLIDER - DIPERBAIKI ========== */
+/* ========== SLIDER ========== */
 .slider-container {
   position: relative;
   margin: 0 16px 16px 16px;
@@ -1000,99 +1000,6 @@ footer .links span:hover{color:#E88D2A;text-decoration:underline}
   display: block;
 }
 
-/* Marketplace */
-.marketplace-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.marketplace-item {
-  background: #F8FAFE;
-  border-radius: 16px;
-  padding: 16px;
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.marketplace-item:hover {
-  background: #F1F5F9;
-  transform: translateX(4px);
-}
-
-.marketplace-icon {
-  width: 52px;
-  height: 52px;
-  background: linear-gradient(135deg, #FFF3E0, #FFE0B5);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.marketplace-icon i {
-  font-size: 24px;
-  color: #E88D2A;
-}
-
-.marketplace-info {
-  flex: 1;
-}
-
-.marketplace-info h4 {
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.marketplace-info p {
-  font-size: 11px;
-  color: #7A8BA0;
-}
-
-.marketplace-price {
-  font-size: 13px;
-  font-weight: 700;
-  color: #E88D2A;
-}
-
-.join-marketplace-card {
-  background: linear-gradient(135deg, #1B4A3A, #2E8B57);
-  border-radius: 16px;
-  padding: 20px;
-  text-align: center;
-  margin-top: 20px;
-  color: white;
-}
-
-.join-marketplace-card h4 {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.join-marketplace-card p {
-  font-size: 12px;
-  margin-bottom: 16px;
-  opacity: 0.9;
-}
-
-.join-marketplace-btn {
-  background: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 40px;
-  font-weight: 600;
-  color: #1B4A3A;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
 /* Register Form */
 .register-form .form-group {
   margin-bottom: 20px;
@@ -1393,28 +1300,6 @@ svg{display:block}
     </div>
   </div>
 
-  <!-- MARKETPLACE PAGE -->
-  <div id="marketplacePage" class="info-page">
-    <div class="info-container">
-      <div class="info-header">
-        <div class="info-back-btn" id="backFromMarketplaceBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></div>
-        <div><h2 style="font-size:18px; font-weight:700;">Info Jasa Lain</h2><p style="font-size:12px; color:#7A8BA0;">Temukan berbagai jasa dari mitra kami</p></div>
-      </div>
-      <div class="info-content">
-        <h2>Jasa Lain dari Mitra Suruhboy</h2>
-        <p>Selain layanan utama Suruhboy, mitra kami juga menawarkan berbagai jasa menarik lainnya.</p>
-        <div class="marketplace-grid">
-          <div class="marketplace-item" data-service="Fotografi"><div class="marketplace-icon"><i class="fas fa-camera"></i></div><div class="marketplace-info"><h4>Jasa Fotografi</h4><p>Pre-wedding, event, produk, poto studio</p></div><div class="marketplace-price">Mulai Rp 200k</div></div>
-          <div class="marketplace-item" data-service="Les Privat"><div class="marketplace-icon"><i class="fas fa-chalkboard-user"></i></div><div class="marketplace-info"><h4>Les Privat</h4><p>Matematika, Bahasa Inggris, SD/SMP/SMA</p></div><div class="marketplace-price">Rp 50k/jam</div></div>
-          <div class="marketplace-item" data-service="Service Elektronik"><div class="marketplace-icon"><i class="fas fa-microchip"></i></div><div class="marketplace-info"><h4>Service Elektronik</h4><p>HP, laptop, AC, kulkas, mesin cuci</p></div><div class="marketplace-price">Mulai Rp 50k</div></div>
-          <div class="marketplace-item" data-service="Laundry"><div class="marketplace-icon"><i class="fas fa-tshirt"></i></div><div class="marketplace-info"><h4>Laundry Express</h4><p>Cuci setrika, antar jemput gratis</p></div><div class="marketplace-price">Rp 7k/kg</div></div>
-          <div class="marketplace-item" data-service="Tukang Bangunan"><div class="marketplace-icon"><i class="fas fa-hammer"></i></div><div class="marketplace-info"><h4>Tukang Bangunan</h4><p>Renovasi, perbaikan rumah, cat</p></div><div class="marketplace-price">Harga nego</div></div>
-        </div>
-        <div class="join-marketplace-card"><h4>Punya Jasa Lain?</h4><p>Bergabunglah menjadi mitra Suruhboy dan tawarkan jasa Anda!</p><button class="join-marketplace-btn" id="joinMarketplaceBtn"><i class="fas fa-handshake"></i> Gabung Sekarang</button></div>
-      </div>
-    </div>
-  </div>
-
   <!-- DAFTAR AGENT PAGE -->
   <div id="registerAgentPage" class="info-page">
     <div class="info-container">
@@ -1516,7 +1401,6 @@ const serviceDetails = {
 
 // ======================== FUNGSI SLIDER ========================
 function getSliderImageUrl(index) {
-  // slider1.jpg, slider2.jpg, slider3.jpg, slider4.jpg dari folder yang sama
   return `slider${index + 1}.jpg`;
 }
 
@@ -1566,12 +1450,11 @@ async function loadSliderFromSheet() {
       slides.push({ judul, subJudul, badge, imageUrl: getSliderImageUrl(i) });
     }
     
-    console.log('📊 Slider data loaded from sheet + local images:', slides);
+    console.log('📊 Slider data loaded:', slides);
     return slides;
     
   } catch (error) {
     console.error('❌ Error loading slider data:', error);
-    // Fallback data
     return [
       { judul: "Promo Spesial", subJudul: "Diskon 50% untuk pengguna baru", badge: "HOT", imageUrl: getSliderImageUrl(0) },
       { judul: "Layanan 24 Jam", subJudul: "Siap melayani kapan saja", badge: "NEW", imageUrl: getSliderImageUrl(1) },
@@ -1868,7 +1751,7 @@ function showServiceDetail(serviceName) {
   const searchResultPage = document.getElementById('searchResultPage');
   const agentCheckPage = document.getElementById('agentCheckPage');
   const serviceDetailContainer = document.getElementById('serviceDetailContainer');
-  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage'];
+  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'registerAgentPage'];
   allPages.forEach(page => { const el = document.getElementById(page); if (el) el.style.display = 'none'; });
   homePage.style.display = 'none';
   searchResultPage.style.display = 'none';
@@ -1894,7 +1777,7 @@ function showInfoPage(pageId) {
   const searchResultPage = document.getElementById('searchResultPage');
   const agentCheckPage = document.getElementById('agentCheckPage');
   const serviceDetailContainer = document.getElementById('serviceDetailContainer');
-  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage'];
+  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'registerAgentPage'];
   allPages.forEach(page => { const el = document.getElementById(page); if (el) el.style.display = 'none'; });
   homePage.style.display = 'none';
   searchResultPage.style.display = 'none';
@@ -1906,14 +1789,6 @@ function showInfoPage(pageId) {
       document.querySelectorAll('.faq-question').forEach(q => {
         q.addEventListener('click', () => { q.classList.toggle('active'); q.nextElementSibling.classList.toggle('show'); });
       });
-    }, 100);
-  }
-  if (pageId === 'marketplacePage') {
-    setTimeout(() => {
-      document.querySelectorAll('.marketplace-item').forEach(item => {
-        item.addEventListener('click', () => { alert(`💼 Jasa "${item.getAttribute('data-service')}"\n\nSilakan hubungi kami via WhatsApp untuk informasi lebih lanjut!`); });
-      });
-      document.getElementById('joinMarketplaceBtn')?.addEventListener('click', () => { window.open(`https://wa.me/62882007670299?text=Halo%20Suruhboy%2C%20saya%20tertarik%20untuk%20bergabung%20menjadi%20mitra%20dan%20menawarkan%20jasa%20saya.`, '_blank'); });
     }, 100);
   }
   if (pageId === 'registerAgentPage') {
@@ -1935,10 +1810,10 @@ function showInfoPage(pageId) {
   }
 }
 
-function hideAllInfoPages() { const homePage = document.getElementById('homePage'); const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage']; allPages.forEach(page => { const el = document.getElementById(page); if (el) el.style.display = 'none'; }); homePage.style.display = 'block'; }
+function hideAllInfoPages() { const homePage = document.getElementById('homePage'); const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'registerAgentPage']; allPages.forEach(page => { const el = document.getElementById(page); if (el) el.style.display = 'none'; }); homePage.style.display = 'block'; }
 
 function openSearchPage() {
-  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage'];
+  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'registerAgentPage'];
   allPages.forEach(page => { const el = document.getElementById(page); if (el) el.style.display = 'none'; });
   document.getElementById('homePage').style.display = 'none';
   document.getElementById('agentCheckPage').style.display = 'none';
@@ -1958,7 +1833,7 @@ function openAgentCheckPage() {
 }
 
 function backToHome() {
-  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage'];
+  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'registerAgentPage'];
   allPages.forEach(page => { const el = document.getElementById(page); if (el) el.style.display = 'none'; });
   document.getElementById('homePage').style.display = 'block';
   document.getElementById('searchResultPage').style.display = 'none';
@@ -2017,10 +1892,14 @@ function setupInfoPageLinks() {
   document.getElementById('backFromTermsBtn').addEventListener('click', hideAllInfoPages);
   document.getElementById('backFromContactBtn').addEventListener('click', hideAllInfoPages);
   document.getElementById('backFromHelpCenterBtn').addEventListener('click', hideAllInfoPages);
-  document.getElementById('backFromMarketplaceBtn').addEventListener('click', hideAllInfoPages);
   document.getElementById('backFromRegisterBtn').addEventListener('click', hideAllInfoPages);
   document.getElementById('helpCenterCard').addEventListener('click', () => showInfoPage('helpCenterPage'));
-  document.getElementById('marketplaceCard').addEventListener('click', () => window.location.href = 'jasa-lain.html'));
+  
+  // PERBAIKAN: Tombol marketplace mengarah ke file terpisah
+  document.getElementById('marketplaceCard').addEventListener('click', () => {
+    window.location.href = 'jasa-lain.html';
+  });
+  
   document.getElementById('registerAgentCard').addEventListener('click', () => showInfoPage('registerAgentPage'));
 }
 
@@ -2042,7 +1921,7 @@ async function init() {
   searchResultPage.style.display = 'none';
   agentCheckPage.style.display = 'none';
   serviceDetailContainer.style.display = 'none';
-  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'marketplacePage', 'registerAgentPage'];
+  const allPages = ['privacyPage', 'termsPage', 'contactPage', 'helpCenterPage', 'registerAgentPage'];
   allPages.forEach(page => { const el = document.getElementById(page); if (el) el.style.display = 'none'; });
   
   homeSearchWrapper.addEventListener('click', openSearchPage);
