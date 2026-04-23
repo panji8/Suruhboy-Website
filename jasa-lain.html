@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"/>
+<title>Info Jasa Lain - Suruhboy</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#F5F6FA;color:#1B2A4A;min-height:100vh}
+
+.page{
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 80px;
+  background: #F5F6FA;
+}
+
+@media (min-width: 768px) {
+  .page {
+    max-width: 700px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.08);
+    border-radius: 32px;
+    margin: 20px auto;
+  }
+}
+
+/* ========== HEADER ========== */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: white;
+  border-radius: 20px;
+  margin: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #E2E6ED;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  background: #F5F6FA;
+  border-color: #E88D2A;
+}
+
+.header h1 {
+  font-size: 18px;
+  font-weight: 700;
+  flex: 1;
+}
+
+.header p {
+  font-size: 12px;
+  color: #7A8BA0;
+  margin-top: 2px;
+}
+
+/* ========== CONTENT ========== */
+.content {
+  padding: 0 16px;
+}
+
+.title-section {
+  margin-bottom: 20px;
+}
+
+.title-section h2 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.title-section p {
+  font-size: 13px;
+  color: #7A8BA0;
+}
+
+/* Marketplace Grid */
+.marketplace-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.marketplace-item {
+  background: white;
+  border-radius: 20px;
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border: 1px solid #F0F4F9;
+}
+
+.marketplace-item:hover {
+  background: #F8FAFE;
+  transform: translateX(4px);
+  border-color: #E88D2A;
+}
+
+.marketplace-icon {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B5);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marketplace-icon i {
+  font-size: 24px;
+  color: #E88D2A;
+}
+
+.marketplace-info {
+  flex: 1;
+}
+
+.marketplace-info h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.marketplace-info p {
+  font-size: 11px;
+  color: #7A8BA0;
+  line-height: 1.4;
+}
+
+.marketplace-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: #E88D2A;
+}
+
+/* Join Card */
+.join-marketplace-card {
+  background: linear-gradient(135deg, #1B4A3A, #2E8B57);
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  margin-top: 8px;
+  margin-bottom: 24px;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.join-marketplace-card h3 {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.join-marketplace-card p {
+  font-size: 12px;
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
+.join-marketplace-btn {
+  background: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 40px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1B4A3A;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.join-marketplace-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 20px;
+  color: #94A3B8;
+  font-size: 11px;
+  border-top: 1px solid #E8EDF2;
+  margin-top: 16px;
+}
+
+/* Responsif */
+@media (max-width: 480px) {
+  .marketplace-item {
+    padding: 14px;
+  }
+  .marketplace-icon {
+    width: 48px;
+    height: 48px;
+  }
+  .marketplace-icon i {
+    font-size: 22px;
+  }
+  .marketplace-info h4 {
+    font-size: 14px;
+  }
+  .marketplace-price {
+    font-size: 12px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <!-- Header dengan tombol back -->
+  <div class="header">
+    <div class="back-btn" onclick="goBack()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1B2A4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </div>
+    <div>
+      <h1>Info Jasa Lain</h1>
+      <p>Temukan berbagai jasa dari mitra kami</p>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="title-section">
+      <h2>✨ Jasa Lain dari Mitra Suruhboy</h2>
+      <p>Selain layanan utama Suruhboy, mitra kami juga menawarkan berbagai jasa menarik lainnya. Hubungi langsung untuk info lebih lanjut.</p>
+    </div>
+
+    <div class="marketplace-grid" id="marketplaceGrid">
+      <!-- Data akan diisi oleh JavaScript -->
+      <div style="text-align: center; padding: 40px;">
+        <i class="fas fa-spinner fa-pulse"></i> Memuat data...
+      </div>
+    </div>
+
+    <div class="join-marketplace-card">
+      <h3>💼 Punya Jasa Lain?</h3>
+      <p>Bergabunglah menjadi mitra Suruhboy dan tawarkan jasa Anda! Raih pelanggan lebih banyak.</p>
+      <button class="join-marketplace-btn" id="joinBtn">
+        <i class="fas fa-handshake"></i> Gabung Sekarang
+      </button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <i class="fas fa-shield-alt"></i> Terverifikasi • Aman & Terpercaya
+  </div>
+</div>
+
+<script>
+// ======================== DATA JASA LAIN (EDIT DI SINI) ========================
+// ========================================================================
+// 📝 YANG PERLU DIEDIT:
+// Tambah / hapus / ubah data jasa di array "jasaLainData" di bawah ini.
+// Setiap item memiliki:
+//   - iconClass: class font awesome (contoh: "fas fa-camera")
+//   - title: judul jasa
+//   - description: deskripsi singkat
+//   - price: estimasi harga
+//   - contact: (opsional) nomor WhatsApp atau link khusus
+// ========================================================================
+
+const jasaLainData = [
+  {
+    iconClass: "fas fa-camera",
+    title: "Jasa Fotografi",
+    description: "Pre-wedding, event, produk, poto studio, video shooting",
+    price: "Mulai Rp 200k",
+    contact: "6281234567890"
+  },
+  {
+    iconClass: "fas fa-chalkboard-user",
+    title: "Les Privat",
+    description: "Matematika, Bahasa Inggris, SD/SMP/SMA, Persiapan Ujian",
+    price: "Rp 50k/jam",
+    contact: "6281234567890"
+  },
+  {
+    iconClass: "fas fa-microchip",
+    title: "Service Elektronik",
+    description: "HP, laptop, AC, kulkas, mesin cuci, TV",
+    price: "Mulai Rp 50k",
+    contact: "6281234567890"
+  },
+  {
+    iconClass: "fas fa-tshirt",
+    title: "Laundry Express",
+    description: "Cuci setrika, antar jemput gratis, wangi tahan lama",
+    price: "Rp 7k/kg",
+    contact: "6281234567890"
+  },
+  {
+    iconClass: "fas fa-hammer",
+    title: "Tukang Bangunan",
+    description: "Renovasi, perbaikan rumah, cat, plumbing, listrik",
+    price: "Harga nego",
+    contact: "6281234567890"
+  },
+  {
+    iconClass: "fas fa-laptop-code",
+    title: "Jasa Desain Grafis",
+    description: "Logo, pamflet, banner, undangan, feed Instagram",
+    price: "Mulai Rp 100k",
+    contact: "6281234567890"
+  },
+  {
+    iconClass: "fas fa-car",
+    title: "Rental Mobil",
+    description: "Avanza, Xenia, Innova, Elf. Dengan sopir atau lepas kunci",
+    price: "Mulai Rp 350k/hari",
+    contact: "6281234567890"
+  },
+  {
+    iconClass: "fas fa-paw",
+    title: "Pet Grooming",
+    description: "Potong kuku, mandi, styling untuk kucing & anjing",
+    price: "Mulai Rp 60k",
+    contact: "6281234567890"
+  }
+];
+
+// Fungsi untuk render marketplace
+function renderMarketplace() {
+  const container = document.getElementById('marketplaceGrid');
+  
+  if (jasaLainData.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 40px; background: white; border-radius: 20px;">
+        <i class="fas fa-store fa-3x" style="color: #CBD5E1; margin-bottom: 16px;"></i>
+        <p>Belum ada jasa yang ditawarkan.</p>
+        <p style="font-size: 12px; margin-top: 8px;">Jadilah mitra pertama!</p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = jasaLainData.map(item => `
+    <div class="marketplace-item" data-title="${item.title}" data-contact="${item.contact || ''}">
+      <div class="marketplace-icon">
+        <i class="${item.iconClass}"></i>
+      </div>
+      <div class="marketplace-info">
+        <h4>${item.title}</h4>
+        <p>${item.description}</p>
+      </div>
+      <div class="marketplace-price">${item.price}</div>
+    </div>
+  `).join('');
+  
+  // Tambahkan event listener untuk setiap item
+  document.querySelectorAll('.marketplace-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const title = item.getAttribute('data-title');
+      const contact = item.getAttribute('data-contact');
+      
+      if (contact) {
+        const message = `Halo, saya tertarik dengan jasa "${title}" yang ditawarkan di marketplace Suruhboy. Mohon informasinya lebih lanjut. Terima kasih.`;
+        window.open(`https://wa.me/${contact}?text=${encodeURIComponent(message)}`, '_blank');
+      } else {
+        // Jika tidak ada kontak khusus, hubungi admin
+        const message = `Halo Suruhboy, saya tertarik dengan jasa "${title}" yang ada di marketplace. Mohon informasinya lebih lanjut.`;
+        window.open(`https://wa.me/62882007670299?text=${encodeURIComponent(message)}`, '_blank');
+      }
+    });
+  });
+}
+
+// Tombol kembali ke halaman utama
+function goBack() {
+  window.location.href = 'index.html';
+}
+
+// Tombol gabung mitra
+document.getElementById('joinBtn').addEventListener('click', () => {
+  const message = `Halo Suruhboy, saya tertarik untuk bergabung menjadi mitra dan menawarkan jasa saya di marketplace. Mohon informasinya.`;
+  window.open(`https://wa.me/62882007670299?text=${encodeURIComponent(message)}`, '_blank');
+});
+
+// Render saat halaman dimuat
+renderMarketplace();
+</script>
+</body>
+</html>
