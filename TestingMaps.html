@@ -2,20 +2,22 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>GoRide Clone - Transportasi Online</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Gojek Clone - Tarif Progresif</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #f8f9fa;
+            background: #f5f7fa;
             height: 100vh;
             overflow: hidden;
+            position: relative;
         }
 
         /* Map Container */
@@ -28,48 +30,81 @@
             z-index: 1;
         }
 
-        /* Overlay Panel */
-        .panel {
+        /* Header */
+        .header {
             position: absolute;
-            top: 20px;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 3;
+            background: linear-gradient(135deg, #00AA5B 0%, #00C46A 100%);
+            padding: 20px 20px 60px 20px;
+            border-radius: 0 0 24px 24px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Main Panel */
+        .main-panel {
+            position: absolute;
+            top: 110px;
             left: 16px;
             right: 16px;
             z-index: 2;
             background: white;
-            border-radius: 20px;
-            padding: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
             backdrop-filter: blur(10px);
-            background: rgba(255,255,255,0.95);
+            background: rgba(255,255,255,0.98);
         }
 
         /* Location Inputs */
         .location-group {
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            position: relative;
         }
 
         .location-label {
             font-size: 12px;
             font-weight: 600;
-            color: #666;
-            margin-bottom: 4px;
+            color: #6B7280;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 6px;
+            letter-spacing: 0.3px;
         }
 
         .location-label .icon {
-            font-size: 16px;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
         }
 
         .location-input {
             width: 100%;
-            padding: 12px 16px;
-            border: 1.5px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 14px;
-            transition: all 0.3s;
+            padding: 14px 16px 14px 44px;
+            border: 1.5px solid #E5E7EB;
+            border-radius: 16px;
+            font-size: 15px;
+            transition: all 0.2s;
             background: white;
+            font-weight: 500;
         }
 
         .location-input:focus {
@@ -78,98 +113,176 @@
             box-shadow: 0 0 0 3px rgba(0,170,91,0.1);
         }
 
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            font-size: 18px;
+        }
+
         /* Service Options */
         .services {
             display: flex;
-            gap: 16px;
-            margin: 16px 0;
+            gap: 12px;
+            margin: 20px 0;
             padding: 8px 0;
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
         }
 
         .service-btn {
             flex: 1;
             text-align: center;
-            padding: 8px;
-            background: #f5f5f5;
-            border-radius: 12px;
+            padding: 12px 8px;
+            background: #F9FAFB;
+            border-radius: 16px;
             cursor: pointer;
             transition: all 0.2s;
-            border: 1px solid transparent;
+            border: 1.5px solid transparent;
         }
 
         .service-btn.active {
-            background: #00AA5B10;
+            background: linear-gradient(135deg, #00AA5B15 0%, #00C46A15 100%);
             border-color: #00AA5B;
+            transform: scale(1.02);
         }
 
         .service-btn .emoji {
-            font-size: 24px;
+            font-size: 28px;
             display: block;
+            margin-bottom: 4px;
         }
 
         .service-btn .name {
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 700;
             margin-top: 4px;
         }
 
-        /* Ride Info */
+        .service-btn .price-badge {
+            font-size: 10px;
+            color: #6B7280;
+            margin-top: 2px;
+        }
+
+        /* Ride Info Card */
         .ride-info {
-            background: #f8f9fa;
-            border-radius: 12px;
-            padding: 12px;
-            margin: 12px 0;
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+            border-radius: 20px;
+            padding: 16px;
+            margin: 16px 0;
             display: none;
+            animation: slideUp 0.3s ease;
         }
 
         .ride-info.show {
             display: block;
         }
 
-        .price {
-            font-size: 20px;
-            font-weight: bold;
-            color: #00AA5B;
-            margin-bottom: 6px;
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .distance-time {
+        .price-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px dashed rgba(0,170,91,0.2);
+        }
+
+        .price-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #065F46;
+        }
+
+        .price {
+            font-size: 28px;
+            font-weight: 800;
+            color: #00AA5B;
+        }
+
+        .price-sub {
             font-size: 12px;
-            color: #666;
+            color: #6B7280;
+        }
+
+        .detail-section {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .detail-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1F2937;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            color: #6B7280;
+            margin-top: 4px;
+        }
+
+        .fare-breakdown {
+            font-size: 11px;
+            color: #6B7280;
+            text-align: center;
+            margin-top: 8px;
+            padding: 8px;
+            background: white;
+            border-radius: 12px;
         }
 
         /* Order Button */
         .order-btn {
             width: 100%;
-            background: #00AA5B;
+            background: linear-gradient(135deg, #00AA5B 0%, #00C46A 100%);
             color: white;
             border: none;
-            padding: 14px;
-            border-radius: 12px;
+            padding: 16px;
+            border-radius: 20px;
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
             margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(0,170,91,0.3);
         }
 
         .order-btn:active {
             transform: scale(0.98);
-            background: #008844;
+            box-shadow: 0 2px 6px rgba(0,170,91,0.3);
         }
 
         .order-btn:disabled {
-            background: #ccc;
+            background: #D1D5DB;
+            box-shadow: none;
             cursor: not-allowed;
+            transform: none;
         }
 
-        /* Loading Indicator */
+        /* Loading */
         .loading {
             text-align: center;
-            padding: 24px;
-            color: #666;
+            padding: 20px;
+            color: #6B7280;
             display: none;
         }
 
@@ -177,20 +290,34 @@
             display: block;
         }
 
-        /* Bottom Sheet untuk Detail */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #E5E7EB;
+            border-top-color: #00AA5B;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Bottom Sheet */
         .bottom-sheet {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
             background: white;
-            border-radius: 24px 24px 0 0;
+            border-radius: 28px 28px 0 0;
             padding: 20px;
-            z-index: 2;
+            z-index: 3;
             transform: translateY(100%);
-            transition: transform 0.3s ease;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
-            max-height: 60vh;
+            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.12);
+            max-height: 70vh;
             overflow-y: auto;
         }
 
@@ -201,16 +328,53 @@
         .drag-handle {
             width: 40px;
             height: 4px;
-            background: #ddd;
+            background: #E5E7EB;
             border-radius: 2px;
-            margin: 0 auto 16px;
+            margin: 0 auto 20px;
         }
 
-        @media (max-width: 768px) {
-            .panel {
-                top: 16px;
-                left: 12px;
-                right: 12px;
+        .success-icon {
+            font-size: 56px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .bottom-sheet h3 {
+            text-align: center;
+            margin-bottom: 12px;
+            font-size: 22px;
+        }
+
+        /* Floating Action */
+        .fab {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2;
+            background: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .main-panel {
+                top: 100px;
+                padding: 16px;
+            }
+            
+            .service-btn .emoji {
+                font-size: 24px;
+            }
+            
+            .price {
+                font-size: 24px;
             }
         }
     </style>
@@ -218,59 +382,92 @@
 <body>
     <div id="map"></div>
     
-    <div class="panel">
+    <div class="header">
+        <h1>Gojek Clone</h1>
+        <p>Perjalanan hemat & nyaman</p>
+    </div>
+    
+    <div class="main-panel">
         <div class="location-group">
             <div class="location-label">
                 <span class="icon">📍</span>
-                <span>Lokasi Penjemputan</span>
+                <span>Dari</span>
             </div>
-            <input type="text" id="pickup-input" class="location-input" placeholder="Masukkan lokasi anda..." autocomplete="off">
+            <div class="input-wrapper">
+                <span class="input-icon">📍</span>
+                <input type="text" id="pickup-input" class="location-input" placeholder="Lokasi anda" autocomplete="off">
+            </div>
         </div>
         
         <div class="location-group">
             <div class="location-label">
                 <span class="icon">🏁</span>
-                <span>Lokasi Tujuan</span>
+                <span>Tujuan</span>
             </div>
-            <input type="text" id="destination-input" class="location-input" placeholder="Mau kemana hari ini?" autocomplete="off">
+            <div class="input-wrapper">
+                <span class="input-icon">🎯</span>
+                <input type="text" id="destination-input" class="location-input" placeholder="Mau kemana?" autocomplete="off">
+            </div>
         </div>
         
         <div class="services">
             <div class="service-btn active" data-service="goride">
                 <span class="emoji">🛵</span>
                 <span class="name">GoRide</span>
+                <span class="price-badge">motor</span>
             </div>
             <div class="service-btn" data-service="gocar">
                 <span class="emoji">🚗</span>
                 <span class="name">GoCar</span>
-            </div>
-            <div class="service-btn" data-service="gofood">
-                <span class="emoji">🍔</span>
-                <span class="name">GoFood</span>
+                <span class="price-badge">mobil</span>
             </div>
         </div>
         
         <div id="ride-info" class="ride-info">
-            <div id="price" class="price">-</div>
-            <div id="distance-time" class="distance-time">-</div>
+            <div class="price-section">
+                <span class="price-label">Estimasi Harga</span>
+                <div>
+                    <span id="price" class="price">Rp 0</span>
+                </div>
+            </div>
+            <div class="detail-section">
+                <div class="detail-item">
+                    <div id="distance" class="detail-value">-</div>
+                    <div class="detail-label">Jarak</div>
+                </div>
+                <div class="detail-item">
+                    <div id="duration" class="detail-value">-</div>
+                    <div class="detail-label">Waktu</div>
+                </div>
+            </div>
+            <div id="fare-breakdown" class="fare-breakdown"></div>
         </div>
         
         <button id="order-btn" class="order-btn" disabled>Pesan Sekarang</button>
-        <div id="loading" class="loading">⏳ Menghitung tarif...</div>
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <div>Menghitung tarif...</div>
+        </div>
+    </div>
+    
+    <div class="fab" id="my-location-btn">
+        📍
     </div>
     
     <div id="bottom-sheet" class="bottom-sheet">
         <div class="drag-handle"></div>
-        <div id="bottom-sheet-content">
-            <h3>✨ Pemesanan Berhasil!</h3>
-            <p>Driver sedang menuju lokasi anda.</p>
-            <p style="font-size: 12px; color: #666; margin-top: 12px;">Demo UI - Terima kasih telah mencoba 🚀</p>
-        </div>
+        <div class="success-icon">✅</div>
+        <h3>Pesanan Berhasil!</h3>
+        <p style="text-align: center; color: #6B7280; margin-top: 8px;">
+            Driver sedang menuju lokasi anda<br>
+            Estimasi tiba dalam 5-10 menit
+        </p>
+        <button class="order-btn" id="close-sheet" style="margin-top: 20px;">Tutup</button>
     </div>
 
     <script>
         // Konfigurasi - GANTI DENGAN API KEY ANDA
-        const API_KEY = 'AIzaSyAddVJN10IxegV8dNkN1w4oxFBF88TAMNs'; // Ganti dengan API Key Anda
+        const API_KEY = 'AIzaSyAddVJN10IxegV8dNkN1w4oxFBF88TAMNs';
         
         let map;
         let pickupAutocomplete;
@@ -278,12 +475,56 @@
         let pickupLocation = null;
         let destLocation = null;
         let currentService = 'goride';
+        let pickupMarker = null;
+        let destMarker = null;
+        let currentRoute = null;
         
-        // Inisialisasi Map
+        // ========== TARIF PROGRESIF ==========
+        // Tarif berdasarkan jarak (km)
+        // 0-5km: Rp 10.000
+        // Setiap tambahan 1km: +Rp 2.000
+        function calculateProgressivePrice(distanceKm, service) {
+            let baseFare = 10000; // Tarif dasar 10rb untuk 5km pertama
+            
+            if (distanceKm <= 5) {
+                return baseFare;
+            } else {
+                // Kelebihan km setelah 5km
+                let extraKm = distanceKm - 5;
+                let extraCost = extraKm * 2000; // Rp 2.000 per km
+                let total = baseFare + extraCost;
+                
+                // Pembulatan ke ribuan terdekat
+                return Math.ceil(total / 1000) * 1000;
+            }
+        }
+        
+        // Format rupiah
+        function formatRupiah(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+        
+        // Get breakdown untuk ditampilkan
+        function getBreakdown(distanceKm, price) {
+            if (distanceKm <= 5) {
+                return `🏷️ Tarif flat 5km pertama: ${formatRupiah(10000)}`;
+            } else {
+                let extraKm = distanceKm - 5;
+                let extraCost = extraKm * 2000;
+                return `📊 5km pertama: ${formatRupiah(10000)} + ${extraKm}km berikutnya (${formatRupiah(2000)}/km) = ${formatRupiah(price)}`;
+            }
+        }
+        
+        // ========== INIT MAP ==========
         function initMap() {
             map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: -6.2088, lng: 106.8456 }, // Jakarta
-                zoom: 12,
+                center: { lat: -6.2088, lng: 106.8456 },
+                zoom: 13,
                 zoomControl: true,
                 mapTypeControl: false,
                 fullscreenControl: false,
@@ -296,21 +537,25 @@
                 ]
             });
             
-            // Inisialisasi Autocomplete
+            // Autocomplete dengan Session Token
             const pickupInput = document.getElementById('pickup-input');
             const destInput = document.getElementById('destination-input');
             
+            let pickupSessionToken = new google.maps.places.AutocompleteSessionToken();
+            let destSessionToken = new google.maps.places.AutocompleteSessionToken();
+            
             pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, {
                 types: ['geocode', 'establishment'],
-                componentRestrictions: { country: 'id' }
+                componentRestrictions: { country: 'id' },
+                sessionToken: pickupSessionToken
             });
             
             destAutocomplete = new google.maps.places.Autocomplete(destInput, {
                 types: ['geocode', 'establishment'],
-                componentRestrictions: { country: 'id' }
+                componentRestrictions: { country: 'id' },
+                sessionToken: destSessionToken
             });
             
-            // Event listeners untuk autocomplete
             pickupAutocomplete.addListener('place_changed', () => {
                 const place = pickupAutocomplete.getPlace();
                 if (place.geometry) {
@@ -318,9 +563,11 @@
                         lat: place.geometry.location.lat(),
                         lng: place.geometry.location.lng()
                     };
-                    updateMapMarker('pickup', pickupLocation);
+                    updateMarker('pickup', pickupLocation);
                     calculateRide();
                 }
+                pickupSessionToken = new google.maps.places.AutocompleteSessionToken();
+                pickupAutocomplete.setOptions({ sessionToken: pickupSessionToken });
             });
             
             destAutocomplete.addListener('place_changed', () => {
@@ -330,59 +577,68 @@
                         lat: place.geometry.location.lat(),
                         lng: place.geometry.location.lng()
                     };
-                    updateMapMarker('destination', destLocation);
+                    updateMarker('destination', destLocation);
                     calculateRide();
                 }
+                destSessionToken = new google.maps.places.AutocompleteSessionToken();
+                destAutocomplete.setOptions({ sessionToken: destSessionToken });
             });
             
-            // Fitur drag-drop marker
-            setupDragDrop();
+            // My Location
+            document.getElementById('my-location-btn').addEventListener('click', () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition((position) => {
+                        pickupLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        reverseGeocode(pickupLocation, 'pickup');
+                        updateMarker('pickup', pickupLocation);
+                        map.setCenter(pickupLocation);
+                        map.setZoom(15);
+                        calculateRide();
+                    }, () => {
+                        alert('Gagal mendapatkan lokasi');
+                    });
+                }
+            });
         }
         
-        let pickupMarker = null;
-        let destMarker = null;
-        
-        function updateMapMarker(type, location) {
-            const markerOptions = {
-                map: map,
-                position: location,
-                draggable: true
-            };
-            
+        function updateMarker(type, location) {
             if (type === 'pickup') {
                 if (pickupMarker) pickupMarker.setMap(null);
-                markerOptions.icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
-                pickupMarker = new google.maps.Marker(markerOptions);
-                pickupMarker.addListener('dragend', (event) => {
-                    pickupLocation = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+                pickupMarker = new google.maps.Marker({
+                    map: map,
+                    position: location,
+                    draggable: true,
+                    icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+                });
+                pickupMarker.addListener('dragend', (e) => {
+                    pickupLocation = { lat: e.latLng.lat(), lng: e.latLng.lng() };
                     reverseGeocode(pickupLocation, 'pickup');
                     calculateRide();
                 });
-            } else if (type === 'destination') {
+            } else {
                 if (destMarker) destMarker.setMap(null);
-                markerOptions.icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
-                destMarker = new google.maps.Marker(markerOptions);
-                destMarker.addListener('dragend', (event) => {
-                    destLocation = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+                destMarker = new google.maps.Marker({
+                    map: map,
+                    position: location,
+                    draggable: true,
+                    icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+                });
+                destMarker.addListener('dragend', (e) => {
+                    destLocation = { lat: e.latLng.lat(), lng: e.latLng.lng() };
                     reverseGeocode(destLocation, 'destination');
                     calculateRide();
                 });
             }
             
-            // Center map ke marker terbaru
             if (pickupLocation && destLocation) {
-                fitBounds();
-            } else if (location) {
-                map.setCenter(location);
-                map.setZoom(14);
+                const bounds = new google.maps.LatLngBounds();
+                bounds.extend(pickupLocation);
+                bounds.extend(destLocation);
+                map.fitBounds(bounds);
             }
-        }
-        
-        function fitBounds() {
-            const bounds = new google.maps.LatLngBounds();
-            bounds.extend(pickupLocation);
-            bounds.extend(destLocation);
-            map.fitBounds(bounds);
         }
         
         function reverseGeocode(location, inputType) {
@@ -397,12 +653,8 @@
             });
         }
         
-        function setupDragDrop() {
-            // Untuk demo, kita sudah setup drag di marker
-        }
-        
-        // Hitung jarak dan tarif menggunakan Distance Matrix API
-        async function calculateRide() {
+        // ========== HITUNG RIDE ==========
+        function calculateRide() {
             if (!pickupLocation || !destLocation) return;
             
             const rideInfo = document.getElementById('ride-info');
@@ -413,7 +665,6 @@
             rideInfo.classList.remove('show');
             orderBtn.disabled = true;
             
-            const service = google.maps.DistanceMatrixService;
             const distanceMatrix = new google.maps.DistanceMatrixService();
             
             distanceMatrix.getDistanceMatrix({
@@ -427,72 +678,32 @@
                 if (status === 'OK') {
                     const element = response.rows[0].elements[0];
                     if (element.status === 'OK') {
-                        const distance = element.distance.value / 1000; // km
+                        const distanceKm = element.distance.value / 1000;
                         const duration = element.duration.text;
-                        const distanceKm = element.distance.text;
+                        const distanceText = element.distance.text;
                         
-                        // Hitung tarif berdasarkan jarak dan service
-                        let price = calculatePrice(distance, currentService);
+                        // Hitung tarif dengan sistem progresif
+                        let price = calculateProgressivePrice(distanceKm, currentService);
                         
-                        document.getElementById('price').innerHTML = `💰 ${formatRupiah(price)}`;
-                        document.getElementById('distance-time').innerHTML = `📏 ${distanceKm} • ⏱️ ${duration}`;
+                        document.getElementById('price').innerHTML = formatRupiah(price);
+                        document.getElementById('distance').innerHTML = distanceText;
+                        document.getElementById('duration').innerHTML = duration;
+                        document.getElementById('fare-breakdown').innerHTML = getBreakdown(distanceKm, price);
+                        
                         rideInfo.classList.add('show');
                         orderBtn.disabled = false;
-                        
-                        // Gambar rute
                         drawRoute();
                     } else {
-                        rideInfo.classList.remove('show');
-                        alert('Tidak dapat menghitung rute. Pastikan lokasi valid.');
+                        alert('Tidak dapat menghitung rute');
                     }
                 } else {
-                    alert('Error menghitung jarak. Periksa koneksi dan API key.');
+                    alert('Error menghitung jarak');
                 }
             });
         }
         
-        function calculatePrice(distanceKm, service) {
-            // Tarif simulasi (Rp)
-            const basePrices = {
-                goride: 5000,
-                gocar: 15000,
-                gofood: 10000
-            };
-            
-            const perKmPrices = {
-                goride: 2500,
-                gocar: 3500,
-                gofood: 2000
-            };
-            
-            const base = basePrices[service] || 5000;
-            const perKm = perKmPrices[service] || 2500;
-            let total = base + (distanceKm * perKm);
-            
-            // Minimum fare
-            const minFare = {
-                goride: 10000,
-                gocar: 25000,
-                gofood: 15000
-            };
-            
-            return Math.max(total, minFare[service]);
-        }
-        
-        function formatRupiah(amount) {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
-            }).format(amount);
-        }
-        
-        let currentRoute = null;
-        
         function drawRoute() {
-            if (currentRoute) {
-                currentRoute.setMap(null);
-            }
+            if (currentRoute) currentRoute.setMap(null);
             
             const directionsService = new google.maps.DirectionsService();
             const directionsRenderer = new google.maps.DirectionsRenderer({
@@ -513,55 +724,41 @@
             });
         }
         
-        // Event listeners untuk service selection
+        // Service selection
         document.querySelectorAll('.service-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.service-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 currentService = btn.dataset.service;
-                if (pickupLocation && destLocation) {
-                    calculateRide();
-                }
+                if (pickupLocation && destLocation) calculateRide();
             });
         });
         
         // Order button
         document.getElementById('order-btn').addEventListener('click', () => {
-            const bottomSheet = document.getElementById('bottom-sheet');
-            bottomSheet.classList.add('show');
-            
-            // Auto close setelah 3 detik
-            setTimeout(() => {
-                bottomSheet.classList.remove('show');
-            }, 3000);
+            document.getElementById('bottom-sheet').classList.add('show');
         });
         
-        // Close bottom sheet dengan drag
-        let startY = 0;
-        const bottomSheet = document.getElementById('bottom-sheet');
-        
-        bottomSheet.addEventListener('touchstart', (e) => {
-            startY = e.touches[0].clientY;
+        document.getElementById('close-sheet').addEventListener('click', () => {
+            document.getElementById('bottom-sheet').classList.remove('show');
         });
         
-        bottomSheet.addEventListener('touchmove', (e) => {
-            const delta = e.touches[0].clientY - startY;
-            if (delta > 50) {
-                bottomSheet.classList.remove('show');
-            }
-        });
-        
-        // Map click untuk menutup bottom sheet
+        // Close sheet on map click
         document.getElementById('map').addEventListener('click', () => {
-            bottomSheet.classList.remove('show');
+            document.getElementById('bottom-sheet').classList.remove('show');
         });
         
-        // Export initMap ke global
+        // Drag to close
+        let startY = 0;
+        const sheet = document.getElementById('bottom-sheet');
+        sheet.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
+        sheet.addEventListener('touchmove', (e) => {
+            if (e.touches[0].clientY - startY > 50) sheet.classList.remove('show');
+        });
+        
         window.initMap = initMap;
     </script>
     
-    <!-- Google Maps API Loader -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAddVJN10IxegV8dNkN1w4oxFBF88TAMNs&libraries=places&callback=initMap" 
-            async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAddVJN10IxegV8dNkN1w4oxFBF88TAMNs&libraries=places&callback=initMap" async defer></script>
 </body>
 </html>
