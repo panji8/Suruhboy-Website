@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>GoRide Clone - Transportasi Online</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f8f9fa;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Map Container */
+        #map {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* Overlay Panel */
+        .panel {
+            position: absolute;
+            top: 20px;
+            left: 16px;
+            right: 16px;
+            z-index: 2;
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95);
+        }
+
+        /* Location Inputs */
+        .location-group {
+            margin-bottom: 12px;
+        }
+
+        .location-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .location-label .icon {
+            font-size: 16px;
+        }
+
+        .location-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .location-input:focus {
+            outline: none;
+            border-color: #00AA5B;
+            box-shadow: 0 0 0 3px rgba(0,170,91,0.1);
+        }
+
+        /* Service Options */
+        .services {
+            display: flex;
+            gap: 16px;
+            margin: 16px 0;
+            padding: 8px 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+
+        .service-btn {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            background: #f5f5f5;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .service-btn.active {
+            background: #00AA5B10;
+            border-color: #00AA5B;
+        }
+
+        .service-btn .emoji {
+            font-size: 24px;
+            display: block;
+        }
+
+        .service-btn .name {
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* Ride Info */
+        .ride-info {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 12px 0;
+            display: none;
+        }
+
+        .ride-info.show {
+            display: block;
+        }
+
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #00AA5B;
+            margin-bottom: 6px;
+        }
+
+        .distance-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Order Button */
+        .order-btn {
+            width: 100%;
+            background: #00AA5B;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        .order-btn:active {
+            transform: scale(0.98);
+            background: #008844;
+        }
+
+        .order-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Loading Indicator */
+        .loading {
+            text-align: center;
+            padding: 24px;
+            color: #666;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        /* Bottom Sheet untuk Detail */
+        .bottom-sheet {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 24px 24px 0 0;
+            padding: 20px;
+            z-index: 2;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .bottom-sheet.show {
+            transform: translateY(0);
+        }
+
+        .drag-handle {
+            width: 40px;
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            margin: 0 auto 16px;
+        }
+
+        @media (max-width: 768px) {
+            .panel {
+                top: 16px;
+                left: 12px;
+                right: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div class="panel">
+        <div class="location-group">
+            <div class="location-label">
+                <span class="icon">📍</span>
+                <span>Lokasi Penjemputan</span>
+            </div>
+            <input type="text" id="pickup-input" class="location-input" placeholder="Masukkan lokasi anda..." autocomplete="off">
+        </div>
+        
+        <div class="location-group">
+            <div class="location-label">
+                <span class="icon">🏁</span>
+                <span>Lokasi Tujuan</span>
+            </div>
+            <input type="text" id="destination-input" class="location-input" placeholder="Mau kemana hari ini?" autocomplete="off">
+        </div>
+        
+        <div class="services">
+            <div class="service-btn active" data-service="goride">
+                <span class="emoji">🛵</span>
+                <span class="name">GoRide</span>
+            </div>
+            <div class="service-btn" data-service="gocar">
+                <span class="emoji">🚗</span>
+                <span class="name">GoCar</span>
+            </div>
+            <div class="service-btn" data-service="gofood">
+                <span class="emoji">🍔</span>
+                <span class="name">GoFood</span>
+            </div>
+        </div>
+        
+        <div id="ride-info" class="ride-info">
+            <div id="price" class="price">-</div>
+            <div id="distance-time" class="distance-time">-</div>
+        </div>
+        
+        <button id="order-btn" class="order-btn" disabled>Pesan Sekarang</button>
+        <div id="loading" class="loading">⏳ Menghitung tarif...</div>
+    </div>
+    
+    <div id="bottom-sheet" class="bottom-sheet">
+        <div class="drag-handle"></div>
+        <div id="bottom-sheet-content">
+            <h3>✨ Pemesanan Berhasil!</h3>
+            <p>Driver sedang menuju lokasi anda.</p>
+            <p style="font-size: 12px; color: #666; margin-top: 12px;">Demo UI - Terima kasih telah mencoba 🚀</p>
+        </div>
+    </div>
+
+    <script>
+        // Konfigurasi - GANTI DENGAN API KEY ANDA
+        const API_KEY = 'AIzaSyAddVJN10IxegV8dNkN1w4oxFBF88TAMNs'; // Ganti dengan API Key Anda
+        
+        let map;
+        let pickupAutocomplete;
+        let destAutocomplete;
+        let pickupLocation = null;
+        let destLocation = null;
+        let currentService = 'goride';
+        
+        // Inisialisasi Map
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: -6.2088, lng: 106.8456 }, // Jakarta
+                zoom: 12,
+                zoomControl: true,
+                mapTypeControl: false,
+                fullscreenControl: false,
+                styles: [
+                    {
+                        featureType: 'poi',
+                        elementType: 'labels',
+                        stylers: [{ visibility: 'off' }]
+                    }
+                ]
+            });
+            
+            // Inisialisasi Autocomplete
+            const pickupInput = document.getElementById('pickup-input');
+            const destInput = document.getElementById('destination-input');
+            
+            pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, {
+                types: ['geocode', 'establishment'],
+                componentRestrictions: { country: 'id' }
+            });
+            
+            destAutocomplete = new google.maps.places.Autocomplete(destInput, {
+                types: ['geocode', 'establishment'],
+                componentRestrictions: { country: 'id' }
+            });
+            
+            // Event listeners untuk autocomplete
+            pickupAutocomplete.addListener('place_changed', () => {
+                const place = pickupAutocomplete.getPlace();
+                if (place.geometry) {
+                    pickupLocation = {
+                        lat: place.geometry.location.lat(),
+                        lng: place.geometry.location.lng()
+                    };
+                    updateMapMarker('pickup', pickupLocation);
+                    calculateRide();
+                }
+            });
+            
+            destAutocomplete.addListener('place_changed', () => {
+                const place = destAutocomplete.getPlace();
+                if (place.geometry) {
+                    destLocation = {
+                        lat: place.geometry.location.lat(),
+                        lng: place.geometry.location.lng()
+                    };
+                    updateMapMarker('destination', destLocation);
+                    calculateRide();
+                }
+            });
+            
+            // Fitur drag-drop marker
+            setupDragDrop();
+        }
+        
+        let pickupMarker = null;
+        let destMarker = null;
+        
+        function updateMapMarker(type, location) {
+            const markerOptions = {
+                map: map,
+                position: location,
+                draggable: true
+            };
+            
+            if (type === 'pickup') {
+                if (pickupMarker) pickupMarker.setMap(null);
+                markerOptions.icon = 'http://maps.google.com/mapfiles/ms/icons/green-dot.png';
+                pickupMarker = new google.maps.Marker(markerOptions);
+                pickupMarker.addListener('dragend', (event) => {
+                    pickupLocation = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+                    reverseGeocode(pickupLocation, 'pickup');
+                    calculateRide();
+                });
+            } else if (type === 'destination') {
+                if (destMarker) destMarker.setMap(null);
+                markerOptions.icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+                destMarker = new google.maps.Marker(markerOptions);
+                destMarker.addListener('dragend', (event) => {
+                    destLocation = { lat: event.latLng.lat(), lng: event.latLng.lng() };
+                    reverseGeocode(destLocation, 'destination');
+                    calculateRide();
+                });
+            }
+            
+            // Center map ke marker terbaru
+            if (pickupLocation && destLocation) {
+                fitBounds();
+            } else if (location) {
+                map.setCenter(location);
+                map.setZoom(14);
+            }
+        }
+        
+        function fitBounds() {
+            const bounds = new google.maps.LatLngBounds();
+            bounds.extend(pickupLocation);
+            bounds.extend(destLocation);
+            map.fitBounds(bounds);
+        }
+        
+        function reverseGeocode(location, inputType) {
+            const geocoder = new google.maps.Geocoder();
+            geocoder.geocode({ location: location }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    const input = inputType === 'pickup' ? 
+                        document.getElementById('pickup-input') : 
+                        document.getElementById('destination-input');
+                    input.value = results[0].formatted_address;
+                }
+            });
+        }
+        
+        function setupDragDrop() {
+            // Untuk demo, kita sudah setup drag di marker
+        }
+        
+        // Hitung jarak dan tarif menggunakan Distance Matrix API
+        async function calculateRide() {
+            if (!pickupLocation || !destLocation) return;
+            
+            const rideInfo = document.getElementById('ride-info');
+            const loading = document.getElementById('loading');
+            const orderBtn = document.getElementById('order-btn');
+            
+            loading.classList.add('show');
+            rideInfo.classList.remove('show');
+            orderBtn.disabled = true;
+            
+            const service = google.maps.DistanceMatrixService;
+            const distanceMatrix = new google.maps.DistanceMatrixService();
+            
+            distanceMatrix.getDistanceMatrix({
+                origins: [pickupLocation],
+                destinations: [destLocation],
+                travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC,
+            }, (response, status) => {
+                loading.classList.remove('show');
+                
+                if (status === 'OK') {
+                    const element = response.rows[0].elements[0];
+                    if (element.status === 'OK') {
+                        const distance = element.distance.value / 1000; // km
+                        const duration = element.duration.text;
+                        const distanceKm = element.distance.text;
+                        
+                        // Hitung tarif berdasarkan jarak dan service
+                        let price = calculatePrice(distance, currentService);
+                        
+                        document.getElementById('price').innerHTML = `💰 ${formatRupiah(price)}`;
+                        document.getElementById('distance-time').innerHTML = `📏 ${distanceKm} • ⏱️ ${duration}`;
+                        rideInfo.classList.add('show');
+                        orderBtn.disabled = false;
+                        
+                        // Gambar rute
+                        drawRoute();
+                    } else {
+                        rideInfo.classList.remove('show');
+                        alert('Tidak dapat menghitung rute. Pastikan lokasi valid.');
+                    }
+                } else {
+                    alert('Error menghitung jarak. Periksa koneksi dan API key.');
+                }
+            });
+        }
+        
+        function calculatePrice(distanceKm, service) {
+            // Tarif simulasi (Rp)
+            const basePrices = {
+                goride: 5000,
+                gocar: 15000,
+                gofood: 10000
+            };
+            
+            const perKmPrices = {
+                goride: 2500,
+                gocar: 3500,
+                gofood: 2000
+            };
+            
+            const base = basePrices[service] || 5000;
+            const perKm = perKmPrices[service] || 2500;
+            let total = base + (distanceKm * perKm);
+            
+            // Minimum fare
+            const minFare = {
+                goride: 10000,
+                gocar: 25000,
+                gofood: 15000
+            };
+            
+            return Math.max(total, minFare[service]);
+        }
+        
+        function formatRupiah(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+        
+        let currentRoute = null;
+        
+        function drawRoute() {
+            if (currentRoute) {
+                currentRoute.setMap(null);
+            }
+            
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+                preserveViewport: true,
+                suppressMarkers: true
+            });
+            
+            directionsService.route({
+                origin: pickupLocation,
+                destination: destLocation,
+                travelMode: google.maps.TravelMode.DRIVING
+            }, (result, status) => {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(result);
+                    currentRoute = directionsRenderer;
+                }
+            });
+        }
+        
+        // Event listeners untuk service selection
+        document.querySelectorAll('.service-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.service-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentService = btn.dataset.service;
+                if (pickupLocation && destLocation) {
+                    calculateRide();
+                }
+            });
+        });
+        
+        // Order button
+        document.getElementById('order-btn').addEventListener('click', () => {
+            const bottomSheet = document.getElementById('bottom-sheet');
+            bottomSheet.classList.add('show');
+            
+            // Auto close setelah 3 detik
+            setTimeout(() => {
+                bottomSheet.classList.remove('show');
+            }, 3000);
+        });
+        
+        // Close bottom sheet dengan drag
+        let startY = 0;
+        const bottomSheet = document.getElementById('bottom-sheet');
+        
+        bottomSheet.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].clientY;
+        });
+        
+        bottomSheet.addEventListener('touchmove', (e) => {
+            const delta = e.touches[0].clientY - startY;
+            if (delta > 50) {
+                bottomSheet.classList.remove('show');
+            }
+        });
+        
+        // Map click untuk menutup bottom sheet
+        document.getElementById('map').addEventListener('click', () => {
+            bottomSheet.classList.remove('show');
+        });
+        
+        // Export initMap ke global
+        window.initMap = initMap;
+    </script>
+    
+    <!-- Google Maps API Loader -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAddVJN10IxegV8dNkN1w4oxFBF88TAMNs&libraries=places&callback=initMap" 
+            async defer></script>
+</body>
+</html>
