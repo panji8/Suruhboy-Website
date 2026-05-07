@@ -5,913 +5,527 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>AntarMakan — Cek Agent & Pilih Lokasi (Distance Matrix)</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #f5f7fa;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Map Container */
-        #map {
-            height: 100%;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        /* Header with gradient */
-        .header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 3;
-            background: linear-gradient(135deg, #FF5A1F 0%, #FF2B4C 100%);
-            padding: 20px 20px 60px 20px;
-            border-radius: 0 0 24px 24px;
-            color: white;
-        }
-
-        .header h1 {
-            font-size: 24px;
-            font-weight: 800;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .header p {
-            font-size: 13px;
-            opacity: 0.9;
-        }
-
-        .step-badge {
-            background: rgba(255,255,255,0.2);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        /* Main Panel */
-        .main-panel {
-            position: absolute;
-            top: 100px;
-            left: 16px;
-            right: 16px;
-            z-index: 2;
-            background: white;
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            background: rgba(255,255,255,0.98);
-        }
-
-        /* Step 1 Panel (Agent Check) */
-        .step-panel {
-            transition: all 0.3s ease;
-        }
-
-        .step-panel.hidden {
-            display: none;
-        }
-
-        /* Location Inputs */
-        .location-group {
-            margin-bottom: 16px;
-            position: relative;
-        }
-
-        .location-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: #6B7280;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .location-input {
-            width: 100%;
-            padding: 14px 16px 14px 44px;
-            border: 1.5px solid #E5E7EB;
-            border-radius: 16px;
-            font-size: 15px;
-            transition: all 0.2s;
-            background: white;
-            font-weight: 500;
-            font-family: inherit;
-        }
-
-        .location-input:focus {
-            outline: none;
-            border-color: #FF5A1F;
-            box-shadow: 0 0 0 3px rgba(255,90,31,0.1);
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 14px;
-            font-size: 18px;
-        }
-
-        /* Agent Card */
-        .agent-card {
-            background: #F9FAFB;
-            border-radius: 16px;
-            padding: 16px;
-            margin: 16px 0;
-        }
-
-        .agent-status {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-badge.check {
-            background: #E5E7EB;
-            color: #6B7280;
-        }
-
-        .status-badge.available {
-            background: #DCFCE7;
-            color: #059669;
-        }
-
-        .status-badge.unavailable {
-            background: #FEE2E2;
-            color: #DC2626;
-        }
-
-        /* Info Card */
-        .ride-info {
-            background: linear-gradient(135deg, #FFF2E9 0%, #FFE9DF 100%);
-            border-radius: 20px;
-            padding: 16px;
-            margin: 16px 0;
-            display: none;
-            animation: slideUp 0.3s ease;
-        }
-
-        .ride-info.show {
-            display: block;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .price-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 12px;
-            padding-bottom: 12px;
-            border-bottom: 1px dashed rgba(255,90,31,0.2);
-        }
-
-        .price-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #9A3412;
-        }
-
-        .price {
-            font-size: 28px;
-            font-weight: 800;
-            color: #FF5A1F;
-        }
-
-        .detail-section {
-            display: flex;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 12px;
-        }
-
-        .detail-item {
-            flex: 1;
-            text-align: center;
-            padding: 8px;
-            background: white;
-            border-radius: 12px;
-        }
-
-        .detail-value {
-            font-size: 16px;
-            font-weight: 700;
-            color: #1F2937;
-        }
-
-        .detail-label {
-            font-size: 11px;
-            color: #6B7280;
-            margin-top: 4px;
-        }
-
-        .fare-breakdown {
-            font-size: 11px;
-            color: #6B7280;
-            text-align: center;
-            margin-top: 8px;
-            padding: 8px;
-            background: white;
-            border-radius: 12px;
-        }
-
-        /* Buttons */
-        .btn-primary {
-            width: 100%;
-            background: linear-gradient(135deg, #FF5A1F 0%, #FF2B4C 100%);
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 20px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 8px;
-            box-shadow: 0 4px 12px rgba(255,90,31,0.3);
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary:disabled {
-            background: #D1D5DB;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            width: 100%;
-            background: white;
-            color: #FF5A1F;
-            border: 1.5px solid #FF5A1F;
-            padding: 14px;
-            border-radius: 20px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .flex-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 20px;
-            color: #6B7280;
-            display: none;
-        }
-
-        .loading.show {
-            display: block;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #E5E7EB;
-            border-top-color: #FF5A1F;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 12px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Floating Action */
-        .fab {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            z-index: 2;
-            background: white;
-            width: 48px;
-            height: 48px;
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            cursor: pointer;
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        /* Bottom Sheet */
-        .bottom-sheet {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-radius: 28px 28px 0 0;
-            padding: 20px;
-            z-index: 4;
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-            box-shadow: 0 -8px 32px rgba(0,0,0,0.12);
-            max-height: 70vh;
-            overflow-y: auto;
-        }
-
-        .bottom-sheet.show {
-            transform: translateY(0);
-        }
-
-        .drag-handle {
-            width: 40px;
-            height: 4px;
-            background: #E5E7EB;
-            border-radius: 2px;
-            margin: 0 auto 20px;
-        }
-
-        /* Order Form in Bottom Sheet */
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1.5px solid #E5E7EB;
-            border-radius: 14px;
-            font-size: 14px;
-            font-family: inherit;
-        }
-
-        .form-group input:focus, .form-group textarea:focus {
-            outline: none;
-            border-color: #FF5A1F;
-        }
-
-        @media (max-width: 480px) {
-            .main-panel {
-                top: 90px;
-                padding: 16px;
-            }
-            .price {
-                font-size: 24px;
-            }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f1f5f9; display: flex; justify-content: center; min-height: 100vh; }
+        .app-wrapper { max-width: 600px; width: 100%; background: #ffffff; min-height: 100vh; box-shadow: 0 0 40px rgba(0,0,0,0.08); position: relative; }
+        .step { display: none; animation: fadeSlide 0.35s ease; }
+        .step.active-step { display: block; }
+        @keyframes fadeSlide { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        .header { padding: 24px 20px 12px; background: white; border-bottom: 1px solid #edf2f7; }
+        .logo-area { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .logo { font-size: 1.8rem; font-weight: 800; background: linear-gradient(135deg, #FF5A1F, #FF2B4C); -webkit-background-clip: text; background-clip: text; color: transparent; display: flex; align-items: center; gap: 8px; }
+        .badge-area { background: #FFEEE6; padding: 6px 14px; border-radius: 60px; font-size: 12px; font-weight: 700; color: #FF5A1F; }
+        .step-indicator { display: flex; gap: 12px; margin-top: 16px; }
+        .step-dot { flex: 1; height: 6px; background: #e2e8f0; border-radius: 6px; transition: 0.2s; }
+        .step-dot.active-dot { background: #FF5A1F; }
+        .card-modern { background: white; border-radius: 32px; padding: 24px; margin: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.03); border: 1px solid #f0f2f5; }
+        .price-card { background: #FFF8F2; border-radius: 28px; padding: 18px; margin: 18px 0; display: flex; justify-content: space-between; align-items: center; }
+        .btn-primary { background: #FF5A1F; color: white; border: none; padding: 14px; border-radius: 60px; font-weight: 700; width: 100%; cursor: pointer; transition: 0.2s; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-outline { background: white; border: 1.5px solid #FF5A1F; color: #FF5A1F; }
+        .flex-buttons { display: flex; gap: 12px; margin-top: 16px; }
+        .input-field { width: 100%; padding: 14px 18px; border-radius: 28px; border: 1.5px solid #eef2f6; font-size: 15px; font-family: 'Inter', sans-serif; }
+        .location-input-group { padding: 0 20px; margin: 12px 0 12px; }
+        .location-card-search { background: #ffffff; border-radius: 28px; margin-bottom: 18px; border: 1px solid #edf2f9; }
+        .label-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px 0; }
+        .my-loc-icon { background: #f1f5f9; border-radius: 40px; padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .my-loc-icon:hover { background: #FFE5D9; }
+        .search-wrapper { padding: 12px 16px 16px; }
+        .search-box { display: flex; align-items: center; background: #f8fafc; border-radius: 48px; border: 1px solid #e2edf2; padding: 12px 18px; gap: 10px; }
+        .search-box input { flex: 1; border: none; background: transparent; font-size: 15px; outline: none; }
+        .map-container { width: calc(100% - 40px); height: 320px; border-radius: 28px; overflow: hidden; margin: 16px 20px; border: 2px solid white; box-shadow: 0 6px 14px rgba(0,0,0,0.1); background: #e9ecef; }
+        .ongkir-kartu { background: linear-gradient(105deg, #FFF2E9, #FFE9DF); margin: 12px 20px 20px; border-radius: 28px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .distance-detail { font-size: 22px; font-weight: 800; color: #0f172a; }
+        .ongkir-price { font-size: 26px; font-weight: 800; color: #FF5A1F; }
+        .action-footer { display: flex; gap: 14px; padding: 8px 20px 30px; }
+        .order-form-panel { background: white; border-radius: 36px 36px 0 0; padding: 24px; margin-top: 8px; box-shadow: 0 -6px 20px rgba(0,0,0,0.05); }
+        .hidden { display: none; }
+        footer { font-size: 11px; text-align: center; padding: 20px; color: #8ba0bc; }
+        .route-info { font-size: 12px; color: #FF5A1F; margin-top: 6px; }
+        button { cursor: pointer; }
+        .loading { text-align: center; padding: 20px; display: none; }
+        .loading.show { display: block; }
+        .spinner { width: 32px; height: 32px; border: 3px solid #e2e8f0; border-top-color: #FF5A1F; border-radius: 50%; animation: spin 0.6s linear infinite; margin: 0 auto 10px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .bottom-sheet { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-radius: 28px 28px 0 0; padding: 24px; z-index: 100; transform: translateY(100%); transition: transform 0.3s; max-height: 70vh; overflow-y: auto; }
+        .bottom-sheet.show { transform: translateY(0); }
+        .drag-handle { width: 40px; height: 4px; background: #e2e8f0; border-radius: 2px; margin: 0 auto 16px; }
     </style>
 </head>
 <body>
-    <div id="map"></div>
-    
-    <div class="header">
-        <h1>
-            <span>🍜 AntarMakan</span>
-            <span class="step-badge" id="stepBadge">Step 1: Cek Agent</span>
-        </h1>
-        <p>Layanan antar makanan dari resto & PKL • Ongkir progresif</p>
-    </div>
-    
-    <div class="main-panel">
-        <!-- STEP 1: CEK AGENT -->
-        <div id="step1Panel" class="step-panel">
-            <div class="location-group">
-                <div class="location-label">
-                    <span>📏</span>
-                    <span>Jarak dari agent ke tujuan (km)</span>
-                </div>
-                <div class="input-wrapper">
-                    <span class="input-icon">📏</span>
-                    <input type="number" id="distanceInput" class="location-input" step="0.1" value="3.8" placeholder="Masukkan jarak">
-                </div>
+<div class="app-wrapper">
+    <!-- STEP 1 : CEK AGENT -->
+    <div id="step1" class="step active-step">
+        <div class="header">
+            <div class="logo-area">
+                <div class="logo"><i class="fas fa-motorcycle"></i> AntarMakan</div>
+                <div class="badge-area"><i class="fas fa-map-pin"></i> Boyolali</div>
             </div>
-            
-            <div class="agent-card">
-                <div class="agent-status">
-                    <span>🛵 Ketersediaan Agent</span>
-                    <span id="agentStatusText" class="status-badge check">Belum dicek</span>
-                </div>
-                <button id="checkAgentBtn" class="btn-primary">🔍 Cek Ketersediaan Agent</button>
-                <div id="agentActionButtons" class="flex-buttons"></div>
-            </div>
-            
-            <div class="ride-info" style="background:#F3F4F6;">
-                <div class="price-section">
-                    <span class="price-label">💰 Ongkos Kirim</span>
-                    <span id="previewOngkir" class="price">Rp 10.000</span>
-                </div>
-                <div class="fare-breakdown" id="previewBreakdown">
-                    🏷️ 5km pertama: Rp10.000
-                </div>
-            </div>
+            <div class="step-indicator"><div class="step-dot active-dot"></div><div class="step-dot"></div></div>
+            <p style="margin-top: 12px; font-weight:600;">Step 1: Cek Ongkir & Ketersediaan Agent</p>
         </div>
-        
-        <!-- STEP 2: PETA & PESANAN -->
-        <div id="step2Panel" class="step-panel hidden">
-            <div class="location-group">
-                <div class="location-label">
-                    <span>📍</span>
-                    <span>Titik Jemput (ambil makanan)</span>
-                </div>
-                <div class="input-wrapper">
-                    <span class="input-icon">📍</span>
-                    <input type="text" id="pickupInput" class="location-input" placeholder="Cari restoran, PKL, atau alamat" autocomplete="off">
-                </div>
+        <div class="card-modern">
+            <div class="input-group" style="margin-bottom: 12px;">
+                <label style="font-weight:600;">Jarak dari agent ke tujuan (km)</label>
+                <input type="number" id="distanceInputStep1" class="input-field" step="0.1" value="3.8">
             </div>
-            
-            <div class="location-group">
-                <div class="location-label">
-                    <span>🏁</span>
-                    <span>Titik Antar (tujuan)</span>
-                </div>
-                <div class="input-wrapper">
-                    <span class="input-icon">🎯</span>
-                    <input type="text" id="destInput" class="location-input" placeholder="Cari rumah, kantor, atau alamat" autocomplete="off">
-                </div>
+            <div class="price-card">
+                <span><i class="fas fa-truck"></i> Ongkos Kirim</span>
+                <strong id="ongkirStep1" style="font-size: 26px; color:#FF5A1F;">Rp 10.000</strong>
             </div>
-            
-            <div id="rideInfo" class="ride-info">
-                <div class="price-section">
-                    <span class="price-label">Estimasi Ongkir</span>
-                    <span id="price" class="price">Rp 0</span>
+            <div class="agent-status" style="background:#F8FAFE; border-radius:24px; padding:20px; text-align:center; margin:16px 0;">
+                <div id="agentMessage">🔍 Klik tombol cek agent</div>
+            </div>
+            <button id="checkAgentStep1Btn" class="btn-primary"><i class="fas fa-radar"></i> Cek Ketersediaan Agent</button>
+            <div id="actionStep1Buttons" class="flex-buttons"></div>
+        </div>
+        <div class="card-modern" style="background:#FEFAF5;">
+            <div style="display: flex; gap:8px;"><i class="fas fa-store"></i> <strong>Layanan Antar Resto & PKL</strong></div>
+            <p style="font-size:13px; margin-top:8px;">Agent siap membelikan makanan favorit Anda di seluruh wilayah Boyolali.</p>
+        </div>
+        <footer>Pastikan cek agent terlebih dahulu sebelum lanjut pemesanan</footer>
+    </div>
+
+    <!-- STEP 2 : PETA + PENCARIAN LOKASI (Distance Matrix API) -->
+    <div id="step2" class="step">
+        <div class="header">
+            <div class="logo-area">
+                <div class="logo"><i class="fas fa-map-marked-alt"></i> Pilih Lokasi</div>
+                <button id="backToStep1Btn" style="background:#F0F2F8; border:none; padding:6px 16px; border-radius:40px; font-weight:600;"><i class="fas fa-arrow-left"></i> Kembali</button>
+            </div>
+            <div class="step-indicator"><div class="step-dot"></div><div class="step-dot active-dot"></div></div>
+            <p style="margin-top: 8px; font-weight:500;">Step 2: Tentukan titik jemput & antar</p>
+        </div>
+
+        <div class="location-input-group">
+            <div class="location-card-search">
+                <div class="label-row">
+                    <span><i class="fas fa-warehouse"></i> <strong>Titik Jemput</strong></span>
+                    <div class="my-loc-icon" id="pickupCurrentBtn"><i class="fas fa-location-dot"></i> Lokasi Terkini</div>
                 </div>
-                <div class="detail-section">
-                    <div class="detail-item">
-                        <div id="distance" class="detail-value">-</div>
-                        <div class="detail-label">Jarak Rute</div>
-                    </div>
-                    <div class="detail-item">
-                        <div id="duration" class="detail-value">-</div>
-                        <div class="detail-label">Estimasi Waktu</div>
+                <div class="search-wrapper">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="pickupSearchInput" placeholder="Cari restoran, alamat atau PKL..." autocomplete="off">
                     </div>
                 </div>
-                <div id="fareBreakdown" class="fare-breakdown"></div>
             </div>
-            
-            <div id="loading" class="loading">
-                <div class="spinner"></div>
-                <div>Menghitung jarak & ongkir...</div>
+            <div class="location-card-search">
+                <div class="label-row">
+                    <span><i class="fas fa-home"></i> <strong>Titik Antar</strong></span>
+                    <div class="my-loc-icon" id="deliveryCurrentBtn"><i class="fas fa-location-dot"></i> Lokasi Terkini</div>
+                </div>
+                <div class="search-wrapper">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="deliverySearchInput" placeholder="Cari rumah, kantor, atau alamat...">
+                    </div>
+                </div>
             </div>
-            
-            <button id="orderBtn" class="btn-primary" disabled>🛵 Pesan Sekarang</button>
-            <button id="backToStep1Btn" class="btn-secondary" style="margin-top: 8px;">← Kembali ke Cek Agent</button>
         </div>
-    </div>
-    
-    <div class="fab" id="myLocationBtn">
-        📍
-    </div>
-    
-    <!-- Bottom Sheet Form Pemesanan -->
-    <div id="bottomSheet" class="bottom-sheet">
-        <div class="drag-handle"></div>
-        <div style="text-align: center; margin-bottom: 20px;">
-            <span style="font-size: 48px;">🍽️</span>
-            <h3 style="margin-top: 8px;">Lengkapi Pesanan</h3>
+
+        <div id="mapContainer" class="map-container"></div>
+
+        <div class="ongkir-kartu">
+            <div>
+                <div style="font-size:13px; font-weight:600;"><i class="fas fa-road"></i> Jarak (rute jalan)</div>
+                <div id="distanceText" class="distance-detail">-- km</div>
+                <div class="route-info" id="routeInfo"><i class="fas fa-car"></i> Pilih titik jemput & antar</div>
+            </div>
+            <div style="text-align:right;">
+                <div style="font-size:13px;">Total Ongkir</div>
+                <div id="ongkirText" class="ongkir-price">Rp --</div>
+                <div style="font-size:10px;">*5km pertama Rp10rb, +1km +2rb</div>
+            </div>
         </div>
-        
-        <div class="form-group">
-            <label>Nama Lengkap</label>
-            <input type="text" id="customerName" placeholder="Contoh: Ahmad Fauzi">
+
+        <div id="loadingDistance" class="loading">
+            <div class="spinner"></div>
+            <div>Menghitung jarak & ongkir...</div>
         </div>
-        <div class="form-group">
-            <label>Nomor HP (Aktif)</label>
-            <input type="tel" id="customerPhone" placeholder="0812 3456 7890">
-        </div>
-        <div class="form-group">
-            <label>Detail Pesanan (makanan & jumlah)</label>
-            <textarea id="orderDetail" rows="3" placeholder="Contoh: Nasi Goreng 2 porsi, Es Teh 3x"></textarea>
-        </div>
-        <div id="dateTimeGroup" class="form-group" style="display: none;">
-            <label>Tanggal & Jam Pengiriman</label>
-            <input type="datetime-local" id="deliveryDateTime">
-        </div>
-        
-        <div class="flex-buttons" style="margin-top: 8px;">
-            <button id="submitOrderBtn" class="btn-primary">✅ Konfirmasi Pesanan</button>
-            <button id="closeSheetBtn" class="btn-secondary">Batal</button>
+
+        <div class="action-footer">
+            <button id="orderNowStep2Btn" class="btn-primary"><i class="fas fa-bolt"></i> Order Sekarang</button>
+            <button id="orderLaterStep2Btn" class="btn-primary" style="background:white; color:#FF5A1F; border:1.5px solid #FF5A1F;"><i class="fas fa-calendar-alt"></i> Order Nanti</button>
         </div>
     </div>
 
-    <script>
-        // ========== KONFIGURASI ==========
-        // GANTI DENGAN API KEY ANDA
-        const API_KEY = 'AIzaSyAddVJN10IxegV8dNkN1w4oxFBF88TAMNs';
-        
-        let map;
-        let pickupAutocomplete, destAutocomplete;
-        let pickupLocation = null;
-        let destLocation = null;
-        let pickupMarker = null;
-        let destMarker = null;
-        let currentRoute = null;
-        
-        // State
-        let isAgentAvailable = false;
-        let currentDistanceManual = 3.8;
-        let isOrderLaterMode = false;
-        
-        // ========== FUNGSI ONGKIR PROGRESIF ==========
-        // Tarif: 5km pertama Rp10.000, setiap tambahan 1km +Rp2.000
-        function calculateOngkir(distanceKm) {
-            if (distanceKm <= 5) return 10000;
-            let extraKm = Math.ceil(distanceKm - 5);
-            let total = 10000 + (extraKm * 2000);
-            return Math.ceil(total / 1000) * 1000;
+    <!-- FORM PEMESANAN -->
+    <div id="bottomSheet" class="bottom-sheet">
+        <div class="drag-handle"></div>
+        <div style="font-weight:800; font-size:20px; margin-bottom:18px; text-align:center;">📋 Data Pemesanan</div>
+        <div class="input-group" style="margin-bottom:16px;">
+            <label style="font-weight:600;">Nama Lengkap</label>
+            <input type="text" id="customerName" class="input-field" placeholder="Nama penerima">
+        </div>
+        <div class="input-group" style="margin-bottom:16px;">
+            <label style="font-weight:600;">Nomor HP (Aktif)</label>
+            <input type="tel" id="customerPhone" class="input-field" placeholder="0812xxxx">
+        </div>
+        <div class="input-group" style="margin-bottom:16px;">
+            <label style="font-weight:600;">Detail Pesanan</label>
+            <textarea id="orderDetail" rows="3" class="input-field" placeholder="Contoh: Nasi Goreng 2 porsi, Es Teh 3x"></textarea>
+        </div>
+        <div id="dateTimeGroup" style="display:none; margin-bottom:16px;">
+            <label style="font-weight:600;">Tanggal & Jam Pengiriman</label>
+            <input type="datetime-local" id="deliveryDateTime" class="input-field">
+        </div>
+        <div class="flex-buttons">
+            <button id="submitOrderBtn" class="btn-primary">✅ Konfirmasi Pesanan</button>
+            <button id="closeSheetBtn" class="btn-outline btn-primary" style="background:white;">Batal</button>
+        </div>
+    </div>
+    <footer>AntarMakan • Boyolali | Jarak dihitung real-time via Distance Matrix API</footer>
+</div>
+
+<script>
+    // ==================== VARIABLES ====================
+    let isAgentAvailable = false;
+    let map = null;
+    let pickupMarker = null, deliveryMarker = null;
+    let pickupLocation = null, deliveryLocation = null;
+    let autocompletePickup = null, autocompleteDelivery = null;
+    let isOrderLaterMode = false;
+    let mapInitialized = false;
+    let directionsRenderer = null;
+
+    const BOYOLALI_CENTER = { lat: -7.5331, lng: 110.5969 };
+
+    // ========== ONGKIR PROGRESIF ==========
+    function calculateOngkir(jarakKm) {
+        if (jarakKm <= 5) return 10000;
+        let extra = Math.ceil(jarakKm - 5);
+        return 10000 + (extra * 2000);
+    }
+
+    function formatRupiah(amount) {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+    }
+
+    function updateStep1Ongkir() {
+        let jarak = parseFloat(document.getElementById('distanceInputStep1').value);
+        if (isNaN(jarak) || jarak < 0) jarak = 0;
+        let ongkir = calculateOngkir(jarak);
+        document.getElementById('ongkirStep1').innerHTML = formatRupiah(ongkir);
+    }
+
+    document.getElementById('distanceInputStep1')?.addEventListener('input', () => {
+        updateStep1Ongkir();
+        isAgentAvailable = false;
+        document.getElementById('agentMessage').innerHTML = "⚠️ Jarak berubah, cek ulang agent.";
+        renderStep1Buttons();
+    });
+
+    function checkAgentAvailability() {
+        let jarak = parseFloat(document.getElementById('distanceInputStep1').value);
+        let prob = 0.72;
+        if (jarak > 12) prob = 0.48;
+        if (jarak > 22) prob = 0.28;
+        const avail = Math.random() < prob;
+        isAgentAvailable = avail;
+        const msgDiv = document.getElementById('agentMessage');
+        if (avail) {
+            msgDiv.innerHTML = '<i class="fas fa-check-circle"></i> ✅ Agent TERSEDIA! Silakan lanjut pemesanan.';
+            msgDiv.style.color = "#15803d";
+        } else {
+            msgDiv.innerHTML = '<i class="fas fa-times-circle"></i> ❌ Agent tidak tersedia. Silakan hubungi admin.';
+            msgDiv.style.color = "#b91c1c";
         }
-        
-        function formatRupiah(amount) {
-            return new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(amount);
+        renderStep1Buttons();
+        return isAgentAvailable;
+    }
+
+    function renderStep1Buttons() {
+        const actionDiv = document.getElementById('actionStep1Buttons');
+        if (!actionDiv) return;
+        actionDiv.innerHTML = '';
+        if (isAgentAvailable) {
+            const lanjutBtn = document.createElement('button');
+            lanjutBtn.className = 'btn-primary';
+            lanjutBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Lanjut ke Pilih Lokasi';
+            lanjutBtn.onclick = () => {
+                localStorage.setItem('antarMakan_agent', 'true');
+                document.getElementById('step1').classList.remove('active-step');
+                document.getElementById('step2').classList.add('active-step');
+                if (!mapInitialized) {
+                    initMap();
+                } else if (map) {
+                    setTimeout(() => google.maps.event.trigger(map, 'resize'), 200);
+                }
+            };
+            actionDiv.appendChild(lanjutBtn);
+        } else {
+            const chatBtn = document.createElement('button');
+            chatBtn.className = 'btn-primary btn-outline';
+            chatBtn.style.border = '1.5px solid #25D366';
+            chatBtn.style.color = '#25D366';
+            chatBtn.innerHTML = '<i class="fab fa-whatsapp"></i> Chat Admin';
+            chatBtn.onclick = () => window.open('https://wa.me/6281234567890?text=Halo%20Admin%20AntarMakan%20Boyolali', '_blank');
+            actionDiv.appendChild(chatBtn);
         }
+    }
+
+    document.getElementById('checkAgentStep1Btn')?.addEventListener('click', () => {
+        updateStep1Ongkir();
+        checkAgentAvailability();
+    });
+
+    // ========== DISTANCE MATRIX API (FUNGSI DARI REFERENSI) ==========
+    function calculateDistanceAndPrice() {
+        if (!pickupLocation || !deliveryLocation) return;
         
-        function getBreakdown(distanceKm, price) {
-            if (distanceKm <= 5) {
-                return `🏷️ Tarif flat 5km pertama: ${formatRupiah(10000)}`;
+        const loadingDiv = document.getElementById('loadingDistance');
+        const ongkirKartu = document.querySelector('.ongkir-kartu');
+        
+        loadingDiv.classList.add('show');
+        
+        const distanceMatrix = new google.maps.DistanceMatrixService();
+        
+        distanceMatrix.getDistanceMatrix({
+            origins: [pickupLocation],
+            destinations: [deliveryLocation],
+            travelMode: google.maps.TravelMode.DRIVING,
+            unitSystem: google.maps.UnitSystem.METRIC,
+        }, (response, status) => {
+            loadingDiv.classList.remove('show');
+            
+            if (status === 'OK') {
+                const element = response.rows[0].elements[0];
+                if (element.status === 'OK') {
+                    const distanceKm = element.distance.value / 1000;
+                    const duration = element.duration.text;
+                    const distanceText = element.distance.text;
+                    const price = calculateOngkir(distanceKm);
+                    
+                    document.getElementById('distanceText').innerHTML = distanceText;
+                    document.getElementById('ongkirText').innerHTML = formatRupiah(price);
+                    document.getElementById('routeInfo').innerHTML = `<i class="fas fa-car"></i> Estimasi perjalanan: ${duration} (rute jalan)`;
+                    
+                    drawRoute();
+                } else {
+                    document.getElementById('routeInfo').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Tidak dapat menghitung rute';
+                }
             } else {
-                let extraKm = distanceKm - 5;
-                let extraCost = extraKm * 2000;
-                return `📊 5km pertama: ${formatRupiah(10000)} + ${extraKm.toFixed(1)}km berikutnya (Rp2.000/km) = ${formatRupiah(price)}`;
+                document.getElementById('routeInfo').innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error Distance Matrix';
             }
-        }
-        
-        // Update preview ongkir di step 1
-        function updatePreviewOngkir() {
-            let jarak = parseFloat(document.getElementById('distanceInput').value);
-            if (isNaN(jarak) || jarak < 0) jarak = 0;
-            currentDistanceManual = jarak;
-            let ongkir = calculateOngkir(jarak);
-            document.getElementById('previewOngkir').innerHTML = formatRupiah(ongkir);
-            document.getElementById('previewBreakdown').innerHTML = getBreakdown(jarak, ongkir);
-        }
-        
-        document.getElementById('distanceInput').addEventListener('input', () => {
-            updatePreviewOngkir();
-            isAgentAvailable = false;
-            document.getElementById('agentStatusText').innerHTML = 'Belum dicek';
-            document.getElementById('agentStatusText').className = 'status-badge check';
-            renderAgentButtons();
         });
-        
-        // Simulasi cek agent
-        function checkAgentAvailability() {
-            let jarak = parseFloat(document.getElementById('distanceInput').value);
-            let prob = 0.7;
-            if (jarak > 12) prob = 0.45;
-            if (jarak > 22) prob = 0.25;
-            const available = Math.random() < prob;
-            isAgentAvailable = available;
-            
-            const statusSpan = document.getElementById('agentStatusText');
-            if (available) {
-                statusSpan.innerHTML = '✅ Tersedia';
-                statusSpan.className = 'status-badge available';
-            } else {
-                statusSpan.innerHTML = '❌ Tidak Tersedia';
-                statusSpan.className = 'status-badge unavailable';
-            }
-            renderAgentButtons();
-            return isAgentAvailable;
-        }
-        
-        function renderAgentButtons() {
-            const actionDiv = document.getElementById('agentActionButtons');
-            actionDiv.innerHTML = '';
-            if (isAgentAvailable) {
-                const lanjutBtn = document.createElement('button');
-                lanjutBtn.className = 'btn-primary';
-                lanjutBtn.innerHTML = '→ Lanjut ke Pilih Lokasi';
-                lanjutBtn.onclick = () => {
-                    localStorage.setItem('antarMakan_agent', 'true');
-                    document.getElementById('step1Panel').classList.add('hidden');
-                    document.getElementById('step2Panel').classList.remove('hidden');
-                    document.getElementById('stepBadge').innerHTML = 'Step 2: Pilih Lokasi';
-                    if (map) setTimeout(() => google.maps.event.trigger(map, 'resize'), 200);
-                };
-                actionDiv.appendChild(lanjutBtn);
-            } else {
-                const chatBtn = document.createElement('button');
-                chatBtn.className = 'btn-secondary';
-                chatBtn.innerHTML = '💬 Chat Admin (WhatsApp)';
-                chatBtn.onclick = () => window.open('https://wa.me/6281234567890?text=Halo%20Admin%20AntarMakan', '_blank');
-                actionDiv.appendChild(chatBtn);
-            }
-        }
-        
-        document.getElementById('checkAgentBtn').addEventListener('click', () => {
-            updatePreviewOngkir();
-            checkAgentAvailability();
-        });
-        
-        // ========== INIT MAP ==========
-        function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: -7.5331, lng: 110.5969 }, // Boyolali center
-                zoom: 13,
-                zoomControl: true,
-                mapTypeControl: false,
-                fullscreenControl: false,
-            });
-            
-            const pickupInput = document.getElementById('pickupInput');
-            const destInput = document.getElementById('destInput');
-            
-            pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, {
-                types: ['geocode', 'establishment'],
-                componentRestrictions: { country: 'id' }
-            });
-            
-            destAutocomplete = new google.maps.places.Autocomplete(destInput, {
-                types: ['geocode', 'establishment'],
-                componentRestrictions: { country: 'id' }
-            });
-            
-            pickupAutocomplete.addListener('place_changed', () => {
-                const place = pickupAutocomplete.getPlace();
-                if (place.geometry) {
-                    pickupLocation = {
-                        lat: place.geometry.location.lat(),
-                        lng: place.geometry.location.lng()
-                    };
-                    updateMarker('pickup', pickupLocation);
-                    calculateDistanceMatrix();
-                }
-            });
-            
-            destAutocomplete.addListener('place_changed', () => {
-                const place = destAutocomplete.getPlace();
-                if (place.geometry) {
-                    destLocation = {
-                        lat: place.geometry.location.lat(),
-                        lng: place.geometry.location.lng()
-                    };
-                    updateMarker('destination', destLocation);
-                    calculateDistanceMatrix();
-                }
-            });
-            
-            // My Location
-            document.getElementById('myLocationBtn').addEventListener('click', () => {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition((position) => {
-                        pickupLocation = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude
-                        };
-                        reverseGeocode(pickupLocation, 'pickup');
-                        updateMarker('pickup', pickupLocation);
-                        map.setCenter(pickupLocation);
-                        map.setZoom(15);
-                        calculateDistanceMatrix();
-                    }, () => {
-                        alert('Gagal mendapatkan lokasi. Aktifkan GPS.');
-                    });
-                }
-            });
-        }
-        
-        function updateMarker(type, location) {
-            if (type === 'pickup') {
-                if (pickupMarker) pickupMarker.setMap(null);
-                pickupMarker = new google.maps.Marker({
-                    map: map,
-                    position: location,
-                    draggable: true,
-                    icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
-                });
-                pickupMarker.addListener('dragend', (e) => {
-                    pickupLocation = { lat: e.latLng.lat(), lng: e.latLng.lng() };
-                    reverseGeocode(pickupLocation, 'pickup');
-                    calculateDistanceMatrix();
-                });
-            } else {
-                if (destMarker) destMarker.setMap(null);
-                destMarker = new google.maps.Marker({
-                    map: map,
-                    position: location,
-                    draggable: true,
-                    icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-                });
-                destMarker.addListener('dragend', (e) => {
-                    destLocation = { lat: e.latLng.lat(), lng: e.latLng.lng() };
-                    reverseGeocode(destLocation, 'destination');
-                    calculateDistanceMatrix();
-                });
-            }
-            
-            if (pickupLocation && destLocation) {
-                const bounds = new google.maps.LatLngBounds();
-                bounds.extend(pickupLocation);
-                bounds.extend(destLocation);
-                map.fitBounds(bounds);
-            }
-        }
-        
-        function reverseGeocode(location, inputType) {
-            const geocoder = new google.maps.Geocoder();
-            geocoder.geocode({ location: location }, (results, status) => {
-                if (status === 'OK' && results[0]) {
-                    const input = inputType === 'pickup' ? 
-                        document.getElementById('pickupInput') : 
-                        document.getElementById('destInput');
-                    input.value = results[0].formatted_address;
-                }
-            });
-        }
-        
-        // ========== DISTANCE MATRIX API ==========
-        function calculateDistanceMatrix() {
-            if (!pickupLocation || !destLocation) return;
-            
-            const rideInfo = document.getElementById('rideInfo');
-            const loading = document.getElementById('loading');
-            const orderBtn = document.getElementById('orderBtn');
-            
-            loading.classList.add('show');
-            rideInfo.classList.remove('show');
-            orderBtn.disabled = true;
-            
-            const distanceMatrix = new google.maps.DistanceMatrixService();
-            
-            distanceMatrix.getDistanceMatrix({
-                origins: [pickupLocation],
-                destinations: [destLocation],
-                travelMode: google.maps.TravelMode.DRIVING,
-                unitSystem: google.maps.UnitSystem.METRIC,
-            }, (response, status) => {
-                loading.classList.remove('show');
-                
-                if (status === 'OK') {
-                    const element = response.rows[0].elements[0];
-                    if (element.status === 'OK') {
-                        const distanceKm = element.distance.value / 1000;
-                        const duration = element.duration.text;
-                        const distanceText = element.distance.text;
-                        
-                        const price = calculateOngkir(distanceKm);
-                        
-                        document.getElementById('price').innerHTML = formatRupiah(price);
-                        document.getElementById('distance').innerHTML = distanceText;
-                        document.getElementById('duration').innerHTML = duration;
-                        document.getElementById('fareBreakdown').innerHTML = getBreakdown(distanceKm, price);
-                        
-                        rideInfo.classList.add('show');
-                        orderBtn.disabled = false;
-                        drawRoute();
-                    } else {
-                        rideInfo.classList.remove('show');
-                    }
-                }
-            });
-        }
-        
-        function drawRoute() {
-            if (currentRoute) currentRoute.setMap(null);
-            
-            const directionsService = new google.maps.DirectionsService();
-            const directionsRenderer = new google.maps.DirectionsRenderer({
-                map: map,
-                preserveViewport: true,
-                suppressMarkers: true
-            });
-            
-            directionsService.route({
-                origin: pickupLocation,
-                destination: destLocation,
-                travelMode: google.maps.TravelMode.DRIVING
-            }, (result, status) => {
-                if (status === 'OK') {
-                    directionsRenderer.setDirections(result);
-                    currentRoute = directionsRenderer;
-                }
-            });
-        }
-        
-        // ========== ORDER BUTTON ==========
-        const bottomSheet = document.getElementById('bottomSheet');
-        const dateTimeGroup = document.getElementById('dateTimeGroup');
-        let isLaterOrder = false;
-        
-        document.getElementById('orderBtn').addEventListener('click', () => {
-            const agentStored = localStorage.getItem('antarMakan_agent') === 'true';
-            if (!agentStored && !isAgentAvailable) {
-                alert('❌ Agent tidak tersedia. Silakan cek agent di halaman awal.');
-                return;
-            }
-            if (!pickupLocation || !destLocation) {
-                alert('Tentukan titik jemput dan titik antar terlebih dahulu.');
-                return;
-            }
-            
-            isLaterOrder = false;
-            dateTimeGroup.style.display = 'none';
-            bottomSheet.classList.add('show');
-        });
-        
-        document.getElementById('closeSheetBtn').addEventListener('click', () => {
-            bottomSheet.classList.remove('show');
-        });
-        
-        document.getElementById('submitOrderBtn').addEventListener('click', () => {
-            const nama = document.getElementById('customerName').value.trim();
-            const hp = document.getElementById('customerPhone').value.trim();
-            const detail = document.getElementById('orderDetail').value.trim();
-            
-            if (!nama || !hp || !detail) {
-                alert('Lengkapi semua data pemesanan!');
-                return;
-            }
-            
-            let jarakText = document.getElementById('distance').innerHTML;
-            let jarakKm = parseFloat(jarakText) || 0;
-            let ongkir = calculateOngkir(jarakKm);
-            
-            alert(`✅ Pesanan Berhasil!\n\nNama: ${nama}\nNo HP: ${hp}\nPesanan: ${detail}\nJarak: ${jarakText}\nOngkir: ${formatRupiah(ongkir)}\n\nTerima kasih! Agent akan segera memproses.`);
-            
-            bottomSheet.classList.remove('show');
-            document.getElementById('customerName').value = '';
-            document.getElementById('customerPhone').value = '';
-            document.getElementById('orderDetail').value = '';
-        });
-        
-        document.getElementById('backToStep1Btn').addEventListener('click', () => {
-            document.getElementById('step2Panel').classList.add('hidden');
-            document.getElementById('step1Panel').classList.remove('hidden');
-            document.getElementById('stepBadge').innerHTML = 'Step 1: Cek Agent';
-        });
-        
-        // Tutup sheet saat klik map
-        document.getElementById('map').addEventListener('click', () => {
-            bottomSheet.classList.remove('show');
-        });
-        
-        // Drag to close sheet
-        let startY = 0;
-        bottomSheet.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; });
-        bottomSheet.addEventListener('touchmove', (e) => {
-            if (e.touches[0].clientY - startY > 50) bottomSheet.classList.remove('show');
-        });
-        
-        // Initial
-        updatePreviewOngkir();
-        renderAgentButtons();
-        window.initMap = initMap;
-    </script>
+    }
     
-    <!-- Google Maps API - GANTI API KEY ANDA -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAddVJN10IxegV8dNkN1w4oxFBF88TAMNs&libraries=places&callback=initMap" async defer></script>
+    function drawRoute() {
+        if (!pickupLocation || !deliveryLocation) return;
+        
+        if (directionsRenderer) directionsRenderer.setMap(null);
+        
+        const directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer({ 
+            map: map, 
+            suppressMarkers: true,
+            polylineOptions: { strokeColor: '#FF5A1F', strokeWeight: 5 }
+        });
+        
+        directionsService.route({
+            origin: pickupLocation,
+            destination: deliveryLocation,
+            travelMode: google.maps.TravelMode.DRIVING
+        }, (result, status) => {
+            if (status === 'OK') {
+                directionsRenderer.setDirections(result);
+            }
+        });
+    }
+
+    // ========== MARKER & LOKASI ==========
+    function setPickupLocation(latLng, updateInputText = true) {
+        if (pickupMarker) pickupMarker.setMap(null);
+        pickupMarker = new google.maps.Marker({
+            position: latLng,
+            map: map,
+            title: 'Titik Jemput',
+            icon: { url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png', scaledSize: new google.maps.Size(42, 42) },
+            draggable: true
+        });
+        pickupLocation = { lat: latLng.lat(), lng: latLng.lng() };
+        if (updateInputText) {
+            document.getElementById('pickupSearchInput').value = `${latLng.lat().toFixed(5)}, ${latLng.lng().toFixed(5)}`;
+        }
+        pickupMarker.addListener('dragend', (e) => {
+            setPickupLocation(e.latLng, true);
+            calculateDistanceAndPrice();
+        });
+        calculateDistanceAndPrice();
+        
+        if (pickupLocation && deliveryLocation) {
+            const bounds = new google.maps.LatLngBounds();
+            bounds.extend(pickupLocation);
+            bounds.extend(deliveryLocation);
+            map.fitBounds(bounds);
+        }
+    }
+
+    function setDeliveryLocation(latLng, updateInputText = true) {
+        if (deliveryMarker) deliveryMarker.setMap(null);
+        deliveryMarker = new google.maps.Marker({
+            position: latLng,
+            map: map,
+            title: 'Titik Antar',
+            icon: { url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', scaledSize: new google.maps.Size(42, 42) },
+            draggable: true
+        });
+        deliveryLocation = { lat: latLng.lat(), lng: latLng.lng() };
+        if (updateInputText) {
+            document.getElementById('deliverySearchInput').value = `${latLng.lat().toFixed(5)}, ${latLng.lng().toFixed(5)}`;
+        }
+        deliveryMarker.addListener('dragend', (e) => {
+            setDeliveryLocation(e.latLng, true);
+            calculateDistanceAndPrice();
+        });
+        calculateDistanceAndPrice();
+        
+        if (pickupLocation && deliveryLocation) {
+            const bounds = new google.maps.LatLngBounds();
+            bounds.extend(pickupLocation);
+            bounds.extend(deliveryLocation);
+            map.fitBounds(bounds);
+        }
+    }
+
+    function getUserLocation(callback) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                pos => callback(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude)), 
+                () => alert("Aktifkan izin lokasi."),
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        } else {
+            alert("Browser tidak mendukung geolokasi.");
+        }
+    }
+
+    // ========== INIT MAP ==========
+    function initMap() {
+        const mapContainer = document.getElementById('mapContainer');
+        if (!mapContainer) return;
+        
+        mapContainer.innerHTML = '';
+        
+        map = new google.maps.Map(mapContainer, {
+            zoom: 13,
+            center: BOYOLALI_CENTER,
+            mapTypeControl: false,
+            fullscreenControl: true,
+            streetViewControl: false,
+            zoomControl: true,
+        });
+        
+        // Default marker
+        const defaultPick = new google.maps.LatLng(-7.5335, 110.5975);
+        const defaultDeliv = new google.maps.LatLng(-7.5218, 110.6032);
+        setPickupLocation(defaultPick, true);
+        setDeliveryLocation(defaultDeliv, true);
+        
+        // Autocomplete
+        const pickupInput = document.getElementById('pickupSearchInput');
+        const deliveryInput = document.getElementById('deliverySearchInput');
+        
+        autocompletePickup = new google.maps.places.Autocomplete(pickupInput, { componentRestrictions: { country: 'id' }, fields: ['geometry', 'formatted_address'] });
+        autocompleteDelivery = new google.maps.places.Autocomplete(deliveryInput, { componentRestrictions: { country: 'id' }, fields: ['geometry', 'formatted_address'] });
+        
+        autocompletePickup.addListener('place_changed', () => {
+            const place = autocompletePickup.getPlace();
+            if (place.geometry) {
+                setPickupLocation(place.geometry.location, false);
+                pickupInput.value = place.formatted_address || place.geometry.location.toUrlValue(5);
+                map.setCenter(place.geometry.location);
+                map.setZoom(14);
+            }
+        });
+        autocompleteDelivery.addListener('place_changed', () => {
+            const place = autocompleteDelivery.getPlace();
+            if (place.geometry) {
+                setDeliveryLocation(place.geometry.location, false);
+                deliveryInput.value = place.formatted_address || place.geometry.location.toUrlValue(5);
+                map.setCenter(place.geometry.location);
+                map.setZoom(14);
+            }
+        });
+        
+        map.addListener('click', (e) => {
+            const isPick = confirm("Titik ini sebagai TITIK JEMPUT? (OK = Jemput, Batal = Antar)");
+            if (isPick) setPickupLocation(e.latLng, true);
+            else setDeliveryLocation(e.latLng, true);
+        });
+        
+        mapInitialized = true;
+    }
+
+    // ========== EVENT LISTENERS ==========
+    document.getElementById('pickupCurrentBtn')?.addEventListener('click', () => {
+        if (map) getUserLocation(loc => { setPickupLocation(loc, true); map.setCenter(loc); map.setZoom(15); });
+    });
+    document.getElementById('deliveryCurrentBtn')?.addEventListener('click', () => {
+        if (map) getUserLocation(loc => { setDeliveryLocation(loc, true); map.setCenter(loc); map.setZoom(15); });
+    });
+
+    const bottomSheet = document.getElementById('bottomSheet');
+    const dateTimeGroup = document.getElementById('dateTimeGroup');
+    
+    function showOrderForm(isLater) {
+        const agentStored = localStorage.getItem('antarMakan_agent') === 'true';
+        if (!agentStored && !isAgentAvailable) {
+            alert("❌ Agent tidak tersedia. Silakan cek agent pada step pertama.");
+            return false;
+        }
+        if (!pickupLocation || !deliveryLocation) {
+            alert("Tentukan titik jemput dan titik antar di peta.");
+            return false;
+        }
+        isOrderLaterMode = isLater;
+        dateTimeGroup.style.display = isLater ? 'block' : 'none';
+        if (isLater) {
+            const now = new Date(); 
+            now.setHours(now.getHours() + 2);
+            document.getElementById('deliveryDateTime').value = now.toISOString().slice(0,16);
+        }
+        bottomSheet.classList.add('show');
+        return true;
+    }
+
+    document.getElementById('orderNowStep2Btn')?.addEventListener('click', () => showOrderForm(false));
+    document.getElementById('orderLaterStep2Btn')?.addEventListener('click', () => showOrderForm(true));
+    document.getElementById('closeSheetBtn')?.addEventListener('click', () => bottomSheet.classList.remove('show'));
+    
+    document.getElementById('submitOrderBtn')?.addEventListener('click', () => {
+        const nama = document.getElementById('customerName').value.trim();
+        const hp = document.getElementById('customerPhone').value.trim();
+        const detail = document.getElementById('orderDetail').value.trim();
+        
+        if (!nama || !hp || !detail) return alert("Lengkapi data pemesanan.");
+        
+        let jarakText = document.getElementById('distanceText').innerText;
+        let jarakKm = parseFloat(jarakText) || 0;
+        let ongkir = calculateOngkir(jarakKm);
+        
+        alert(`✅ Pesanan Berhasil!\n\nNama: ${nama}\nNo HP: ${hp}\nPesanan: ${detail}\nJarak: ${jarakText}\nOngkir: ${formatRupiah(ongkir)}\n\nTerima kasih! Agent akan memproses.`);
+        
+        bottomSheet.classList.remove('show');
+        document.getElementById('customerName').value = '';
+        document.getElementById('customerPhone').value = '';
+        document.getElementById('orderDetail').value = '';
+    });
+
+    document.getElementById('backToStep1Btn')?.addEventListener('click', () => {
+        document.getElementById('step2').classList.remove('active-step');
+        document.getElementById('step1').classList.add('active-step');
+        localStorage.setItem('antarMakan_agent', isAgentAvailable);
+    });
+
+    // ========== INITIAL ==========
+    updateStep1Ongkir();
+    renderStep1Buttons();
+    
+    window.initMap = initMap;
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAddVJN10IxegV8dNkN1w4oxFBF88TAMNs&libraries=places&callback=initMap" async defer></script>
 </body>
 </html>
