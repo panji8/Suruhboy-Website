@@ -337,6 +337,23 @@
         }
 
         /* ============================================
+           INFO PENGIRIM (Device Info)
+           ============================================ */
+        .device-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+            border: 1px solid #e0e0e0;
+        }
+
+        .device-info strong {
+            color: #15348F;
+        }
+
+        /* ============================================
            RESPONSIVE
            ============================================ */
         @media (max-width: 768px) {
@@ -354,7 +371,7 @@
 
             .form-group input,
             .form-group textarea {
-                font-size: 16px; /* Mencegah zoom di iOS */
+                font-size: 16px;
             }
 
             .submit-btn {
@@ -397,46 +414,18 @@
 
             <!-- Form -->
             <form id="reportForm" enctype="multipart/form-data">
-                <!-- Nama Petugas -->
+                <!-- Nama Pemesan -->
                 <div class="form-group">
-                    <label for="nama">👤 Nama Petugas</label>
-                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama petugas" required>
-                    <div class="error-message" id="namaError">Nama petugas wajib diisi</div>
+                    <label for="nama">👤 Nama Pemesan</label>
+                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama pemesan" required>
+                    <div class="error-message" id="namaError">Nama pemesan wajib diisi</div>
                 </div>
 
-                <!-- Tanggal -->
+                <!-- Jumlah Order -->
                 <div class="form-group">
-                    <label for="tanggal">📅 Tanggal</label>
-                    <input type="date" id="tanggal" name="tanggal" required>
-                    <div class="error-message" id="tanggalError">Tanggal wajib diisi</div>
-                </div>
-
-                <!-- Nomor Order -->
-                <div class="form-group">
-                    <label for="order">🧾 Nomor Order</label>
-                    <input type="text" id="order" name="order" placeholder="Masukkan nomor order" required>
-                    <div class="error-message" id="orderError">Nomor order wajib diisi</div>
-                </div>
-
-                <!-- Nama Customer -->
-                <div class="form-group">
-                    <label for="customer">🙋 Nama Customer</label>
-                    <input type="text" id="customer" name="customer" placeholder="Masukkan nama customer" required>
-                    <div class="error-message" id="customerError">Nama customer wajib diisi</div>
-                </div>
-
-                <!-- Alamat -->
-                <div class="form-group">
-                    <label for="alamat">📍 Alamat</label>
-                    <textarea id="alamat" name="alamat" rows="3" placeholder="Masukkan alamat lengkap" required></textarea>
-                    <div class="error-message" id="alamatError">Alamat wajib diisi</div>
-                </div>
-
-                <!-- Jumlah -->
-                <div class="form-group">
-                    <label for="jumlah">📦 Jumlah</label>
-                    <input type="text" id="jumlah" name="jumlah" placeholder="Masukkan jumlah" required>
-                    <div class="error-message" id="jumlahError">Jumlah wajib diisi</div>
+                    <label for="jumlah">📦 Jumlah Order</label>
+                    <input type="text" id="jumlah" name="jumlah" placeholder="Masukkan jumlah order" required>
+                    <div class="error-message" id="jumlahError">Jumlah order wajib diisi</div>
                 </div>
 
                 <!-- Keterangan -->
@@ -455,6 +444,12 @@
                         <img id="previewImage" src="#" alt="Preview Foto">
                     </div>
                     <div class="error-message" id="fotoError">Foto wajib diupload</div>
+                </div>
+
+                <!-- Device Info (otomatis) -->
+                <div class="device-info" id="deviceInfo">
+                    <strong>🖥️ Informasi Pengirim:</strong><br>
+                    <span id="deviceInfoText">Mengambil data perangkat...</span>
                 </div>
 
                 <!-- Tombol Kirim -->
@@ -495,8 +490,6 @@
         // ============================================
         const form = document.getElementById('reportForm');
         const submitBtn = document.getElementById('submitBtn');
-        const btnText = document.getElementById('btnText');
-        const btnLoading = document.getElementById('btnLoading');
         const modal = document.getElementById('modal');
         const modalIcon = document.getElementById('modalIcon');
         const modalTitle = document.getElementById('modalTitle');
@@ -504,6 +497,127 @@
         const fotoInput = document.getElementById('foto');
         const previewContainer = document.getElementById('previewContainer');
         const previewImage = document.getElementById('previewImage');
+        const deviceInfoText = document.getElementById('deviceInfoText');
+
+        // ============================================
+        // FUNGSI: AMBIL INFORMASI PERANGKAT
+        // ============================================
+        function getDeviceInfo() {
+            const info = [];
+            
+            // 1. User Agent (Browser & OS)
+            const ua = navigator.userAgent;
+            info.push('🌐 Browser: ' + getBrowserName(ua));
+            info.push('💻 OS: ' + getOSName(ua));
+            
+            // 2. Resolusi Layar
+            info.push('📱 Resolusi: ' + window.screen.width + 'x' + window.screen.height);
+            
+            // 3. Bahasa
+            info.push('🌍 Bahasa: ' + navigator.language);
+            
+            // 4. Timezone
+            info.push('🕐 Timezone: ' + Intl.DateTimeFormat().resolvedOptions().timeZone);
+            
+            // 5. IP Address (melalui API eksternal)
+            // Catatan: Ini akan diambil secara async
+            getIPAddress().then(ip => {
+                if (ip) {
+                    info.push('🌐 IP: ' + ip);
+                    deviceInfoText.textContent = info.join(' | ');
+                }
+            }).catch(() => {
+                deviceInfoText.textContent = info.join(' | ');
+            });
+            
+            // Tampilkan info tanpa IP dulu
+            deviceInfoText.textContent = info.join(' | ');
+            
+            return info;
+        }
+
+        // ============================================
+        // FUNGSI: DAPATKAN NAMA BROWSER
+        // ============================================
+        function getBrowserName(ua) {
+            if (ua.indexOf('Chrome') > -1 && ua.indexOf('Edg') === -1) return 'Chrome';
+            if (ua.indexOf('Firefox') > -1) return 'Firefox';
+            if (ua.indexOf('Safari') > -1 && ua.indexOf('Chrome') === -1) return 'Safari';
+            if (ua.indexOf('Edg') > -1) return 'Edge';
+            if (ua.indexOf('Opera') > -1 || ua.indexOf('OPR') > -1) return 'Opera';
+            return 'Unknown';
+        }
+
+        // ============================================
+        // FUNGSI: DAPATKAN NAMA OS
+        // ============================================
+        function getOSName(ua) {
+            if (ua.indexOf('Windows') > -1) return 'Windows';
+            if (ua.indexOf('Mac OS') > -1) return 'macOS';
+            if (ua.indexOf('Android') > -1) return 'Android';
+            if (ua.indexOf('iOS') > -1 || ua.indexOf('iPhone') > -1 || ua.indexOf('iPad') > -1) return 'iOS';
+            if (ua.indexOf('Linux') > -1) return 'Linux';
+            return 'Unknown';
+        }
+
+        // ============================================
+        // FUNGSI: DAPATKAN IP ADDRESS
+        // ============================================
+        async function getIPAddress() {
+            try {
+                // Menggunakan API gratis untuk mendapatkan IP
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                console.log('Gagal mendapatkan IP:', error);
+                return null;
+            }
+        }
+
+        // ============================================
+        // FUNGSI: DAPATKAN LOKASI (jika diizinkan)
+        // ============================================
+        function getLocation() {
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    resolve(null);
+                    return;
+                }
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        resolve({
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        });
+                    },
+                    () => {
+                        resolve(null);
+                    },
+                    { timeout: 5000, enableHighAccuracy: true }
+                );
+            });
+        }
+
+        // ============================================
+        // FUNGSI: FORMAT TIMESTAMP
+        // ============================================
+        function getTimestamp() {
+            const now = new Date();
+            const options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false,
+                timeZoneName: 'short'
+            };
+            return now.toLocaleString('id-ID', options);
+        }
 
         // ============================================
         // FUNGSI: TAMPILKAN PREVIEW FOTO
@@ -548,10 +662,6 @@
             let isValid = true;
             const fields = [
                 { id: 'nama', errorId: 'namaError' },
-                { id: 'tanggal', errorId: 'tanggalError' },
-                { id: 'order', errorId: 'orderError' },
-                { id: 'customer', errorId: 'customerError' },
-                { id: 'alamat', errorId: 'alamatError' },
                 { id: 'jumlah', errorId: 'jumlahError' },
                 { id: 'keterangan', errorId: 'keteranganError' },
                 { id: 'foto', errorId: 'fotoError' }
@@ -638,28 +748,36 @@
         // ============================================
         // FUNGSI: KIRIM KE TELEGRAM
         // ============================================
-        async function sendToTelegram(formData) {
-            // Format caption
+        async function sendToTelegram(formData, deviceInfo, location, timestamp) {
+            // Ambil data dari form
             const nama = formData.get('nama');
-            const tanggal = formData.get('tanggal');
-            const order = formData.get('order');
-            const customer = formData.get('customer');
-            const alamat = formData.get('alamat');
             const jumlah = formData.get('jumlah');
             const keterangan = formData.get('keterangan');
 
-            const caption = 
-                "━━━━━━━━━━━━━━━━━━\n" +
-                "📋 LAPORAN SURUHBOY\n" +
-                "━━━━━━━━━━━━━━━━━━\n" +
-                "👤 Petugas\n" + nama + "\n\n" +
-                "📅 Tanggal\n" + tanggal + "\n\n" +
-                "🧾 Nomor Order\n" + order + "\n\n" +
-                "🙋 Customer\n" + customer + "\n\n" +
-                "📍 Alamat\n" + alamat + "\n\n" +
-                "📦 Jumlah\n" + jumlah + "\n\n" +
-                "📝 Keterangan\n" + keterangan + "\n" +
-                "━━━━━━━━━━━━━━━━━━";
+            // Format caption dengan timestamp dan info pengirim
+            let caption = "━━━━━━━━━━━━━━━━━━\n";
+            caption += "📋 LAPORAN SURUHBOY\n";
+            caption += "━━━━━━━━━━━━━━━━━━\n";
+            caption += "🕐 Waktu Laporan\n";
+            caption += timestamp + "\n\n";
+            caption += "👤 Nama Pemesan\n";
+            caption += nama + "\n\n";
+            caption += "📦 Jumlah Order\n";
+            caption += jumlah + "\n\n";
+            caption += "📝 Keterangan\n";
+            caption += keterangan + "\n\n";
+            caption += "━━━━━━━━━━━━━━━━━━\n";
+            caption += "📱 INFORMASI PENGIRIM\n";
+            caption += "━━━━━━━━━━━━━━━━━━\n";
+            caption += deviceInfo + "\n";
+            
+            // Tambahkan lokasi jika ada
+            if (location) {
+                caption += "📍 Lokasi: " + location.lat + ", " + location.lng + "\n";
+                caption += "📏 Akurasi: " + Math.round(location.accuracy) + " meter\n";
+            }
+            
+            caption += "━━━━━━━━━━━━━━━━━━";
 
             // Siapkan data untuk dikirim ke Telegram
             const foto = formData.get('foto');
@@ -712,12 +830,26 @@
             // Set loading state
             setLoading(true);
 
-            // Siapkan data form
+            // Siapkan data
             const formData = new FormData(this);
+            
+            // Dapatkan timestamp
+            const timestamp = getTimestamp();
+            
+            // Dapatkan device info
+            const deviceInfo = deviceInfoText.textContent;
+            
+            // Dapatkan lokasi (jika diizinkan)
+            let location = null;
+            try {
+                location = await getLocation();
+            } catch (error) {
+                console.log('Gagal mendapatkan lokasi:', error);
+            }
 
             try {
                 // Kirim ke Telegram
-                const result = await sendToTelegram(formData);
+                const result = await sendToTelegram(formData, deviceInfo, location, timestamp);
 
                 // Reset loading state
                 setLoading(false);
@@ -741,12 +873,39 @@
         });
 
         // ============================================
-        // CEK KONFIGURASI SAAT LOAD
+        // INISIALISASI: AMBIL INFO PERANGKAT
         // ============================================
         window.addEventListener('load', function() {
+            // Cek konfigurasi
             if (BOT_TOKEN === 'MASUKKAN_TOKEN_BOT_DI_SINI') {
                 console.warn('⚠️ PERINGATAN: Token Bot belum diisi!');
                 console.warn('Silakan ganti BOT_TOKEN di bagian konfigurasi JavaScript.');
+            }
+            
+            // Ambil info perangkat
+            getDeviceInfo();
+            
+            // Coba dapatkan lokasi (dengan izin user)
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        // Lokasi berhasil didapat, update info
+                        const loc = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        };
+                        // Update device info dengan lokasi
+                        const currentInfo = deviceInfoText.textContent;
+                        deviceInfoText.textContent = currentInfo + ' | 📍 ' + 
+                            loc.lat.toFixed(6) + ', ' + loc.lng.toFixed(6);
+                    },
+                    () => {
+                        // Lokasi ditolak atau gagal
+                        console.log('Lokasi tidak diizinkan atau gagal didapat');
+                    },
+                    { timeout: 5000, enableHighAccuracy: true }
+                );
             }
         });
     </script>
