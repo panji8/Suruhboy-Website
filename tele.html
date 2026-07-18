@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Suruhboy</title>
+    <style>
+        /* ============================================
+           RESET DAN BASE STYLES
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #15348F 0%, #1a4ab8 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        /* ============================================
+           CONTAINER UTAMA
+           ============================================ */
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           CARD
+           ============================================ */
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* ============================================
+           HEADER CARD
+           ============================================ */
+        .card-header {
+            background: #15348F;
+            color: #ffffff;
+            padding: 30px 40px;
+            text-align: center;
+        }
+
+        .card-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .card-header p {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* ============================================
+           FORM
+           ============================================ */
+        form {
+            padding: 40px;
+        }
+
+        /* ============================================
+           FORM GROUP
+           ============================================ */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #15348F;
+            margin-bottom: 8px;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            background: #fafafa;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #15348F;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(21, 52, 143, 0.1);
+        }
+
+        .form-group input.error,
+        .form-group textarea.error {
+            border-color: #e74c3c;
+            background: #fff5f5;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* ============================================
+           ERROR MESSAGE
+           ============================================ */
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 6px;
+            display: none;
+            font-weight: 500;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* ============================================
+           FILE INPUT
+           ============================================ */
+        .form-group input[type="file"] {
+            padding: 10px;
+            background: #f8f9fa;
+            border: 2px dashed #d0d0d0;
+            cursor: pointer;
+        }
+
+        .form-group input[type="file"]:hover {
+            border-color: #15348F;
+            background: #f0f2ff;
+        }
+
+        .file-info {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 4px;
+        }
+
+        /* ============================================
+           PREVIEW GAMBAR
+           ============================================ */
+        #previewContainer {
+            margin-top: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #e0e0e0;
+            padding: 10px;
+            background: #fafafa;
+            text-align: center;
+        }
+
+        #previewImage {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           TOMBOL SUBMIT
+           ============================================ */
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: #15348F;
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #1a4ab8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(21, 52, 143, 0.3);
+        }
+
+        .submit-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled {
+            background: #7f8c8d;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* ============================================
+           LOADING SPINNER
+           ============================================ */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ============================================
+           MODAL / POPUP
+           ============================================ */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 20px;
+            max-width: 450px;
+            width: 90%;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 25px 30px 15px;
+            text-align: center;
+        }
+
+        .modal-header h2 {
+            color: #15348F;
+            font-size: 24px;
+        }
+
+        .modal-header .modal-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .modal-body {
+            padding: 0 30px 20px;
+            text-align: center;
+            color: #555;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .modal-footer {
+            padding: 15px 30px 25px;
+            text-align: center;
+        }
+
+        .modal-btn {
+            padding: 12px 40px;
+            background: #15348F;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn:hover {
+            background: #1a4ab8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(21, 52, 143, 0.3);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .card-header {
+                padding: 20px;
+            }
+
+            .card-header h1 {
+                font-size: 22px;
+            }
+
+            form {
+                padding: 25px;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                font-size: 16px; /* Mencegah zoom di iOS */
+            }
+
+            .submit-btn {
+                font-size: 16px;
+                padding: 14px;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card-header h1 {
+                font-size: 18px;
+            }
+
+            .card-header p {
+                font-size: 12px;
+            }
+
+            form {
+                padding: 20px;
+            }
+
+            .form-group {
+                margin-bottom: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- Header Card -->
+            <div class="card-header">
+                <h1>📋 LAPORAN SURUHBOY</h1>
+                <p>Isi form di bawah ini untuk mengirim laporan</p>
+            </div>
+
+            <!-- Form -->
+            <form id="reportForm" enctype="multipart/form-data">
+                <!-- Nama Petugas -->
+                <div class="form-group">
+                    <label for="nama">👤 Nama Petugas</label>
+                    <input type="text" id="nama" name="nama" placeholder="Masukkan nama petugas" required>
+                    <div class="error-message" id="namaError">Nama petugas wajib diisi</div>
+                </div>
+
+                <!-- Tanggal -->
+                <div class="form-group">
+                    <label for="tanggal">📅 Tanggal</label>
+                    <input type="date" id="tanggal" name="tanggal" required>
+                    <div class="error-message" id="tanggalError">Tanggal wajib diisi</div>
+                </div>
+
+                <!-- Nomor Order -->
+                <div class="form-group">
+                    <label for="order">🧾 Nomor Order</label>
+                    <input type="text" id="order" name="order" placeholder="Masukkan nomor order" required>
+                    <div class="error-message" id="orderError">Nomor order wajib diisi</div>
+                </div>
+
+                <!-- Nama Customer -->
+                <div class="form-group">
+                    <label for="customer">🙋 Nama Customer</label>
+                    <input type="text" id="customer" name="customer" placeholder="Masukkan nama customer" required>
+                    <div class="error-message" id="customerError">Nama customer wajib diisi</div>
+                </div>
+
+                <!-- Alamat -->
+                <div class="form-group">
+                    <label for="alamat">📍 Alamat</label>
+                    <textarea id="alamat" name="alamat" rows="3" placeholder="Masukkan alamat lengkap" required></textarea>
+                    <div class="error-message" id="alamatError">Alamat wajib diisi</div>
+                </div>
+
+                <!-- Jumlah -->
+                <div class="form-group">
+                    <label for="jumlah">📦 Jumlah</label>
+                    <input type="text" id="jumlah" name="jumlah" placeholder="Masukkan jumlah" required>
+                    <div class="error-message" id="jumlahError">Jumlah wajib diisi</div>
+                </div>
+
+                <!-- Keterangan -->
+                <div class="form-group">
+                    <label for="keterangan">📝 Keterangan</label>
+                    <textarea id="keterangan" name="keterangan" rows="3" placeholder="Masukkan keterangan tambahan" required></textarea>
+                    <div class="error-message" id="keteranganError">Keterangan wajib diisi</div>
+                </div>
+
+                <!-- Upload Foto -->
+                <div class="form-group">
+                    <label for="foto">📸 Upload Foto</label>
+                    <input type="file" id="foto" name="foto" accept=".jpg,.jpeg,.png" required>
+                    <div class="file-info">⚠️ Maksimal 5 MB, format JPG, JPEG, atau PNG</div>
+                    <div id="previewContainer" style="display: none;">
+                        <img id="previewImage" src="#" alt="Preview Foto">
+                    </div>
+                    <div class="error-message" id="fotoError">Foto wajib diupload</div>
+                </div>
+
+                <!-- Tombol Kirim -->
+                <button type="submit" id="submitBtn" class="submit-btn">
+                    <span id="btnText">📤 Kirim Laporan</span>
+                    <span id="btnLoading" class="loading-spinner" style="display: none;"></span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Popup -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-icon" id="modalIcon">✅</div>
+                <h2 id="modalTitle">Berhasil!</h2>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Laporan berhasil dikirim ke Telegram.</p>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()" class="modal-btn">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // KONFIGURASI TELEGRAM - GANTI DI SINI!
+        // ============================================
+        const BOT_TOKEN = '8754861106:AAEZ35vPotRlWbo2mwbY1yET7jI-a42YM7U';  // Ganti dengan token bot Anda
+        const CHAT_ID = '1505266415';                     // Ganti dengan chat ID Anda
+        const API_URL = 'https://api.telegram.org/bot' + BOT_TOKEN + '/';
+
+        // ============================================
+        // DOM ELEMENTS
+        // ============================================
+        const form = document.getElementById('reportForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const btnLoading = document.getElementById('btnLoading');
+        const modal = document.getElementById('modal');
+        const modalIcon = document.getElementById('modalIcon');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const fotoInput = document.getElementById('foto');
+        const previewContainer = document.getElementById('previewContainer');
+        const previewImage = document.getElementById('previewImage');
+
+        // ============================================
+        // FUNGSI: TAMPILKAN PREVIEW FOTO
+        // ============================================
+        fotoInput.addEventListener('change', function(e) {
+            const file = this.files[0];
+            
+            // Validasi ukuran file (5 MB)
+            if (file && file.size > 5 * 1024 * 1024) {
+                alert('Ukuran file terlalu besar! Maksimal 5 MB.');
+                this.value = '';
+                previewContainer.style.display = 'none';
+                return;
+            }
+
+            // Validasi tipe file
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (file && !validTypes.includes(file.type)) {
+                alert('Format file tidak didukung! Gunakan JPG, JPEG, atau PNG.');
+                this.value = '';
+                previewContainer.style.display = 'none';
+                return;
+            }
+
+            // Tampilkan preview
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        });
+
+        // ============================================
+        // FUNGSI: VALIDASI FORM
+        // ============================================
+        function validateForm() {
+            let isValid = true;
+            const fields = [
+                { id: 'nama', errorId: 'namaError' },
+                { id: 'tanggal', errorId: 'tanggalError' },
+                { id: 'order', errorId: 'orderError' },
+                { id: 'customer', errorId: 'customerError' },
+                { id: 'alamat', errorId: 'alamatError' },
+                { id: 'jumlah', errorId: 'jumlahError' },
+                { id: 'keterangan', errorId: 'keteranganError' },
+                { id: 'foto', errorId: 'fotoError' }
+            ];
+
+            fields.forEach(field => {
+                const element = document.getElementById(field.id);
+                const errorElement = document.getElementById(field.errorId);
+                
+                if (!element.value || element.value.trim() === '') {
+                    element.classList.add('error');
+                    errorElement.classList.add('show');
+                    isValid = false;
+                } else {
+                    element.classList.remove('error');
+                    errorElement.classList.remove('show');
+                }
+            });
+
+            return isValid;
+        }
+
+        // ============================================
+        // FUNGSI: RESET FORM
+        // ============================================
+        function resetForm() {
+            form.reset();
+            previewContainer.style.display = 'none';
+            previewImage.src = '#';
+            
+            // Hapus class error
+            document.querySelectorAll('.error').forEach(el => {
+                el.classList.remove('error');
+            });
+            document.querySelectorAll('.error-message.show').forEach(el => {
+                el.classList.remove('show');
+            });
+        }
+
+        // ============================================
+        // FUNGSI: TAMPILKAN MODAL
+        // ============================================
+        function showModal(success, message) {
+            if (success) {
+                modalIcon.textContent = '✅';
+                modalTitle.textContent = 'Berhasil!';
+                modalTitle.style.color = '#15348F';
+            } else {
+                modalIcon.textContent = '❌';
+                modalTitle.textContent = 'Gagal!';
+                modalTitle.style.color = '#e74c3c';
+            }
+            modalMessage.textContent = message;
+            modal.style.display = 'flex';
+        }
+
+        // ============================================
+        // FUNGSI: TUTUP MODAL
+        // ============================================
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        // Tutup modal jika klik di luar
+        window.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // ============================================
+        // FUNGSI: SET LOADING STATE
+        // ============================================
+        function setLoading(isLoading) {
+            if (isLoading) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span id="btnText" style="display:none;">📤 Kirim Laporan</span><span id="btnLoading" class="loading-spinner"></span> Mengirim...';
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span id="btnText">📤 Kirim Laporan</span><span id="btnLoading" class="loading-spinner" style="display: none;"></span>';
+            }
+        }
+
+        // ============================================
+        // FUNGSI: KIRIM KE TELEGRAM
+        // ============================================
+        async function sendToTelegram(formData) {
+            // Format caption
+            const nama = formData.get('nama');
+            const tanggal = formData.get('tanggal');
+            const order = formData.get('order');
+            const customer = formData.get('customer');
+            const alamat = formData.get('alamat');
+            const jumlah = formData.get('jumlah');
+            const keterangan = formData.get('keterangan');
+
+            const caption = 
+                "━━━━━━━━━━━━━━━━━━\n" +
+                "📋 LAPORAN SURUHBOY\n" +
+                "━━━━━━━━━━━━━━━━━━\n" +
+                "👤 Petugas\n" + nama + "\n\n" +
+                "📅 Tanggal\n" + tanggal + "\n\n" +
+                "🧾 Nomor Order\n" + order + "\n\n" +
+                "🙋 Customer\n" + customer + "\n\n" +
+                "📍 Alamat\n" + alamat + "\n\n" +
+                "📦 Jumlah\n" + jumlah + "\n\n" +
+                "📝 Keterangan\n" + keterangan + "\n" +
+                "━━━━━━━━━━━━━━━━━━";
+
+            // Siapkan data untuk dikirim ke Telegram
+            const foto = formData.get('foto');
+            
+            // Buat FormData untuk Telegram
+            const telegramData = new FormData();
+            telegramData.append('chat_id', CHAT_ID);
+            telegramData.append('caption', caption);
+            telegramData.append('photo', foto);
+
+            try {
+                const response = await fetch(API_URL + 'sendPhoto', {
+                    method: 'POST',
+                    body: telegramData
+                });
+
+                const result = await response.json();
+
+                if (result.ok) {
+                    return {
+                        success: true,
+                        message: 'Laporan berhasil dikirim ke Telegram'
+                    };
+                } else {
+                    return {
+                        success: false,
+                        message: 'Error Telegram: ' + (result.description || 'Gagal mengirim')
+                    };
+                }
+            } catch (error) {
+                return {
+                    success: false,
+                    message: 'Gagal terhubung ke Telegram: ' + error.message
+                };
+            }
+        }
+
+        // ============================================
+        // EVENT: SUBMIT FORM
+        // ============================================
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Validasi form
+            if (!validateForm()) {
+                showModal(false, 'Silakan lengkapi semua field yang wajib diisi.');
+                return;
+            }
+
+            // Set loading state
+            setLoading(true);
+
+            // Siapkan data form
+            const formData = new FormData(this);
+
+            try {
+                // Kirim ke Telegram
+                const result = await sendToTelegram(formData);
+
+                // Reset loading state
+                setLoading(false);
+
+                if (result.success) {
+                    // Reset form
+                    resetForm();
+                    // Tampilkan modal sukses
+                    showModal(true, result.message);
+                } else {
+                    // Tampilkan modal error
+                    showModal(false, result.message || 'Gagal mengirim laporan.');
+                }
+            } catch (error) {
+                // Reset loading state
+                setLoading(false);
+                // Tampilkan error
+                showModal(false, 'Terjadi kesalahan. Silakan coba lagi.');
+                console.error('Error:', error);
+            }
+        });
+
+        // ============================================
+        // CEK KONFIGURASI SAAT LOAD
+        // ============================================
+        window.addEventListener('load', function() {
+            if (BOT_TOKEN === 'MASUKKAN_TOKEN_BOT_DI_SINI') {
+                console.warn('⚠️ PERINGATAN: Token Bot belum diisi!');
+                console.warn('Silakan ganti BOT_TOKEN di bagian konfigurasi JavaScript.');
+            }
+        });
+    </script>
+</body>
+</html>
