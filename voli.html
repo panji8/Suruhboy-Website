@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live Score Voli + Multi Camera</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a1a;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        /* Status Bar */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .status-bar .mode {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .status-dot.online { background: #4CAF50; animation: pulse 1.5s infinite; }
+        .status-dot.offline { background: #f44336; }
+        .status-dot.connecting { background: #ff9800; animation: pulse 0.5s infinite; }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .btn-toggle {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-toggle.server { background: #4CAF50; color: white; }
+        .btn-toggle.client { background: #2196F3; color: white; }
+        .btn-toggle:hover { transform: scale(1.05); }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            background: linear-gradient(45deg, #f7971e, #ffd200);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Main Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        /* Video Section */
+        .video-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .video-section h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .video-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+        }
+        
+        .video-main {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            min-height: 400px;
+        }
+        
+        .video-main video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-main .video-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: #ffd700;
+        }
+        
+        .video-main .camera-control {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .video-thumbnails {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .video-thumb {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .video-thumb:hover {
+            border-color: #ffd700;
+            transform: scale(1.02);
+        }
+        
+        .video-thumb.active {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255,215,0,0.3);
+        }
+        
+        .video-thumb video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-thumb .thumb-label {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 0.7em;
+        }
+        
+        .video-thumb .status-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.6em;
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .video-thumb .status-badge.inactive {
+            background: #f44336;
+        }
+        
+        /* Score Panel */
+        .score-panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .score-panel h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .score-board {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .team-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        
+        .team-row .team-name {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .team-row .team-score {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .team-row .team-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255,215,0,0.3);
+            color: #ffd700;
+            font-size: 1em;
+            width: 80px;
+            text-align: center;
+        }
+        
+        .team-row .team-input:focus {
+            outline: none;
+            border-bottom-color: #ffd700;
+        }
+        
+        .team-a .team-score { color: #ff6b6b; }
+        .team-b .team-score { color: #4ecdc4; }
+        
+        .set-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        
+        .set-info span {
+            padding: 3px 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            font-size: 0.8em;
+        }
+        
+        .set-info .highlight { background: #ff6b6b; }
+        
+        /* Controls */
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .btn:active { transform: scale(0.95); }
+        
+        .btn-primary { background: #4CAF50; color: white; }
+        .btn-danger { background: #f44336; color: white; }
+        .btn-warning { background: #ff9800; color: white; }
+        .btn-info { background: #2196F3; color: white; }
+        .btn-purple { background: #9c27b0; color: white; }
+        .btn-reset { background: #607d8b; color: white; }
+        .btn-success { background: #4CAF50; color: white; }
+        .btn-sm { padding: 5px 10px; font-size: 0.75em; }
+        
+        /* Connection Panel */
+        .connection-panel {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 15px;
+        }
+        
+        .connection-panel h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        
+        .connection-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        #qrCode {
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            min-height: 150px;
+            align-items: center;
+        }
+        
+        .room-code-display {
+            text-align: center;
+            padding: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-size: 1.1em;
+            letter-spacing: 2px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        
+        .device-list {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .device-item {
+            padding: 5px 10px;
+            margin: 3px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85em;
+        }
+        
+        .device-item .badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.65em;
+            font-weight: bold;
+        }
+        
+        .badge.server { background: #4CAF50; color: white; }
+        .badge.client { background: #2196F3; color: white; }
+        .badge.self { background: #ff9800; color: white; }
+        .badge.camera { background: #9c27b0; color: white; }
+        
+        .device-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .device-status.online { background: #4CAF50; }
+        .device-status.offline { background: #f44336; }
+        .device-status.streaming { background: #ff9800; animation: pulse 1s infinite; }
+        
+        /* Timeline */
+        .timeline {
+            background: rgba(255,255,255,0.05);
+            padding: 10px 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            max-height: 100px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+        
+        .timeline h3 {
+            color: #ffd700;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        
+        .timeline-item {
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.8em;
+        }
+        
+        .timeline-item .time {
+            color: #ffd700;
+            margin-right: 8px;
+        }
+        
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            max-width: 90%;
+        }
+        
+        .toast.success { border-left: 4px solid #4CAF50; }
+        .toast.error { border-left: 4px solid #f44336; }
+        .toast.info { border-left: 4px solid #2196F3; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .video-main {
+                min-height: 250px;
+            }
+            
+            .video-thumbnails {
+                flex-direction: row;
+                overflow-x: auto;
+            }
+            
+            .video-thumb {
+                min-width: 150px;
+                aspect-ratio: 16/9;
+            }
+            
+            .connection-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .status-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+        }
+        
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="mode">
+                <span class="status-dot online" id="statusDot"></span>
+                <span id="statusText">📡 Server Aktif</span>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <span style="font-size: 0.85em;">Mode:</span>
+                <button class="btn-toggle server" onclick="setMode('server')">📡 Server</button>
+                <button class="btn-toggle client" onclick="setMode('client')">📱 Client</button>
+                <button class="btn btn-info btn-sm" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+            </div>
+        </div>
+        
+        <!-- Header -->
+        <div class="header">
+            <h1>🏐 Live Score Voli + Multi Camera</h1>
+            <div style="font-size: 0.85em; opacity: 0.7;">Pilih kamera HP untuk ditampilkan di monitor</div>
+        </div>
+        
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Video Section -->
+            <div class="video-section">
+                <h3>
+                    📹 Live Stream
+                    <span style="font-size: 0.7em; opacity: 0.7;">
+                        <span id="cameraCount">0</span> kamera online
+                    </span>
+                </h3>
+                <div class="video-grid">
+                    <div class="video-main" id="mainVideoContainer">
+                        <video id="mainVideo" autoplay playsinline muted></video>
+                        <div class="video-label" id="mainVideoLabel">Pilih kamera dari thumbnail</div>
+                        <div class="camera-control">
+                            <button class="btn btn-danger btn-sm" onclick="stopMainCamera()">✕</button>
+                        </div>
+                    </div>
+                    <div class="video-thumbnails" id="videoThumbnails">
+                        <div style="text-align: center; opacity: 0.5; padding: 20px; font-size: 0.85em;">
+                            Belum ada kamera<br>Connect HP untuk streaming
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Score Panel -->
+            <div class="score-panel">
+                <h3>🏆 Scoreboard</h3>
+                <div class="score-board">
+                    <div class="team-row team-a">
+                        <span class="team-name">
+                            <input type="text" class="team-input" id="teamAName" value="Tim A" onchange="updateTeamName('A', this.value)">
+                        </span>
+                        <span class="team-score" id="teamAScore">0</span>
+                    </div>
+                    <div class="team-row team-b">
+                        <span class="team-name">
+                            <input type="text" class="team-input" id="teamBName" value="Tim B" onchange="updateTeamName('B', this.value)">
+                        </span>
+                        <span class="team-score" id="teamBScore">0</span>
+                    </div>
+                </div>
+                
+                <div class="set-info">
+                    <span>Set: <strong id="currentSet">1</strong></span>
+                    <span>🏆 A: <strong id="teamASetPoints">0</strong></span>
+                    <span>🏆 B: <strong id="teamBSetPoints">0</strong></span>
+                    <span class="highlight" id="matchStatus">▶ Berjalan</span>
+                </div>
+                
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="addPoint('A')">🔴 A +1</button>
+                    <button class="btn btn-danger" onclick="subtractPoint('A')">A -1</button>
+                    <button class="btn btn-primary" onclick="addPoint('B')">🔵 B +1</button>
+                    <button class="btn btn-danger" onclick="subtractPoint('B')">B -1</button>
+                    <button class="btn btn-warning" onclick="addSetPoint('A')">🏆 Set A</button>
+                    <button class="btn btn-warning" onclick="addSetPoint('B')">🏆 Set B</button>
+                    <button class="btn btn-info" onclick="nextSet()">Set+</button>
+                    <button class="btn btn-purple" onclick="togglePause()">⏸️</button>
+                    <button class="btn btn-reset" onclick="resetMatch()">↺ Reset</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Connection Panel -->
+        <div class="connection-panel">
+            <h3>🔗 Koneksi & Device</h3>
+            <div class="connection-grid">
+                <div>
+                    <div id="qrCode">
+                        <div style="color: #666; text-align: center; padding: 20px;">
+                            <div style="font-size: 2em;">📲</div>
+                            <p style="font-size: 0.85em;">Generate QR untuk connect</p>
+                        </div>
+                    </div>
+                    <div class="room-code-display" id="roomCodeDisplay">Room: ---</div>
+                    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn btn-success btn-sm" onclick="generateQR()">🔄 Generate QR</button>
+                        <button class="btn btn-info btn-sm" onclick="copyRoomCode()">📋 Copy</button>
+                        <button class="btn btn-primary btn-sm" onclick="connectViaCode()">🔗 Manual</button>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="color: #ffd700; font-size: 0.9em; margin-bottom: 10px;">
+                        📱 Device Terhubung (<span id="deviceCount">0</span>)
+                    </h3>
+                    <div class="device-list" id="deviceList">
+                        <div style="text-align: center; opacity: 0.5; padding: 15px; font-size: 0.85em;">
+                            Belum ada device
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-danger btn-sm" onclick="disconnectAll()" style="flex:1;">🔌 Putus</button>
+                        <button class="btn btn-info btn-sm" onclick="refreshDevices()" style="flex:1;">🔄 Refresh</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Timeline -->
+        <div class="timeline">
+            <h3>📝 Timeline</h3>
+            <div id="timelineContent">
+                <div style="text-align: center; opacity: 0.5; padding: 5px; font-size: 0.85em;">
+                    Belum ada aktivitas
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        const state = {
+            teamA: { name: 'Tim A', score: 0, setPoints: 0 },
+            teamB: { name: 'Tim B', score: 0, setPoints: 0 },
+            currentSet: 1,
+            isPaused: false,
+            timeline: [],
+            devices: [],
+            cameras: [],
+            roomCode: 'VOLI-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+            mode: 'server',
+            isConnected: false,
+            mainCameraId: null,
+            peerConnections: {}
+        };
+        
+        let qrCodeInstance = null;
+        let broadcastChannel = null;
+        let deviceId = 'DEV-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+        let isInitialized = false;
+        let mainVideoStream = null;
+        
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+        
+        function initializeApp() {
+            if (isInitialized) return;
+            isInitialized = true;
+            
+            setMode('server');
+            generateQR();
+            updateDisplay();
+            loadState();
+            
+            // Auto-save
+            setInterval(autoSave, 5000);
+            
+            // Simulasi device dan kamera untuk demo
+            setTimeout(simulateDevices, 2000);
+            
+            console.log('🏐 Live Score + Camera System initialized');
+            console.log('📱 Device ID:', deviceId);
+            console.log('🔑 Room Code:', state.roomCode);
+        }
+        
+        // ============================================
+        // MODE MANAGEMENT
+        // ============================================
+        function setMode(mode) {
+            state.mode = mode;
+            
+            document.getElementById('btnServer').style.opacity = mode === 'server' ? '1' : '0.5';
+            document.getElementById('btnClient').style.opacity = mode === 'client' ? '1' : '0.5';
+            
+            const statusText = document.getElementById('statusText');
+            const statusDot = document.getElementById('statusDot');
+            
+            if (mode === 'server') {
+                statusText.textContent = '📡 Server Mode - Siap menerima koneksi kamera';
+                statusDot.className = 'status-dot online';
+                document.getElementById('roomCodeDisplay').textContent = 'Room: ' + state.roomCode;
+                initializeBroadcast();
+            } else {
+                statusText.textContent = '📱 Client Mode - Kirim kamera ke server';
+                statusDot.className = 'status-dot connecting';
+                document.getElementById('roomCodeDisplay').textContent = 'Mode Client - Kirim Kamera';
+                connectAsClient();
+            }
+            
+            addTimeline(`Mode: ${mode.toUpperCase()}`);
+        }
+        
+        // ============================================
+        // BROADCAST CHANNEL
+        // ============================================
+        function initializeBroadcast() {
+            try {
+                if (broadcastChannel) broadcastChannel.close();
+                
+                broadcastChannel = new BroadcastChannel('voli_cam_' + state.roomCode);
+                broadcastChannel.onmessage = function(event) {
+                    handleBroadcastMessage(event.data);
+                };
+                
+                state.isConnected = true;
+                addTimeline('📡 Broadcast Channel siap');
+                updateStatus('online');
+            } catch (e) {
+                console.error('Broadcast error:', e);
+                window.addEventListener('storage', function(event) {
+                    if (event.key === 'voli_cam_' + state.roomCode) {
+                        try {
+                            handleBroadcastMessage(JSON.parse(event.newValue));
+                        } catch (e) {}
+                    }
+                });
+                addTimeline('⚠️ Fallback ke LocalStorage');
+            }
+        }
+        
+        function broadcastUpdate(data) {
+            const message = {
+                type: 'update',
+                state: {
+                    teamA: state.teamA,
+                    teamB: state.teamB,
+                    currentSet: state.currentSet,
+                    isPaused: state.isPaused,
+                    timeline: state.timeline.slice(-10)
+                },
+                devices: state.devices,
+                cameras: state.cameras,
+                deviceId: deviceId,
+                timestamp: Date.now(),
+                ...data
+            };
+            
+            try {
+                if (broadcastChannel) {
+                    broadcastChannel.postMessage(message);
+                }
+                localStorage.setItem('voli_cam_' + state.roomCode, JSON.stringify(message));
+            } catch (e) {}
+        }
+        
+        function handleBroadcastMessage(data) {
+            if (data.deviceId === deviceId) return;
+            
+            // Update state
+            if (data.state) {
+                state.teamA = data.state.teamA || state.teamA;
+                state.teamB = data.state.teamB || state.teamB;
+                state.currentSet = data.state.currentSet || state.currentSet;
+                state.isPaused = data.state.isPaused || false;
+                if (data.state.timeline) state.timeline = data.state.timeline;
+                updateDisplay();
+                updateTimeline();
+            }
+            
+            // Update devices
+            if (data.devices) {
+                state.devices = data.devices;
+                updateDeviceList();
+            }
+            
+            // Update cameras
+            if (data.cameras) {
+                state.cameras = data.cameras;
+                updateCameraList();
+            }
+            
+            // Handle new device
+            if (data.type === 'connect' && !state.devices.includes(data.deviceId)) {
+                state.devices.push(data.deviceId);
+                updateDeviceList();
+                addTimeline(`📱 ${data.deviceId} terhubung`);
+                document.getElementById('deviceCount').textContent = state.devices.length + 1;
+                broadcastUpdate();
+            }
+            
+            // Handle camera stream offer
+            if (data.type === 'camera_offer' && state.mode === 'server') {
+                handleCameraOffer(data);
+            }
+        }
+        
+        // ============================================
+        // CLIENT CONNECTION (HP)
+        // ============================================
+        function connectAsClient() {
+            // Simulasi connect ke server
+            state.isConnected = true;
+            updateStatus('online');
+            
+            setTimeout(() => {
+                broadcastUpdate({ type: 'connect' });
+                addTimeline('📱 Terhubung sebagai Client');
+                
+                // Mulai kamera
+                startCamera();
+            }, 500);
+        }
+        
+        // ============================================
+        // CAMERA MANAGEMENT (Client Side)
+        // ============================================
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment', width: 1280, height: 720 },
+                    audio: false
+                });
+                
+                // Tampilkan preview di client
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.autoplay = true;
+                video.muted = true;
+                video.style.display = 'none';
+                document.body.appendChild(video);
+                
+                // Kirim stream ke server
+                sendStreamToServer(stream);
+                
+                addTimeline('📹 Kamera aktif dan streaming');
+                showToast('📹 Kamera aktif!', 'success');
+                
+                // Update status
+                broadcastUpdate({
+                    type: 'camera_active',
+                    cameraId: deviceId,
+                    cameraName: 'HP ' + deviceId
+                });
+                
+            } catch (err) {
+                console.error('Camera error:', err);
+                showToast('❌ Gagal akses kamera: ' + err.message, 'error');
+                addTimeline('❌ Gagal akses kamera');
+            }
+        }
+        
+        function sendStreamToServer(stream) {
+            // Simulasi kirim stream via BroadcastChannel
+            // Di real implementation, ini akan pakai WebRTC
+            
+            // Simulasi: ambil screenshot tiap detik
+            const video = document.querySelector('video');
+            if (!video) return;
+            
+            const canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 360;
+            const ctx = canvas.getContext('2d');
+            
+            setInterval(() => {
+                if (video.videoWidth > 0) {
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageData = canvas.toDataURL('image/jpeg', 0.5);
+                    
+                    broadcastUpdate({
+                        type: 'camera_frame',
+                        cameraId: deviceId,
+                        frame: imageData,
+                        timestamp: Date.now()
+                    });
+                }
+            }, 100); // 10 fps
+        }
+        
+        // ============================================
+        // CAMERA MANAGEMENT (Server Side)
+        // ============================================
+        function handleCameraOffer(data) {
+            if (data.type === 'camera_active') {
+                // Tambahkan ke daftar kamera
+                const camera = {
+                    id: data.cameraId,
+                    name: data.cameraName || 'Kamera ' + data.cameraId,
+                    active: true
+                };
+                
+                if (!state.cameras.find(c => c.id === camera.id)) {
+                    state.cameras.push(camera);
+                    updateCameraList();
+                    addTimeline(`📹 ${camera.name} terhubung`);
+                    document.getElementById('cameraCount').textContent = state.cameras.length;
+                    broadcastUpdate();
+                }
+            }
+            
+            if (data.type === 'camera_frame' && state.cameras.find(c => c.id === data.cameraId)) {
+                // Tampilkan frame di video main jika ini kamera yang dipilih
+                if (state.mainCameraId === data.cameraId) {
+                    displayFrame(data.frame);
+                }
+            }
+        }
+        
+        function displayFrame(imageData) {
+            const mainVideo = document.getElementById('mainVideo');
+            // Tampilkan image sebagai video frame
+            // Untuk demo, kita tampilkan di canvas atau img
+            // Karena video element tidak bisa langsung render image, kita pakai canvas
+            let canvas = document.getElementById('mainCanvas');
+            if (!canvas) {
+                canvas = document.createElement('canvas');
+                canvas.id = 'mainCanvas';
+                canvas.style.width = '100%';
+                canvas.style.height = '100%';
+                canvas.style.objectFit = 'cover';
+                const container = document.getElementById('mainVideoContainer');
+                const video = document.getElementById('mainVideo');
+                video.style.display = 'none';
+                container.insertBefore(canvas, video.nextSibling);
+            }
+            
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+            img.src = imageData;
+        }
+        
+        function updateCameraList() {
+            const container = document.getElementById('videoThumbnails');
+            
+            if (state.cameras.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; opacity: 0.5; padding: 20px; font-size: 0.85em;">
+                        Belum ada kamera<br>Connect HP untuk streaming
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = state.cameras.map(cam => `
+                <div class="video-thumb ${state.mainCameraId === cam.id ? 'active' : ''}" 
+                     onclick="selectCamera('${cam.id}')">
+                    <video id="thumb_${cam.id}" autoplay playsinline muted></video>
+                    <div class="thumb-label">${cam.name}</div>
+                    <div class="status-badge ${cam.active ? '' : 'inactive'}">
+                        ${cam.active ? '● Live' : '● Off'}
+                    </div>
+                </div>
+            `).join('');
+            
+            // Jika tidak ada kamera yang dipilih, pilih yang pertama
+            if (!state.mainCameraId && state.cameras.length > 0) {
+                selectCamera(state.cameras[0].id);
+            }
+        }
+        
+        function selectCamera(cameraId) {
+            state.mainCameraId = cameraId;
+            const camera = state.cameras.find(c => c.id === cameraId);
+            
+            if (camera) {
+                document.getElementById('mainVideoLabel').textContent = '📹 ' + camera.name;
+                addTimeline(`📹 Memilih kamera: ${camera.name}`);
+                updateCameraList();
+                
+                // Minta frame terbaru
+                broadcastUpdate({
+                    type: 'request_frame',
+                    cameraId: cameraId
+                });
+            }
+        }
+        
+        function stopMainCamera() {
+            state.mainCameraId = null;
+            document.getElementById('mainVideoLabel').textContent = 'Pilih kamera dari thumbnail';
+            
+            const canvas = document.getElementById('mainCanvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            updateCameraList();
+            addTimeline('📹 Kamera di-stop');
+        }
+        
+        // ============================================
+        // QR CODE
+        // ============================================
+        function generateQR() {
+            const qrContainer = document.getElementById('qrCode');
+            qrContainer.innerHTML = '';
+            
+            const connectionData = {
+                room: state.roomCode,
+                mode: 'client',
+                type: 'voli_camera',
+                server: window.location.href,
+                timestamp: Date.now()
+            };
+            
+            try {
+                qrCodeInstance = new QRCode(qrContainer, {
+                    text: JSON.stringify(connectionData),
+                    width: 180,
+                    height: 180,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                });
+                document.getElementById('roomCodeDisplay').textContent = 'Room: ' + state.roomCode;
+                addTimeline('📱 QR Code digenerate');
+                showToast('QR Code siap! Scan dengan HP', 'success');
+            } catch (e) {
+                qrContainer.innerHTML = '<div style="color: #666;">Error generate QR</div>';
+            }
+        }
+        
+        function copyRoomCode() {
+            navigator.clipboard.writeText(state.roomCode).then(() => {
+                showToast('Room Code disalin: ' + state.roomCode, 'success');
+            });
+        }
+        
+        function connectViaCode() {
+            const code = prompt('Masukkan Room Code:', state.roomCode);
+            if (code) {
+                state.roomCode = code;
+                document.getElementById('roomCodeDisplay').textContent = 'Room: ' + code;
+                generateQR();
+                if (state.mode === 'client') {
+                    connectAsClient();
+                } else {
+                    initializeBroadcast();
+                }
+                showToast('Terhubung ke room: ' + code, 'success');
+            }
+        }
+        
+        // ============================================
+        // SCORE CONTROLS
+        // ============================================
+        function addPoint(team) {
+            if (state.isPaused) { showToast('⏸️ Di-pause!', 'error'); return; }
+            
+            if (team === 'A') {
+                state.teamA.score++;
+                addTimeline(`🔴 Tim A +1 (${state.teamA.score})`);
+            } else {
+                state.teamB.score++;
+                addTimeline(`🔵 Tim B +1 (${state.teamB.score})`);
+            }
+            
+            updateDisplay();
+            broadcastUpdate();
+            checkWinCondition();
+        }
+        
+        function subtractPoint(team) {
+            if (state.isPaused) { showToast('⏸️ Di-pause!', 'error'); return; }
+            
+            if (team === 'A' && state.teamA.score > 0) {
+                state.teamA.score--;
+                addTimeline(`🔴 Tim A -1 (${state.teamA.score})`);
+            } else if (team === 'B' && state.teamB.score > 0) {
+                state.teamB.score--;
+                addTimeline(`🔵 Tim B -1 (${state.teamB.score})`);
+            }
+            
+            updateDisplay();
+            broadcastUpdate();
+        }
+        
+        function addSetPoint(team) {
+            if (state.isPaused) { showToast('⏸️ Di-pause!', 'error'); return; }
+            
+            if (team === 'A') {
+                state.teamA.setPoints++;
+                addTimeline(`🏆 Tim A menang Set ${state.currentSet}!`);
+            } else {
+                state.teamB.setPoints++;
+                addTimeline(`🏆 Tim B menang Set ${state.currentSet}!`);
+            }
+            
+            updateDisplay();
+            broadcastUpdate();
+            showToast(`🏆 ${team === 'A' ? 'Tim A' : 'Tim B'} menang set!`, 'success');
+        }
+        
+        function nextSet() {
+            state.currentSet++;
+            state.teamA.score = 0;
+            state.teamB.score = 0;
+            addTimeline(`📋 Set ${state.currentSet} dimulai`);
+            updateDisplay();
+            broadcastUpdate();
+            showToast(`Set ${state.currentSet} dimulai!`, 'info');
+        }
+        
+        function resetMatch() {
+            if (confirm('Reset semua data pertandingan?')) {
+                state.teamA.score = 0;
+                state.teamB.score = 0;
+                state.teamA.setPoints = 0;
+                state.teamB.setPoints = 0;
+                state.currentSet = 1;
+                state.timeline = [];
+                state.isPaused = false;
+                document.getElementById('matchStatus').textContent = '▶ Berjalan';
+                addTimeline('🔄 Match di-reset');
+                updateDisplay();
+                broadcastUpdate();
+                showToast('Match di-reset!', 'info');
+            }
+        }
+        
+        function togglePause() {
+            state.isPaused = !state.isPaused;
+            document.getElementById('matchStatus').textContent = state.isPaused ? '⏸️ Pause' : '▶ Berjalan';
+            addTimeline(state.isPaused ? '⏸️ Pause' : '▶️ Lanjut');
+            broadcastUpdate();
+            showToast(state.isPaused ? '⏸️ Pause' : '▶️ Lanjut', 'info');
+        }
+        
+        function checkWinCondition() {
+            if (state.teamA.score >= 25 && state.teamA.score - state.teamB.score >= 2) {
+                addSetPoint('A');
+                showToast('🏆 Tim A memenangkan set!', 'success');
+            } else if (state.teamB.score >= 25 && state.teamB.score - state.teamA.score >= 2) {
+                addSetPoint('B');
+                showToast('🏆 Tim B memenangkan set!', 'success');
+            }
+        }
+        
+        function updateTeamName(team, name) {
+            if (team === 'A') state.teamA.name = name;
+            else state.teamB.name = name;
+            broadcastUpdate();
+            addTimeline(`✏️ ${team === 'A' ? 'Tim A' : 'Tim B'} → ${name}`);
+        }
+        
+        // ============================================
+        // DISPLAY UPDATE
+        // ============================================
+        function updateDisplay() {
+            document.getElementById('teamAName').value = state.teamA.name;
+            document.getElementById('teamAScore').textContent = state.teamA.score;
+            document.getElementById('teamBName').value = state.teamB.name;
+            document.getElementById('teamBScore').textContent = state.teamB.score;
+            document.getElementById('currentSet').textContent = state.currentSet;
+            document.getElementById('teamASetPoints').textContent = state.teamA.setPoints;
+            document.getElementById('teamBSetPoints').textContent = state.teamB.setPoints;
+            document.getElementById('deviceCount').textContent = state.devices.length + 1;
+        }
+        
+        // ============================================
+        // DEVICE MANAGEMENT
+        // ============================================
+        function updateDeviceList() {
+            const list = document.getElementById('deviceList');
+            const devices = [deviceId, ...state.devices];
+            
+            if (devices.length === 0) {
+                list.innerHTML = '<div style="text-align: center; opacity: 0.5; padding: 15px; font-size: 0.85em;">Belum ada device</div>';
+                return;
+            }
+            
+            list.innerHTML = devices.map(id => {
+                const isSelf = id === deviceId;
+                const isServer = state.mode === 'server' && isSelf;
+                const hasCamera = state.cameras.find(c => c.id === id);
+                
+                return `
+                    <div class="device-item">
+                        <span>
+                            ${isSelf ? '⭐ ' : '📱 '}
+                            ${id}
+                            ${isSelf ? ' (Server)' : ''}
+                            ${hasCamera ? ' 📹' : ''}
+                        </span>
+                        <span>
+                            <span class="badge ${isServer ? 'server' : isSelf ? 'self' : hasCamera ? 'camera' : 'client'}">
+                                ${isServer ? 'Server' : isSelf ? 'You' : hasCamera ? 'Camera' : 'Client'}
+                            </span>
+                            <span class="device-status ${hasCamera ? 'streaming' : 'online'}"></span>
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function disconnectAll() {
+            if (confirm('Putuskan semua koneksi?')) {
+                state.devices = [];
+                state.cameras = [];
+                updateDeviceList();
+                updateCameraList();
+                addTimeline('🔌 Semua device diputuskan');
+                showToast('Semua device diputuskan', 'info');
+                broadcastUpdate();
+            }
+        }
+        
+        function refreshDevices() {
+            updateDeviceList();
+            updateCameraList();
+            showToast('Device list di-refresh', 'info');
+        }
+        
+        // ============================================
+        // TIMELINE
+        // ============================================
+        function addTimeline(message) {
+            const timestamp = new Date().toLocaleTimeString('id-ID');
+            state.timeline.push({ time: timestamp, message: message });
+            if (state.timeline.length > 50) state.timeline = state.timeline.slice(-50);
+            updateTimeline();
+        }
+        
+        function updateTimeline() {
+            const container = document.getElementById('timelineContent');
+            if (state.timeline.length === 0) {
+                container.innerHTML = '<div style="text-align: center; opacity: 0.5; padding: 5px; font-size: 0.85em;">Belum ada aktivitas</div>';
+                return;
+            }
+            
+            container.innerHTML = state.timeline.slice(-20).map(item => `
+                <div class="timeline-item">
+                    <span class="time">[${item.time}]</span>
+                    ${item.message}
+                </div>
+            `).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // ============================================
+        // STATUS
+        // ============================================
+        function updateStatus(status) {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            
+            dot.className = 'status-dot ' + status;
+            if (status === 'online') {
+                text.textContent = state.mode === 'server' ? '📡 Server Aktif' : '📱 Client Terhubung';
+            } else if (status === 'connecting') {
+                text.textContent = '⏳ Menghubungkan...';
+            } else {
+                text.textContent = '🔴 Offline';
+            }
+        }
+        
+        // ============================================
+        // TOAST
+        // ============================================
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // ============================================
+        // FULLSCREEN
+        // ============================================
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+            }
+        }
+        
+        // ============================================
+        // AUTO SAVE / LOAD
+        // ============================================
+        function autoSave() {
+            try {
+                const saveData = {
+                    teamA: state.teamA,
+                    teamB: state.teamB,
+                    currentSet: state.currentSet,
+                    isPaused: state.isPaused,
+                    timeline: state.timeline.slice(-20),
+                    roomCode: state.roomCode
+                };
+                localStorage.setItem('voli_score_save', JSON.stringify(saveData));
+            } catch (e) {}
+        }
+        
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('voli_score_save');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    state.teamA = data.teamA || state.teamA;
+                    state.teamB = data.teamB || state.teamB;
+                    state.currentSet = data.currentSet || 1;
+                    state.isPaused = data.isPaused || false;
+                    state.roomCode = data.roomCode || state.roomCode;
+                    if (data.timeline) state.timeline = data.timeline;
+                    updateDisplay();
+                    updateTimeline();
+                    document.getElementById('roomCodeDisplay').textContent = 'Room: ' + state.roomCode;
+                }
+            } catch (e) {}
+        }
+        
+        // ============================================
+        // SIMULASI DEVICE & KAMERA (DEMO)
+        // ============================================
+        function simulateDevices() {
+            if (state.mode === 'server') {
+                // Simulasi 2 HP dengan kamera
+                const demoCameras = [
+                    { id: 'CAM-SAMSUNG', name: '📱 Samsung A53' },
+                    { id: 'CAM-iPHONE', name: '📱 iPhone 13' }
+                ];
+                
+                demoCameras.forEach((cam, index) => {
+                    setTimeout(() => {
+                        if (!state.cameras.find(c => c.id === cam.id)) {
+                            state.cameras.push({
+                                id: cam.id,
+                                name: cam.name,
+                                active: true
+                            });
+                            state.devices.push(cam.id);
+                            updateCameraList();
+                            updateDeviceList();
+                            addTimeline(`📹 ${cam.name} terhubung (simulasi)`);
+                            document.getElementById('cameraCount').textContent = state.cameras.length;
+                            document.getElementById('deviceCount').textContent = state.devices.length + 1;
+                            
+                            // Pilih kamera pertama otomatis
+                            if (index === 0) {
+                                setTimeout(() => selectCamera(cam.id), 500);
+                            }
+                            
+                            broadcastUpdate();
+                        }
+                    }, (index + 1) * 2000);
+                });
+            }
+        }
+        
+        // ============================================
+        // KEYBOARD SHORTCUTS
+        // ============================================
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT') return;
+            
+            switch(e.key) {
+                case '1': addPoint('A'); break;
+                case '2': addPoint('B'); break;
+                case '3': addSetPoint('A'); break;
+                case '4': addSetPoint('B'); break;
+                case ' ': e.preventDefault(); togglePause(); break;
+                case 'r': resetMatch(); break;
+                case 'f': toggleFullscreen(); break;
+                case 'n': nextSet(); break;
+            }
+        });
+        
+        console.log('🏐 Live Score + Multi Camera siap!');
+        console.log('📌 Shortcuts: 1=A+ 2=B+ 3=SetA 4=SetB Space=Pause');
+    </script>
+</body>
+</html>
