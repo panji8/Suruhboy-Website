@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Live Score Voli + Multi Camera</title>
+    <title>CCTV System - Multi Camera</title>
     <style>
         * {
             margin: 0;
@@ -25,28 +25,48 @@
             padding: 15px;
         }
         
-        .status-bar {
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 15px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            margin-bottom: 15px;
             flex-wrap: wrap;
+            gap: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .header h1 {
+            font-size: 1.8em;
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
             gap: 10px;
         }
         
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
         }
         
-        .status-dot.online { background: #4CAF50; animation: pulse 1.5s infinite; }
-        .status-dot.offline { background: #f44336; }
-        .status-dot.connecting { background: #ff9800; animation: pulse 0.5s infinite; }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .status-dot.online { background: #4CAF50; }
+        .status-dot.recording { background: #ff4444; animation: pulse 0.5s infinite; }
+        .status-dot.offline { background: #666; animation: none; }
         
         @keyframes pulse {
             0% { opacity: 1; transform: scale(1); }
@@ -54,222 +74,277 @@
             100% { opacity: 1; transform: scale(1); }
         }
         
-        .btn-toggle {
-            padding: 8px 20px;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        
-        .btn-toggle.server { background: #4CAF50; color: white; }
-        .btn-toggle.client { background: #2196F3; color: white; }
-        .btn-toggle:hover { transform: scale(1.05); }
-        
-        .header {
-            text-align: center;
-            padding: 15px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .header h1 {
-            font-size: 2em;
-            background: linear-gradient(45deg, #f7971e, #ffd200);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
+        /* Layout */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 300px;
             gap: 15px;
-            margin-bottom: 15px;
         }
         
-        .video-section {
+        /* Video Grid */
+        .video-grid-container {
             background: rgba(255,255,255,0.05);
             border-radius: 15px;
             padding: 15px;
             border: 1px solid rgba(255,255,255,0.1);
         }
         
-        .video-section h3 {
-            color: #ffd700;
-            margin-bottom: 10px;
+        .video-grid-container .header-grid {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .video-grid-container .header-grid h3 {
+            color: #ffd700;
+            font-size: 1.1em;
+        }
+        
+        .view-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .view-controls .btn {
+            padding: 5px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        
+        .view-controls .btn.active {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .view-controls .btn:hover {
+            transform: scale(1.05);
         }
         
         .video-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 10px;
         }
         
-        .video-main {
+        .video-grid.view-1 { grid-template-columns: 1fr; }
+        .video-grid.view-2 { grid-template-columns: 1fr 1fr; }
+        .video-grid.view-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+        .video-grid.view-6 { grid-template-columns: 1fr 1fr 1fr; }
+        
+        .video-item {
             position: relative;
             background: #000;
             border-radius: 10px;
             overflow: hidden;
             aspect-ratio: 16/9;
-            min-height: 400px;
+            border: 2px solid rgba(255,255,255,0.1);
+            transition: all 0.3s;
         }
         
-        .video-main video, .video-main canvas {
+        .video-item.active {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255,215,0,0.2);
+        }
+        
+        .video-item video, .video-item canvas {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
         
-        .video-main .video-label {
+        .video-item .camera-info {
             position: absolute;
             bottom: 10px;
             left: 10px;
             background: rgba(0,0,0,0.7);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            color: #ffd700;
-        }
-        
-        .video-thumbnails {
+            padding: 3px 12px;
+            border-radius: 15px;
+            font-size: 0.75em;
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            align-items: center;
+            gap: 8px;
         }
         
-        .video-thumb {
-            position: relative;
-            background: #000;
-            border-radius: 10px;
-            overflow: hidden;
-            aspect-ratio: 16/9;
+        .video-item .camera-info .rec-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ff4444;
+            display: none;
+            animation: pulse 0.5s infinite;
+        }
+        
+        .video-item .camera-info .rec-dot.active {
+            display: inline-block;
+        }
+        
+        .video-item .camera-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .video-item:hover .camera-controls {
+            opacity: 1;
+        }
+        
+        .camera-controls .btn-sm {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.7em;
             cursor: pointer;
-            border: 2px solid transparent;
             transition: all 0.3s;
         }
         
-        .video-thumb:hover {
-            border-color: #ffd700;
-            transform: scale(1.02);
-        }
-        
-        .video-thumb.active {
-            border-color: #ffd700;
-            box-shadow: 0 0 20px rgba(255,215,0,0.3);
-        }
-        
-        .video-thumb video, .video-thumb canvas {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .video-thumb .thumb-label {
-            position: absolute;
-            bottom: 5px;
-            left: 5px;
-            background: rgba(0,0,0,0.7);
-            padding: 2px 10px;
-            border-radius: 10px;
-            font-size: 0.7em;
-        }
-        
-        .video-thumb .status-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.6em;
-            background: #4CAF50;
+        .btn-sm.record {
+            background: #ff4444;
             color: white;
         }
         
-        .score-panel {
+        .btn-sm.record.active {
+            background: #ff8800;
+            animation: pulse 0.5s infinite;
+        }
+        
+        .btn-sm.screenshot {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .btn-sm.fullscreen {
+            background: #9c27b0;
+            color: white;
+        }
+        
+        /* Motion Detection Overlay */
+        .motion-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .motion-box {
+            position: absolute;
+            border: 2px solid #ff4444;
+            background: rgba(255,68,68,0.1);
+            animation: blink 0.5s ease;
+        }
+        
+        @keyframes blink {
+            0% { opacity: 0; }
+            50% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+        
+        /* Side Panel */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .panel {
             background: rgba(255,255,255,0.05);
             border-radius: 15px;
             padding: 15px;
             border: 1px solid rgba(255,255,255,0.1);
         }
         
-        .score-panel h3 {
+        .panel h3 {
             color: #ffd700;
+            font-size: 1em;
             margin-bottom: 10px;
-            text-align: center;
         }
         
-        .score-board {
-            text-align: center;
-            margin-bottom: 15px;
+        /* Camera List */
+        .camera-list {
+            max-height: 200px;
+            overflow-y: auto;
         }
         
-        .team-row {
+        .camera-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px;
+            padding: 8px 10px;
             background: rgba(255,255,255,0.05);
             border-radius: 8px;
             margin-bottom: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
         
-        .team-row .team-score {
-            font-size: 2em;
-            font-weight: bold;
-        }
-        
-        .team-row .team-input {
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid rgba(255,215,0,0.3);
-            color: #ffd700;
-            font-size: 1em;
-            width: 80px;
-            text-align: center;
-        }
-        
-        .team-row .team-input:focus {
-            outline: none;
-            border-bottom-color: #ffd700;
-        }
-        
-        .team-a .team-score { color: #ff6b6b; }
-        .team-b .team-score { color: #4ecdc4; }
-        
-        .set-info {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            padding: 10px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            margin: 10px 0;
-        }
-        
-        .set-info span {
-            padding: 3px 12px;
+        .camera-item:hover {
             background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            font-size: 0.8em;
         }
         
-        .set-info .highlight { background: #ff6b6b; }
+        .camera-item.active {
+            border-left: 3px solid #ffd700;
+        }
         
-        .controls {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .camera-item .cam-name {
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
             gap: 8px;
-            margin: 10px 0;
         }
         
+        .camera-item .cam-status {
+            font-size: 0.7em;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        .cam-status.online { background: #4CAF50; color: white; }
+        .cam-status.offline { background: #666; color: white; }
+        .cam-status.recording { background: #ff4444; color: white; animation: pulse 1s infinite; }
+        
+        /* Recording List */
+        .recording-list {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .recording-item {
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            margin-bottom: 3px;
+            font-size: 0.8em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .recording-item .del-btn {
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 2px 8px;
+            cursor: pointer;
+            font-size: 0.7em;
+        }
+        
+        /* Controls */
         .btn {
-            padding: 8px 12px;
+            padding: 8px 16px;
             border: none;
             border-radius: 8px;
             font-size: 0.85em;
@@ -278,113 +353,51 @@
             font-weight: bold;
         }
         
-        .btn:active { transform: scale(0.95); }
+        .btn:hover {
+            transform: scale(1.05);
+        }
         
-        .btn-primary { background: #4CAF50; color: white; }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        
+        .btn-primary { background: #2196F3; color: white; }
+        .btn-success { background: #4CAF50; color: white; }
         .btn-danger { background: #f44336; color: white; }
         .btn-warning { background: #ff9800; color: white; }
-        .btn-info { background: #2196F3; color: white; }
         .btn-purple { background: #9c27b0; color: white; }
-        .btn-reset { background: #607d8b; color: white; }
-        .btn-success { background: #4CAF50; color: white; }
-        .btn-sm { padding: 5px 10px; font-size: 0.75em; }
+        .btn-sm { padding: 4px 10px; font-size: 0.75em; }
         
-        .connection-panel {
-            background: rgba(255,255,255,0.05);
-            border-radius: 15px;
-            padding: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 15px;
+        .control-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
         }
         
-        .connection-panel h3 {
-            color: #ffd700;
-            margin-bottom: 10px;
-            font-size: 1em;
-        }
-        
-        .connection-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        
+        /* QR Code */
         #qrCode {
             display: flex;
             justify-content: center;
             padding: 10px;
             background: white;
             border-radius: 10px;
-            min-height: 150px;
+            min-height: 120px;
             align-items: center;
         }
         
-        .room-code-display {
+        .room-code {
             text-align: center;
             padding: 8px;
             background: rgba(255,255,255,0.1);
             border-radius: 8px;
-            font-size: 1.1em;
+            font-size: 1em;
             letter-spacing: 2px;
             font-family: monospace;
-            margin: 10px 0;
+            margin-top: 10px;
         }
         
-        .device-list {
-            max-height: 150px;
-            overflow-y: auto;
-        }
-        
-        .device-item {
-            padding: 5px 10px;
-            margin: 3px 0;
-            background: rgba(255,255,255,0.05);
-            border-radius: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85em;
-        }
-        
-        .device-item .badge {
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.65em;
-            font-weight: bold;
-        }
-        
-        .badge.server { background: #4CAF50; color: white; }
-        .badge.client { background: #2196F3; color: white; }
-        .badge.self { background: #ff9800; color: white; }
-        .badge.camera { background: #9c27b0; color: white; }
-        
-        .timeline {
-            background: rgba(255,255,255,0.05);
-            padding: 10px 15px;
-            border-radius: 15px;
-            border: 1px solid rgba(255,255,255,0.1);
-            max-height: 100px;
-            overflow-y: auto;
-            margin-top: 15px;
-        }
-        
-        .timeline h3 {
-            color: #ffd700;
-            margin-bottom: 5px;
-            font-size: 0.9em;
-        }
-        
-        .timeline-item {
-            padding: 2px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.8em;
-        }
-        
-        .timeline-item .time {
-            color: #ffd700;
-            margin-right: 8px;
-        }
-        
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -401,153 +414,148 @@
         .toast.success { border-left: 4px solid #4CAF50; }
         .toast.error { border-left: 4px solid #f44336; }
         .toast.info { border-left: 4px solid #2196F3; }
+        .toast.warning { border-left: 4px solid #ff9800; }
         
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
         
+        /* Responsive */
         @media (max-width: 1024px) {
-            .main-grid { grid-template-columns: 1fr; }
-            .video-grid { grid-template-columns: 1fr; }
-            .video-main { min-height: 250px; }
-            .video-thumbnails { flex-direction: row; overflow-x: auto; }
-            .video-thumb { min-width: 150px; aspect-ratio: 16/9; }
-            .connection-grid { grid-template-columns: 1fr; }
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .video-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
         }
         
         @media (max-width: 768px) {
-            .controls { grid-template-columns: 1fr; }
-            .status-bar { flex-direction: column; text-align: center; }
-            .header h1 { font-size: 1.5em; }
+            .video-grid.view-2,
+            .video-grid.view-4,
+            .video-grid.view-6 {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.3em;
+            }
         }
         
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #ffd700; border-radius: 10px; }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 10px;
+        }
+        
+        /* Fullscreen video */
+        .video-item.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            border-radius: 0;
+            aspect-ratio: unset;
+        }
+        
+        .video-item.fullscreen .camera-controls {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="mode">
-                <span class="status-dot online" id="statusDot"></span>
-                <span id="statusText">📡 Server Aktif</span>
-            </div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
-                <span style="font-size: 0.85em;">Mode:</span>
-                <button class="btn-toggle server" onclick="setMode('server')">📡 Server</button>
-                <button class="btn-toggle client" onclick="setMode('client')">📱 Client</button>
-                <button class="btn btn-info btn-sm" onclick="toggleFullscreen()">⛶ Fullscreen</button>
-            </div>
-        </div>
-        
         <!-- Header -->
         <div class="header">
-            <h1>🏐 Live Score Voli + Multi Camera</h1>
-            <div style="font-size: 0.85em; opacity: 0.7;">Scan QR untuk connect HP sebagai kamera</div>
+            <h1>
+                <span>🎥 CCTV System</span>
+                <span style="font-size: 0.5em; -webkit-text-fill-color: #666;">
+                    <span class="status-dot online" id="statusDot"></span>
+                    <span id="statusText">Online</span>
+                </span>
+            </h1>
+            <div class="header-controls">
+                <button class="btn btn-success btn-sm" onclick="addCamera()">➕ Tambah Kamera</button>
+                <button class="btn btn-primary btn-sm" onclick="toggleRecording()">
+                    <span id="recBtnText">⏺ Record All</span>
+                </button>
+                <button class="btn btn-warning btn-sm" onclick="takeScreenshot()">📸 Screenshot</button>
+                <button class="btn btn-purple btn-sm" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+            </div>
         </div>
         
         <!-- Main Grid -->
         <div class="main-grid">
-            <!-- Video Section -->
-            <div class="video-section">
-                <h3>
-                    📹 Live Stream
-                    <span style="font-size: 0.7em; opacity: 0.7;">
-                        <span id="cameraCount">0</span> kamera online
-                    </span>
-                </h3>
-                <div class="video-grid">
-                    <div class="video-main" id="mainVideoContainer">
-                        <video id="mainVideo" autoplay playsinline muted style="display:none;"></video>
-                        <canvas id="mainCanvas"></canvas>
-                        <div class="video-label" id="mainVideoLabel">Pilih kamera dari thumbnail</div>
+            <!-- Video Grid -->
+            <div class="video-grid-container">
+                <div class="header-grid">
+                    <h3>📹 Live Feed</h3>
+                    <div class="view-controls">
+                        <button class="btn active" onclick="setView('auto')" data-view="auto">Auto</button>
+                        <button class="btn" onclick="setView('1')" data-view="1">1</button>
+                        <button class="btn" onclick="setView('2')" data-view="2">2</button>
+                        <button class="btn" onclick="setView('4')" data-view="4">4</button>
+                        <button class="btn" onclick="setView('6')" data-view="6">6</button>
                     </div>
-                    <div class="video-thumbnails" id="videoThumbnails">
-                        <div style="text-align: center; opacity: 0.5; padding: 20px; font-size: 0.85em;">
-                            Belum ada kamera<br>Scan QR dari HP
-                        </div>
+                </div>
+                <div class="video-grid view-auto" id="videoGrid">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #666;">
+                        <div style="font-size: 3em; margin-bottom: 10px;">📹</div>
+                        <p>Belum ada kamera terhubung</p>
+                        <p style="font-size: 0.85em; margin-top: 5px;">Klik "Tambah Kamera" atau scan QR Code</p>
                     </div>
                 </div>
             </div>
             
-            <!-- Score Panel -->
-            <div class="score-panel">
-                <h3>🏆 Scoreboard</h3>
-                <div class="score-board">
-                    <div class="team-row team-a">
-                        <span class="team-name">
-                            <input type="text" class="team-input" id="teamAName" value="Tim A" onchange="updateTeamName('A', this.value)">
-                        </span>
-                        <span class="team-score" id="teamAScore">0</span>
-                    </div>
-                    <div class="team-row team-b">
-                        <span class="team-name">
-                            <input type="text" class="team-input" id="teamBName" value="Tim B" onchange="updateTeamName('B', this.value)">
-                        </span>
-                        <span class="team-score" id="teamBScore">0</span>
-                    </div>
-                </div>
-                
-                <div class="set-info">
-                    <span>Set: <strong id="currentSet">1</strong></span>
-                    <span>🏆 A: <strong id="teamASetPoints">0</strong></span>
-                    <span>🏆 B: <strong id="teamBSetPoints">0</strong></span>
-                    <span class="highlight" id="matchStatus">▶ Berjalan</span>
-                </div>
-                
-                <div class="controls">
-                    <button class="btn btn-primary" onclick="addPoint('A')">🔴 A +1</button>
-                    <button class="btn btn-danger" onclick="subtractPoint('A')">A -1</button>
-                    <button class="btn btn-primary" onclick="addPoint('B')">🔵 B +1</button>
-                    <button class="btn btn-danger" onclick="subtractPoint('B')">B -1</button>
-                    <button class="btn btn-warning" onclick="addSetPoint('A')">🏆 Set A</button>
-                    <button class="btn btn-warning" onclick="addSetPoint('B')">🏆 Set B</button>
-                    <button class="btn btn-info" onclick="nextSet()">Set+</button>
-                    <button class="btn btn-purple" onclick="togglePause()">⏸️</button>
-                    <button class="btn btn-reset" onclick="resetMatch()">↺ Reset</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Connection Panel -->
-        <div class="connection-panel">
-            <h3>🔗 Koneksi & Device</h3>
-            <div class="connection-grid">
-                <div>
+            <!-- Side Panel -->
+            <div class="side-panel">
+                <!-- Connection Panel -->
+                <div class="panel">
+                    <h3>🔗 Connect Camera</h3>
                     <div id="qrCode">
-                        <div style="color: #666; text-align: center; padding: 20px;">
+                        <div style="color: #666; text-align: center; padding: 10px;">
                             <div style="font-size: 2em;">📲</div>
-                            <p style="font-size: 0.85em;">Generate QR untuk connect</p>
+                            <p style="font-size: 0.8em;">Generate QR untuk connect</p>
                         </div>
                     </div>
-                    <div class="room-code-display" id="roomCodeDisplay">Room: ---</div>
-                    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                    <div class="room-code" id="roomCodeDisplay">Room: ---</div>
+                    <div class="control-group">
                         <button class="btn btn-success btn-sm" onclick="generateQR()">🔄 Generate QR</button>
                         <button class="btn btn-info btn-sm" onclick="copyRoomCode()">📋 Copy</button>
+                        <button class="btn btn-primary btn-sm" onclick="addCamera()">📱 Manual</button>
                     </div>
                 </div>
-                <div>
-                    <h3 style="color: #ffd700; font-size: 0.9em; margin-bottom: 10px;">
-                        📱 Device Terhubung (<span id="deviceCount">0</span>)
-                    </h3>
-                    <div class="device-list" id="deviceList">
+                
+                <!-- Camera List -->
+                <div class="panel">
+                    <h3>📷 Camera List (<span id="cameraCount">0</span>)</h3>
+                    <div class="camera-list" id="cameraList">
                         <div style="text-align: center; opacity: 0.5; padding: 15px; font-size: 0.85em;">
-                            Belum ada device
+                            Belum ada kamera
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Timeline -->
-        <div class="timeline">
-            <h3>📝 Timeline</h3>
-            <div id="timelineContent">
-                <div style="text-align: center; opacity: 0.5; padding: 5px; font-size: 0.85em;">
-                    Belum ada aktivitas
+                
+                <!-- Recording List -->
+                <div class="panel">
+                    <h3>💾 Recordings (<span id="recordingCount">0</span>)</h3>
+                    <div class="recording-list" id="recordingList">
+                        <div style="text-align: center; opacity: 0.5; padding: 15px; font-size: 0.85em;">
+                            Belum ada recording
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -558,91 +566,46 @@
     
     <script>
         // ============================================
-        // STATE MANAGEMENT
+        // STATE
         // ============================================
         const state = {
-            teamA: { name: 'Tim A', score: 0, setPoints: 0 },
-            teamB: { name: 'Tim B', score: 0, setPoints: 0 },
-            currentSet: 1,
-            isPaused: false,
-            timeline: [],
-            devices: [],
             cameras: [],
-            roomCode: 'VOLI-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
-            mode: 'server',
-            mainCameraId: null,
-            isClientMode: false
+            recordings: [],
+            roomCode: 'CCTV-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+            isRecording: false,
+            currentView: 'auto',
+            selectedCamera: null
         };
         
         let qrCodeInstance = null;
         let broadcastChannel = null;
-        let deviceId = 'DEV-' + Math.random().toString(36).substr(2, 4).toUpperCase();
-        let isInitialized = false;
-        let myStream = null;
-        let frameInterval = null;
+        let deviceId = 'CCTV-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+        let recordingInterval = null;
+        let frameIntervals = {};
+        let cameraIdCounter = 0;
         
         // ============================================
-        // INITIALIZATION
+        // INIT
         // ============================================
         document.addEventListener('DOMContentLoaded', function() {
-            initializeApp();
+            initializeCCTV();
         });
         
-        function initializeApp() {
-            if (isInitialized) return;
-            isInitialized = true;
+        function initializeCCTV() {
+            generateQR();
+            initializeBroadcast();
+            loadRecordings();
+            updateUI();
             
-            // Cek apakah ini client dari URL parameter
-            const urlParams = new URLSearchParams(window.location.search);
-            const mode = urlParams.get('mode');
-            const room = urlParams.get('room');
+            // Auto-add demo camera
+            setTimeout(() => {
+                addDemoCamera('Camera 1 (Depan)');
+                setTimeout(() => addDemoCamera('Camera 2 (Belakang)'), 1000);
+                setTimeout(() => addDemoCamera('Camera 3 (Samping)'), 2000);
+            }, 500);
             
-            if (mode === 'client' && room) {
-                state.roomCode = room;
-                state.mode = 'client';
-                document.getElementById('roomCodeDisplay').textContent = 'Room: ' + room;
-                setMode('client');
-            } else {
-                setMode('server');
-                generateQR();
-            }
-            
-            updateDisplay();
-            loadState();
-            setInterval(autoSave, 5000);
-            
-            console.log('🏐 Live Score + Camera System initialized');
-            console.log('📱 Device ID:', deviceId);
+            console.log('🎥 CCTV System initialized');
             console.log('🔑 Room Code:', state.roomCode);
-        }
-        
-        // ============================================
-        // MODE MANAGEMENT
-        // ============================================
-        function setMode(mode) {
-            state.mode = mode;
-            
-            document.getElementById('btnServer').style.opacity = mode === 'server' ? '1' : '0.5';
-            document.getElementById('btnClient').style.opacity = mode === 'client' ? '1' : '0.5';
-            
-            const statusText = document.getElementById('statusText');
-            const statusDot = document.getElementById('statusDot');
-            
-            if (mode === 'server') {
-                statusText.textContent = '📡 Server Mode - Siap menerima koneksi kamera';
-                statusDot.className = 'status-dot online';
-                document.getElementById('roomCodeDisplay').textContent = 'Room: ' + state.roomCode;
-                initializeBroadcast();
-                document.querySelector('.video-section h3 span').textContent = '0 kamera online';
-            } else {
-                statusText.textContent = '📱 Client Mode - Kirim kamera ke server';
-                statusDot.className = 'status-dot connecting';
-                document.getElementById('roomCodeDisplay').textContent = 'Mode Client - Kirim Kamera';
-                // Langsung minta akses kamera
-                startCameraStream();
-            }
-            
-            addTimeline(`Mode: ${mode.toUpperCase()}`);
         }
         
         // ============================================
@@ -650,40 +613,27 @@
         // ============================================
         function initializeBroadcast() {
             try {
-                if (broadcastChannel) broadcastChannel.close();
-                
-                broadcastChannel = new BroadcastChannel('voli_cam_' + state.roomCode);
+                broadcastChannel = new BroadcastChannel('cctv_' + state.roomCode);
                 broadcastChannel.onmessage = function(event) {
                     handleBroadcastMessage(event.data);
                 };
-                
-                addTimeline('📡 Broadcast Channel siap');
+                console.log('📡 Broadcast Channel ready');
             } catch (e) {
                 console.error('Broadcast error:', e);
-                // Fallback localStorage
                 window.addEventListener('storage', function(event) {
-                    if (event.key === 'voli_cam_' + state.roomCode) {
+                    if (event.key === 'cctv_' + state.roomCode) {
                         try {
                             handleBroadcastMessage(JSON.parse(event.newValue));
                         } catch (e) {}
                     }
                 });
-                addTimeline('⚠️ Fallback ke LocalStorage');
             }
         }
         
         function broadcastUpdate(data) {
             const message = {
                 type: 'update',
-                state: {
-                    teamA: state.teamA,
-                    teamB: state.teamB,
-                    currentSet: state.currentSet,
-                    isPaused: state.isPaused,
-                    timeline: state.timeline.slice(-10)
-                },
-                devices: state.devices,
-                cameras: state.cameras,
+                cameras: state.cameras.map(c => ({ id: c.id, name: c.name, active: c.active })),
                 deviceId: deviceId,
                 timestamp: Date.now(),
                 ...data
@@ -693,195 +643,180 @@
                 if (broadcastChannel) {
                     broadcastChannel.postMessage(message);
                 }
-                localStorage.setItem('voli_cam_' + state.roomCode, JSON.stringify(message));
+                localStorage.setItem('cctv_' + state.roomCode, JSON.stringify(message));
             } catch (e) {}
         }
         
         function handleBroadcastMessage(data) {
             if (data.deviceId === deviceId) return;
             
-            // Update state
-            if (data.state) {
-                state.teamA = data.state.teamA || state.teamA;
-                state.teamB = data.state.teamB || state.teamB;
-                state.currentSet = data.state.currentSet || state.currentSet;
-                state.isPaused = data.state.isPaused || false;
-                if (data.state.timeline) state.timeline = data.state.timeline;
-                updateDisplay();
-                updateTimeline();
+            if (data.type === 'camera_frame' && data.cameraId) {
+                // Tampilkan frame dari camera lain
+                const camera = state.cameras.find(c => c.id === data.cameraId);
+                if (camera) {
+                    displayFrame(data.cameraId, data.frame);
+                }
             }
             
-            // Update devices
-            if (data.devices) {
-                state.devices = data.devices;
-                updateDeviceList();
-            }
-            
-            // Update cameras
-            if (data.cameras) {
-                state.cameras = data.cameras;
-                updateCameraList();
-                document.getElementById('cameraCount').textContent = state.cameras.length;
-            }
-            
-            // Handle new device
-            if (data.type === 'connect' && !state.devices.includes(data.deviceId)) {
-                state.devices.push(data.deviceId);
-                updateDeviceList();
-                addTimeline(`📱 ${data.deviceId} terhubung`);
-                document.getElementById('deviceCount').textContent = state.devices.length + 1;
-                broadcastUpdate();
-            }
-            
-            // Handle camera frame dari client
-            if (data.type === 'camera_frame' && state.mode === 'server') {
-                handleCameraFrame(data);
-            }
-            
-            // Handle camera active
-            if (data.type === 'camera_active') {
-                const camera = {
+            if (data.type === 'camera_connect') {
+                // Camera baru dari client
+                const newCam = {
                     id: data.cameraId,
-                    name: data.cameraName || 'Kamera ' + data.cameraId,
-                    active: true
+                    name: data.cameraName || 'Camera ' + data.cameraId,
+                    active: true,
+                    isRemote: true
                 };
                 
-                if (!state.cameras.find(c => c.id === camera.id)) {
-                    state.cameras.push(camera);
-                    updateCameraList();
-                    addTimeline(`📹 ${camera.name} terhubung`);
-                    document.getElementById('cameraCount').textContent = state.cameras.length;
-                    broadcastUpdate();
+                if (!state.cameras.find(c => c.id === newCam.id)) {
+                    state.cameras.push(newCam);
+                    addCameraElement(newCam);
+                    updateUI();
+                    showToast(`📷 ${newCam.name} terhubung`, 'success');
                 }
             }
         }
         
         // ============================================
-        // CLIENT - START CAMERA
+        // CAMERA MANAGEMENT
         // ============================================
-        async function startCameraStream() {
-            try {
-                // Tampilkan loading
-                showToast('📹 Mengakses kamera...', 'info');
+        function addCamera() {
+            const name = prompt('Nama Camera:', 'Camera ' + (state.cameras.length + 1));
+            if (name) {
+                const camera = {
+                    id: 'CAM-' + (++cameraIdCounter),
+                    name: name,
+                    active: true,
+                    isRemote: false
+                };
                 
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { 
-                        facingMode: 'environment',
-                        width: { ideal: 640 },
-                        height: { ideal: 480 }
-                    },
-                    audio: false
-                });
+                state.cameras.push(camera);
+                addCameraElement(camera);
+                updateUI();
                 
-                myStream = stream;
+                // Jika mode client, mulai stream
+                if (state.isClientMode) {
+                    startLocalCamera(camera.id);
+                }
                 
-                // Tampilkan preview di client
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.autoplay = true;
-                video.muted = true;
-                video.style.display = 'none';
-                document.body.appendChild(video);
+                broadcastUpdate({ type: 'camera_connect', cameraId: camera.id, cameraName: camera.name });
+                showToast(`📷 ${camera.name} ditambahkan`, 'success');
+            }
+        }
+        
+        function addDemoCamera(name) {
+            const camera = {
+                id: 'CAM-DEMO-' + (++cameraIdCounter),
+                name: name,
+                active: true,
+                isRemote: false,
+                isDemo: true
+            };
+            
+            state.cameras.push(camera);
+            addCameraElement(camera);
+            updateUI();
+            
+            // Simulasi stream
+            simulateCameraStream(camera.id);
+            
+            showToast(`📷 ${camera.name} terhubung (demo)`, 'info');
+        }
+        
+        function removeCamera(cameraId) {
+            if (confirm('Hapus camera ini?')) {
+                state.cameras = state.cameras.filter(c => c.id !== cameraId);
+                const element = document.querySelector(`[data-camera-id="${cameraId}"]`);
+                if (element) element.remove();
+                updateUI();
+                showToast('Camera dihapus', 'info');
                 
-                // Kirim status camera aktif ke server
-                broadcastUpdate({
-                    type: 'camera_active',
-                    cameraId: deviceId,
-                    cameraName: '📱 ' + deviceId
-                });
-                
-                // Mulai kirim frame
-                startSendingFrames(video);
-                
-                addTimeline('📹 Kamera aktif dan streaming');
-                showToast('📹 Kamera aktif!', 'success');
-                
-                // Update status
-                const statusText = document.getElementById('statusText');
-                statusText.textContent = '📹 Streaming kamera ke server';
-                document.getElementById('statusDot').className = 'status-dot online';
-                
-            } catch (err) {
-                console.error('Camera error:', err);
-                showToast('❌ Gagal akses kamera: ' + err.message, 'error');
-                addTimeline('❌ Gagal akses kamera');
-                
-                // Coba dengan konfigurasi berbeda
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({
-                        video: true,
-                        audio: false
-                    });
-                    myStream = stream;
-                    startCameraStream();
-                } catch (e2) {
-                    showToast('❌ Tidak bisa akses kamera. Periksa izin.', 'error');
+                if (frameIntervals[cameraId]) {
+                    clearInterval(frameIntervals[cameraId]);
+                    delete frameIntervals[cameraId];
                 }
             }
         }
         
-        function startSendingFrames(video) {
+        function addCameraElement(camera) {
+            const grid = document.getElementById('videoGrid');
+            
+            // Hapus placeholder jika ada
+            const placeholder = grid.querySelector('[style*="grid-column: 1/-1"]');
+            if (placeholder && state.cameras.length === 1) {
+                placeholder.remove();
+            }
+            
+            const div = document.createElement('div');
+            div.className = 'video-item';
+            div.dataset.cameraId = camera.id;
+            
+            // Canvas untuk menampilkan frame
             const canvas = document.createElement('canvas');
-            canvas.width = 320;
-            canvas.height = 240;
-            const ctx = canvas.getContext('2d');
+            canvas.id = 'cam_' + camera.id;
+            div.appendChild(canvas);
             
-            // Kirim frame setiap 100ms (10 fps)
-            if (frameInterval) clearInterval(frameInterval);
+            // Camera info
+            const info = document.createElement('div');
+            info.className = 'camera-info';
+            info.innerHTML = `
+                <span class="rec-dot" id="recDot_${camera.id}"></span>
+                <span>${camera.name}</span>
+                <span style="font-size:0.8em; opacity:0.6;" id="fps_${camera.id}">0 fps</span>
+            `;
+            div.appendChild(info);
             
-            frameInterval = setInterval(() => {
-                if (video.videoWidth > 0 && video.videoHeight > 0) {
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    const imageData = canvas.toDataURL('image/jpeg', 0.6);
-                    
-                    broadcastUpdate({
-                        type: 'camera_frame',
-                        cameraId: deviceId,
-                        frame: imageData,
-                        timestamp: Date.now()
-                    });
+            // Controls
+            const controls = document.createElement('div');
+            controls.className = 'camera-controls';
+            controls.innerHTML = `
+                <button class="btn-sm record" onclick="toggleCameraRecording('${camera.id}')" id="recBtn_${camera.id}">⏺</button>
+                <button class="btn-sm screenshot" onclick="takeCameraScreenshot('${camera.id}')">📸</button>
+                <button class="btn-sm fullscreen" onclick="toggleCameraFullscreen('${camera.id}')">⛶</button>
+                <button class="btn-sm" style="background:#f44336;color:white;" onclick="removeCamera('${camera.id}')">✕</button>
+            `;
+            div.appendChild(controls);
+            
+            // Click to select
+            div.addEventListener('click', function(e) {
+                if (!e.target.closest('.camera-controls')) {
+                    selectCamera(camera.id);
                 }
-            }, 100);
+            });
+            
+            grid.appendChild(div);
+            updateView();
+        }
+        
+        function selectCamera(cameraId) {
+            state.selectedCamera = cameraId;
+            
+            // Update UI
+            document.querySelectorAll('.video-item').forEach(el => {
+                el.classList.toggle('active', el.dataset.cameraId === cameraId);
+            });
+            
+            document.querySelectorAll('.camera-item').forEach(el => {
+                el.classList.toggle('active', el.dataset.cameraId === cameraId);
+            });
         }
         
         // ============================================
-        // SERVER - HANDLE CAMERA FRAME
+        // DISPLAY FRAME
         // ============================================
-        function handleCameraFrame(data) {
-            // Tampilkan frame di thumbnail
-            const thumb = document.getElementById('thumb_' + data.cameraId);
-            if (thumb) {
-                if (thumb.tagName === 'CANVAS') {
-                    const ctx = thumb.getContext('2d');
-                    const img = new Image();
-                    img.onload = function() {
-                        thumb.width = img.width;
-                        thumb.height = img.height;
-                        ctx.drawImage(img, 0, 0, thumb.width, thumb.height);
-                    };
-                    img.src = data.frame;
-                }
-            }
+        function displayFrame(cameraId, imageData) {
+            const canvas = document.getElementById('cam_' + cameraId);
+            if (!canvas) return;
             
-            // Jika ini camera yang dipilih, tampilkan di main
-            if (state.mainCameraId === data.cameraId) {
-                displayMainFrame(data.frame);
-            }
-        }
-        
-        function displayMainFrame(imageData) {
-            const canvas = document.getElementById('mainCanvas');
             const ctx = canvas.getContext('2d');
             const img = new Image();
             img.onload = function() {
-                // Maintain aspect ratio
-                const container = document.getElementById('mainVideoContainer');
+                const container = canvas.parentElement;
                 const rect = container.getBoundingClientRect();
                 const ratio = img.width / img.height;
-                let w = rect.width || 640;
+                let w = rect.width || 320;
                 let h = w / ratio;
                 if (h > rect.height) {
-                    h = rect.height || 480;
+                    h = rect.height || 240;
                     w = h * ratio;
                 }
                 canvas.width = w;
@@ -892,49 +827,115 @@
         }
         
         // ============================================
-        // CAMERA LIST (Server)
+        // SIMULATE CAMERA STREAM (DEMO)
         // ============================================
-        function updateCameraList() {
-            const container = document.getElementById('videoThumbnails');
+        function simulateCameraStream(cameraId) {
+            // Buat animasi random untuk demo
+            const canvas = document.getElementById('cam_' + cameraId);
+            if (!canvas) return;
             
-            if (state.cameras.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; opacity: 0.5; padding: 20px; font-size: 0.85em;">
-                        Belum ada kamera<br>Scan QR dari HP
-                    </div>
-                `;
-                return;
-            }
+            const ctx = canvas.getContext('2d');
+            let frameCount = 0;
+            let fpsCounter = 0;
+            let lastFpsUpdate = Date.now();
             
-            container.innerHTML = state.cameras.map(cam => `
-                <div class="video-thumb ${state.mainCameraId === cam.id ? 'active' : ''}" 
-                     onclick="selectCamera('${cam.id}')">
-                    <canvas id="thumb_${cam.id}" style="width:100%;height:100%;"></canvas>
-                    <div class="thumb-label">${cam.name}</div>
-                    <div class="status-badge">● Live</div>
-                </div>
-            `).join('');
-            
-            // Jika tidak ada kamera yang dipilih, pilih yang pertama
-            if (!state.mainCameraId && state.cameras.length > 0) {
-                selectCamera(state.cameras[0].id);
-            }
+            frameIntervals[cameraId] = setInterval(() => {
+                const container = canvas.parentElement;
+                const rect = container.getBoundingClientRect();
+                const w = rect.width || 320;
+                const h = rect.height || 240;
+                canvas.width = w;
+                canvas.height = h;
+                
+                // Generate random content
+                const gradient = ctx.createRadialGradient(
+                    w/2 + Math.sin(frameCount * 0.01) * 50,
+                    h/2 + Math.cos(frameCount * 0.015) * 50,
+                    10,
+                    w/2, h/2, w/2
+                );
+                gradient.addColorStop(0, `hsl(${frameCount % 360}, 70%, 50%)`);
+                gradient.addColorStop(0.5, `hsl(${(frameCount + 60) % 360}, 70%, 30%)`);
+                gradient.addColorStop(1, '#000');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, w, h);
+                
+                // Text
+                ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📹 LIVE', w/2, h/2);
+                
+                ctx.fillStyle = 'rgba(255,255,255,0.2)';
+                ctx.font = '12px Arial';
+                ctx.fillText(new Date().toLocaleTimeString(), w/2, h/2 + 30);
+                
+                // Draw random motion dots
+                for (let i = 0; i < 10; i++) {
+                    const x = Math.random() * w;
+                    const y = Math.random() * h;
+                    const r = Math.random() * 5 + 2;
+                    ctx.fillStyle = `rgba(255,255,255,${Math.random() * 0.3})`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                frameCount++;
+                fpsCounter++;
+                
+                // Update FPS
+                const now = Date.now();
+                if (now - lastFpsUpdate > 1000) {
+                    const fps = document.getElementById('fps_' + cameraId);
+                    if (fps) fps.textContent = fpsCounter + ' fps';
+                    fpsCounter = 0;
+                    lastFpsUpdate = now;
+                }
+            }, 100);
         }
         
-        function selectCamera(cameraId) {
-            state.mainCameraId = cameraId;
-            const camera = state.cameras.find(c => c.id === cameraId);
-            
-            if (camera) {
-                document.getElementById('mainVideoLabel').textContent = '📹 ' + camera.name;
-                addTimeline(`📹 Memilih kamera: ${camera.name}`);
-                updateCameraList();
-                
-                // Minta frame terbaru
-                broadcastUpdate({
-                    type: 'request_frame',
-                    cameraId: cameraId
+        // ============================================
+        // LOCAL CAMERA (Client Mode)
+        // ============================================
+        async function startLocalCamera(cameraId) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment', width: 640, height: 480 },
+                    audio: false
                 });
+                
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.autoplay = true;
+                video.muted = true;
+                video.style.display = 'none';
+                document.body.appendChild(video);
+                
+                // Kirim frame ke server
+                const canvas = document.createElement('canvas');
+                canvas.width = 320;
+                canvas.height = 240;
+                const ctx = canvas.getContext('2d');
+                
+                frameIntervals[cameraId] = setInterval(() => {
+                    if (video.videoWidth > 0) {
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        const imageData = canvas.toDataURL('image/jpeg', 0.6);
+                        
+                        broadcastUpdate({
+                            type: 'camera_frame',
+                            cameraId: cameraId,
+                            frame: imageData
+                        });
+                    }
+                }, 100);
+                
+                showToast('📹 Camera aktif', 'success');
+                
+            } catch (err) {
+                console.error('Camera error:', err);
+                showToast('❌ Gagal akses kamera: ' + err.message, 'error');
             }
         }
         
@@ -945,24 +946,22 @@
             const qrContainer = document.getElementById('qrCode');
             qrContainer.innerHTML = '';
             
-            // Buat URL untuk client dengan parameter
             const clientUrl = window.location.href.split('?')[0] + 
                 '?mode=client&room=' + state.roomCode;
             
             try {
                 qrCodeInstance = new QRCode(qrContainer, {
                     text: clientUrl,
-                    width: 180,
-                    height: 180,
+                    width: 150,
+                    height: 150,
                     colorDark: '#000000',
                     colorLight: '#ffffff',
                     correctLevel: QRCode.CorrectLevel.H
                 });
                 document.getElementById('roomCodeDisplay').textContent = 'Room: ' + state.roomCode;
-                addTimeline('📱 QR Code digenerate');
-                showToast('QR Code siap! Scan dengan HP', 'success');
+                showToast('QR Code siap! Scan untuk connect', 'success');
             } catch (e) {
-                qrContainer.innerHTML = '<div style="color: #666;">Error generate QR</div>';
+                qrContainer.innerHTML = '<div style="color:#666;">Error generate QR</div>';
             }
         }
         
@@ -970,186 +969,244 @@
             const clientUrl = window.location.href.split('?')[0] + 
                 '?mode=client&room=' + state.roomCode;
             navigator.clipboard.writeText(clientUrl).then(() => {
-                showToast('Link disalin! Buka di HP', 'success');
+                showToast('Link disalin!', 'success');
             });
         }
         
         // ============================================
-        // SCORE CONTROLS
+        // VIEW CONTROLS
         // ============================================
-        function addPoint(team) {
-            if (state.isPaused) { showToast('⏸️ Di-pause!', 'error'); return; }
+        function setView(view) {
+            state.currentView = view;
             
-            if (team === 'A') {
-                state.teamA.score++;
-                addTimeline(`🔴 Tim A +1 (${state.teamA.score})`);
+            document.querySelectorAll('.view-controls .btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.view === view);
+            });
+            
+            updateView();
+        }
+        
+        function updateView() {
+            const grid = document.getElementById('videoGrid');
+            grid.className = 'video-grid view-' + state.currentView;
+            
+            // Auto adjust
+            if (state.currentView === 'auto') {
+                const count = state.cameras.length;
+                if (count <= 1) grid.className = 'video-grid view-1';
+                else if (count <= 2) grid.className = 'video-grid view-2';
+                else if (count <= 4) grid.className = 'video-grid view-4';
+                else grid.className = 'video-grid view-6';
+            }
+        }
+        
+        // ============================================
+        // RECORDING
+        // ============================================
+        function toggleRecording() {
+            state.isRecording = !state.isRecording;
+            document.getElementById('recBtnText').textContent = state.isRecording ? '⏹ Stop' : '⏺ Record All';
+            document.getElementById('statusDot').className = 'status-dot ' + (state.isRecording ? 'recording' : 'online');
+            document.getElementById('statusText').textContent = state.isRecording ? 'Recording...' : 'Online';
+            
+            if (state.isRecording) {
+                startRecording();
             } else {
-                state.teamB.score++;
-                addTimeline(`🔵 Tim B +1 (${state.teamB.score})`);
+                stopRecording();
             }
             
-            updateDisplay();
-            broadcastUpdate();
-            checkWinCondition();
+            // Update semua camera
+            document.querySelectorAll('.rec-dot').forEach(dot => {
+                dot.classList.toggle('active', state.isRecording);
+            });
         }
         
-        function subtractPoint(team) {
-            if (state.isPaused) { showToast('⏸️ Di-pause!', 'error'); return; }
+        function toggleCameraRecording(cameraId) {
+            const btn = document.getElementById('recBtn_' + cameraId);
+            const isActive = btn.classList.toggle('active');
             
-            if (team === 'A' && state.teamA.score > 0) {
-                state.teamA.score--;
-                addTimeline(`🔴 Tim A -1 (${state.teamA.score})`);
-            } else if (team === 'B' && state.teamB.score > 0) {
-                state.teamB.score--;
-                addTimeline(`🔵 Tim B -1 (${state.teamB.score})`);
-            }
-            
-            updateDisplay();
-            broadcastUpdate();
-        }
-        
-        function addSetPoint(team) {
-            if (state.isPaused) { showToast('⏸️ Di-pause!', 'error'); return; }
-            
-            if (team === 'A') {
-                state.teamA.setPoints++;
-                addTimeline(`🏆 Tim A menang Set ${state.currentSet}!`);
+            if (isActive) {
+                btn.textContent = '⏹';
+                btn.style.background = '#ff8800';
+                showToast(`⏺ Recording ${getCameraName(cameraId)}`, 'warning');
             } else {
-                state.teamB.setPoints++;
-                addTimeline(`🏆 Tim B menang Set ${state.currentSet}!`);
+                btn.textContent = '⏺';
+                btn.style.background = '#ff4444';
+                showToast(`⏹ Stop recording ${getCameraName(cameraId)}`, 'info');
             }
+        }
+        
+        function startRecording() {
+            // Simulasi recording
+            if (recordingInterval) clearInterval(recordingInterval);
             
-            updateDisplay();
-            broadcastUpdate();
-            showToast(`🏆 ${team === 'A' ? 'Tim A' : 'Tim B'} menang set!`, 'success');
+            recordingInterval = setInterval(() => {
+                // Simulasi save frame
+                const timestamp = new Date().toLocaleString();
+                state.recordings.push({
+                    id: 'REC-' + Date.now(),
+                    name: 'Recording ' + (state.recordings.length + 1),
+                    timestamp: timestamp,
+                    size: (Math.random() * 10 + 1).toFixed(1) + ' MB'
+                });
+                
+                updateRecordingList();
+                showToast(`💾 Recording saved: ${timestamp}`, 'info');
+            }, 5000);
         }
         
-        function nextSet() {
-            state.currentSet++;
-            state.teamA.score = 0;
-            state.teamB.score = 0;
-            addTimeline(`📋 Set ${state.currentSet} dimulai`);
-            updateDisplay();
-            broadcastUpdate();
-            showToast(`Set ${state.currentSet} dimulai!`, 'info');
-        }
-        
-        function resetMatch() {
-            if (confirm('Reset semua data pertandingan?')) {
-                state.teamA.score = 0;
-                state.teamB.score = 0;
-                state.teamA.setPoints = 0;
-                state.teamB.setPoints = 0;
-                state.currentSet = 1;
-                state.timeline = [];
-                state.isPaused = false;
-                document.getElementById('matchStatus').textContent = '▶ Berjalan';
-                addTimeline('🔄 Match di-reset');
-                updateDisplay();
-                broadcastUpdate();
-                showToast('Match di-reset!', 'info');
+        function stopRecording() {
+            if (recordingInterval) {
+                clearInterval(recordingInterval);
+                recordingInterval = null;
             }
         }
         
-        function togglePause() {
-            state.isPaused = !state.isPaused;
-            document.getElementById('matchStatus').textContent = state.isPaused ? '⏸️ Pause' : '▶ Berjalan';
-            addTimeline(state.isPaused ? '⏸️ Pause' : '▶️ Lanjut');
-            broadcastUpdate();
-            showToast(state.isPaused ? '⏸️ Pause' : '▶️ Lanjut', 'info');
+        function deleteRecording(id) {
+            state.recordings = state.recordings.filter(r => r.id !== id);
+            updateRecordingList();
+            showToast('Recording dihapus', 'info');
         }
         
-        function checkWinCondition() {
-            if (state.teamA.score >= 25 && state.teamA.score - state.teamB.score >= 2) {
-                addSetPoint('A');
-                showToast('🏆 Tim A memenangkan set!', 'success');
-            } else if (state.teamB.score >= 25 && state.teamB.score - state.teamA.score >= 2) {
-                addSetPoint('B');
-                showToast('🏆 Tim B memenangkan set!', 'success');
+        // ============================================
+        // SCREENSHOT
+        // ============================================
+        function takeScreenshot() {
+            const cameraId = state.selectedCamera || (state.cameras[0]?.id);
+            if (!cameraId) {
+                showToast('Pilih camera dulu', 'error');
+                return;
             }
+            takeCameraScreenshot(cameraId);
         }
         
-        function updateTeamName(team, name) {
-            if (team === 'A') state.teamA.name = name;
-            else state.teamB.name = name;
-            broadcastUpdate();
-            addTimeline(`✏️ ${team === 'A' ? 'Tim A' : 'Tim B'} → ${name}`);
-        }
-        
-        // ============================================
-        // DISPLAY UPDATE
-        // ============================================
-        function updateDisplay() {
-            document.getElementById('teamAName').value = state.teamA.name;
-            document.getElementById('teamAScore').textContent = state.teamA.score;
-            document.getElementById('teamBName').value = state.teamB.name;
-            document.getElementById('teamBScore').textContent = state.teamB.score;
-            document.getElementById('currentSet').textContent = state.currentSet;
-            document.getElementById('teamASetPoints').textContent = state.teamA.setPoints;
-            document.getElementById('teamBSetPoints').textContent = state.teamB.setPoints;
-            document.getElementById('deviceCount').textContent = state.devices.length + 1;
-        }
-        
-        // ============================================
-        // DEVICE MANAGEMENT
-        // ============================================
-        function updateDeviceList() {
-            const list = document.getElementById('deviceList');
-            const devices = [deviceId, ...state.devices];
-            
-            if (devices.length === 0) {
-                list.innerHTML = '<div style="text-align: center; opacity: 0.5; padding: 15px; font-size: 0.85em;">Belum ada device</div>';
+        function takeCameraScreenshot(cameraId) {
+            const canvas = document.getElementById('cam_' + cameraId);
+            if (!canvas) {
+                showToast('Camera tidak aktif', 'error');
                 return;
             }
             
-            list.innerHTML = devices.map(id => {
-                const isSelf = id === deviceId;
-                const isServer = state.mode === 'server' && isSelf;
-                const hasCamera = state.cameras.find(c => c.id === id);
-                
-                return `
-                    <div class="device-item">
-                        <span>
-                            ${isSelf ? '⭐ ' : '📱 '}
-                            ${id}
-                            ${isSelf ? ' (Server)' : ''}
-                            ${hasCamera ? ' 📹' : ''}
-                        </span>
-                        <span>
-                            <span class="badge ${isServer ? 'server' : isSelf ? 'self' : hasCamera ? 'camera' : 'client'}">
-                                ${isServer ? 'Server' : isSelf ? 'You' : hasCamera ? 'Camera' : 'Client'}
-                            </span>
-                        </span>
+            const link = document.createElement('a');
+            link.download = `screenshot_${getCameraName(cameraId)}_${Date.now()}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            showToast(`📸 Screenshot ${getCameraName(cameraId)} diambil`, 'success');
+        }
+        
+        // ============================================
+        // FULLSCREEN
+        // ============================================
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+                showToast('⛶ Fullscreen mode', 'info');
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+            }
+        }
+        
+        function toggleCameraFullscreen(cameraId) {
+            const item = document.querySelector(`[data-camera-id="${cameraId}"]`);
+            if (item) {
+                item.classList.toggle('fullscreen');
+                if (item.classList.contains('fullscreen')) {
+                    showToast('⛶ Camera fullscreen', 'info');
+                }
+            }
+        }
+        
+        // ============================================
+        // UI UPDATE
+        // ============================================
+        function updateUI() {
+            document.getElementById('cameraCount').textContent = state.cameras.length;
+            updateCameraList();
+            updateView();
+            
+            if (state.cameras.length > 0 && !state.selectedCamera) {
+                selectCamera(state.cameras[0].id);
+            }
+        }
+        
+        function updateCameraList() {
+            const list = document.getElementById('cameraList');
+            
+            if (state.cameras.length === 0) {
+                list.innerHTML = `
+                    <div style="text-align: center; opacity: 0.5; padding: 15px; font-size: 0.85em;">
+                        Belum ada kamera
                     </div>
                 `;
-            }).join('');
-        }
-        
-        // ============================================
-        // TIMELINE
-        // ============================================
-        function addTimeline(message) {
-            const timestamp = new Date().toLocaleTimeString('id-ID');
-            state.timeline.push({ time: timestamp, message: message });
-            if (state.timeline.length > 50) state.timeline = state.timeline.slice(-50);
-            updateTimeline();
-        }
-        
-        function updateTimeline() {
-            const container = document.getElementById('timelineContent');
-            if (state.timeline.length === 0) {
-                container.innerHTML = '<div style="text-align: center; opacity: 0.5; padding: 5px; font-size: 0.85em;">Belum ada aktivitas</div>';
                 return;
             }
             
-            container.innerHTML = state.timeline.slice(-20).map(item => `
-                <div class="timeline-item">
-                    <span class="time">[${item.time}]</span>
-                    ${item.message}
+            list.innerHTML = state.cameras.map(cam => `
+                <div class="camera-item ${state.selectedCamera === cam.id ? 'active' : ''}" 
+                     data-camera-id="${cam.id}"
+                     onclick="selectCamera('${cam.id}')">
+                    <span class="cam-name">
+                        <span>📷</span>
+                        ${cam.name}
+                    </span>
+                    <span class="cam-status ${cam.active ? 'online' : 'offline'}">
+                        ${cam.active ? '● Online' : '● Offline'}
+                    </span>
                 </div>
             `).join('');
-            container.scrollTop = container.scrollHeight;
         }
+        
+        function updateRecordingList() {
+            const list = document.getElementById('recordingList');
+            document.getElementById('recordingCount').textContent = state.recordings.length;
+            
+            if (state.recordings.length === 0) {
+                list.innerHTML = `
+                    <div style="text-align: center; opacity: 0.5; padding: 15px; font-size: 0.85em;">
+                        Belum ada recording
+                    </div>
+                `;
+                return;
+            }
+            
+            list.innerHTML = state.recordings.slice(-10).reverse().map(rec => `
+                <div class="recording-item">
+                    <span>${rec.name} (${rec.timestamp})</span>
+                    <span>
+                        ${rec.size}
+                        <button class="del-btn" onclick="deleteRecording('${rec.id}')">✕</button>
+                    </span>
+                </div>
+            `).join('');
+        }
+        
+        function getCameraName(cameraId) {
+            const cam = state.cameras.find(c => c.id === cameraId);
+            return cam ? cam.name : 'Unknown';
+        }
+        
+        // ============================================
+        // SAVE / LOAD RECORDINGS
+        // ============================================
+        function loadRecordings() {
+            try {
+                const saved = localStorage.getItem('cctv_recordings');
+                if (saved) {
+                    state.recordings = JSON.parse(saved);
+                    updateRecordingList();
+                }
+            } catch (e) {}
+        }
+        
+        function saveRecordings() {
+            try {
+                localStorage.setItem('cctv_recordings', JSON.stringify(state.recordings));
+            } catch (e) {}
+        }
+        
+        // Auto save recordings
+        setInterval(saveRecordings, 10000);
         
         // ============================================
         // TOAST
@@ -1168,71 +1225,45 @@
         }
         
         // ============================================
-        // FULLSCREEN
-        // ============================================
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(() => {});
-            } else {
-                if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
-            }
-        }
-        
-        // ============================================
-        // AUTO SAVE / LOAD
-        // ============================================
-        function autoSave() {
-            try {
-                const saveData = {
-                    teamA: state.teamA,
-                    teamB: state.teamB,
-                    currentSet: state.currentSet,
-                    isPaused: state.isPaused,
-                    timeline: state.timeline.slice(-20),
-                    roomCode: state.roomCode
-                };
-                localStorage.setItem('voli_score_save', JSON.stringify(saveData));
-            } catch (e) {}
-        }
-        
-        function loadState() {
-            try {
-                const saved = localStorage.getItem('voli_score_save');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    state.teamA = data.teamA || state.teamA;
-                    state.teamB = data.teamB || state.teamB;
-                    state.currentSet = data.currentSet || 1;
-                    state.isPaused = data.isPaused || false;
-                    state.roomCode = data.roomCode || state.roomCode;
-                    if (data.timeline) state.timeline = data.timeline;
-                    updateDisplay();
-                    updateTimeline();
-                    document.getElementById('roomCodeDisplay').textContent = 'Room: ' + state.roomCode;
-                }
-            } catch (e) {}
-        }
-        
-        // ============================================
         // KEYBOARD SHORTCUTS
         // ============================================
         document.addEventListener('keydown', function(e) {
             if (e.target.tagName === 'INPUT') return;
             
             switch(e.key) {
-                case '1': addPoint('A'); break;
-                case '2': addPoint('B'); break;
-                case '3': addSetPoint('A'); break;
-                case '4': addSetPoint('B'); break;
-                case ' ': e.preventDefault(); togglePause(); break;
-                case 'r': resetMatch(); break;
+                case 'r': toggleRecording(); break;
+                case 's': takeScreenshot(); break;
                 case 'f': toggleFullscreen(); break;
-                case 'n': nextSet(); break;
+                case 'a': addCamera(); break;
+                case '1': setView('1'); break;
+                case '2': setView('2'); break;
+                case '3': setView('4'); break;
+                case '4': setView('6'); break;
+                case ' ': e.preventDefault(); 
+                    const next = state.cameras.find(c => c.id !== state.selectedCamera);
+                    if (next) selectCamera(next.id);
+                    break;
             }
         });
         
-        console.log('🏐 Live Score + Multi Camera siap!');
-        console.log('📌 Shortcuts: 1=A+ 2=B+ 3=SetA 4=SetB Space=Pause');
+        // ============================================
+        // CHECK CLIENT MODE
+        // ============================================
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('mode') === 'client') {
+            state.isClientMode = true;
+            state.roomCode = urlParams.get('room') || state.roomCode;
+            document.getElementById('roomCodeDisplay').textContent = 'Mode: Client - ' + state.roomCode;
+            showToast('📱 Mode Client - Menghubungkan...', 'info');
+            
+            // Auto add camera as client
+            setTimeout(() => {
+                addCamera();
+            }, 1000);
+        }
+        
+        console.log('🎥 CCTV System siap!');
+        console.log('📌 Shortcuts: R=Record S=Screenshot F=Fullscreen A=Add Camera 1-4=View');
     </script>
 </body>
 </html>
