@@ -25,7 +25,6 @@
             padding: 15px;
         }
         
-        /* Status Bar */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -35,12 +34,6 @@
             border-radius: 10px;
             margin-bottom: 15px;
             flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .status-bar .mode {
-            display: flex;
-            align-items: center;
             gap: 10px;
         }
         
@@ -74,7 +67,6 @@
         .btn-toggle.client { background: #2196F3; color: white; }
         .btn-toggle:hover { transform: scale(1.05); }
         
-        /* Header */
         .header {
             text-align: center;
             padding: 15px;
@@ -90,7 +82,6 @@
             -webkit-text-fill-color: transparent;
         }
         
-        /* Main Layout */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 300px;
@@ -98,7 +89,6 @@
             margin-bottom: 15px;
         }
         
-        /* Video Section */
         .video-section {
             background: rgba(255,255,255,0.05);
             border-radius: 15px;
@@ -129,7 +119,7 @@
             min-height: 400px;
         }
         
-        .video-main video {
+        .video-main video, .video-main canvas {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -144,14 +134,6 @@
             border-radius: 20px;
             font-size: 0.85em;
             color: #ffd700;
-        }
-        
-        .video-main .camera-control {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            gap: 5px;
         }
         
         .video-thumbnails {
@@ -181,7 +163,7 @@
             box-shadow: 0 0 20px rgba(255,215,0,0.3);
         }
         
-        .video-thumb video {
+        .video-thumb video, .video-thumb canvas {
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -208,11 +190,6 @@
             color: white;
         }
         
-        .video-thumb .status-badge.inactive {
-            background: #f44336;
-        }
-        
-        /* Score Panel */
         .score-panel {
             background: rgba(255,255,255,0.05);
             border-radius: 15px;
@@ -239,11 +216,6 @@
             background: rgba(255,255,255,0.05);
             border-radius: 8px;
             margin-bottom: 5px;
-        }
-        
-        .team-row .team-name {
-            font-weight: bold;
-            font-size: 1.1em;
         }
         
         .team-row .team-score {
@@ -289,7 +261,6 @@
         
         .set-info .highlight { background: #ff6b6b; }
         
-        /* Controls */
         .controls {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -318,7 +289,6 @@
         .btn-success { background: #4CAF50; color: white; }
         .btn-sm { padding: 5px 10px; font-size: 0.75em; }
         
-        /* Connection Panel */
         .connection-panel {
             background: rgba(255,255,255,0.05);
             border-radius: 15px;
@@ -388,18 +358,6 @@
         .badge.self { background: #ff9800; color: white; }
         .badge.camera { background: #9c27b0; color: white; }
         
-        .device-status {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-        
-        .device-status.online { background: #4CAF50; }
-        .device-status.offline { background: #f44336; }
-        .device-status.streaming { background: #ff9800; animation: pulse 1s infinite; }
-        
-        /* Timeline */
         .timeline {
             background: rgba(255,255,255,0.05);
             padding: 10px 15px;
@@ -427,7 +385,6 @@
             margin-right: 8px;
         }
         
-        /* Toast */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -450,63 +407,24 @@
             to { transform: translateX(0); opacity: 1; }
         }
         
-        /* Responsive */
         @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .video-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .video-main {
-                min-height: 250px;
-            }
-            
-            .video-thumbnails {
-                flex-direction: row;
-                overflow-x: auto;
-            }
-            
-            .video-thumb {
-                min-width: 150px;
-                aspect-ratio: 16/9;
-            }
-            
-            .connection-grid {
-                grid-template-columns: 1fr;
-            }
+            .main-grid { grid-template-columns: 1fr; }
+            .video-grid { grid-template-columns: 1fr; }
+            .video-main { min-height: 250px; }
+            .video-thumbnails { flex-direction: row; overflow-x: auto; }
+            .video-thumb { min-width: 150px; aspect-ratio: 16/9; }
+            .connection-grid { grid-template-columns: 1fr; }
         }
         
         @media (max-width: 768px) {
-            .controls {
-                grid-template-columns: 1fr;
-            }
-            
-            .status-bar {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .header h1 {
-                font-size: 1.5em;
-            }
+            .controls { grid-template-columns: 1fr; }
+            .status-bar { flex-direction: column; text-align: center; }
+            .header h1 { font-size: 1.5em; }
         }
         
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #ffd700;
-            border-radius: 10px;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #ffd700; border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -528,7 +446,7 @@
         <!-- Header -->
         <div class="header">
             <h1>🏐 Live Score Voli + Multi Camera</h1>
-            <div style="font-size: 0.85em; opacity: 0.7;">Pilih kamera HP untuk ditampilkan di monitor</div>
+            <div style="font-size: 0.85em; opacity: 0.7;">Scan QR untuk connect HP sebagai kamera</div>
         </div>
         
         <!-- Main Grid -->
@@ -543,15 +461,13 @@
                 </h3>
                 <div class="video-grid">
                     <div class="video-main" id="mainVideoContainer">
-                        <video id="mainVideo" autoplay playsinline muted></video>
+                        <video id="mainVideo" autoplay playsinline muted style="display:none;"></video>
+                        <canvas id="mainCanvas"></canvas>
                         <div class="video-label" id="mainVideoLabel">Pilih kamera dari thumbnail</div>
-                        <div class="camera-control">
-                            <button class="btn btn-danger btn-sm" onclick="stopMainCamera()">✕</button>
-                        </div>
                     </div>
                     <div class="video-thumbnails" id="videoThumbnails">
                         <div style="text-align: center; opacity: 0.5; padding: 20px; font-size: 0.85em;">
-                            Belum ada kamera<br>Connect HP untuk streaming
+                            Belum ada kamera<br>Scan QR dari HP
                         </div>
                     </div>
                 </div>
@@ -611,7 +527,6 @@
                     <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
                         <button class="btn btn-success btn-sm" onclick="generateQR()">🔄 Generate QR</button>
                         <button class="btn btn-info btn-sm" onclick="copyRoomCode()">📋 Copy</button>
-                        <button class="btn btn-primary btn-sm" onclick="connectViaCode()">🔗 Manual</button>
                     </div>
                 </div>
                 <div>
@@ -622,10 +537,6 @@
                         <div style="text-align: center; opacity: 0.5; padding: 15px; font-size: 0.85em;">
                             Belum ada device
                         </div>
-                    </div>
-                    <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
-                        <button class="btn btn-danger btn-sm" onclick="disconnectAll()" style="flex:1;">🔌 Putus</button>
-                        <button class="btn btn-info btn-sm" onclick="refreshDevices()" style="flex:1;">🔄 Refresh</button>
                     </div>
                 </div>
             </div>
@@ -659,16 +570,16 @@
             cameras: [],
             roomCode: 'VOLI-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
             mode: 'server',
-            isConnected: false,
             mainCameraId: null,
-            peerConnections: {}
+            isClientMode: false
         };
         
         let qrCodeInstance = null;
         let broadcastChannel = null;
         let deviceId = 'DEV-' + Math.random().toString(36).substr(2, 4).toUpperCase();
         let isInitialized = false;
-        let mainVideoStream = null;
+        let myStream = null;
+        let frameInterval = null;
         
         // ============================================
         // INITIALIZATION
@@ -681,16 +592,24 @@
             if (isInitialized) return;
             isInitialized = true;
             
-            setMode('server');
-            generateQR();
+            // Cek apakah ini client dari URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            const room = urlParams.get('room');
+            
+            if (mode === 'client' && room) {
+                state.roomCode = room;
+                state.mode = 'client';
+                document.getElementById('roomCodeDisplay').textContent = 'Room: ' + room;
+                setMode('client');
+            } else {
+                setMode('server');
+                generateQR();
+            }
+            
             updateDisplay();
             loadState();
-            
-            // Auto-save
             setInterval(autoSave, 5000);
-            
-            // Simulasi device dan kamera untuk demo
-            setTimeout(simulateDevices, 2000);
             
             console.log('🏐 Live Score + Camera System initialized');
             console.log('📱 Device ID:', deviceId);
@@ -714,11 +633,13 @@
                 statusDot.className = 'status-dot online';
                 document.getElementById('roomCodeDisplay').textContent = 'Room: ' + state.roomCode;
                 initializeBroadcast();
+                document.querySelector('.video-section h3 span').textContent = '0 kamera online';
             } else {
                 statusText.textContent = '📱 Client Mode - Kirim kamera ke server';
                 statusDot.className = 'status-dot connecting';
                 document.getElementById('roomCodeDisplay').textContent = 'Mode Client - Kirim Kamera';
-                connectAsClient();
+                // Langsung minta akses kamera
+                startCameraStream();
             }
             
             addTimeline(`Mode: ${mode.toUpperCase()}`);
@@ -736,11 +657,10 @@
                     handleBroadcastMessage(event.data);
                 };
                 
-                state.isConnected = true;
                 addTimeline('📡 Broadcast Channel siap');
-                updateStatus('online');
             } catch (e) {
                 console.error('Broadcast error:', e);
+                // Fallback localStorage
                 window.addEventListener('storage', function(event) {
                     if (event.key === 'voli_cam_' + state.roomCode) {
                         try {
@@ -801,6 +721,7 @@
             if (data.cameras) {
                 state.cameras = data.cameras;
                 updateCameraList();
+                document.getElementById('cameraCount').textContent = state.cameras.length;
             }
             
             // Handle new device
@@ -812,101 +733,13 @@
                 broadcastUpdate();
             }
             
-            // Handle camera stream offer
-            if (data.type === 'camera_offer' && state.mode === 'server') {
-                handleCameraOffer(data);
+            // Handle camera frame dari client
+            if (data.type === 'camera_frame' && state.mode === 'server') {
+                handleCameraFrame(data);
             }
-        }
-        
-        // ============================================
-        // CLIENT CONNECTION (HP)
-        // ============================================
-        function connectAsClient() {
-            // Simulasi connect ke server
-            state.isConnected = true;
-            updateStatus('online');
             
-            setTimeout(() => {
-                broadcastUpdate({ type: 'connect' });
-                addTimeline('📱 Terhubung sebagai Client');
-                
-                // Mulai kamera
-                startCamera();
-            }, 500);
-        }
-        
-        // ============================================
-        // CAMERA MANAGEMENT (Client Side)
-        // ============================================
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'environment', width: 1280, height: 720 },
-                    audio: false
-                });
-                
-                // Tampilkan preview di client
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.autoplay = true;
-                video.muted = true;
-                video.style.display = 'none';
-                document.body.appendChild(video);
-                
-                // Kirim stream ke server
-                sendStreamToServer(stream);
-                
-                addTimeline('📹 Kamera aktif dan streaming');
-                showToast('📹 Kamera aktif!', 'success');
-                
-                // Update status
-                broadcastUpdate({
-                    type: 'camera_active',
-                    cameraId: deviceId,
-                    cameraName: 'HP ' + deviceId
-                });
-                
-            } catch (err) {
-                console.error('Camera error:', err);
-                showToast('❌ Gagal akses kamera: ' + err.message, 'error');
-                addTimeline('❌ Gagal akses kamera');
-            }
-        }
-        
-        function sendStreamToServer(stream) {
-            // Simulasi kirim stream via BroadcastChannel
-            // Di real implementation, ini akan pakai WebRTC
-            
-            // Simulasi: ambil screenshot tiap detik
-            const video = document.querySelector('video');
-            if (!video) return;
-            
-            const canvas = document.createElement('canvas');
-            canvas.width = 640;
-            canvas.height = 360;
-            const ctx = canvas.getContext('2d');
-            
-            setInterval(() => {
-                if (video.videoWidth > 0) {
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    const imageData = canvas.toDataURL('image/jpeg', 0.5);
-                    
-                    broadcastUpdate({
-                        type: 'camera_frame',
-                        cameraId: deviceId,
-                        frame: imageData,
-                        timestamp: Date.now()
-                    });
-                }
-            }, 100); // 10 fps
-        }
-        
-        // ============================================
-        // CAMERA MANAGEMENT (Server Side)
-        // ============================================
-        function handleCameraOffer(data) {
+            // Handle camera active
             if (data.type === 'camera_active') {
-                // Tambahkan ke daftar kamera
                 const camera = {
                     id: data.cameraId,
                     name: data.cameraName || 'Kamera ' + data.cameraId,
@@ -921,50 +754,153 @@
                     broadcastUpdate();
                 }
             }
-            
-            if (data.type === 'camera_frame' && state.cameras.find(c => c.id === data.cameraId)) {
-                // Tampilkan frame di video main jika ini kamera yang dipilih
-                if (state.mainCameraId === data.cameraId) {
-                    displayFrame(data.frame);
+        }
+        
+        // ============================================
+        // CLIENT - START CAMERA
+        // ============================================
+        async function startCameraStream() {
+            try {
+                // Tampilkan loading
+                showToast('📹 Mengakses kamera...', 'info');
+                
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    },
+                    audio: false
+                });
+                
+                myStream = stream;
+                
+                // Tampilkan preview di client
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.autoplay = true;
+                video.muted = true;
+                video.style.display = 'none';
+                document.body.appendChild(video);
+                
+                // Kirim status camera aktif ke server
+                broadcastUpdate({
+                    type: 'camera_active',
+                    cameraId: deviceId,
+                    cameraName: '📱 ' + deviceId
+                });
+                
+                // Mulai kirim frame
+                startSendingFrames(video);
+                
+                addTimeline('📹 Kamera aktif dan streaming');
+                showToast('📹 Kamera aktif!', 'success');
+                
+                // Update status
+                const statusText = document.getElementById('statusText');
+                statusText.textContent = '📹 Streaming kamera ke server';
+                document.getElementById('statusDot').className = 'status-dot online';
+                
+            } catch (err) {
+                console.error('Camera error:', err);
+                showToast('❌ Gagal akses kamera: ' + err.message, 'error');
+                addTimeline('❌ Gagal akses kamera');
+                
+                // Coba dengan konfigurasi berbeda
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: false
+                    });
+                    myStream = stream;
+                    startCameraStream();
+                } catch (e2) {
+                    showToast('❌ Tidak bisa akses kamera. Periksa izin.', 'error');
                 }
             }
         }
         
-        function displayFrame(imageData) {
-            const mainVideo = document.getElementById('mainVideo');
-            // Tampilkan image sebagai video frame
-            // Untuk demo, kita tampilkan di canvas atau img
-            // Karena video element tidak bisa langsung render image, kita pakai canvas
-            let canvas = document.getElementById('mainCanvas');
-            if (!canvas) {
-                canvas = document.createElement('canvas');
-                canvas.id = 'mainCanvas';
-                canvas.style.width = '100%';
-                canvas.style.height = '100%';
-                canvas.style.objectFit = 'cover';
-                const container = document.getElementById('mainVideoContainer');
-                const video = document.getElementById('mainVideo');
-                video.style.display = 'none';
-                container.insertBefore(canvas, video.nextSibling);
+        function startSendingFrames(video) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 320;
+            canvas.height = 240;
+            const ctx = canvas.getContext('2d');
+            
+            // Kirim frame setiap 100ms (10 fps)
+            if (frameInterval) clearInterval(frameInterval);
+            
+            frameInterval = setInterval(() => {
+                if (video.videoWidth > 0 && video.videoHeight > 0) {
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageData = canvas.toDataURL('image/jpeg', 0.6);
+                    
+                    broadcastUpdate({
+                        type: 'camera_frame',
+                        cameraId: deviceId,
+                        frame: imageData,
+                        timestamp: Date.now()
+                    });
+                }
+            }, 100);
+        }
+        
+        // ============================================
+        // SERVER - HANDLE CAMERA FRAME
+        // ============================================
+        function handleCameraFrame(data) {
+            // Tampilkan frame di thumbnail
+            const thumb = document.getElementById('thumb_' + data.cameraId);
+            if (thumb) {
+                if (thumb.tagName === 'CANVAS') {
+                    const ctx = thumb.getContext('2d');
+                    const img = new Image();
+                    img.onload = function() {
+                        thumb.width = img.width;
+                        thumb.height = img.height;
+                        ctx.drawImage(img, 0, 0, thumb.width, thumb.height);
+                    };
+                    img.src = data.frame;
+                }
             }
             
+            // Jika ini camera yang dipilih, tampilkan di main
+            if (state.mainCameraId === data.cameraId) {
+                displayMainFrame(data.frame);
+            }
+        }
+        
+        function displayMainFrame(imageData) {
+            const canvas = document.getElementById('mainCanvas');
             const ctx = canvas.getContext('2d');
             const img = new Image();
             img.onload = function() {
-                canvas.width = img.width;
-                canvas.height = img.height;
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                // Maintain aspect ratio
+                const container = document.getElementById('mainVideoContainer');
+                const rect = container.getBoundingClientRect();
+                const ratio = img.width / img.height;
+                let w = rect.width || 640;
+                let h = w / ratio;
+                if (h > rect.height) {
+                    h = rect.height || 480;
+                    w = h * ratio;
+                }
+                canvas.width = w;
+                canvas.height = h;
+                ctx.drawImage(img, 0, 0, w, h);
             };
             img.src = imageData;
         }
         
+        // ============================================
+        // CAMERA LIST (Server)
+        // ============================================
         function updateCameraList() {
             const container = document.getElementById('videoThumbnails');
             
             if (state.cameras.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; opacity: 0.5; padding: 20px; font-size: 0.85em;">
-                        Belum ada kamera<br>Connect HP untuk streaming
+                        Belum ada kamera<br>Scan QR dari HP
                     </div>
                 `;
                 return;
@@ -973,11 +909,9 @@
             container.innerHTML = state.cameras.map(cam => `
                 <div class="video-thumb ${state.mainCameraId === cam.id ? 'active' : ''}" 
                      onclick="selectCamera('${cam.id}')">
-                    <video id="thumb_${cam.id}" autoplay playsinline muted></video>
+                    <canvas id="thumb_${cam.id}" style="width:100%;height:100%;"></canvas>
                     <div class="thumb-label">${cam.name}</div>
-                    <div class="status-badge ${cam.active ? '' : 'inactive'}">
-                        ${cam.active ? '● Live' : '● Off'}
-                    </div>
+                    <div class="status-badge">● Live</div>
                 </div>
             `).join('');
             
@@ -1004,20 +938,6 @@
             }
         }
         
-        function stopMainCamera() {
-            state.mainCameraId = null;
-            document.getElementById('mainVideoLabel').textContent = 'Pilih kamera dari thumbnail';
-            
-            const canvas = document.getElementById('mainCanvas');
-            if (canvas) {
-                const ctx = canvas.getContext('2d');
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
-            
-            updateCameraList();
-            addTimeline('📹 Kamera di-stop');
-        }
-        
         // ============================================
         // QR CODE
         // ============================================
@@ -1025,17 +945,13 @@
             const qrContainer = document.getElementById('qrCode');
             qrContainer.innerHTML = '';
             
-            const connectionData = {
-                room: state.roomCode,
-                mode: 'client',
-                type: 'voli_camera',
-                server: window.location.href,
-                timestamp: Date.now()
-            };
+            // Buat URL untuk client dengan parameter
+            const clientUrl = window.location.href.split('?')[0] + 
+                '?mode=client&room=' + state.roomCode;
             
             try {
                 qrCodeInstance = new QRCode(qrContainer, {
-                    text: JSON.stringify(connectionData),
+                    text: clientUrl,
                     width: 180,
                     height: 180,
                     colorDark: '#000000',
@@ -1051,24 +967,11 @@
         }
         
         function copyRoomCode() {
-            navigator.clipboard.writeText(state.roomCode).then(() => {
-                showToast('Room Code disalin: ' + state.roomCode, 'success');
+            const clientUrl = window.location.href.split('?')[0] + 
+                '?mode=client&room=' + state.roomCode;
+            navigator.clipboard.writeText(clientUrl).then(() => {
+                showToast('Link disalin! Buka di HP', 'success');
             });
-        }
-        
-        function connectViaCode() {
-            const code = prompt('Masukkan Room Code:', state.roomCode);
-            if (code) {
-                state.roomCode = code;
-                document.getElementById('roomCodeDisplay').textContent = 'Room: ' + code;
-                generateQR();
-                if (state.mode === 'client') {
-                    connectAsClient();
-                } else {
-                    initializeBroadcast();
-                }
-                showToast('Terhubung ke room: ' + code, 'success');
-            }
         }
         
         // ============================================
@@ -1216,29 +1119,10 @@
                             <span class="badge ${isServer ? 'server' : isSelf ? 'self' : hasCamera ? 'camera' : 'client'}">
                                 ${isServer ? 'Server' : isSelf ? 'You' : hasCamera ? 'Camera' : 'Client'}
                             </span>
-                            <span class="device-status ${hasCamera ? 'streaming' : 'online'}"></span>
                         </span>
                     </div>
                 `;
             }).join('');
-        }
-        
-        function disconnectAll() {
-            if (confirm('Putuskan semua koneksi?')) {
-                state.devices = [];
-                state.cameras = [];
-                updateDeviceList();
-                updateCameraList();
-                addTimeline('🔌 Semua device diputuskan');
-                showToast('Semua device diputuskan', 'info');
-                broadcastUpdate();
-            }
-        }
-        
-        function refreshDevices() {
-            updateDeviceList();
-            updateCameraList();
-            showToast('Device list di-refresh', 'info');
         }
         
         // ============================================
@@ -1265,23 +1149,6 @@
                 </div>
             `).join('');
             container.scrollTop = container.scrollHeight;
-        }
-        
-        // ============================================
-        // STATUS
-        // ============================================
-        function updateStatus(status) {
-            const dot = document.getElementById('statusDot');
-            const text = document.getElementById('statusText');
-            
-            dot.className = 'status-dot ' + status;
-            if (status === 'online') {
-                text.textContent = state.mode === 'server' ? '📡 Server Aktif' : '📱 Client Terhubung';
-            } else if (status === 'connecting') {
-                text.textContent = '⏳ Menghubungkan...';
-            } else {
-                text.textContent = '🔴 Offline';
-            }
         }
         
         // ============================================
@@ -1344,44 +1211,6 @@
                     document.getElementById('roomCodeDisplay').textContent = 'Room: ' + state.roomCode;
                 }
             } catch (e) {}
-        }
-        
-        // ============================================
-        // SIMULASI DEVICE & KAMERA (DEMO)
-        // ============================================
-        function simulateDevices() {
-            if (state.mode === 'server') {
-                // Simulasi 2 HP dengan kamera
-                const demoCameras = [
-                    { id: 'CAM-SAMSUNG', name: '📱 Samsung A53' },
-                    { id: 'CAM-iPHONE', name: '📱 iPhone 13' }
-                ];
-                
-                demoCameras.forEach((cam, index) => {
-                    setTimeout(() => {
-                        if (!state.cameras.find(c => c.id === cam.id)) {
-                            state.cameras.push({
-                                id: cam.id,
-                                name: cam.name,
-                                active: true
-                            });
-                            state.devices.push(cam.id);
-                            updateCameraList();
-                            updateDeviceList();
-                            addTimeline(`📹 ${cam.name} terhubung (simulasi)`);
-                            document.getElementById('cameraCount').textContent = state.cameras.length;
-                            document.getElementById('deviceCount').textContent = state.devices.length + 1;
-                            
-                            // Pilih kamera pertama otomatis
-                            if (index === 0) {
-                                setTimeout(() => selectCamera(cam.id), 500);
-                            }
-                            
-                            broadcastUpdate();
-                        }
-                    }, (index + 1) * 2000);
-                });
-            }
         }
         
         // ============================================
