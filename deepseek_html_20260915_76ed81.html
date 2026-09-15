@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<title>SuruhBoy - User</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+  body { background: #f2f4f7; }
+  #app { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; padding: 16px; }
+  h1 { color: #1a9e5c; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card { background: #f8f9fb; padding: 12px; border-radius: 10px; margin-bottom: 12px; }
+  label { font-size: 13px; font-weight: 600; color: #444; display: block; margin-top: 8px; }
+  input, button { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-top: 6px; font-size: 14px; }
+  button { background: #1a9e5c; color: white; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
+  button:hover { background: #15824b; }
+  button:disabled { background: #ccc; cursor: not-allowed; }
+  #map { height: 300px; border-radius: 10px; margin-bottom: 12px; }
+  .driver-item { padding: 12px; background: white; border-radius: 8px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .price-box { background: linear-gradient(135deg, #1a9e5c, #26c878); color: white; padding: 16px; border-radius: 10px; text-align: center; margin: 10px 0; }
+  .hidden { display: none !important; }
+  .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .status-pending { background: #fff3cd; color: #856404; }
+  .status-accepted { background: #d1ecf1; color: #0c5460; }
+  .status-on_trip { background: #d4edda; color: #155724; }
+  .status-completed { background: #d4f5e1; color: #1a9e5c; }
+  .small { font-size: 12px; color: #666; }
+  .divider { text-align: center; color: #999; margin: 16px 0; font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>🛵 SuruhBoy <span class="small" style="font-weight:400">(User)</span></h1>
+
+  <!-- LOGIN -->
+  <div id="login-view">
+    <div class="card">
+      <label>Nomor HP</label>
+      <input id="phone" placeholder="08123456789" value="08111" />
+      <label>Password</label>
+      <input id="password" type="password" placeholder="••••••" value="123" />
+      <button onclick="login()">Masuk</button>
+      <div class="divider">atau</div>
+      <button onclick="document.getElementById('reg-view').classList.toggle('hidden')" style="background:#6c757d">Daftar Baru</button>
+    </div>
+
+    <div id="reg-view" class="card hidden">
+      <h3 style="margin-bottom:8px">Daftar User</h3>
+      <input id="reg-name" placeholder="Nama" />
+      <input id="reg-phone" placeholder="Nomor HP" />
+      <input id="reg-pass" type="password" placeholder="Password" />
+      <button onclick="register()">Daftar</button>
+    </div>
+  </div>
+
+  <!-- ORDER -->
+  <div id="order-view" class="hidden">
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+      <span>Halo, <b id="user-name"></b> 👋</span>
+      <button style="width:auto;padding:4px 10px;background:#e74c3c;font-size:12px" onclick="logout()">Keluar</button>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="card">
+      <label>📍 Lokasi Jemput</label>
+      <input id="pickup" placeholder="Ketik alamat jemput" />
+      <label>🎯 Tujuan</label>
+      <input id="dest" placeholder="Ketik alamat tujuan" />
+      <button onclick="hitungOngkir()" style="margin-top:10px">💰 Hitung Ongkir</button>
+    </div>
+
+    <div id="estimate-box" class="hidden">
+      <div class="price-box">
+        <div id="distance-text" style="font-size:13px;opacity:0.9">- km</div>
+        <div style="font-size:26px;font-weight:bold;margin-top:4px" id="price-text">Rp -</div>
+        <div id="duration-text" class="small" style="color:rgba(255,255,255,0.85);margin-top:4px">-</div>
+      </div>
+      <button onclick="cariDriver()">🔍 Cari Driver Terdekat</button>
+    </div>
+
+    <div id="drivers-list"></div>
+    <div id="status-box"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   KONFIGURASI - GANTI API KEY KAMU DI SINI
+   ============================================================ */
+const GOOGLE_MAPS_API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY';
+
+/* ============================================================
+   KONFIGURASI ONGKIR
+   ============================================================ */
+const BASE_FARE = 5000;
+const PER_KM = 2500;
+const MIN_FARE = 8000;
+
+function hitungOngkir(distanceKm) {
+  const total = BASE_FARE + distanceKm * PER_KM;
+  return Math.max(Math.round(total / 500) * 500, MIN_FARE);
+}
+
+/* ============================================================
+   STORAGE (localStorage + BroadcastChannel sync antar tab)
+   ============================================================ */
+const CHANNEL = new BroadcastChannel('suruhboy');
+const STORAGE_KEYS = {
+  USERS: 'sb_users',
+  DRIVERS: 'sb_drivers',      // data akun driver
+  ONLINE: 'sb_online',        // driver yang online + lokasinya
+  ORDERS: 'sb_orders',        // semua order
+  SESSION: 'sb_session_user',
+};
+
+function getData(key) { return JSON.parse(localStorage.getItem(key) || '[]'); }
+function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); broadcast('update'); }
+function broadcast(type, payload = {}) {
+  CHANNEL.postMessage({ type, payload, ts: Date.now() });
+}
+
+// Seed demo data
+(function seed() {
+  if (!localStorage.getItem(STORAGE_KEYS.USERS)) {
+    setData(STORAGE_KEYS.USERS, [{ id: 1, name: 'Budi', phone: '08111', password: '123' }]);
+  }
+  if (!localStorage.getItem(STORAGE_KEYS.ONLINE)) setData(STORAGE_KEYS.ONLINE, []);
+  if (!localStorage.getItem(STORAGE_KEYS.ORDERS)) setData(STORAGE_KEYS.ORDERS, []);
+})();
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let currentUser = null;
+let map, pickupMarker, destMarker, driverMarkers = {};
+let pickupLoc = null, destLoc = null;
+let currentOrderId = null;
+
+/* ============================================================
+   LOAD GOOGLE MAPS (dinamis biar API key 1 tempat)
+   ============================================================ */
+function loadGoogleMaps() {
+  return new Promise((resolve) => {
+    if (window.google?.maps) return resolve();
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places`;
+    script.onload = resolve;
+    document.head.appendChild(script);
+  });
+}
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+function login() {
+  const phone = document.getElementById('phone').value.trim();
+  const password = document.getElementById('password').value;
+  const users = getData(STORAGE_KEYS.USERS);
+  const user = users.find(u => u.phone === phone && u.password === password);
+  if (!user) return alert('❌ Nomor HP atau password salah');
+
+  currentUser = user;
+  localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(user));
+  showOrderView();
+}
+
+function register() {
+  const name = document.getElementById('reg-name').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const password = document.getElementById('reg-pass').value;
+  if (!name || !phone || !password) return alert('Isi semua field');
+
+  const users = getData(STORAGE_KEYS.USERS);
+  if (users.find(u => u.phone === phone)) return alert('Nomor sudah terdaftar');
+
+  users.push({ id: Date.now(), name, phone, password });
+  setData(STORAGE_KEYS.USERS, users);
+  alert('✅ Berhasil daftar! Silakan login.');
+  document.getElementById('reg-view').classList.add('hidden');
+}
+
+function logout() {
+  localStorage.removeItem(STORAGE_KEYS.SESSION);
+  location.reload();
+}
+
+/* ============================================================
+   MAP
+   ============================================================ */
+async function showOrderView() {
+  document.getElementById('login-view').classList.add('hidden');
+  document.getElementById('order-view').classList.remove('hidden');
+  document.getElementById('user-name').textContent = currentUser.name;
+
+  await loadGoogleMaps();
+  initMap();
+}
+
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: { lat: -6.2, lng: 106.816666 },
+    zoom: 13,
+  });
+
+  // Autocomplete jemput
+  const pickupAC = new google.maps.places.Autocomplete(document.getElementById('pickup'));
+  pickupAC.addListener('place_changed', () => {
+    const place = pickupAC.getPlace();
+    if (!place.geometry) return;
+    pickupLoc = { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() };
+    if (pickupMarker) pickupMarker.setMap(null);
+    pickupMarker = new google.maps.Marker({
+      position: pickupLoc, map, label: 'A',
+      icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+    });
+    map.panTo(pickupLoc);
+  });
+
+  // Autocomplete tujuan
+  const destAC = new google.maps.places.Autocomplete(document.getElementById('dest'));
+  destAC.addListener('place_changed', () => {
+    const place = destAC.getPlace();
+    if (!place.geometry) return;
+    destLoc = { lat: place.geometry.location.lat(), lng: place.geometry.location.lng() };
+    if (destMarker) destMarker.setMap(null);
+    destMarker = new google.maps.Marker({
+      position: destLoc, map, label: 'B',
+      icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+    });
+    map.panTo(destLoc);
+  });
+
+  // Auto-detect lokasi
+  navigator.geolocation?.getCurrentPosition((pos) => {
+    const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+    map.setCenter(loc);
+    map.setZoom(15);
+    document.getElementById('pickup').value = `${loc.lat.toFixed(6)}, ${loc.lng.toFixed(6)}`;
+    pickupLoc = loc;
+    pickupMarker = new google.maps.Marker({ position: loc, map, label: 'A' });
+  });
+
+  // Polling update order & driver
+  setInterval(refreshOrderStatus, 2000);
+}
+
+/* ============================================================
+   HITUNG ONGKIR (Directions API)
+   ============================================================ */
+async function hitungOngkir() {
+  if (!pickupLoc || !destLoc) return alert('Isi lokasi jemput & tujuan dulu');
+
+  const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${pickupLoc.lat},${pickupLoc.lng}&destination=${destLoc.lat},${destLoc.lng}&key=${GOOGLE_MAPS_API_KEY}`;
+
+  try {
+    const res = await fetch(url).then(r => r.json());
+    let distanceKm, durationText = '-';
+
+    if (res.routes && res.routes.length) {
+      distanceKm = res.routes[0].legs[0].distance.value / 1000;
+      durationText = res.routes[0].legs[0].duration.text;
+    } else {
+      // Fallback Haversine
+      distanceKm = haversine(pickupLoc.lat, pickupLoc.lng, destLoc.lat, destLoc.lng);
+    }
+
+    const price = hitungOngkir(distanceKm);
+    document.getElementById('distance-text').textContent = `📏 ${distanceKm.toFixed(2)} km`;
+    document.getElementById('price-text').textContent = `Rp ${price.toLocaleString('id-ID')}`;
+    document.getElementById('duration-text').textContent = `⏱️ Estimasi ${durationText}`;
+    document.getElementById('estimate-box').classList.remove('hidden');
+  } catch (e) {
+    const distanceKm = haversine(pickupLoc.lat, pickupLoc.lng, destLoc.lat, destLoc.lng);
+    document.getElementById('distance-text').textContent = `📏 ${distanceKm.toFixed(2)} km (estimasi)`;
+    document.getElementById('price-text').textContent = `Rp ${hitungOngkir(distanceKm).toLocaleString('id-ID')}`;
+    document.getElementById('estimate-box').classList.remove('hidden');
+  }
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+/* ============================================================
+   CARI DRIVER TERDEKAT
+   ============================================================ */
+function cariDriver() {
+  if (!pickupLoc) return alert('Pilih lokasi jemput dulu');
+
+  const onlineDrivers = getData(STORAGE_KEYS.ONLINE);
+  const now = Date.now();
+  const freshDrivers = onlineDrivers.filter(d => now - d.last_update < 60000); // fresh < 1 menit
+
+  const nearby = freshDrivers
+    .map(d => ({ ...d, distance: haversine(pickupLoc.lat, pickupLoc.lng, d.lat, d.lng) }))
+    .filter(d => d.distance <= 10)
+    .sort((a, b) => a.distance - b.distance);
+
+  const list = document.getElementById('drivers-list');
+  if (!nearby.length) {
+    list.innerHTML = `<div class="card">❌ Tidak ada driver online di sekitar.<br/><span class="small">Pastikan driver.html dibuka di tab lain dan klik "Go Online".</span></div>`;
+    return;
+  }
+
+  list.innerHTML = `<h3 style="margin:8px 0">🎯 ${nearby.length} driver ditemukan</h3>` +
+    nearby.map(d => `
+      <div class="driver-item">
+        <div>
+          <b>${d.name}</b><br/>
+          <span class="small">${d.vehicle} • ${d.plate}</span><br/>
+          <span class="small" style="color:#1a9e5c;font-weight:600">${d.distance.toFixed(2)} km dari Anda</span>
+        </div>
+        <button style="width:auto;padding:8px 14px;font-size:13px" onclick="buatOrder(${d.driver_id})">Pesan</button>
+      </div>
+    `).join('');
+}
+
+/* ============================================================
+   BUAT ORDER
+   ============================================================ */
+function buatOrder(driverId) {
+  if (!pickupLoc || !destLoc) return alert('Isi lokasi dulu');
+
+  const distance = haversine(pickupLoc.lat, pickupLoc.lng, destLoc.lat, destLoc.lng);
+  const price = hitungOngkir(distance);
+
+  const orders = getData(STORAGE_KEYS.ORDERS);
+  const order = {
+    id: Date.now(),
+    user_id: currentUser.id,
+    user_name: currentUser.name,
+    driver_id: driverId,
+    pickup_lat: pickupLoc.lat,
+    pickup_lng: pickupLoc.lng,
+    pickup_address: document.getElementById('pickup').value,
+    dest_lat: destLoc.lat,
+    dest_lng: destLoc.lng,
+    dest_address: document.getElementById('dest').value,
+    distance_km: parseFloat(distance.toFixed(2)),
+    price,
+    status: 'pending',
+    created_at: Date.now(),
+  };
+  orders.push(order);
+  setData(STORAGE_KEYS.ORDERS, orders);
+
+  currentOrderId = order.id;
+  broadcast('order:new', { order_id: order.id, driver_id: driverId });
+  renderStatusBox();
+}
+
+/* ============================================================
+   STATUS ORDER (auto refresh via polling)
+   ============================================================ */
+function renderStatusBox() {
+  if (!currentOrderId) return;
+  const orders = getData(STORAGE_KEYS.ORDERS);
+  const order = orders.find(o => o.id === currentOrderId);
+  if (!order) return;
+
+  const drivers = getData(STORAGE_KEYS.DRIVERS);
+  const driver = drivers.find(d => d.id === order.driver_id);
+  const online = getData(STORAGE_KEYS.ONLINE).find(d => d.driver_id === order.driver_id);
+
+  const statusLabel = {
+    pending: '⏳ Menunggu driver',
+    accepted: '✅ Driver menerima order',
+    on_trip: '🛵 Sedang dalam perjalanan',
+    completed: '🎉 Selesai',
+    cancelled: '❌ Dibatalkan',
+  };
+
+  const box = document.getElementById('status-box');
+  box.innerHTML = `
+    <div class="card" style="border-left:4px solid #1a9e5c">
+      <h3>Order #${order.id.toString().slice(-6)}</h3>
+      <p style="margin-top:8px">Status: <span class="status-badge status-${order.status}">${statusLabel[order.status]}</span></p>
+      <p style="margin-top:6px"><b>Ongkir: Rp ${order.price.toLocaleString('id-ID')}</b></p>
+      <p class="small">Jarak: ${order.distance_km} km</p>
+      ${driver ? `
+        <div style="margin-top:10px;padding:10px;background:#f0f9f4;border-radius:8px">
+          <b>🚗 ${driver.name}</b><br/>
+          <span class="small">${driver.vehicle} • ${driver.plate}</span>
+          ${online ? `<br/><span class="small">📍 Driver online di ${online.lat.toFixed(4)}, ${online.lng.toFixed(4)}</span>` : ''}
+        </div>
+      ` : ''}
+    </div>
+  `;
+
+  // Update marker driver
+  if (online && map) {
+    if (driverMarkers[order.driver_id]) driverMarkers[order.driver_id].setMap(null);
+    driverMarkers[order.driver_id] = new google.maps.Marker({
+      position: { lat: online.lat, lng: online.lng },
+      map, icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+      title: driver?.name || 'Driver',
+    });
+  }
+}
+
+function refreshOrderStatus() {
+  if (currentOrderId) renderStatusBox();
+}
+
+/* ============================================================
+   BROADCAST LISTENER
+   ============================================================ */
+CHANNEL.onmessage = (e) => {
+  if (e.data.type === 'order:status' && currentOrderId === e.data.payload.order_id) {
+    renderStatusBox();
+  }
+  if (e.data.type === 'driver:online' || e.data.type === 'driver:offline') {
+    // refresh list kalau sedang tampil
+  }
+};
+
+/* ============================================================
+   AUTO LOGIN kalau session ada
+   ============================================================ */
+window.addEventListener('load', () => {
+  const session = localStorage.getItem(STORAGE_KEYS.SESSION);
+  if (session) {
+    currentUser = JSON.parse(session);
+    showOrderView();
+  }
+});
+</script>
+</body>
+</html>

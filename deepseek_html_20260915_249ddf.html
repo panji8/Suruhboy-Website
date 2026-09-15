@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<title>SuruhBoy - Driver</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+  body { background: #f2f4f7; }
+  #app { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; padding: 16px; }
+  h1 { color: #1a9e5c; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .card { background: #f8f9fb; padding: 12px; border-radius: 10px; margin-bottom: 12px; }
+  label { font-size: 13px; font-weight: 600; color: #444; display: block; margin-top: 8px; }
+  input, button { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; margin-top: 6px; font-size: 14px; }
+  button { background: #1a9e5c; color: white; border: none; cursor: pointer; font-weight: 600; transition: 0.2s; }
+  button:hover { background: #15824b; }
+  button.danger { background: #e74c3c; }
+  button.danger:hover { background: #c0392b; }
+  button.warning { background: #f39c12; }
+  #map { height: 280px; border-radius: 10px; margin-bottom: 12px; }
+  .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge.online { background: #d4f5e1; color: #1a9e5c; }
+  .badge.offline { background: #f0f0f0; color: #666; }
+  .order-card { padding: 12px; background: white; border-radius: 8px; margin: 8px 0; border-left: 4px solid #1a9e5c; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .hidden { display: none !important; }
+  .small { font-size: 12px; color: #666; }
+  .divider { text-align: center; color: #999; margin: 16px 0; font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <h1>🛵 SuruhBoy <span class="small" style="font-weight:400">(Driver)</span></h1>
+
+  <!-- LOGIN -->
+  <div id="login-view">
+    <div class="card">
+      <label>Nomor HP</label>
+      <input id="phone" placeholder="08222" value="08222" />
+      <label>Password</label>
+      <input id="password" type="password" placeholder="••••••" value="123" />
+      <button onclick="login()">Masuk</button>
+      <div class="divider">atau</div>
+      <button onclick="document.getElementById('reg-view').classList.toggle('hidden')" style="background:#6c757d">Daftar Driver</button>
+    </div>
+
+    <div id="reg-view" class="card hidden">
+      <h3 style="margin-bottom:8px">Daftar Driver</h3>
+      <input id="reg-name" placeholder="Nama" />
+      <input id="reg-phone" placeholder="Nomor HP" />
+      <input id="reg-pass" type="password" placeholder="Password" />
+      <input id="reg-vehicle" placeholder="Kendaraan (Honda Vario)" />
+      <input id="reg-plate" placeholder="Plat (B 1234 XYZ)" />
+      <button onclick="register()">Daftar</button>
+    </div>
+  </div>
+
+  <!-- DRIVER VIEW -->
+  <div id="driver-view" class="hidden">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          Halo, <b id="driver-name"></b><br/>
+          Status: <span id="status-badge" class="badge offline">OFFLINE</span>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button id="toggle-btn" style="width:auto;padding:8px 16px" onclick="toggleOnline()">Go Online</button>
+          <button style="width:auto;padding:8px 10px;background:#e74c3c;font-size:12px" onclick="logout()">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="map"></div>
+
+    <div id="active-order"></div>
+    <div id="orders-list"></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   KONFIGURASI - GANTI API KEY KAMU
+   ============================================================ */
+const GOOGLE_MAPS_API_KEY = 'YOUR_GOOGLE_MAPS_API_KEY';
+
+/* ============================================================
+   STORAGE KEYS (harus SAMA dengan user.html)
+   ============================================================ */
+const CHANNEL = new BroadcastChannel('suruhboy');
+const STORAGE_KEYS = {
+  DRIVERS: 'sb_drivers',
+  ONLINE: 'sb_online',
+  ORDERS: 'sb_orders',
+  SESSION: 'sb_session_driver',
+};
+
+function getData(key) { return JSON.parse(localStorage.getItem(key) || '[]'); }
+function setData(key, val) { localStorage.setItem(key, JSON.stringify(val)); broadcast('update'); }
+function broadcast(type, payload = {}) {
+  CHANNEL.postMessage({ type, payload, ts: Date.now() });
+}
+
+// Seed demo driver
+(function seed() {
+  if (!localStorage.getItem(STORAGE_KEYS.DRIVERS)) {
+    setData(STORAGE_KEYS.DRIVERS, [{
+      id: 100,
+      name: 'Andi Driver',
+      phone: '08222',
+      password: '123',
+      vehicle: 'Honda Vario',
+      plate: 'B 1234 XYZ'
+    }]);
+  }
+})();
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let currentDriver = null;
+let map, myMarker, myPos = null;
+let isOnline = false;
+let watchId = null;
+let acceptedOrderId = null;
+
+/* ============================================================
+   LOAD MAPS
+   ============================================================ */
+function loadGoogleMaps() {
+  return new Promise((resolve) => {
+    if (window.google?.maps) return resolve();
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}`;
+    script.onload = resolve;
+    document.head.appendChild(script);
+  });
+}
+
+/* ============================================================
+   AUTH
+   ============================================================ */
+function login() {
+  const phone = document.getElementById('phone').value.trim();
+  const password = document.getElementById('password').value;
+  const drivers = getData(STORAGE_KEYS.DRIVERS);
+  const driver = drivers.find(d => d.phone === phone && d.password === password);
+  if (!driver) return alert('❌ Nomor HP atau password salah');
+
+  currentDriver = driver;
+  localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(driver));
+  showDriverView();
+}
+
+function register() {
+  const name = document.getElementById('reg-name').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim();
+  const password = document.getElementById('reg-pass').value;
+  const vehicle = document.getElementById('reg-vehicle').value.trim() || 'Motor';
+  const plate = document.getElementById('reg-plate').value.trim() || '-';
+  if (!name || !phone || !password) return alert('Isi semua field wajib');
+
+  const drivers = getData(STORAGE_KEYS.DRIVERS);
+  if (drivers.find(d => d.phone === phone)) return alert('Nomor sudah terdaftar');
+
+  drivers.push({ id: Date.now(), name, phone, password, vehicle, plate });
+  setData(STORAGE_KEYS.DRIVERS, drivers);
+  alert('✅ Berhasil daftar! Silakan login.');
+  document.getElementById('reg-view').classList.add('hidden');
+}
+
+function logout() {
+  setOffline();
+  localStorage.removeItem(STORAGE_KEYS.SESSION);
+  location.reload();
+}
+
+/* ============================================================
+   DRIVER VIEW
+   ============================================================ */
+async function showDriverView() {
+  document.getElementById('login-view').classList.add('hidden');
+  document.getElementById('driver-view').classList.remove('hidden');
+  document.getElementById('driver-name').textContent = currentDriver.name;
+
+  await loadGoogleMaps();
+  initMap();
+  renderOrders();
+
+  // Polling orders (untuk notif order baru)
+  setInterval(renderOrders, 2000);
+}
+
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: { lat: -6.2, lng: 106.816666 },
+    zoom: 14,
+  });
+
+  if (navigator.geolocation) {
+    watchId = navigator.geolocation.watchPosition((pos) => {
+      myPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      if (!myMarker) {
+        myMarker = new google.maps.Marker({
+          position: myPos, map,
+          title: 'Lokasi Saya',
+          icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+        });
+        map.panTo(myPos);
+        map.setZoom(15);
+      } else {
+        myMarker.setPosition(myPos);
+      }
+      if (isOnline) updateOnlineLocation();
+    }, (err) => {
+      console.warn('GPS error:', err);
+      // Fallback ke Jakarta pusat
+      myPos = myPos || { lat: -6.2, lng: 106.816666 };
+    }, { enableHighAccuracy: true, maximumAge: 5000 });
+  } else {
+    myPos = { lat: -6.2, lng: 106.816666 };
+  }
+}
+
+/* ============================================================
+   ONLINE / OFFLINE
+   ============================================================ */
+function toggleOnline() {
+  isOnline ? setOffline() : setOnline();
+}
+
+function setOnline() {
+  isOnline = true;
+  updateUIStatus();
+  updateOnlineLocation();
+}
+
+function setOffline() {
+  isOnline = false;
+  updateUIStatus();
+  // Hapus dari daftar online
+  const online = getData(STORAGE_KEYS.ONLINE).filter(d => d.driver_id !== currentDriver.id);
+  setData(STORAGE_KEYS.ONLINE, online);
+  broadcast('driver:offline', { driver_id: currentDriver.id });
+}
+
+function updateUIStatus() {
+  document.getElementById('status-badge').textContent = isOnline ? 'ONLINE' : 'OFFLINE';
+  document.getElementById('status-badge').className = 'badge ' + (isOnline ? 'online' : 'offline');
+  const btn = document.getElementById('toggle-btn');
+  btn.textContent = isOnline ? 'Go Offline' : 'Go Online';
+  btn.className = isOnline ? 'danger' : '';
+}
+
+function updateOnlineLocation() {
+  if (!myPos) return;
+  const online = getData(STORAGE_KEYS.ONLINE).filter(d => d.driver_id !== currentDriver.id);
+  online.push({
+    driver_id: currentDriver.id,
+    name: currentDriver.name,
+    vehicle: currentDriver.vehicle,
+    plate: currentDriver.plate,
+    lat: myPos.lat,
+    lng: myPos.lng,
+    last_update: Date.now(),
+  });
+  setData(STORAGE_KEYS.ONLINE, online);
+  broadcast('driver:online', { driver_id: currentDriver.id, lat: myPos.lat, lng: myPos.lng });
+}
+
+/* ============================================================
+   RENDER ORDERS
+   ============================================================ */
+function renderOrders() {
+  const orders = getData(STORAGE_KEYS.ORDERS);
+  const myOrders = orders.filter(o => o.driver_id === currentDriver.id);
+
+  // Order aktif (belum completed)
+  const active = myOrders.find(o => o.status !== 'completed' && o.status !== 'cancelled');
+  const activeBox = document.getElementById('active-order');
+
+  if (active) {
+    const statusLabel = {
+      pending: '⏳ Order baru',
+      accepted: '✅ Diterima, jemput user',
+      on_trip: '🛵 Dalam perjalanan',
+    };
+    activeBox.innerHTML = `
+      <div class="card" style="border-left:4px solid #f39c12">
+        <h3>📦 Order Aktif #${active.id.toString().slice(-6)}</h3>
+        <p class="small" style="margin-top:6px">👤 ${active.user_name}</p>
+        <p class="small">📍 ${active.pickup_address}</p>
+        <p class="small">🎯 ${active.dest_address}</p>
+        <p style="margin-top:8px"><b>💰 Rp ${active.price.toLocaleString('id-ID')}</b> • ${active.distance_km} km</p>
+        <p style="margin-top:8px">Status: <b>${statusLabel[active.status]}</b></p>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          ${active.status === 'pending' ? `<button onclick="updateStatus(${active.id},'accepted')">✅ Terima</button>` : ''}
+          ${active.status === 'accepted' ? `<button class="warning" onclick="updateStatus(${active.id},'on_trip')">🛵 Mulai Trip</button>` : ''}
+          ${active.status === 'on_trip' ? `<button onclick="updateStatus(${active.id},'completed')">🎉 Selesai</button>` : ''}
+          <button class="danger" onclick="updateStatus(${active.id},'cancelled')">Batalkan</button>
+        </div>
+        <button style="margin-top:8px;background:#6c757d" onclick="showRoute(${active.id})">🗺️ Lihat Rute</button>
+      </div>
+    `;
+    acceptedOrderId = active.id;
+
+    // Render rute kalau ada
+    showRoute(active.id);
+  } else {
+    activeBox.innerHTML = '';
+    acceptedOrderId = null;
+  }
+
+  // Riwayat
+  const history = myOrders.filter(o => o.status === 'completed' || o.status === 'cancelled');
+  const list = document.getElementById('orders-list');
+  if (!history.length) {
+    list.innerHTML = `<div class="card small">📭 Belum ada riwayat order.<br/>${isOnline ? 'Menunggu order masuk...' : 'Kamu sedang OFFLINE.'}</div>`;
+  } else {
+    list.innerHTML = `<h3 style="margin:8px 0">📜 Riwayat</h3>` + history.slice(-5).reverse().map(o => `
+      <div class="card small">
+        <b>#${o.id.toString().slice(-6)}</b> — ${o.status === 'completed' ? '🎉 Selesai' : '❌ Batal'}<br/>
+        ${o.pickup_address} → ${o.dest_address}<br/>
+        💰 Rp ${o.price.toLocaleString('id-ID')}
+      </div>
+    `).join('');
+  }
+}
+
+/* ============================================================
+   RUTE (Directions API)
+   ============================================================ */
+let routeRenderer = null;
+async function showRoute(orderId) {
+  const orders = getData(STORAGE_KEYS.ORDERS);
+  const order = orders.find(o => o.id === orderId);
+  if (!order || !myPos) return;
+
+  try {
+    const url = `https://maps.googleapis.com/maps/api/directions/json?origin=${myPos.lat},${myPos.lng}&destination=${order.pickup_lat},${order.pickup_lng}&key=${GOOGLE_MAPS_API_KEY}`;
+    const res = await fetch(url).then(r => r.json());
+    if (!res.routes?.length) return;
+
+    if (routeRenderer) routeRenderer.setDirections(res);
+    else routeRenderer = new google.maps.DirectionsRenderer({ map, suppressMarkers: true });
+    routeRenderer.setDirections(res);
+  } catch (e) { console.warn('Route error', e); }
+}
+
+/* ============================================================
+   UPDATE STATUS ORDER
+   ============================================================ */
+function updateStatus(orderId, status) {
+  const orders = getData(STORAGE_KEYS.ORDERS);
+  const idx = orders.findIndex(o => o.id === orderId);
+  if (idx === -1) return;
+
+  orders[idx].status = status;
+  setData(STORAGE_KEYS.ORDERS, orders);
+  broadcast('order:status', { order_id: orderId, status });
+  renderOrders();
+}
+
+/* ============================================================
+   BROADCAST LISTENER
+   ============================================================ */
+CHANNEL.onmessage = (e) => {
+  if (e.data.type === 'order:new') {
+    if (e.data.payload.driver_id === currentDriver.id) {
+      // Notif suara / highlight
+      if (isOnline) {
+        console.log('📦 Order baru masuk!');
+      }
+    }
+    renderOrders();
+  }
+  if (e.data.type === 'order:status') renderOrders();
+};
+
+/* ============================================================
+   AUTO LOGIN
+   ============================================================ */
+window.addEventListener('load', () => {
+  const session = localStorage.getItem(STORAGE_KEYS.SESSION);
+  if (session) {
+    currentDriver = JSON.parse(session);
+    showDriverView();
+  }
+});
+
+// Bersihkan saat tab ditutup
+window.addEventListener('beforeunload', () => {
+  if (isOnline && currentDriver) setOffline();
+});
+</script>
+</body>
+</html>
