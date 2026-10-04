@@ -1,1331 +1,526 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuruhBoy - Semua Kebutuhanmu, Tinggal Suruh</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-    <style>
-        :root {
-            --primary: #0a2269;
-            --secondary: #fe7f2d;
-            --light: #e4eef0;
-            --dark: #0a1a4d;
-            --white: #ffffff;
-            --gray: #6c757d;
-            --gray-light: #f8f9fa;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: var(--light);
-            color: var(--dark);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 0 16px;
-        }
-        
-        @media (min-width: 768px) {
-            .container {
-                max-width: 720px;
-                padding: 0 20px;
-            }
-        }
-        
-        @media (min-width: 992px) {
-            .container {
-                max-width: 960px;
-            }
-        }
-        
-        @media (min-width: 1200px) {
-            .container {
-                max-width: 1140px;
-            }
-        }
-        
-        /* ===== HEADER ===== */
-        header {
-            background: var(--primary);
-            color: var(--white);
-            padding: 12px 0;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(10, 34, 105, 0.2);
-        }
-        
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .logo-wrapper {
-            display: flex;
-            align-items: center;
-            flex: 1;
-            min-width: 0; /* Untuk mencegah overflow */
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--white);
-            text-decoration: none;
-            white-space: nowrap;
-        }
-        
-        .logo i {
-            color: var(--secondary);
-            font-size: 26px;
-        }
-        
-        /* Tombol Cek Ongkir di Header untuk Mobile */
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
-        }
-        
-        .mobile-ongkir-button {
-            background: var(--secondary);
-            color: var(--white);
-            padding: 8px 16px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-            transition: all 0.3s ease;
-        }
-        
-        .mobile-ongkir-button:hover {
-            background: #e6711d;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(254, 127, 45, 0.3);
-        }
-        
-        .mobile-ongkir-button i {
-            font-size: 14px;
-        }
-        
-        /* Menu Toggle untuk Mobile */
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: var(--white);
-            font-size: 24px;
-            cursor: pointer;
-            padding: 5px;
-            flex-shrink: 0;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-        
-        .nav-links a {
-            color: var(--white);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 15px;
-            padding: 8px 16px;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-        
-        .nav-links a:hover {
-            background: rgba(254, 127, 45, 0.2);
-            color: var(--secondary);
-        }
-        
-        .nav-links a.active {
-            background: var(--secondary);
-            color: var(--white);
-        }
-        
-        .cta-button {
-            background: var(--secondary);
-            color: var(--white);
-            padding: 10px 24px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-        }
-        
-        .cta-button:hover {
-            background: #e6711d;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(254, 127, 45, 0.3);
-        }
-        
-        /* ===== HERO ===== */
-        .hero {
-            padding: 120px 0 80px;
-            background: linear-gradient(135deg, var(--primary) 0%, #1a3a8c 100%);
-            color: var(--white);
-            margin-top: 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="%23ffffff" opacity="0.05"/></svg>');
-            background-size: cover;
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 1;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .hero h1 {
-            font-size: 42px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            color: var(--white);
-            line-height: 1.2;
-        }
-        
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 32px;
-            }
-        }
-        
-        .hero h1 span {
-            color: var(--secondary);
-            display: inline-block;
-        }
-        
-        .hero p {
-            font-size: 18px;
-            opacity: 0.9;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-        
-        .cta-button-large {
-            background: var(--secondary);
-            color: var(--white);
-            padding: 16px 36px;
-            border-radius: 30px;
-            font-size: 18px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        
-        .cta-button-large:hover {
-            background: #e6711d;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(254, 127, 45, 0.3);
-        }
-        
-        /* ===== SWIPER SLIDER ===== */
-        .slider-section {
-            padding: 60px 0;
-        }
-        
-        .swiper-container {
-            width: 100%;
-            height: 400px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(10, 34, 105, 0.15);
-        }
-        
-        @media (max-width: 768px) {
-            .swiper-container {
-                height: 300px;
-            }
-        }
-        
-        .swiper-slide {
-            position: relative;
-        }
-        
-        .swiper-slide img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .slide-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(10, 34, 105, 0.9));
-            color: var(--white);
-            padding: 30px;
-        }
-        
-        .slide-content h2 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        
-        /* ===== SERVICES ===== */
-        .services-section {
-            padding: 80px 0;
-            background: var(--white);
-        }
-        
-        .section-title {
-            text-align: center;
-            font-size: 36px;
-            margin-bottom: 50px;
-            color: var(--primary);
-            position: relative;
-            padding-bottom: 20px;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 5px;
-            background: var(--secondary);
-            border-radius: 3px;
-        }
-        
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-            margin-bottom: 50px;
-        }
-        
-        .service-card {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 35px 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(10, 34, 105, 0.08);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .service-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-        }
-        
-        .service-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(10, 34, 105, 0.15);
-            border-color: var(--secondary);
-        }
-        
-        .service-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--primary), #1a3a8c);
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-        }
-        
-        .service-icon i {
-            font-size: 32px;
-            color: var(--white);
-        }
-        
-        .service-card h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: var(--primary);
-            font-weight: 700;
-        }
-        
-        .service-card p {
-            font-size: 16px;
-            color: var(--dark);
-            line-height: 1.5;
-        }
-        
-        /* ===== CTA SECTION ===== */
-        .cta-section {
-            padding: 80px 0;
-            background: linear-gradient(135deg, var(--primary) 0%, #1a3a8c 100%);
-            color: var(--white);
-            text-align: center;
-            margin: 40px 0;
-            border-radius: 20px;
-        }
-        
-        .cta-section h2 {
-            font-size: 36px;
-            margin-bottom: 20px;
-            color: var(--white);
-        }
-        
-        .cta-section p {
-            font-size: 18px;
-            margin-bottom: 30px;
-            opacity: 0.9;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        /* ===== TESTIMONIALS ===== */
-        .testimonials-section {
-            padding: 80px 0;
-            background: var(--gray-light);
-        }
-        
-        .testimonial-card {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 35px 30px;
-            box-shadow: 0 10px 30px rgba(10, 34, 105, 0.08);
-            border-left: 5px solid var(--secondary);
-            height: 100%;
-        }
-        
-        .testimonial-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .testimonial-avatar {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), #1a3a8c);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            font-size: 20px;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-        
-        .testimonial-info h3 {
-            font-size: 18px;
-            color: var(--primary);
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-        
-        .testimonial-rating {
-            color: var(--secondary);
-            font-size: 14px;
-        }
-        
-        .testimonial-text {
-            font-style: italic;
-            color: var(--dark);
-            font-size: 16px;
-            line-height: 1.6;
-            position: relative;
-            padding-left: 20px;
-        }
-        
-        .testimonial-text::before {
-            content: '"';
-            font-size: 50px;
-            color: var(--secondary);
-            position: absolute;
-            left: -10px;
-            top: -15px;
-            opacity: 0.3;
-            font-family: Georgia, serif;
-        }
-        
-        /* ===== ABOUT US ===== */
-        .about-section {
-            padding: 80px 0;
-            background: var(--white);
-        }
-        
-        .about-content {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 50px;
-            align-items: center;
-        }
-        
-        @media (min-width: 992px) {
-            .about-content {
-                grid-template-columns: 1fr 1fr;
-                gap: 60px;
-            }
-        }
-        
-        .about-text h2 {
-            font-size: 36px;
-            margin-bottom: 25px;
-            color: var(--primary);
-            line-height: 1.3;
-        }
-        
-        .about-text p {
-            font-size: 17px;
-            margin-bottom: 20px;
-            color: var(--dark);
-            line-height: 1.6;
-        }
-        
-        .about-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-top: 40px;
-        }
-        
-        .stat-item {
-            text-align: center;
-            padding: 25px 15px;
-            background: var(--light);
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(10, 34, 105, 0.05);
-            border-top: 4px solid var(--secondary);
-            transition: transform 0.3s ease;
-        }
-        
-        .stat-item:hover {
-            transform: translateY(-5px);
-        }
-        
-        .stat-number {
-            font-size: 36px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 10px;
-            line-height: 1;
-        }
-        
-        .stat-item p {
-            font-size: 15px;
-            color: var(--dark);
-            margin: 0;
-            font-weight: 500;
-        }
-        
-        .about-image {
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(10, 34, 105, 0.1);
-        }
-        
-        .about-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-        
-        .about-image:hover img {
-            transform: scale(1.05);
-        }
-        
-        /* ===== CONTACT SECTION ===== */
-        .contact-section {
-            padding: 80px 0;
-            background: linear-gradient(135deg, var(--primary) 0%, #1a3a8c 100%);
-            color: var(--white);
-            border-radius: 20px;
-            margin: 60px 0;
-        }
-        
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-        
-        .contact-item {
-            text-align: center;
-            padding: 30px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .contact-item:hover {
-            transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .contact-item i {
-            font-size: 40px;
-            margin-bottom: 20px;
-            color: var(--secondary);
-        }
-        
-        .contact-item h3 {
-            font-size: 20px;
-            margin-bottom: 10px;
-            color: var(--white);
-        }
-        
-        .contact-item p {
-            font-size: 16px;
-            opacity: 0.9;
-            margin-bottom: 5px;
-        }
-        
-        /* ===== FOOTER ===== */
-        footer {
-            background: var(--primary);
-            color: var(--white);
-            padding: 60px 0 30px;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .footer-section h3 {
-            font-size: 20px;
-            margin-bottom: 20px;
-            color: var(--secondary);
-        }
-        
-        .footer-section ul {
-            list-style: none;
-        }
-        
-        .footer-section ul li {
-            margin-bottom: 12px;
-        }
-        
-        .footer-section a {
-            color: var(--white);
-            text-decoration: none;
-            font-size: 15px;
-            transition: color 0.3s;
-            opacity: 0.9;
-        }
-        
-        .footer-section a:hover {
-            color: var(--secondary);
-            opacity: 1;
-        }
-        
-        .social-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .social-links a {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-        
-        .social-links a:hover {
-            background: var(--secondary);
-            transform: translateY(-3px);
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-        }
-        
-        /* ===== TOMBOL LIHAT SEMUA LAYANAN ===== */
-        .see-all-button {
-            background: var(--primary);
-            color: var(--white);
-            padding: 16px 36px;
-            border-radius: 30px;
-            font-size: 17px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            border: 2px solid var(--primary);
-            transition: all 0.3s ease;
-            margin: 20px auto 0;
-        }
-        
-        .see-all-button:hover {
-            background: transparent;
-            color: var(--primary);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(10, 34, 105, 0.15);
-        }
-        
-        .button-container {
-            text-align: center;
-            margin-top: 40px;
-        }
-        
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 768px) {
-            .navbar {
-                position: relative;
-                gap: 10px;
-            }
-            
-            .logo {
-                font-size: 20px;
-            }
-            
-            .logo i {
-                font-size: 22px;
-            }
-            
-            .menu-toggle {
-                display: block;
-                order: 3;
-                flex-shrink: 0;
-            }
-            
-            .header-right {
-                order: 2;
-                flex-shrink: 0;
-            }
-            
-            .logo-wrapper {
-                order: 1;
-                flex: 1;
-                min-width: 0;
-                overflow: hidden;
-            }
-            
-            .mobile-ongkir-button {
-                padding: 8px 12px;
-                font-size: 13px;
-                gap: 4px;
-            }
-            
-            .mobile-ongkir-button i {
-                font-size: 12px;
-            }
-            
-            .nav-links {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: var(--primary);
-                flex-direction: column;
-                padding: 20px;
-                box-shadow: 0 10px 30px rgba(10, 34, 105, 0.2);
-                z-index: 1000;
-                gap: 10px;
-            }
-            
-            .nav-links.active {
-                display: flex;
-            }
-            
-            .nav-links a {
-                width: 100%;
-                text-align: center;
-                padding: 12px 20px;
-                border-radius: 10px;
-            }
-            
-            .nav-links .cta-button {
-                width: 100%;
-                justify-content: center;
-                margin-top: 10px;
-            }
-            
-            .hero {
-                padding: 100px 0 60px;
-            }
-            
-            .section-title {
-                font-size: 28px;
-                margin-bottom: 40px;
-            }
-            
-            .services-section,
-            .testimonials-section,
-            .about-section,
-            .cta-section,
-            .contact-section {
-                padding: 60px 0;
-            }
-            
-            .service-card {
-                padding: 25px 20px;
-            }
-            
-            .testimonial-card {
-                padding: 25px 20px;
-            }
-            
-            .about-stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-            }
-            
-            .stat-item {
-                padding: 20px 10px;
-            }
-            
-            .stat-number {
-                font-size: 28px;
-            }
-            
-            .cta-section h2 {
-                font-size: 28px;
-            }
-            
-            .contact-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-        }
-        
-        @media (min-width: 769px) {
-            .mobile-ongkir-button {
-                display: none;
-            }
-            
-            .menu-toggle {
-                display: none;
-            }
-        }
-        
-        /* Untuk layar sangat kecil (iPhone SE dll) */
-        @media (max-width: 360px) {
-            .logo {
-                font-size: 18px;
-            }
-            
-            .mobile-ongkir-button {
-                padding: 6px 10px;
-                font-size: 12px;
-            }
-            
-            .mobile-ongkir-button span {
-                display: none;
-            }
-            
-            .mobile-ongkir-button i {
-                margin: 0;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SuruhBoy — Jasa On-Demand Boyolali</title>
+<meta name="description" content="SuruhBoy adalah jasa on-demand di Boyolali. Titip beli, antar barang, antar makanan, bantu urusan — cukup chat WhatsApp.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0f2a4a;
+  --navy-soft:#1e3a5f;
+  --orange:#ff7a1a;
+  --orange-soft:#fff2e8;
+  --wa:#25d366;
+  --bg:#fafbfc;
+  --line:#eaeef3;
+  --muted:#7a8899;
+  --text:#0f2a4a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);
+  line-height:1.6;-webkit-font-smoothing:antialiased;
+}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:640px;margin:0 auto;padding:0 20px}
+
+/* ===== HEADER ===== */
+header{
+  padding:20px 0;
+  display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:50;
+  background:rgba(250,251,252,.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid transparent;
+  transition:all .3s;
+}
+header.scrolled{border-bottom-color:var(--line)}
+.brand{
+  display:flex;align-items:center;gap:10px;
+  font-weight:800;font-size:17px;letter-spacing:-.3px;
+}
+.brand-dot{
+  width:32px;height:32px;border-radius:10px;
+  background:var(--navy);
+  display:grid;place-items:center;color:#fff;font-size:15px;
+}
+.brand span{color:var(--orange)}
+.mini-wa{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--wa);color:#fff;
+  padding:9px 16px;border-radius:99px;
+  font-size:13px;font-weight:600;
+  transition:all .2s;
+}
+.mini-wa:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(37,211,102,.3)}
+.mini-wa i{font-size:14px}
+
+/* ===== HERO ===== */
+.hero{
+  padding:60px 0 40px;text-align:center;
+}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--orange-soft);color:var(--orange);
+  padding:6px 14px;border-radius:99px;
+  font-size:12px;font-weight:700;
+  letter-spacing:.3px;margin-bottom:24px;
+}
+.hero-tag i{font-size:11px}
+.hero h1{
+  font-size:40px;font-weight:800;line-height:1.15;
+  letter-spacing:-1.2px;margin-bottom:16px;
+}
+.hero h1 .accent{
+  color:var(--orange);
+  position:relative;
+}
+.hero h1 .accent::after{
+  content:'';position:absolute;
+  left:0;right:0;bottom:2px;height:8px;
+  background:var(--orange-soft);z-index:-1;
+  border-radius:4px;
+}
+.hero p{
+  font-size:16px;color:var(--muted);max-width:460px;
+  margin:0 auto 32px;
+}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--wa);color:#fff;
+  padding:16px 32px;border-radius:99px;
+  font-weight:700;font-size:16px;
+  box-shadow:0 10px 30px rgba(37,211,102,.3);
+  transition:all .25s;
+}
+.hero-cta:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(37,211,102,.4)}
+.hero-cta i{font-size:20px}
+.hero-note{
+  font-size:13px;color:var(--muted);margin-top:14px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.hero-note i{color:var(--wa);font-size:8px}
+
+/* ===== SECTION ===== */
+section{padding:40px 0}
+.section-title{
+  font-size:13px;font-weight:700;color:var(--muted);
+  letter-spacing:1.5px;text-transform:uppercase;
+  margin-bottom:20px;
+}
+
+/* ===== APA ITU SURUHBOY ===== */
+.about{
+  background:#fff;border:1px solid var(--line);
+  border-radius:20px;padding:28px 24px;
+  position:relative;overflow:hidden;
+}
+.about::before{
+  content:'';position:absolute;top:0;left:0;
+  width:4px;height:100%;background:var(--orange);
+}
+.about-icon{
+  width:52px;height:52px;border-radius:16px;
+  background:var(--orange-soft);color:var(--orange);
+  display:grid;place-items:center;font-size:22px;
+  margin-bottom:18px;
+}
+.about h2{
+  font-size:22px;font-weight:800;
+  letter-spacing:-.5px;margin-bottom:12px;
+  line-height:1.3;
+}
+.about h2 em{
+  font-style:normal;color:var(--orange);
+}
+.about p{
+  font-size:14.5px;color:var(--muted);
+  line-height:1.7;margin-bottom:14px;
+}
+.about p:last-of-type{margin-bottom:0}
+.about p strong{color:var(--text);font-weight:600}
+
+/* ===== FITUR UNGGULAN ===== */
+.features{display:flex;flex-direction:column;gap:12px}
+.feature{
+  display:flex;align-items:flex-start;gap:16px;
+  padding:20px;background:#fff;
+  border:1px solid var(--line);border-radius:18px;
+  transition:all .25s;
+}
+.feature:hover{
+  border-color:var(--orange);
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(255,122,26,.08);
+}
+.feature-check{
+  width:26px;height:26px;flex-shrink:0;
+  border-radius:50%;background:var(--orange-soft);
+  color:var(--orange);display:grid;place-items:center;
+  font-size:12px;margin-top:2px;
+}
+.feature-body{flex:1;min-width:0}
+.feature-body h3{
+  font-size:15px;font-weight:700;
+  margin-bottom:4px;letter-spacing:-.2px;
+}
+.feature-body p{font-size:13px;color:var(--muted);line-height:1.55}
+
+/* ===== LAYANAN LIST ===== */
+.services{display:flex;flex-direction:column;gap:12px}
+.svc{
+  display:flex;align-items:center;gap:16px;
+  padding:18px 20px;background:#fff;
+  border:1px solid var(--line);border-radius:18px;
+  transition:all .25s;cursor:pointer;
+}
+.svc:hover{
+  border-color:var(--orange);
+  transform:translateX(4px);
+  box-shadow:0 8px 24px rgba(255,122,26,.08);
+}
+.svc-icon{
+  width:46px;height:46px;flex-shrink:0;
+  border-radius:14px;background:var(--orange-soft);
+  color:var(--orange);display:grid;place-items:center;
+  font-size:18px;transition:all .25s;
+}
+.svc:hover .svc-icon{
+  background:var(--orange);color:#fff;
+  transform:rotate(-6deg);
+}
+.svc-body{flex:1;min-width:0}
+.svc-body h3{
+  font-size:15px;font-weight:700;
+  margin-bottom:2px;letter-spacing:-.2px;
+}
+.svc-body p{font-size:13px;color:var(--muted);line-height:1.5}
+.svc-arrow{
+  color:var(--muted);font-size:14px;
+  transition:all .25s;flex-shrink:0;
+}
+.svc:hover .svc-arrow{color:var(--orange);transform:translateX(3px)}
+
+/* ===== CTA CARD ===== */
+.cta-card{
+  background:var(--navy);color:#fff;
+  border-radius:24px;padding:36px 28px;
+  text-align:center;position:relative;overflow:hidden;
+}
+.cta-card::before{
+  content:'';position:absolute;top:-60%;right:-20%;
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,122,26,.3),transparent 70%);
+}
+.cta-card > *{position:relative;z-index:1}
+.cta-card h3{
+  font-size:24px;font-weight:800;
+  letter-spacing:-.5px;margin-bottom:8px;
+}
+.cta-card p{font-size:14px;opacity:.75;margin-bottom:22px}
+.cta-card .wa-big{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--wa);color:#fff;
+  padding:14px 28px;border-radius:99px;
+  font-weight:700;font-size:15px;
+  box-shadow:0 8px 24px rgba(37,211,102,.35);
+  transition:all .25s;
+}
+.cta-card .wa-big:hover{transform:translateY(-2px);background:#1ebe5a}
+
+/* ===== FAQ ===== */
+.faq{background:#fff;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.faq summary{
+  padding:16px 20px;font-weight:600;font-size:14.5px;
+  cursor:pointer;list-style:none;
+  display:flex;justify-content:space-between;align-items:center;
+  transition:all .2s;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{
+  content:'+';color:var(--orange);
+  font-size:20px;font-weight:400;
+  transition:transform .3s;
+}
+.faq[open] summary::after{transform:rotate(45deg)}
+.faq summary:hover{background:var(--orange-soft)}
+.faq-body{padding:0 20px 18px;font-size:13.5px;color:var(--muted);line-height:1.65}
+
+/* ===== FOOTER ===== */
+footer{
+  padding:36px 0 100px;text-align:center;
+  border-top:1px solid var(--line);margin-top:40px;
+}
+footer .brand{justify-content:center;margin-bottom:10px}
+footer p{font-size:13px;color:var(--muted)}
+footer .social{
+  display:flex;gap:8px;justify-content:center;margin-top:18px;
+}
+footer .social a{
+  width:38px;height:38px;border-radius:12px;
+  background:#fff;border:1px solid var(--line);
+  display:grid;place-items:center;
+  color:var(--navy);font-size:14px;
+  transition:all .25s;
+}
+footer .social a:hover{
+  background:var(--navy);color:#fff;
+  transform:translateY(-3px);
+  border-color:var(--navy);
+}
+
+/* ===== WA FLOAT ===== */
+.wa-float{
+  position:fixed;bottom:20px;right:20px;z-index:100;
+  width:56px;height:56px;border-radius:50%;
+  background:var(--wa);color:#fff;
+  display:grid;place-items:center;font-size:26px;
+  box-shadow:0 8px 24px rgba(37,211,102,.4);
+  transition:all .25s;
+}
+.wa-float:hover{transform:scale(1.08);background:#1ebe5a}
+
+/* ===== REVEAL ===== */
+.reveal{opacity:0;transform:translateY(20px);transition:all .7s cubic-bezier(.16,1,.3,1)}
+.reveal.show{opacity:1;transform:translateY(0)}
+
+/* ===== MOBILE ===== */
+@media (max-width:600px){
+  .wrap{padding:0 18px}
+  .hero{padding:40px 0 30px}
+  .hero h1{font-size:30px;letter-spacing:-.8px}
+  .hero p{font-size:15px}
+  .hero-cta{padding:15px 26px;font-size:15px}
+  .about{padding:22px 20px;border-radius:16px}
+  .about h2{font-size:19px}
+  .about p{font-size:14px}
+  .cta-card{padding:30px 22px;border-radius:20px}
+  .cta-card h3{font-size:20px}
+  .wa-float{width:52px;height:52px;font-size:24px;bottom:16px;right:16px}
+  footer{padding-bottom:88px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+  .reveal{opacity:1;transform:none}
+  html{scroll-behavior:auto}
+}
+</style>
 </head>
 <body>
-    <!-- Header & Navigation -->
-    <header>
-        <div class="container">
-            <nav class="navbar">
-                <div class="logo-wrapper">
-                    <a href="#" class="logo">
-                        <i class="fas fa-running"></i>
-                        <span>SuruhBoy</span>
-                    </a>
-                </div>
-                
-                <!-- Tombol Cek Ongkir untuk Mobile -->
-                <div class="header-right">
-                    <a href="cek-ongkir.html" class="mobile-ongkir-button">
-                        <i class="fas fa-calculator"></i>
-                        <span>Cek Ongkir</span>
-                    </a>
-                </div>
-                
-                <!-- Menu Toggle untuk Mobile -->
-                <button class="menu-toggle" id="menuToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                
-                <div class="nav-links" id="navLinks">
-                    <a href="#" class="active">Beranda</a>
-                    <a href="#services">Layanan</a>
-                    <a href="#testimonials">Testimoni</a>
-                    <a href="#about">Tentang Kami</a>
-                    <a href="#contact">Kontak</a>
-                    <a href="cek-ongkir.html" class="cta-button">
-                        <i class="fas fa-calculator"></i>
-                        Cek Ongkir
-                    </a>
-                </div>
-            </nav>
+
+<div class="wrap">
+  <!-- HEADER -->
+  <header id="header">
+    <div class="brand">
+      <div class="brand-dot"><i class="fas fa-bolt"></i></div>
+      Suruh<span>Boy</span>
+    </div>
+    <a href="https://wa.me/62882007670299?text=Halo%20SuruhBoy" target="_blank" rel="noopener" class="mini-wa">
+      <i class="fab fa-whatsapp"></i> Chat
+    </a>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-tag">
+      <i class="fas fa-circle"></i> Jasa On-Demand Boyolali
+    </div>
+    <h1>
+      Semua kebutuhanmu,<br>
+      <span class="accent">tinggal suruh</span>
+    </h1>
+    <p>Titip beli, antar barang, atau bantu urusan harian di Boyolali. Cukup chat WhatsApp — kami yang urus.</p>
+    <a href="https://wa.me/62882007670299?text=Halo%20SuruhBoy%2C%20saya%20mau%20pesan%20layanan" target="_blank" rel="noopener" class="hero-cta">
+      <i class="fab fa-whatsapp"></i>
+      Pesan via WhatsApp
+    </a>
+    <div class="hero-note">
+      <i class="fas fa-circle"></i>
+      Balas dalam &lt; 5 menit
+    </div>
+  </section>
+
+  <!-- APA ITU SURUHBOY -->
+  <section>
+    <div class="section-title">Tentang Kami</div>
+    <div class="about reveal">
+      <div class="about-icon"><i class="fas fa-bolt"></i></div>
+      <h2>Apa itu <em>SuruhBoy</em>?</h2>
+      <p>
+        <strong>SuruhBoy</strong> adalah layanan <strong>jasa on-demand di Boyolali</strong> yang siap membantu
+        segala kebutuhan harianmu — dari titip beli, antar barang, antar makanan,
+        sampai bantu urusan kecil yang bikin repot.
+      </p>
+      <p>
+        Cukup <strong>chat WhatsApp</strong>, tim SuruhBoy akan langsung bergerak.
+        Tanpa aplikasi tambahan, tanpa ribet — <strong>semua tinggal suruh</strong>.
+      </p>
+    </div>
+  </section>
+
+  <!-- FITUR UNGGULAN -->
+  <section>
+    <div class="section-title">Fitur Unggulan Kami</div>
+    <div class="features">
+      <div class="feature reveal">
+        <div class="feature-check"><i class="fas fa-check"></i></div>
+        <div class="feature-body">
+          <h3>Tersedia Banyak Agent</h3>
+          <p>Tim agent siap sedia di berbagai titik Boyolali — pesananmu cepat ditangani.</p>
         </div>
-    </header>
+      </div>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Semua Kebutuhanmu, <span>Tinggal Suruh</span></h1>
-                <p>SuruhBoy hadir untuk memudahkan semua kebutuhan Anda. Dari antar makanan hingga urusan penting, kami siap membantu 24/7.</p>
-                <a href="#services" class="cta-button-large">
-                    <i class="fas fa-play-circle"></i>
-                    Lihat Layanan Kami
-                </a>
-            </div>
+      <div class="feature reveal">
+        <div class="feature-check"><i class="fas fa-check"></i></div>
+        <div class="feature-body">
+          <h3>Cover Area Luas</h3>
+          <p>Jangkauan layanan luas, dari pusat kota sampai pelosok Boyolali.</p>
         </div>
-    </section>
+      </div>
 
-    <!-- Image Slider -->
-    <section class="slider-section">
-        <div class="container">
-            <div class="swiper-container">
-                <div class="swiper-wrapper">
-                    <!-- Slide 1 -->
-                    <div class="swiper-slide">
-                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Antar Makanan">
-                        <div class="slide-content">
-                            <h2>Antar Makanan Favoritmu</h2>
-                            <p>Pesan dari restoran manapun, kami antarkan sampai depan pintu</p>
-                        </div>
-                    </div>
-                    <!-- Slide 2 -->
-                    <div class="swiper-slide">
-                        <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Kirim Barang">
-                        <div class="slide-content">
-                            <h2>Kirim Barang Aman & Cepat</h2>
-                            <p>Dokumen, paket, atau barang penting lainnya</p>
-                        </div>
-                    </div>
-                    <!-- Slide 3 -->
-                    <div class="swiper-slide">
-                        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Titip Beli">
-                        <div class="slide-content">
-                            <h2>Titip Beli dari Mana Saja</h2>
-                            <p>Ingin beli sesuatu tapi malas keluar? Kami bantu!</p>
-                        </div>
-                    </div>
-                </div>
-                <!-- Add Pagination -->
-                <div class="swiper-pagination"></div>
-            </div>
+      <div class="feature reveal">
+        <div class="feature-check"><i class="fas fa-check"></i></div>
+        <div class="feature-body">
+          <h3>Murah &amp; Terpercaya</h3>
+          <p>Harga bersahabat, pelayanan amanah. Sudah dipercaya banyak pelanggan.</p>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Main Services Section -->
-    <section id="services" class="services-section">
-        <div class="container">
-            <h2 class="section-title">Layanan Utama Kami</h2>
-            <div class="services-grid">
-                <!-- Service 1 -->
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-utensils"></i>
-                    </div>
-                    <h3>Antar Makanan</h3>
-                    <p>Antar makanan dari restoran favoritmu kemanapun dengan cepat</p>
-                </div>
-                <!-- Service 2 -->
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-box"></i>
-                    </div>
-                    <h3>Kirim Barang</h3>
-                    <p>Kirim paket dan barang penting dengan aman dan terpercaya</p>
-                </div>
-                <!-- Service 3 -->
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-shopping-cart"></i>
-                    </div>
-                    <h3>Titip Beli</h3>
-                    <p>Beliin apa saja yang kamu butuhkan dari toko manapun</p>
-                </div>
-                <!-- Service 4 -->
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-file-contract"></i>
-                    </div>
-                    <h3>Dokumen & Urusan</h3>
-                    <p>Bantu urusan administratif dan dokumen penting</p>
-                </div>
-            </div>
-            
-            <!-- Tombol Lihat Semua Layanan -->
-            <div class="button-container">
-                <a href="jenis-layanan.html" class="see-all-button">
-                    <i class="fas fa-list"></i>
-                    Lihat Semua 10 Layanan Kami
-                </a>
-            </div>
+  <!-- LAYANAN -->
+  <section>
+    <div class="section-title">Layanan</div>
+    <div class="services">
+      <a href="https://wa.me/62882007670299?text=Halo%2C%20saya%20mau%20titip%20beli" target="_blank" rel="noopener" class="svc reveal">
+        <div class="svc-icon"><i class="fas fa-shopping-basket"></i></div>
+        <div class="svc-body">
+          <h3>Titip Beli</h3>
+          <p>Beliin apa saja dari toko favoritmu</p>
         </div>
-    </section>
+        <i class="fas fa-chevron-right svc-arrow"></i>
+      </a>
 
-    <!-- CTA Check Ongkir Section -->
-    <section id="cta" class="cta-section">
-        <div class="container">
-            <h2>Cek Biaya Layanan Sekarang</h2>
-            <p>Hitung estimasi biaya untuk layanan yang kamu butuhkan secara instan</p>
-            <a href="cek-ongkir.html" class="cta-button-large">
-                <i class="fas fa-calculator"></i>
-                Cek Ongkir Sekarang
-            </a>
+      <a href="https://wa.me/62882007670299?text=Halo%2C%20saya%20mau%20antar%20barang" target="_blank" rel="noopener" class="svc reveal">
+        <div class="svc-icon"><i class="fas fa-box"></i></div>
+        <div class="svc-body">
+          <h3>Antar Barang</h3>
+          <p>Kirim paket &amp; dokumen dengan aman</p>
         </div>
-    </section>
+        <i class="fas fa-chevron-right svc-arrow"></i>
+      </a>
 
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="testimonials-section">
-        <div class="container">
-            <h2 class="section-title">Apa Kata Pelanggan</h2>
-            
-            <div class="services-grid">
-                <!-- Testimonial 1 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">DL</div>
-                        <div class="testimonial-info">
-                            <h3>Devi Lestari</h3>
-                            <div class="testimonial-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="testimonial-text">"Driver ramah-ramah, makanan sampai masih panas. Recommended banget!"</p>
-                </div>
-                
-                <!-- Testimonial 2 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">RS</div>
-                        <div class="testimonial-info">
-                            <h3>Rina Sari</h3>
-                            <div class="testimonial-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="testimonial-text">"Pelayanan cepat dan harga terjangkau. Sudah beberapa kali titip beli kebutuhan rumah, selalu puas!"</p>
-                </div>
-                
-                <!-- Testimonial 3 -->
-                <div class="testimonial-card">
-                    <div class="testimonial-header">
-                        <div class="testimonial-avatar">AB</div>
-                        <div class="testimonial-info">
-                            <h3>Andi Budiman</h3>
-                            <div class="testimonial-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="testimonial-text">"Pas banget buat yang sibuk kayak saya. Urusan kantor banyak, SuruhBoy bantu banget untuk kirim dokumen."</p>
-                </div>
-            </div>
+      <a href="https://wa.me/62882007670299?text=Halo%2C%20saya%20mau%20antar%20makanan" target="_blank" rel="noopener" class="svc reveal">
+        <div class="svc-icon"><i class="fas fa-utensils"></i></div>
+        <div class="svc-body">
+          <h3>Antar Makanan</h3>
+          <p>Pesan dari restoran favorit, sampai depan pintu</p>
         </div>
-    </section>
+        <i class="fas fa-chevron-right svc-arrow"></i>
+      </a>
 
-    <!-- About Us Section -->
-    <section id="about" class="about-section">
-        <div class="container">
-            <h2 class="section-title">Tentang SuruhBoy</h2>
-            
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>Solusi Untuk Semua Kebutuhan Harianmu</h2>
-                    <p>SuruhBoy hadir sebagai platform yang menghubungkan Anda dengan penyedia jasa untuk berbagai kebutuhan sehari-hari. Dengan tim profesional yang terpercaya, kami menjamin keamanan dan kepuasan dalam setiap layanan.</p>
-                    <p>Misi kami adalah membuat hidup Anda lebih mudah dengan menyediakan akses ke berbagai layanan hanya dalam satu aplikasi.</p>
-                    
-                    <div class="about-stats">
-                        <div class="stat-item">
-                            <div class="stat-number">10K+</div>
-                            <p>Pelanggan Puas</p>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">50K+</div>
-                            <p>Layanan Terselesaikan</p>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">24/7</div>
-                            <p>Layanan Tersedia</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Tim SuruhBoy">
-                </div>
-            </div>
+      <a href="https://wa.me/62882007670299?text=Halo%2C%20saya%20butuh%20bantu%20urusan" target="_blank" rel="noopener" class="svc reveal">
+        <div class="svc-icon"><i class="fas fa-file-alt"></i></div>
+        <div class="svc-body">
+          <h3>Bantu Urusan</h3>
+          <p>Antar dokumen, urus administrasi &amp; lainnya</p>
         </div>
-    </section>
+        <i class="fas fa-chevron-right svc-arrow"></i>
+      </a>
+    </div>
+  </section>
 
-    <!-- Contact Support Section -->
-    <section id="contact" class="contact-section">
-        <div class="container">
-            <h2 class="section-title" style="color:var(--white);">Hubungi Support Kami</h2>
-            <p style="text-align:center;margin-bottom:30px;font-size:18px;opacity:0.9;">Tim support kami siap membantu 24/7</p>
-            
-            <div class="contact-grid">
-                <!-- WhatsApp -->
-                <div class="contact-item">
-                    <i class="fab fa-whatsapp"></i>
-                    <h3>WhatsApp</h3>
-                    <p>+62 812-3456-7890</p>
-                    <p>Respon cepat via chat</p>
-                </div>
-                
-                <!-- Telepon -->
-                <div class="contact-item">
-                    <i class="fas fa-phone"></i>
-                    <h3>Telepon</h3>
-                    <p>(021) 1234-5678</p>
-                    <p>Senin - Minggu, 8:00-22:00</p>
-                </div>
-                
-                <!-- Email -->
-                <div class="contact-item">
-                    <i class="fas fa-envelope"></i>
-                    <h3>Email</h3>
-                    <p>support@suruhboy.com</p>
-                    <p>Respon dalam 1x24 jam</p>
-                </div>
-                
-                <!-- Live Chat -->
-                <div class="contact-item">
-                    <i class="fas fa-comment-dots"></i>
-                    <h3>Live Chat</h3>
-                    <p>Tersedia di aplikasi</p>
-                    <p>Bantuan instan 24/7</p>
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- FAQ -->
+  <section>
+    <div class="section-title">FAQ</div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <div class="logo">
-                        <i class="fas fa-running"></i>
-                        <span>SuruhBoy</span>
-                    </div>
-                    <p style="font-size:15px;margin-top:15px;opacity:0.9;">Semua kebutuhanmu, tinggal suruh. Kami siap membantu kapan saja.</p>
-                    <div class="social-links">
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-tiktok"></i></a>
-                    </div>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>Layanan</h3>
-                    <ul>
-                        <li><a href="jenis-layanan.html">Antar Makanan</a></li>
-                        <li><a href="jenis-layanan.html">Kirim Barang</a></li>
-                        <li><a href="jenis-layanan.html">Titip Beli</a></li>
-                        <li><a href="jenis-layanan.html">Dokumen & Urusan</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>Perusahaan</h3>
-                    <ul>
-                        <li><a href="#about">Tentang Kami</a></li>
-                        <li><a href="#testimonials">Testimoni</a></li>
-                        <li><a href="#">Karir</a></li>
-                        <li><a href="#">Blog</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-section">
-                    <h3>Kalkulator</h3>
-                    <ul>
-                        <li><a href="cek-ongkir.html">Cek Ongkir</a></li>
-                        <li><a href="cek-ongkir.html">Estimasi Biaya</a></li>
-                        <li><a href="cek-ongkir.html">Pilih Layanan</a></li>
-                        <li><a href="cek-ongkir.html">Chat Admin</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="copyright">
-                <p>&copy; 2025 SuruhBoy. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    <details class="faq">
+      <summary>Bagaimana cara pesan?</summary>
+      <div class="faq-body">Cukup klik tombol WhatsApp di halaman ini. Tim kami akan langsung membalas dan membantu proses pemesanan.</div>
+    </details>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script>
-        // Initialize Swiper
-        const swiper = new Swiper('.swiper-container', {
-            loop: true,
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-            autoplay: {
-                delay: 5000,
-                disableOnInteraction: false,
-            },
-            speed: 800,
-            effect: 'slide',
-            grabCursor: true,
-        });
+    <details class="faq">
+      <summary>Area mana saja yang dilayani?</summary>
+      <div class="faq-body">Kami melayani seluruh area Boyolali dan sekitarnya. Chat kami untuk konfirmasi jangkauan lokasimu.</div>
+    </details>
 
-        // Toggle menu for mobile
-        const menuToggle = document.getElementById('menuToggle');
-        const navLinks = document.getElementById('navLinks');
-        
-        menuToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            // Change icon
-            const icon = menuToggle.querySelector('i');
-            if (icon.classList.contains('fa-bars')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
+    <details class="faq">
+      <summary>Berapa biaya layanannya?</summary>
+      <div class="faq-body">Biaya tergantung jarak dan jenis layanan. Chat kami untuk estimasi cepat — gratis, tanpa komitmen.</div>
+    </details>
 
-        // Close menu when clicking outside
-        document.addEventListener('click', (event) => {
-            if (!event.target.closest('.navbar') && navLinks.classList.contains('active')) {
-                navLinks.classList.remove('active');
-                const icon = menuToggle.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
+    <details class="faq">
+      <summary>Bayar bagaimana?</summary>
+      <div class="faq-body">Bisa transfer bank, e-wallet, atau tunai saat serah terima. Fleksibel sesuai kenyamananmu.</div>
+    </details>
+  </section>
 
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                // Close mobile menu if open
-                if (navLinks.classList.contains('active')) {
-                    navLinks.classList.remove('active');
-                    const icon = menuToggle.querySelector('i');
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
-                
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-        
-        // Highlight active nav link
-        window.addEventListener('scroll', function() {
-            const sections = document.querySelectorAll('section[id]');
-            const navLinks = document.querySelectorAll('.nav-links a');
-            
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (scrollY >= sectionTop - 100) {
-                    current = section.getAttribute('id');
-                }
-            });
-            
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href').substring(1) === current) {
-                    link.classList.add('active');
-                }
-            });
-        });
-    </script>
+  <!-- CTA -->
+  <section>
+    <div class="cta-card reveal">
+      <h3>Siap dibantu sekarang?</h3>
+      <p>Chat kami, tim siap merespon cepat.</p>
+      <a href="https://wa.me/62882007670299?text=Halo%20SuruhBoy%2C%20saya%20butuh%20bantuan" target="_blank" rel="noopener" class="wa-big">
+        <i class="fab fa-whatsapp"></i>
+        Chat Sekarang
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="brand">
+      <div class="brand-dot"><i class="fas fa-bolt"></i></div>
+      Suruh<span>Boy</span>
+    </div>
+    <p>Jasa on-demand Boyolali — semua kebutuhanmu, tinggal suruh.</p>
+    <div class="social">
+  <a href="https://www.instagramk.com/@suruhboy.id" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+  <a href="https://www.tiktok.com/@jasasuruhboyolali" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+  <a href="https://wa.me/62882007670299" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+</div>
+  </footer>
+</div>
+
+<!-- WA FLOAT -->
+<a href="https://wa.me/62882007670299?text=Halo%20SuruhBoy" target="_blank" rel="noopener" class="wa-float" aria-label="Chat WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<script>
+// Header scroll effect
+window.addEventListener('scroll', () => {
+  document.getElementById('header').classList.toggle('scrolled', window.scrollY > 20);
+});
+
+// Reveal on scroll
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('show');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// FAQ accordion
+document.querySelectorAll('.faq').forEach(detail => {
+  detail.addEventListener('toggle', () => {
+    if (detail.open) {
+      document.querySelectorAll('.faq').forEach(other => {
+        if (other !== detail) other.open = false;
+      });
+    }
+  });
+});
+</script>
 </body>
 </html>
