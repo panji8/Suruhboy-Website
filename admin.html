@@ -4,6 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SuruhBoy — Dashboard Tracking</title>
+<meta name="description" content="Dashboard tracking pengunjung website SuruhBoy.">
+
+<!-- ===== Favicon ===== -->
+<link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+<link rel="manifest" href="favicon/site.webmanifest">
+
+<!-- ===== PWA ===== -->
+<meta name="theme-color" content="#0f2a4a">
+<meta name="apple-mobile-web-app-title" content="SuruhBoy Admin">
+<meta name="application-name" content="SuruhBoy Admin">
+<meta name="robots" content="noindex, nofollow">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -20,17 +35,59 @@ body{
 a{text-decoration:none;color:inherit}
 .wrap{max-width:960px;margin:0 auto;padding:40px 20px}
 
-/* ===== HEADER ===== */
+/* ===== TOP BAR ===== */
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:16px;margin-bottom:24px;flex-wrap:wrap;
+}
 .back{
   color:var(--muted);font-size:13px;text-decoration:none;
-  display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;
+  display:inline-flex;align-items:center;gap:6px;
   transition:color .2s;
 }
 .back:hover{color:var(--orange)}
-h1{font-size:28px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
-h1 span{color:var(--orange)}
-.sub{color:var(--muted);font-size:14px;margin-bottom:24px}
 
+.brand-mini{
+  display:flex;align-items:center;gap:8px;
+  font-weight:700;font-size:14px;color:var(--navy);
+}
+.brand-mini-dot{
+  width:28px;height:28px;border-radius:8px;
+  background:var(--navy);overflow:hidden;
+  display:grid;place-items:center;flex-shrink:0;
+}
+.brand-mini-dot img{width:100%;height:100%;object-fit:contain;padding:3px}
+.brand-mini span{color:var(--orange)}
+
+/* ===== PAGE HEADER ===== */
+.page-header{
+  display:flex;align-items:center;gap:20px;
+  margin-bottom:24px;
+}
+.page-logo{
+  width:64px;height:64px;border-radius:18px;
+  background:var(--navy);overflow:hidden;
+  display:grid;place-items:center;flex-shrink:0;
+  box-shadow:0 10px 24px rgba(15,42,74,.15);
+}
+.page-logo img{width:100%;height:100%;object-fit:contain;padding:10px}
+.page-title h1{font-size:28px;font-weight:800;letter-spacing:-.5px;margin-bottom:2px}
+.page-title h1 span{color:var(--orange)}
+.page-title .sub{color:var(--muted);font-size:14px}
+
+@media (min-width:1024px){
+  .page-logo{width:76px;height:76px;border-radius:22px;padding:12px}
+  .page-title h1{font-size:34px}
+  .page-title .sub{font-size:15px}
+}
+@media (max-width:600px){
+  .page-header{gap:14px}
+  .page-logo{width:52px;height:52px;border-radius:14px;padding:8px}
+  .page-title h1{font-size:22px}
+  .page-title .sub{font-size:12.5px}
+}
+
+/* ===== REFRESH ===== */
 .refresh{
   display:inline-flex;align-items:center;gap:8px;
   background:var(--navy);color:#fff;padding:10px 20px;
@@ -106,23 +163,49 @@ tr:last-child td{border:0}
 .footnote{
   text-align:center;color:var(--muted);font-size:12px;
   padding:20px 0;margin-top:20px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
 }
+.footnote .dot{
+  width:8px;height:8px;border-radius:50%;background:#25d366;
+  animation:blink 1.5s infinite;
+}
+@keyframes blink{50%{opacity:.4}}
 </style>
 </head>
 <body>
 
 <div class="wrap">
-  <a href="index.html" class="back">
-    <i class="fas fa-arrow-left"></i> Kembali ke Website
-  </a>
 
-  <h1>Dashboard <span>Tracking</span></h1>
-  <p class="sub">Statistik pengunjung website SuruhBoy — data dari Google Sheets.</p>
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <a href="index.html" class="back">
+      <i class="fas fa-arrow-left"></i> Kembali ke Website
+    </a>
+    <div class="brand-mini">
+      <div class="brand-mini-dot">
+        <img src="favicon/android-chrome-192x192.png" alt="SuruhBoy">
+      </div>
+      Suruh<span>Boy</span> Admin
+    </div>
+  </div>
 
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-logo">
+      <img src="favicon/android-chrome-192x192.png" alt="SuruhBoy">
+    </div>
+    <div class="page-title">
+      <h1>Dashboard <span>Tracking</span></h1>
+      <p class="sub">Statistik pengunjung website SuruhBoy — data dari Google Sheets.</p>
+    </div>
+  </div>
+
+  <!-- REFRESH -->
   <button class="refresh" id="refreshBtn">
     <i class="fas fa-sync"></i> Refresh Data
   </button>
 
+  <!-- CONTENT -->
   <div id="content">
     <div class="loading">
       <i class="fas fa-spinner fa-spin"></i>
@@ -130,7 +213,9 @@ tr:last-child td{border:0}
     </div>
   </div>
 
+  <!-- FOOTNOTE -->
   <div class="footnote">
+    <span class="dot"></span>
     Data diambil real-time dari Google Sheets — tanpa cache.
   </div>
 </div>
@@ -172,7 +257,6 @@ function renderDashboard(data){
   const daily = data.daily || [];
   const referrers = data.referrers || [];
 
-  // Trend calculation
   const diff = yesterday > 0
     ? Math.round((today - yesterday) / yesterday * 100)
     : 0;
@@ -267,7 +351,6 @@ function renderChart(daily){
   const canvas = $('trendChart');
   if (!canvas) return;
 
-  // Destroy chart lama jika ada
   if (window.__trendChart) {
     window.__trendChart.destroy();
     window.__trendChart = null;
