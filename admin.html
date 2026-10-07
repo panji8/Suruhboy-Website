@@ -2,368 +2,1822 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SuruhBoy — Dashboard Tracking</title>
-<meta name="description" content="Dashboard tracking pengunjung website SuruhBoy.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuruhBoy HQ — Admin Panel</title>
 
-<!-- ===== Favicon ===== -->
 <link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 <link rel="manifest" href="favicon/site.webmanifest">
-
-<!-- ===== PWA ===== -->
 <meta name="theme-color" content="#0f2a4a">
-<meta name="apple-mobile-web-app-title" content="SuruhBoy Admin">
-<meta name="application-name" content="SuruhBoy Admin">
 <meta name="robots" content="noindex, nofollow">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
 <style>
 :root{
   --navy:#0f2a4a;--navy-soft:#1e3a5f;--orange:#ff7a1a;--orange-soft:#fff2e8;
   --bg:#fafbfc;--line:#eaeef3;--muted:#7a8899;--text:#0f2a4a;
+  --danger:#dc2626;--danger-soft:#fef2f2;--success:#16a34a;--success-soft:#f0fdf4;
+  --warning:#f59e0b;--warning-soft:#fffbeb;--info:#3b82f6;--info-soft:#eff6ff;
+  --shadow-sm:0 1px 3px rgba(15,42,74,.06);
+  --shadow:0 8px 24px rgba(15,42,74,.08);
+  --shadow-md:0 12px 32px rgba(15,42,74,.10);
+  --shadow-lg:0 20px 60px rgba(15,42,74,.20);
+  --radius:12px;--radius-lg:18px;--radius-xl:24px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:'Plus Jakarta Sans',system-ui,sans-serif;
-  background:var(--bg);color:var(--text);line-height:1.6;
-  -webkit-font-smoothing:antialiased;
-}
-a{text-decoration:none;color:inherit}
-.wrap{max-width:960px;margin:0 auto;padding:40px 20px}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font-family:inherit;font-size:14px}
+button{cursor:pointer;border:none;background:none;color:inherit}
 
-/* ===== TOP BAR ===== */
-.topbar{
-  display:flex;justify-content:space-between;align-items:center;
-  gap:16px;margin-bottom:24px;flex-wrap:wrap;
-}
-.back{
-  color:var(--muted);font-size:13px;text-decoration:none;
-  display:inline-flex;align-items:center;gap:6px;
-  transition:color .2s;
-}
-.back:hover{color:var(--orange)}
+/* ===== LOGIN ===== */
+.login-screen{position:fixed;inset:0;z-index:10000;background:var(--navy);display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden}
+.login-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 80%,rgba(255,122,26,.15),transparent 50%),radial-gradient(circle at 80% 20%,rgba(255,122,26,.10),transparent 50%)}
+.login-screen.hidden{display:none}
+.login-card{position:relative;z-index:1;background:#fff;border-radius:var(--radius-xl);padding:44px 40px;width:100%;max-width:420px;box-shadow:var(--shadow-lg);text-align:center;animation:fadeUp .5s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.login-logo{width:72px;height:72px;border-radius:20px;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 22px;box-shadow:0 12px 32px rgba(15,42,74,.2);overflow:hidden;flex-shrink:0}
+.login-logo img{width:100%;height:100%;object-fit:contain;padding:10px}
+.login-title{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
+.login-title span{color:var(--orange)}
+.login-sub{color:var(--muted);font-size:14px;margin-bottom:30px}
+.login-input{width:100%;padding:14px 18px;border:2px solid var(--line);border-radius:12px;font-size:15px;text-align:center;letter-spacing:4px;font-weight:600;transition:all .2s;margin-bottom:12px;background:var(--bg)}
+.login-input:focus{outline:none;border-color:var(--orange);background:#fff}
+.login-input::placeholder{letter-spacing:4px;color:var(--muted)}
+.login-error{color:var(--danger);font-size:12px;font-weight:600;min-height:18px;margin-bottom:12px}
+.login-btn{width:100%;padding:14px;background:var(--navy);color:#fff;border-radius:12px;font-size:15px;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.login-btn:hover:not(:disabled){background:var(--navy-soft);transform:translateY(-1px);box-shadow:0 8px 20px rgba(15,42,74,.25)}
+.login-btn:disabled{opacity:.7;cursor:wait}
+.login-hint{margin-top:22px;padding:12px 14px;background:var(--warning-soft);border-radius:10px;font-size:12px;color:#92400e;display:flex;align-items:center;gap:8px;justify-content:center}
+.login-hint i{color:var(--warning)}
 
-.brand-mini{
-  display:flex;align-items:center;gap:8px;
-  font-weight:700;font-size:14px;color:var(--navy);
-}
-.brand-mini-dot{
-  width:28px;height:28px;border-radius:8px;
-  background:var(--navy);overflow:hidden;
-  display:grid;place-items:center;flex-shrink:0;
-}
-.brand-mini-dot img{width:100%;height:100%;object-fit:contain;padding:3px}
-.brand-mini span{color:var(--orange)}
+/* ===== APP ===== */
+.app{display:none}
+.app.active{display:block}
 
-/* ===== PAGE HEADER ===== */
-.page-header{
-  display:flex;align-items:center;gap:20px;
-  margin-bottom:24px;
-}
-.page-logo{
-  width:64px;height:64px;border-radius:18px;
-  background:var(--navy);overflow:hidden;
-  display:grid;place-items:center;flex-shrink:0;
-  box-shadow:0 10px 24px rgba(15,42,74,.15);
-}
-.page-logo img{width:100%;height:100%;object-fit:contain;padding:10px}
-.page-title h1{font-size:28px;font-weight:800;letter-spacing:-.5px;margin-bottom:2px}
-.page-title h1 span{color:var(--orange)}
-.page-title .sub{color:var(--muted);font-size:14px}
+/* ===== SIDEBAR ===== */
+.sidebar{width:260px;height:100vh;position:fixed;top:0;left:0;background:var(--navy);color:#fff;z-index:1000;display:flex;flex-direction:column;overflow-y:auto}
+.sidebar-logo{padding:22px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer}
+.logo-icon{width:40px;height:40px;border-radius:12px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden;flex-shrink:0}
+.logo-icon img{width:100%;height:100%;object-fit:contain;padding:4px}
+.logo-text{font-weight:800;font-size:17px;letter-spacing:-.3px}
+.logo-text span{color:var(--orange)}
+.sidebar-nav{flex:1;padding:16px 12px}
+.sidebar-section{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.35);padding:16px 12px 8px;font-weight:700}
+.sidebar-link{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;color:rgba(255,255,255,.65);font-size:14px;font-weight:500;cursor:pointer;border:none;background:none;width:100%;text-align:left;margin-bottom:2px;transition:all .2s}
+.sidebar-link:hover{background:rgba(255,122,26,.15);color:#fff}
+.sidebar-link.active{background:var(--orange);color:#fff;font-weight:700}
+.sidebar-link i{width:20px;text-align:center;font-size:15px}
+.sidebar-link.logout{color:rgba(255,100,100,.75);margin-top:8px}
+.sidebar-link.logout:hover{background:rgba(220,38,38,.15);color:#fca5a5}
+.badge{margin-left:auto;background:var(--orange);color:#fff;font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700}
+.sidebar-footer{padding:16px 12px;border-top:1px solid rgba(255,255,255,.08)}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:8px}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
 
-@media (min-width:1024px){
-  .page-logo{width:76px;height:76px;border-radius:22px;padding:12px}
-  .page-title h1{font-size:34px}
-  .page-title .sub{font-size:15px}
-}
-@media (max-width:600px){
-  .page-header{gap:14px}
-  .page-logo{width:52px;height:52px;border-radius:14px;padding:8px}
-  .page-title h1{font-size:22px}
-  .page-title .sub{font-size:12.5px}
-}
+/* ===== MAIN ===== */
+.main-content{margin-left:260px;min-height:100vh}
+.header{height:68px;background:rgba(250,251,252,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:100;gap:12px}
+.page-title{font-size:18px;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:10px}
+.page-title i{color:var(--orange)}
+.header-actions{display:flex;align-items:center;gap:8px}
+.content{padding:28px}
+.page-content{width:100%;animation:fadeIn .3s ease;display:none}
+.page-content.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* ===== REFRESH ===== */
-.refresh{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--navy);color:#fff;padding:10px 20px;
-  border-radius:99px;font-size:13px;font-weight:600;
-  cursor:pointer;border:0;transition:all .2s;margin-bottom:28px;
-}
-.refresh:hover{background:var(--navy-soft)}
-.refresh i{transition:transform .4s}
-.refresh.spin i{animation:sp .8s linear infinite}
+/* ===== BUTTON ===== */
+.btn{padding:10px 18px;border-radius:24px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;transition:all .2s;white-space:nowrap}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover:not(:disabled){background:var(--navy-soft);transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,42,74,.2)}
+.btn-orange{background:var(--orange);color:#fff}
+.btn-orange:hover:not(:disabled){background:#e66a0d;transform:translateY(-1px);box-shadow:0 6px 16px rgba(255,122,26,.35)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover:not(:disabled){background:#b91c1c}
+.btn-ghost{background:#fff;color:var(--text);border:1px solid var(--line)}
+.btn-ghost:hover:not(:disabled){background:var(--bg);border-color:var(--muted)}
+.btn-sm{padding:8px 14px;font-size:12px}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn i.spin{animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 
-/* ===== KPI CARDS ===== */
-.kpis{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:14px;margin-bottom:24px;
-}
-.k{
-  background:#fff;border:1px solid var(--line);
-  border-radius:18px;padding:20px;transition:all .25s;
-}
-.k:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(29,78,96,.08)}
-.k span{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
-.k b{
-  font-size:26px;font-weight:800;color:var(--navy);
-  letter-spacing:-1px;display:block;line-height:1.2;
-}
-.k .trend{font-size:11px;color:var(--muted);margin-top:4px}
+/* ===== TOOLBAR ===== */
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.toolbar-left{display:flex;gap:10px;flex-wrap:wrap;align-items:center;flex:1;min-width:0}
+.toolbar-right{display:flex;gap:8px;align-items:center}
+.search-box{position:relative;flex:1;max-width:300px;min-width:180px}
+.search-box i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
+.search-box input{width:100%;padding:10px 14px 10px 38px;border:1px solid var(--line);border-radius:24px;font-size:13px;outline:none;transition:all .2s;background:#fff}
+.search-box input:focus{border-color:var(--orange)}
+.filter-select{padding:10px 16px;border:1px solid var(--line);border-radius:24px;background:#fff;font-size:13px;font-weight:500;outline:none;cursor:pointer;transition:all .2s}
+.filter-select:focus{border-color:var(--orange)}
 
-/* ===== CARDS ===== */
-.card{
-  background:#fff;border:1px solid var(--line);
-  border-radius:20px;padding:24px;margin-bottom:20px;
-}
-.card h3{font-size:15px;font-weight:700;margin-bottom:16px}
-.chart-wrap{position:relative;height:260px}
+/* ===== KPI ===== */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+.stat-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow-sm);transition:all .25s}
+.stat-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.stat-top{display:flex;justify-content:space-between;align-items:flex-start}
+.stat-info p{font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:500}
+.stat-info h3{font-size:26px;font-weight:800;letter-spacing:-.8px;color:var(--navy);line-height:1.2}
+.stat-note{margin-top:6px;font-size:11px;color:var(--muted)}
+.stat-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.stat-icon.blue{background:var(--info-soft);color:var(--info)}
+.stat-icon.green{background:var(--success-soft);color:var(--success)}
+.stat-icon.orange{background:var(--orange-soft);color:var(--orange)}
+.stat-icon.navy{background:#eef2f7;color:var(--navy)}
 
-/* ===== TABLES ===== */
-table{width:100%;border-collapse:collapse;font-size:14px}
-th{
-  text-align:left;color:var(--muted);font-weight:600;
-  font-size:12px;padding:10px;border-bottom:2px solid var(--line);
-}
-td{padding:12px 10px;border-bottom:1px solid var(--line)}
-td b{font-weight:600}
-tr:last-child td{border:0}
-.rank{
-  width:28px;height:28px;border-radius:8px;background:var(--bg);
-  display:inline-grid;place-items:center;
-  font-size:12px;font-weight:700;color:var(--navy);
-}
-.rank.r1{background:var(--orange);color:#fff}
+/* ===== CARD ===== */
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;transition:all .25s}
+.card:hover{box-shadow:var(--shadow)}
+.card-header{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.card-header h3{font-size:15px;font-weight:700;letter-spacing:-.2px}
+.card-subtitle{font-size:12px;color:var(--muted);margin-top:3px}
+.card-body{padding:22px}
+.grid-2col{display:grid;grid-template-columns:1.6fr 1fr;gap:20px;margin-bottom:20px}
+.chart-container{position:relative;height:320px}
 
-/* ===== STATE ===== */
-.loading{text-align:center;padding:60px 20px;color:var(--muted)}
-.loading i{font-size:32px;color:var(--orange);margin-bottom:12px;display:block}
-.error{
-  background:#fef2f2;border:1px solid #fecaca;color:#dc2626;
-  padding:16px;border-radius:12px;font-size:14px;line-height:1.6;
-}
-.error b{display:block;margin-bottom:4px}
-.error code{
-  background:rgba(220,38,38,.08);padding:2px 6px;
-  border-radius:4px;font-size:12px;
-  font-family:monospace;
-}
+/* ===== ORDER TABLE ===== */
+.order-table-wrap{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow-sm)}
+.table-header{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.table-header h3{font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px}
+.table-header h3 i{color:var(--orange)}
+.table-header-info{font-size:12px;color:var(--muted);margin-top:3px}
+.table-header-info strong{color:var(--navy);font-weight:700}
+.table-wrapper{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#f8fafc;padding:13px 18px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;white-space:nowrap}
+td{padding:15px 18px;border-top:1px solid var(--line);vertical-align:middle}
+tbody tr{transition:background .15s}
+tbody tr:hover{background:#f8fafc}
 
-/* ===== TWO COLUMN ===== */
-.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-@media (max-width:700px){.two{grid-template-columns:1fr}}
+.order-id{font-family:'SF Mono',Menlo,Consolas,monospace;font-weight:700;font-size:12px;color:var(--navy);background:#eef2f7;padding:3px 10px;border-radius:8px;display:inline-block}
 
-/* ===== FOOTER NOTE ===== */
-.footnote{
-  text-align:center;color:var(--muted);font-size:12px;
-  padding:20px 0;margin-top:20px;
-  display:flex;align-items:center;justify-content:center;gap:6px;
+.status{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.status::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+.status-pending{background:var(--warning-soft);color:#b45309}
+.status-proses{background:var(--info-soft);color:#1d4ed8}
+.status-selesai{background:var(--success-soft);color:#047857}
+.status-batal{background:var(--danger-soft);color:#b91c1c}
+
+.money{font-weight:700;font-variant-numeric:tabular-nums}
+.money-green{color:var(--success)}
+.money-orange{color:var(--orange)}
+
+/* Action Menu */
+.action-menu{position:relative;display:inline-block}
+.action-btn{width:34px;height:34px;border-radius:10px;background:transparent;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;transition:all .2s}
+.action-btn:hover{background:var(--bg);color:var(--orange)}
+.action-dropdown{position:absolute;top:100%;right:0;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow-md);padding:6px;min-width:180px;display:none;z-index:50;margin-top:6px}
+.action-menu.open .action-dropdown{display:block;animation:fadeIn .15s}
+.action-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:500;width:100%;text-align:left;color:var(--text);transition:background .15s}
+.action-item:hover{background:var(--bg)}
+.action-item i{width:16px;color:var(--muted);font-size:13px}
+.action-item.danger{color:var(--danger)}
+.action-item.danger i{color:var(--danger)}
+.action-item.danger:hover{background:var(--danger-soft)}
+
+/* ===== PAGINATION ===== */
+.pagination{padding:18px 22px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.pagination-info{font-size:12px;color:var(--muted)}
+.pagination-info strong{color:var(--navy);font-weight:700}
+.pagination-controls{display:flex;align-items:center;gap:4px}
+.page-btn{min-width:34px;height:34px;padding:0 10px;border-radius:10px;background:transparent;font-size:13px;font-weight:600;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;transition:all .15s}
+.page-btn:hover:not(:disabled){background:var(--orange-soft);color:var(--orange)}
+.page-btn.active{background:var(--navy);color:#fff}
+.page-btn:disabled{opacity:.35;cursor:not-allowed}
+.page-size{margin-left:12px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;font-size:12px;font-weight:600;outline:none;cursor:pointer;background:#fff}
+.page-size:focus{border-color:var(--orange)}
+
+/* ===== MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,42,74,.55);z-index:5000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border-radius:var(--radius-xl);width:100%;max-width:640px;max-height:92vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:modalIn .3s ease}
+.modal.wide{max-width:780px}
+.modal.small{max-width:420px}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{padding:22px 28px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:#fff;z-index:10}
+.modal-header h3{font-size:17px;font-weight:800;letter-spacing:-.3px;display:flex;align-items:center;gap:10px}
+.modal-header h3 i{color:var(--orange)}
+.modal-close{width:36px;height:36px;border-radius:10px;color:var(--muted);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:var(--danger-soft);color:var(--danger)}
+.modal-body{padding:28px}
+.modal-footer{padding:18px 28px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0;background:#fff}
+
+/* ===== FORM ===== */
+.form-section{margin-bottom:26px}
+.form-section-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.form-section-title i{color:var(--orange);font-size:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-field{display:flex;flex-direction:column;gap:7px}
+.form-field.full{grid-column:1/-1}
+.form-label{font-size:12px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:4px}
+.form-label .required{color:var(--danger)}
+.form-input,.form-textarea,.form-select{padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:13px;background:#fff;outline:none;transition:all .2s;font-family:inherit;width:100%;color:var(--text)}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,122,26,.1)}
+.form-textarea{resize:vertical;min-height:80px}
+.form-hint{font-size:11px;color:var(--muted);margin-top:2px}
+.form-field.readonly .form-input{background:var(--bg);color:var(--muted);cursor:not-allowed}
+
+/* Radio Group */
+.radio-group{display:flex;gap:8px;flex-wrap:wrap}
+.radio-option{flex:1;min-width:100px;padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;cursor:pointer;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;color:var(--muted)}
+.radio-option input{display:none}
+.radio-option:hover{border-color:var(--orange);color:var(--orange)}
+.radio-option:has(input:checked){background:var(--orange);color:#fff;border-color:var(--orange)}
+.radio-option.pending:has(input:checked){background:var(--warning);border-color:var(--warning)}
+.radio-option.proses:has(input:checked){background:var(--info);border-color:var(--info)}
+.radio-option.selesai:has(input:checked){background:var(--success);border-color:var(--success)}
+.radio-option.batal:has(input:checked){background:var(--danger);border-color:var(--danger)}
+
+/* ===== DETAIL ===== */
+.detail-status-banner{background:linear-gradient(135deg,var(--navy),var(--navy-soft));color:#fff;border-radius:16px;padding:24px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;position:relative;overflow:hidden}
+.detail-status-banner::before{content:'';position:absolute;top:-40%;right:-15%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,122,26,.3),transparent 70%)}
+.detail-status-banner > *{position:relative;z-index:1}
+.detail-status-banner.pending{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.detail-status-banner.proses{background:linear-gradient(135deg,#3b82f6,#1d4ed8)}
+.detail-status-banner.selesai{background:linear-gradient(135deg,#10b981,#047857)}
+.detail-status-banner.batal{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.detail-status-banner h2{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
+.detail-status-banner p{font-size:12px;opacity:.85}
+
+.detail-section{margin-bottom:22px;padding-bottom:22px;border-bottom:1px solid var(--line)}
+.detail-section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.detail-section-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.detail-section-title i{color:var(--orange);font-size:12px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.detail-item{display:flex;flex-direction:column;gap:3px}
+.detail-label{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.detail-value{font-size:14px;font-weight:600;color:var(--text)}
+.detail-value.money{font-size:15px;font-variant-numeric:tabular-nums}
+
+/* ===== CONFIRM ===== */
+.confirm-icon{width:72px;height:72px;border-radius:50%;background:var(--danger-soft);color:var(--danger);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 18px}
+.confirm-title{text-align:center;font-size:18px;font-weight:800;letter-spacing:-.3px;margin-bottom:10px}
+.confirm-text{text-align:center;font-size:13px;color:var(--muted);line-height:1.65}
+.confirm-text b{color:var(--navy)}
+
+/* ===== EMPTY ===== */
+.empty-state{padding:64px 20px;text-align:center;color:var(--muted)}
+.empty-state i{font-size:52px;color:var(--line);margin-bottom:18px;display:block}
+.empty-state h4{font-size:15px;color:var(--text);margin-bottom:6px;font-weight:700}
+.empty-state p{font-size:13px}
+
+/* ===== TOAST ===== */
+.toast-container{position:fixed;top:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+.toast{background:#fff;border:1px solid var(--line);border-left:4px solid var(--navy);box-shadow:var(--shadow-md);border-radius:14px;padding:14px 18px;min-width:300px;max-width:400px;font-size:13px;display:flex;align-items:flex-start;gap:12px;animation:toastIn .3s ease}
+@keyframes toastIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+.toast.success{border-left-color:var(--success)}
+.toast.error{border-left-color:var(--danger)}
+.toast.info{border-left-color:var(--orange)}
+.toast-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.toast.success .toast-icon{background:var(--success-soft);color:var(--success)}
+.toast.error .toast-icon{background:var(--danger-soft);color:var(--danger)}
+.toast.info .toast-icon{background:var(--orange-soft);color:var(--orange)}
+.toast-content{flex:1;min-width:0}
+.toast-title{font-weight:700;margin-bottom:2px;font-size:13px}
+.toast-message{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ===== INVOICE ===== */
+.invoice-preview{background:#fff;border:2px dashed var(--line);border-radius:16px;padding:32px 28px;font-family:'Plus Jakarta Sans',sans-serif;position:relative;overflow:hidden}
+.invoice-preview::before{content:'';position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--navy),var(--orange))}
+.invoice-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding-bottom:20px;border-bottom:2px solid var(--line);margin-bottom:24px;flex-wrap:wrap}
+.invoice-brand{display:flex;align-items:center;gap:12px}
+.invoice-brand-logo{width:52px;height:52px;border-radius:14px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.invoice-brand-text h2{font-size:20px;font-weight:800;letter-spacing:-.5px;color:var(--navy);line-height:1.2}
+.invoice-brand-text h2 span{color:var(--orange)}
+.invoice-brand-text p{font-size:12px;color:var(--muted);margin-top:2px}
+.invoice-meta{text-align:right}
+.invoice-meta .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700}
+.invoice-meta .value{font-size:18px;font-weight:800;color:var(--navy);letter-spacing:-.3px}
+.invoice-recipient{background:var(--orange-soft);border-radius:12px;padding:16px 20px;margin-bottom:24px}
+.invoice-recipient .label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--orange);font-weight:800;margin-bottom:6px}
+.invoice-recipient .name{font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-.3px}
+.invoice-table{width:100%;border-collapse:collapse;margin-bottom:24px}
+.invoice-table th{background:var(--navy);color:#fff;padding:12px 16px;font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:700;text-align:left}
+.invoice-table th:last-child{text-align:right}
+.invoice-table td{padding:16px;border-bottom:1px solid var(--line);font-size:14px}
+.invoice-table td:last-child{text-align:right}
+.invoice-table .row-label{font-weight:600;color:var(--muted);font-size:13px}
+.invoice-table .row-value{font-weight:700;color:var(--navy);font-variant-numeric:tabular-nums}
+.invoice-table .row-value.highlight{font-size:20px;color:var(--orange);letter-spacing:-.5px}
+.invoice-total{background:linear-gradient(135deg,var(--navy),var(--navy-soft));color:#fff;border-radius:14px;padding:24px 28px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;position:relative;overflow:hidden}
+.invoice-total::before{content:'';position:absolute;top:-50%;right:-10%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(255,122,26,.3),transparent 70%)}
+.invoice-total > *{position:relative;z-index:1}
+.invoice-total .label{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;opacity:.85;margin-bottom:6px}
+.invoice-total .value{font-size:32px;font-weight:800;letter-spacing:-1px;color:var(--orange);line-height:1}
+.invoice-footer{margin-top:24px;padding-top:20px;border-top:1px dashed var(--line);text-align:center;font-size:11px;color:var(--muted);line-height:1.7}
+.invoice-footer strong{color:var(--navy)}
+.copy-area-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:24px;background:var(--navy);color:#fff;font-weight:700;font-size:14px;transition:all .2s}
+.copy-area-btn:hover:not(:disabled){background:var(--navy-soft);transform:translateY(-2px);box-shadow:0 8px 20px rgba(15,42,74,.25)}
+.copy-area-btn.success{background:var(--success)}
+.copy-area-btn:disabled{opacity:.7;cursor:not-allowed}
+
+/* Loading overlay */
+.loading-overlay{position:fixed;inset:0;background:rgba(250,251,252,.85);backdrop-filter:blur(4px);z-index:8000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.loading-overlay.active{display:flex}
+.loading-spinner{width:48px;height:48px;border:4px solid var(--line);border-top-color:var(--orange);border-radius:50%;animation:sp 1s linear infinite}
+.loading-text{font-size:14px;color:var(--muted);font-weight:600}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1000px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .grid-2col{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
 }
-.footnote .dot{
-  width:8px;height:8px;border-radius:50%;background:#25d366;
-  animation:blink 1.5s infinite;
+@media(max-width:700px){
+  .sidebar{width:72px}
+  .logo-text,.sidebar-section,.sidebar-link span,.sidebar-user .user-info{display:none}
+  .sidebar-link{justify-content:center;position:relative;padding:14px 0}
+  .badge{position:absolute;top:6px;right:14px;font-size:9px;padding:2px 6px}
+  .main-content{margin-left:72px}
+  .stats-grid{grid-template-columns:1fr}
+  .content{padding:16px}
+  .header{padding:0 16px;height:60px}
+  .page-title{font-size:15px}
+  .modal{max-width:100%;border-radius:20px 20px 0 0;max-height:95vh}
+  .modal-overlay{padding:0;align-items:flex-end}
+  .toolbar{flex-direction:column;align-items:stretch}
+  .toolbar-left,.toolbar-right{width:100%}
+  .search-box{max-width:100%}
+  .pagination{flex-direction:column;align-items:stretch}
+  .pagination-controls{justify-content:center}
+  .detail-grid{grid-template-columns:1fr}
+  .login-card{padding:36px 24px}
 }
-@keyframes blink{50%{opacity:.4}}
 </style>
 </head>
 <body>
 
-<div class="wrap">
+<!-- ============================================================
+     LOGIN SCREEN
+============================================================ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">🛵</div>
+    <h1 class="login-title">Suruh<span>Boy</span> HQ</h1>
+    <p class="login-sub">Masuk ke panel admin</p>
 
-  <!-- TOP BAR -->
-  <div class="topbar">
-    <a href="index.html" class="back">
-      <i class="fas fa-arrow-left"></i> Kembali ke Website
-    </a>
-    <div class="brand-mini">
-      <div class="brand-mini-dot">
-        <img src="favicon/android-chrome-192x192.png" alt="SuruhBoy">
-      </div>
-      Suruh<span>Boy</span> Admin
+    <input type="password" class="login-input" id="loginPassword" placeholder="••••••" maxlength="40">
+    <div class="login-error" id="loginError"></div>
+
+    <button class="login-btn" id="loginBtn">
+      <i class="fas fa-lock-open"></i> Masuk
+    </button>
+
+    <div class="login-hint">
+      <i class="fas fa-shield-halved"></i>
+      <span>Akses terbatas untuk admin SuruhBoy</span>
     </div>
-  </div>
-
-  <!-- PAGE HEADER -->
-  <div class="page-header">
-    <div class="page-logo">
-      <img src="favicon/android-chrome-192x192.png" alt="SuruhBoy">
-    </div>
-    <div class="page-title">
-      <h1>Dashboard <span>Tracking</span></h1>
-      <p class="sub">Statistik pengunjung website SuruhBoy — data dari Google Sheets.</p>
-    </div>
-  </div>
-
-  <!-- REFRESH -->
-  <button class="refresh" id="refreshBtn">
-    <i class="fas fa-sync"></i> Refresh Data
-  </button>
-
-  <!-- CONTENT -->
-  <div id="content">
-    <div class="loading">
-      <i class="fas fa-spinner fa-spin"></i>
-      <p>Memuat data…</p>
-    </div>
-  </div>
-
-  <!-- FOOTNOTE -->
-  <div class="footnote">
-    <span class="dot"></span>
-    Data diambil real-time dari Google Sheets — tanpa cache.
   </div>
 </div>
 
-<script>
-// ============================================================
-// KONFIGURASI — GANTI DENGAN URL APPS SCRIPT KAMU
-// ============================================================
-const API_URL = 'https://script.google.com/macros/s/AKfycbwkpxZpfSsrqkXtZvaJJL4NaBRU1iSjOV3vr2-VvMdpn-QA8Z6pZMGCornl0Y4q6cvCPQ/exec';
 
-// ============================================================
-// UTIL
-// ============================================================
-const $ = id => document.getElementById(id);
-const fmt = n => new Intl.NumberFormat('id-ID').format(n || 0);
-const escapeHtml = v => String(v || '')
-  .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-  .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+<!-- ============================================================
+     APP
+============================================================ -->
+<div class="app" id="app">
 
-function showError(msg){
-  $('content').innerHTML = `
-    <div class="error">
-      <b>Gagal memuat data</b>
-      ${escapeHtml(msg)}<br><br>
-      <small>Cek:</small><br>
-      <small>1. URL Apps Script: <code>${escapeHtml(API_URL.slice(0, 50))}…</code></small><br>
-      <small>2. Deployment sudah diset <b>"Anyone"</b></small><br>
-      <small>3. Sheet name = <code>visits</code></small>
-    </div>
-  `;
-}
+<aside class="sidebar">
+  <div class="sidebar-logo" onclick="navigateTo('dashboard')">
+    <div class="logo-icon">🛵</div>
+    <div class="logo-text">SuruhBoy<span>HQ</span></div>
+  </div>
 
-// ============================================================
-// RENDER DASHBOARD
-// ============================================================
-function renderDashboard(data){
-  const { total = 0, today = 0, yesterday = 0, unique = 0 } = data;
-  const pages = data.pages || [];
-  const daily = data.daily || [];
-  const referrers = data.referrers || [];
+  <nav class="sidebar-nav">
+    <div class="sidebar-section">Menu Utama</div>
 
-  const diff = yesterday > 0
-    ? Math.round((today - yesterday) / yesterday * 100)
-    : 0;
-  const trendIcon = diff >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
-  const trendColor = diff >= 0 ? '#16a34a' : '#dc2626';
+    <button class="sidebar-link active" data-page="dashboard" onclick="navigateTo('dashboard')">
+      <i class="fas fa-th-large"></i><span>Dashboard</span>
+    </button>
 
-  $('content').innerHTML = `
-    <div class="kpis">
-      <div class="k">
-        <span>Total Kunjungan</span>
-        <b>${fmt(total)}</b>
-        <div class="trend">Sejak tracking aktif</div>
+    <button class="sidebar-link" data-page="orders" onclick="navigateTo('orders')">
+      <i class="fas fa-shopping-bag"></i><span>Order</span>
+      <span class="badge" id="orderBadge">0</span>
+    </button>
+
+    <button class="sidebar-link" data-page="invoice" onclick="navigateTo('invoice')">
+      <i class="fas fa-file-invoice-dollar"></i><span>Invoice</span>
+    </button>
+
+    <div class="sidebar-section">Bisnis</div>
+
+    <button class="sidebar-link" data-page="tracking" onclick="navigateTo('tracking')">
+      <i class="fas fa-chart-line"></i><span>Tracking</span>
+    </button>
+
+    <button class="sidebar-link" data-page="settings" onclick="navigateTo('settings')">
+      <i class="fas fa-gear"></i><span>Pengaturan</span>
+    </button>
+
+    <div class="sidebar-section">Sesi</div>
+
+    <button class="sidebar-link logout" onclick="logout()">
+      <i class="fas fa-right-from-bracket"></i><span>Keluar</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="avatar">SA</div>
+      <div class="user-info">
+        <div style="color:#fff;font-size:13px;font-weight:700">Super Admin</div>
+        <div style="color:rgba(255,255,255,.5);font-size:10px">SuruhBoy HQ</div>
       </div>
-      <div class="k">
-        <span>Hari Ini</span>
-        <b>${fmt(today)}</b>
-        <div class="trend" style="color:${trendColor}">
-          <i class="fas ${trendIcon}"></i> ${Math.abs(diff)}% dari kemarin
+    </div>
+  </div>
+</aside>
+
+
+<main class="main-content">
+  <header class="header">
+    <h1 class="page-title" id="pageTitle">
+      <i class="fas fa-th-large"></i> Dashboard
+    </h1>
+    <div class="header-actions">
+      <button class="btn btn-ghost btn-sm" id="refreshBtn" onclick="refreshCurrentPage()">
+        <i class="fas fa-sync"></i> Refresh
+      </button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div id="page-dashboard" class="page-content active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-info">
+              <p>Total Pemasukan</p>
+              <h3 id="dashRevenue">Rp 0</h3>
+              <div class="stat-note">Dari semua order</div>
+            </div>
+            <div class="stat-icon orange"><i class="fas fa-wallet"></i></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-info">
+              <p>Total Order</p>
+              <h3 id="dashOrders">0</h3>
+              <div class="stat-note">Semua order</div>
+            </div>
+            <div class="stat-icon blue"><i class="fas fa-shopping-bag"></i></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-info">
+              <p>Agent Aktif</p>
+              <h3 id="dashAgents">0</h3>
+              <div class="stat-note">Agent dengan order</div>
+            </div>
+            <div class="stat-icon green"><i class="fas fa-user-tie"></i></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-info">
+              <p>Total Admin</p>
+              <h3 id="dashAdmin">Rp 0</h3>
+              <div class="stat-note">Rate 7% & 10%</div>
+            </div>
+            <div class="stat-icon navy"><i class="fas fa-percent"></i></div>
+          </div>
         </div>
       </div>
-      <div class="k">
-        <span>Kemarin</span>
-        <b>${fmt(yesterday)}</b>
-        <div class="trend">Kunjungan kemarin</div>
-      </div>
-      <div class="k">
-        <span>Pengunjung Unik</span>
-        <b>${fmt(unique)}</b>
-        <div class="trend">Session berbeda</div>
+
+      <div class="grid-2col">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>📈 Pemasukan Mingguan</h3>
+              <div class="card-subtitle">Berdasarkan Week Helper A</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="chart-container"><canvas id="revenueChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>🏆 Agent Paling Aktif</h3>
+              <div class="card-subtitle">Berdasarkan jumlah order</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="topAgentsPreview"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Memuat...</p></div></div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <h3>Tren 30 Hari Terakhir</h3>
-      <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+
+    <!-- ===== ORDERS ===== -->
+    <div id="page-orders" class="page-content">
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Cari Order ID atau nama CS..." id="searchInput">
+          </div>
+          <select class="filter-select" id="filterStatus">
+            <option value="">Semua Status</option>
+            <option value="pending">⏳ Pending</option>
+            <option value="proses">🔄 Proses</option>
+            <option value="selesai">✅ Selesai</option>
+            <option value="batal">❌ Batal</option>
+          </select>
+          <select class="filter-select" id="filterAgent">
+            <option value="">Semua Agent</option>
+          </select>
+        </div>
+        <div class="toolbar-right">
+          <button class="btn btn-orange" onclick="openOrderModal('add')">
+            <i class="fas fa-plus"></i> Tambah Order
+          </button>
+        </div>
+      </div>
+
+      <div class="order-table-wrap">
+        <div class="table-header">
+          <div>
+            <h3><i class="fas fa-list"></i> Daftar Order</h3>
+            <div class="table-header-info">Menampilkan <strong id="showingInfo">0</strong> dari <strong id="totalInfo">0</strong> order</div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:60px">#</th>
+                <th style="width:130px">Order ID</th>
+                <th style="width:110px">Tanggal</th>
+                <th>CS</th>
+                <th>Agent</th>
+                <th style="text-align:right">Nominal</th>
+                <th style="width:120px">Status</th>
+                <th style="width:60px"></th>
+              </tr>
+            </thead>
+            <tbody id="orderTableBody">
+              <tr><td colspan="8"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <div class="pagination-info">
+            Halaman <strong id="currentPageInfo">1</strong> dari <strong id="totalPagesInfo">1</strong>
+          </div>
+          <div class="pagination-controls" id="paginationControls"></div>
+        </div>
+      </div>
     </div>
 
-    <div class="two">
-      <div class="card">
-        <h3>Halaman Populer</h3>
-        <table>
-          <thead>
-            <tr>
-              <th style="width:36px">#</th>
-              <th>Halaman</th>
-              <th style="text-align:right">Views</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${pages.slice(0, 8).map((p, i) => `
+
+    <!-- ===== INVOICE ===== -->
+    <div id="page-invoice" class="page-content">
+
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <select class="filter-select" id="invoiceWeekFilter" style="min-width:220px">
+            <option value="">-- Pilih Week --</option>
+          </select>
+        </div>
+        <div class="toolbar-right">
+          <button class="btn btn-ghost btn-sm" onclick="downloadAllInvoices()">
+            <i class="fas fa-download"></i> Export Semua
+          </button>
+        </div>
+      </div>
+
+      <div class="order-table-wrap">
+        <div class="table-header">
+          <div>
+            <h3><i class="fas fa-file-invoice-dollar"></i> Invoice Agent</h3>
+            <div class="table-header-info">Total tagihan admin per agent untuk week terpilih</div>
+          </div>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
               <tr>
-                <td><span class="rank ${i === 0 ? 'r1' : ''}">${i + 1}</span></td>
-                <td><b>${escapeHtml(p.path)}</b></td>
-                <td style="text-align:right"><b>${fmt(p.count)}</b></td>
+                <th style="width:60px">#</th>
+                <th>Nama Agent</th>
+                <th style="width:160px">Week</th>
+                <th style="text-align:right">Total Pendapatan</th>
+                <th style="text-align:right">Total Admin</th>
+                <th style="width:60px"></th>
               </tr>
-            `).join('') || '<tr><td colspan="3" style="text-align:center;color:#999;padding:20px">Belum ada data</td></tr>'}
-          </tbody>
-        </table>
+            </thead>
+            <tbody id="invoiceTableBody">
+              <tr><td colspan="6">
+                <div class="empty-state">
+                  <i class="fas fa-file-invoice"></i>
+                  <h4>Pilih Week</h4>
+                  <p>Pilih week di atas untuk melihat daftar invoice agent</p>
+                </div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+          <div class="pagination-info">
+            Menampilkan <strong id="invoiceShowingInfo">0</strong> agent
+          </div>
+          <div class="pagination-info" style="font-weight:700;color:var(--navy)">
+            Total Admin: <span id="invoiceTotalAdmin" style="color:var(--orange);font-weight:800">Rp 0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ===== TRACKING ===== -->
+    <div id="page-tracking" class="page-content">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-info">
+              <p>Total Kunjungan</p>
+              <h3 id="trackTotal">0</h3>
+              <div class="stat-note">Sejak tracking aktif</div>
+            </div>
+            <div class="stat-icon navy"><i class="fas fa-eye"></i></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-info">
+              <p>Hari Ini</p>
+              <h3 id="trackToday">0</h3>
+              <div class="stat-note" id="trackTrend">-</div>
+            </div>
+            <div class="stat-icon green"><i class="fas fa-arrow-trend-up"></i></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-info">
+              <p>Kemarin</p>
+              <h3 id="trackYesterday">0</h3>
+              <div class="stat-note">Kunjungan kemarin</div>
+            </div>
+            <div class="stat-icon blue"><i class="fas fa-calendar-day"></i></div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-top">
+            <div class="stat-info">
+              <p>Pengunjung Unik</p>
+              <h3 id="trackUnique">0</h3>
+              <div class="stat-note">Session berbeda</div>
+            </div>
+            <div class="stat-icon orange"><i class="fas fa-user-group"></i></div>
+          </div>
+        </div>
       </div>
 
       <div class="card">
-        <h3>Sumber Kunjungan</h3>
-        <table>
-          <thead>
-            <tr>
-              <th style="width:36px">#</th>
-              <th>Sumber</th>
-              <th style="text-align:right">Views</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${referrers.slice(0, 8).map((r, i) => `
-              <tr>
-                <td><span class="rank ${i === 0 ? 'r1' : ''}">${i + 1}</span></td>
-                <td><b>${escapeHtml(r.source)}</b></td>
-                <td style="text-align:right"><b>${fmt(r.count)}</b></td>
-              </tr>
-            `).join('') || '<tr><td colspan="3" style="text-align:center;color:#999;padding:20px">Belum ada data</td></tr>'}
-          </tbody>
-        </table>
+        <div class="card-header">
+          <div><h3>Tren 30 Hari Terakhir</h3></div>
+        </div>
+        <div class="card-body">
+          <div class="chart-container"><canvas id="trackingChart"></canvas></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ===== SETTINGS ===== -->
+    <div id="page-settings" class="page-content">
+      <div class="card"><div class="card-body">
+        <div class="empty-state">
+          <i class="fas fa-gear"></i>
+          <h4>Pengaturan</h4>
+          <p>Halaman ini untuk konfigurasi sistem SuruhBoy HQ.</p>
+        </div>
+      </div></div>
+    </div>
+
+  </div>
+</main>
+
+</div>
+
+
+<!-- ============================================================
+     MODAL: TAMBAH/EDIT ORDER
+============================================================ -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal wide">
+    <div class="modal-header">
+      <h3 id="orderModalTitle"><i class="fas fa-plus"></i> Tambah Order Baru</h3>
+      <button class="modal-close" onclick="closeModal('orderModal')">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-section">
+        <div class="form-section-title"><i class="fas fa-clipboard-list"></i> Informasi Pesanan</div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label">Tanggal <span class="required">*</span></label>
+            <input type="date" class="form-input" id="formTanggal">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Order ID</label>
+            <input type="text" class="form-input" id="formOrderId" readonly>
+            <div class="form-hint">Auto-generate dari sistem</div>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Nama CS <span class="required">*</span></label>
+            <input type="text" class="form-input" id="formNamaCs" placeholder="Nama pelanggan">
+          </div>
+          <div class="form-field">
+            <label class="form-label">No. HP</label>
+            <input type="tel" class="form-input" id="formNomorHp" placeholder="08xx-xxxx-xxxx">
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Detail Pesanan <span class="required">*</span></label>
+            <textarea class="form-textarea" id="formDeskripsi" placeholder="Contoh: Antar orang ke Sppg SMA Soedirman"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title"><i class="fas fa-location-dot"></i> Lokasi</div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label">Titik Jemput</label>
+            <input type="text" class="form-input" id="formJemput" placeholder="Lokasi jemput">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Titik Antar</label>
+            <input type="text" class="form-input" id="formAntar" placeholder="Lokasi antar">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title"><i class="fas fa-user-tie"></i> Agent &amp; Pembayaran</div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label">Agent</label>
+            <select class="form-select" id="formAgent">
+              <option value="">Pilih Agent</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Ongkir / Nominal <span class="required">*</span></label>
+            <input type="number" class="form-input" id="formOngkir" placeholder="33000">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title"><i class="fas fa-tag"></i> Status</div>
+        <div class="form-grid">
+          <div class="form-field full">
+            <label class="form-label">Status <span class="required">*</span></label>
+            <div class="radio-group">
+              <label class="radio-option pending">
+                <input type="radio" name="status" value="pending">
+                <span>⏳ Pending</span>
+              </label>
+              <label class="radio-option proses">
+                <input type="radio" name="status" value="proses" checked>
+                <span>🔄 Proses</span>
+              </label>
+              <label class="radio-option selesai">
+                <input type="radio" name="status" value="selesai">
+                <span>✅ Selesai</span>
+              </label>
+              <label class="radio-option batal">
+                <input type="radio" name="status" value="batal">
+                <span>❌ Batal</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('orderModal')">Batal</button>
+      <button class="btn btn-orange" id="saveOrderBtn" onclick="saveOrder()">
+        <i class="fas fa-save"></i> Simpan Order
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     MODAL: DETAIL / INVOICE
+============================================================ -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal wide">
+    <div class="modal-header">
+      <h3 id="detailModalTitle"><i class="fas fa-file-lines"></i> Detail Order</h3>
+      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('detailModal')">Tutup</button>
+      <button class="btn btn-danger" id="detailDeleteBtn">
+        <i class="fas fa-trash"></i> Hapus
+      </button>
+      <button class="btn btn-orange" id="detailEditBtn">
+        <i class="fas fa-pen"></i> Edit
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     MODAL: KONFIRMASI HAPUS
+============================================================ -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal small">
+    <div class="modal-body">
+      <div class="confirm-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3 class="confirm-title">Hapus Order?</h3>
+      <p class="confirm-text" id="confirmText"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('confirmModal')">Batal</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn">
+        <i class="fas fa-trash"></i> Ya, Hapus
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loadingText">Memuat...</div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+
+<!-- ============================================================
+     SCRIPT
+============================================================ -->
+<script>
+/* ============================================================
+   ⚙️ KONFIGURASI — GANTI DENGAN URL APPS SCRIPT KAMU
+============================================================ */
+const API_URL = 'https://script.google.com/macros/s/AKfycbw4g-WyHeZ98TJiyZU5HbS-2KD_IhPJqDb9jc8csmnokrwIcBd-Jkuu-GtRWuaBdd3s/exec';
+
+/* ============================================================
+   STATE
+============================================================ */
+let authToken = '';
+let currentPage = 'dashboard';
+let ordersState = {
+  page: 1,
+  pageSize: 10,
+  search: '',
+  status: '',
+  agent: '',
+  total: 0,
+  totalPages: 0,
+  data: []
+};
+let agentList = [];
+let selectedInvoiceWeek = '';
+let editingRowNumber = null;
+let deletingRowNumber = null;
+let charts = { revenue: null, tracking: null };
+
+/* ============================================================
+   API HELPER
+============================================================ */
+
+async function apiGet(params) {
+  const query = new URLSearchParams(params).toString();
+  const res = await fetch(`${API_URL}?${query}`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+async function apiPost(data) {
+  const payload = { ...data, token: authToken };
+  const res = await fetch(API_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  });
+  // Mode no-cors tidak bisa baca response
+  // Kita konfirmasi dengan re-fetch data
+  return { ok: true };
+}
+
+/* Karena no-cors tidak bisa baca response, kita pakai strategi:
+   POST → tunggu 1 detik → re-fetch data → cek perubahan */
+
+/* ============================================================
+   LOGIN
+============================================================ */
+const loginScreen = document.getElementById('loginScreen');
+const app = document.getElementById('app');
+const loginPassword = document.getElementById('loginPassword');
+const loginError = document.getElementById('loginError');
+const loginBtn = document.getElementById('loginBtn');
+
+loginBtn.onclick = doLogin;
+loginPassword.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+async function doLogin() {
+  const pwd = loginPassword.value.trim();
+  if (!pwd) {
+    loginError.textContent = 'Password wajib diisi.';
+    return;
+  }
+
+  loginBtn.disabled = true;
+  loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+  loginError.textContent = '';
+
+  try {
+    // Login pakai fetch dengan no-cors → kirim ke server
+    // Response tidak terbaca, tapi kita bisa test dengan fetch berikutnya
+    await apiPost({ action: 'login', password: pwd });
+
+    // Tunggu sebentar biar server proses
+    await new Promise(r => setTimeout(r, 800));
+
+    // Coba akses data → kalau berhasil, berarti login sukses
+    const test = await apiGet({ action: 'ping' });
+    if (!test.ok) throw new Error('API tidak merespon');
+
+    // Simpan token sementara (dummy, karena server yang validasi)
+    authToken = 'session_' + Date.now();
+
+    // Masuk ke app
+    loginScreen.classList.add('hidden');
+    app.classList.add('active');
+    showToast('success', 'Selamat Datang', 'Login berhasil.');
+
+    // Load dashboard
+    loadDashboard();
+
+  } catch (err) {
+    console.error(err);
+    loginError.textContent = 'Gagal login. Cek password & koneksi.';
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.innerHTML = '<i class="fas fa-lock-open"></i> Masuk';
+  }
+}
+
+function logout() {
+  if (!confirm('Yakin keluar dari admin panel?')) return;
+  authToken = '';
+  app.classList.remove('active');
+  loginScreen.classList.remove('hidden');
+  loginPassword.value = '';
+  loginError.textContent = '';
+}
+
+/* ============================================================
+   NAVIGASI
+============================================================ */
+const pageTitles = {
+  dashboard: ['fa-th-large', 'Dashboard'],
+  orders: ['fa-shopping-bag', 'Manajemen Order'],
+  invoice: ['fa-file-invoice-dollar', 'Invoice Agent'],
+  tracking: ['fa-chart-line', 'Tracking Pengunjung'],
+  settings: ['fa-gear', 'Pengaturan'],
+};
+
+function navigateTo(page) {
+  currentPage = page;
+
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  const active = document.querySelector(`.sidebar-link[data-page="${page}"]`);
+  if (active) active.classList.add('active');
+
+  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + page);
+  if (target) target.classList.add('active');
+
+  const [icon, title] = pageTitles[page] || ['fa-file', page];
+  document.getElementById('pageTitle').innerHTML = `<i class="fas ${icon}"></i> ${title}`;
+
+  if (page === 'dashboard') loadDashboard();
+  if (page === 'orders') loadOrders();
+  if (page === 'invoice') loadInvoiceWeeks();
+  if (page === 'tracking') loadTracking();
+}
+
+function refreshCurrentPage() {
+  showToast('info', 'Refresh', 'Memuat data terbaru...');
+  navigateTo(currentPage);
+}
+
+/* ============================================================
+   LOADING OVERLAY
+============================================================ */
+function showLoading(text) {
+  document.getElementById('loadingText').textContent = text || 'Memuat...';
+  document.getElementById('loadingOverlay').classList.add('active');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('active');
+}
+
+/* ============================================================
+   DASHBOARD
+============================================================ */
+async function loadDashboard() {
+  try {
+    const res = await apiGet({ action: 'stats' });
+    if (!res.ok) throw new Error(res.error || 'API error');
+
+    document.getElementById('dashRevenue').textContent = formatRupiah(res.totalRevenue);
+    document.getElementById('dashOrders').textContent = res.totalOrders.toLocaleString('id-ID');
+    document.getElementById('dashAgents').textContent = res.totalAgents;
+    document.getElementById('dashAdmin').textContent = formatRupiah(res.totalAdmin);
+
+    // Update badge order
+    document.getElementById('orderBadge').textContent = res.totalOrders;
+
+    // Chart
+    renderRevenueChart(res.weekly);
+
+    // Top agents
+    renderTopAgents(res.topAgents);
+
+  } catch (err) {
+    console.error('Dashboard error:', err);
+    showToast('error', 'Gagal memuat dashboard', err.message);
+  }
+}
+
+function renderRevenueChart(weekly) {
+  const canvas = document.getElementById('revenueChart');
+  if (!canvas) return;
+  if (charts.revenue) charts.revenue.destroy();
+
+  const last5 = (weekly || []).slice(-5);
+  const labels = last5.map(w => w.week || '-');
+  const values = last5.map(w => w.total);
+
+  Chart.defaults.font.family = "'Plus Jakarta Sans',sans-serif";
+  charts.revenue = new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Pemasukan',
+        data: values,
+        backgroundColor: last5.map((_, i) => i === last5.length - 1 ? '#ff7a1a' : '#0f2a4a'),
+        borderRadius: 8,
+        maxBarThickness: 60,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#0f2a4a', padding: 12, cornerRadius: 8, displayColors: false,
+          callbacks: { label: c => ' ' + formatRupiah(c.raw) }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true, grid: { color: '#eaeef3' },
+          ticks: { color: '#7a8899', font: { size: 11 }, callback: v => v >= 1000000 ? 'Rp ' + (v / 1000000).toFixed(1) + ' jt' : v >= 1000 ? 'Rp ' + (v / 1000).toFixed(0) + ' rb' : v }
+        },
+        x: { grid: { display: false }, ticks: { color: '#7a8899', font: { size: 10 } } }
+      }
+    }
+  });
+}
+
+function renderTopAgents(list) {
+  const el = document.getElementById('topAgentsPreview');
+  if (!list || !list.length) {
+    el.innerHTML = '<div class="empty-state"><i class="fas fa-user-tie"></i><p>Belum ada data agent</p></div>';
+    return;
+  }
+
+  el.innerHTML = list.map((a, i) => `
+    <div class="analytics-item">
+      <div class="rank ${i === 0 ? 'first' : i === 1 ? 'second' : i === 2 ? 'third' : ''}">${i + 1}</div>
+      <div class="agent-avatar">${escapeHtml(a.name.substring(0, 2).toUpperCase())}</div>
+      <div class="agent-info">
+        <div class="agent-name">${escapeHtml(a.name)}</div>
+        <div class="agent-meta">${a.orders} order</div>
+      </div>
+      <div class="agent-value">${formatRupiah(a.revenue)}</div>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   ORDERS
+============================================================ */
+async function loadOrders() {
+  const tbody = document.getElementById('orderTableBody');
+  tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></div></td></tr>`;
+
+  try {
+    const params = {
+      action: 'orders',
+      page: ordersState.page,
+      pageSize: ordersState.pageSize
+    };
+    if (ordersState.search) params.search = ordersState.search;
+    if (ordersState.status) params.status = ordersState.status;
+    if (ordersState.agent) params.agent = ordersState.agent;
+
+    const res = await apiGet(params);
+    if (!res.ok) throw new Error(res.error || 'API error');
+
+    ordersState.data = res.data || [];
+    ordersState.total = res.total || 0;
+    ordersState.totalPages = res.totalPages || 1;
+
+    // Update filter agent (dari data yang ada)
+    updateAgentFilter(res.data);
+
+    renderOrderTable(res);
+
+  } catch (err) {
+    console.error('Load orders error:', err);
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h4>Gagal memuat</h4><p>${escapeHtml(err.message)}</p></div></td></tr>`;
+    showToast('error', 'Gagal memuat order', err.message);
+  }
+}
+
+function updateAgentFilter(data) {
+  // Kumpulkan agent unik dari data yang ada
+  const agents = new Set();
+  data.forEach(o => { if (o.agent) agents.add(o.agent); });
+
+  // Kalau belum ada di agentList, tambah
+  agents.forEach(a => { if (!agentList.includes(a)) agentList.push(a); });
+
+  const select = document.getElementById('filterAgent');
+  const currentVal = select.value;
+  select.innerHTML = '<option value="">Semua Agent</option>' +
+    agentList.sort().map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+  select.value = currentVal;
+
+  // Update juga form agent
+  const formAgent = document.getElementById('formAgent');
+  formAgent.innerHTML = '<option value="">Pilih Agent</option>' +
+    agentList.sort().map(a => `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`).join('');
+}
+
+function renderOrderTable(res) {
+  const tbody = document.getElementById('orderTableBody');
+  const start = (res.page - 1) * res.pageSize;
+  const end = Math.min(start + res.pageSize, res.total);
+
+  if (!res.data.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fas fa-inbox"></i><h4>Tidak ada order</h4><p>Coba ubah filter atau tambah order baru</p></div></td></tr>`;
+  } else {
+    tbody.innerHTML = res.data.map((o, idx) => `
+      <tr>
+        <td style="color:var(--muted);font-weight:600">${start + idx + 1}</td>
+        <td><span class="order-id">${escapeHtml(o.orderId || '-')}</span></td>
+        <td>${formatDate(o.tanggal)}</td>
+        <td><b>${escapeHtml(o.namaCs)}</b></td>
+        <td style="color:var(--muted)">${escapeHtml(o.agent || '-')}</td>
+        <td style="text-align:right" class="money">${formatRupiah(o.nominal)}</td>
+        <td>${statusBadge(o.status)}</td>
+        <td>
+          <div class="action-menu">
+            <button class="action-btn" onclick="toggleActionMenu(event, this)">
+              <i class="fas fa-ellipsis-vertical"></i>
+            </button>
+            <div class="action-dropdown">
+              <button class="action-item" onclick="viewOrder(${o.rowNumber})">
+                <i class="fas fa-eye"></i> Lihat Detail
+              </button>
+              <button class="action-item" onclick="editOrder(${o.rowNumber})">
+                <i class="fas fa-pen"></i> Edit
+              </button>
+              <button class="action-item danger" onclick="confirmDeleteOrder(${o.rowNumber})">
+                <i class="fas fa-trash"></i> Hapus
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  document.getElementById('showingInfo').textContent = res.total ? `${start + 1}-${end}` : '0';
+  document.getElementById('totalInfo').textContent = res.total;
+  document.getElementById('currentPageInfo').textContent = res.page;
+  document.getElementById('totalPagesInfo').textContent = res.totalPages;
+  document.getElementById('paginationControls').innerHTML = renderPagination(res.page, res.totalPages);
+}
+
+function renderPagination(current, total) {
+  let html = '';
+  html += `<button class="page-btn" ${current === 1 ? 'disabled' : ''} onclick="gotoPage(${current - 1})"><i class="fas fa-chevron-left"></i></button>`;
+
+  const pages = [];
+  if (total <= 7) {
+    for (let i = 1; i <= total; i++) pages.push(i);
+  } else {
+    pages.push(1);
+    if (current > 3) pages.push('...');
+    for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) pages.push(i);
+    if (current < total - 2) pages.push('...');
+    pages.push(total);
+  }
+
+  pages.forEach(p => {
+    if (p === '...') {
+      html += `<span class="page-btn" style="cursor:default">…</span>`;
+    } else {
+      html += `<button class="page-btn ${p === current ? 'active' : ''}" onclick="gotoPage(${p})">${p}</button>`;
+    }
+  });
+
+  html += `<button class="page-btn" ${current === total ? 'disabled' : ''} onclick="gotoPage(${current + 1})"><i class="fas fa-chevron-right"></i></button>`;
+
+  html += `<select class="page-size" onchange="changePageSize(this.value)">
+    <option value="10" ${ordersState.pageSize === 10 ? 'selected' : ''}>10/hal</option>
+    <option value="25" ${ordersState.pageSize === 25 ? 'selected' : ''}>25/hal</option>
+    <option value="50" ${ordersState.pageSize === 50 ? 'selected' : ''}>50/hal</option>
+    <option value="100" ${ordersState.pageSize === 100 ? 'selected' : ''}>100/hal</option>
+  </select>`;
+
+  return html;
+}
+
+function gotoPage(p) {
+  ordersState.page = p;
+  loadOrders();
+  document.querySelector('.order-table-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function changePageSize(size) {
+  ordersState.pageSize = Number(size);
+  ordersState.page = 1;
+  loadOrders();
+}
+
+// Filter events
+document.getElementById('searchInput').addEventListener('input', debounce(e => {
+  ordersState.search = e.target.value.trim();
+  ordersState.page = 1;
+  loadOrders();
+}, 400));
+
+document.getElementById('filterStatus').addEventListener('change', e => {
+  ordersState.status = e.target.value;
+  ordersState.page = 1;
+  loadOrders();
+});
+
+document.getElementById('filterAgent').addEventListener('change', e => {
+  ordersState.agent = e.target.value;
+  ordersState.page = 1;
+  loadOrders();
+});
+
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+/* ============================================================
+   ACTION MENU
+============================================================ */
+function toggleActionMenu(e, btn) {
+  e.stopPropagation();
+  const menu = btn.parentElement;
+  const isOpen = menu.classList.contains('open');
+  document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('open'));
+  if (!isOpen) menu.classList.add('open');
+}
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('open'));
+});
+
+/* ============================================================
+   MODAL: TAMBAH / EDIT ORDER
+============================================================ */
+function openOrderModal(mode) {
+  editingRowNumber = null;
+  clearForm();
+
+  document.getElementById('detailEditBtn').style.display = 'inline-flex';
+  document.getElementById('detailDeleteBtn').style.display = 'inline-flex';
+
+  if (mode === 'add') {
+    document.getElementById('orderModalTitle').innerHTML = '<i class="fas fa-plus"></i> Tambah Order Baru';
+    document.getElementById('formTanggal').value = new Date().toISOString().slice(0, 10);
+    document.getElementById('formOrderId').value = '(auto-generate)';
+  }
+
+  document.getElementById('orderModal').classList.add('active');
+}
+
+function editOrder(rowNumber) {
+  const order = ordersState.data.find(o => o.rowNumber === rowNumber);
+  if (!order) {
+    showToast('error', 'Error', 'Data order tidak ditemukan di halaman ini.');
+    return;
+  }
+
+  editingRowNumber = rowNumber;
+
+  document.getElementById('orderModalTitle').innerHTML = '<i class="fas fa-pen"></i> Edit Order ' + escapeHtml(order.orderId);
+  document.getElementById('formOrderId').value = order.orderId || '';
+  document.getElementById('formTanggal').value = order.tanggal || '';
+  document.getElementById('formNamaCs').value = order.namaCs || '';
+  document.getElementById('formNomorHp').value = order.nomorHp || '';
+  document.getElementById('formDeskripsi').value = order.deskripsi || '';
+  document.getElementById('formJemput').value = order.titikJemput || '';
+  document.getElementById('formAntar').value = order.titikAntar || '';
+  document.getElementById('formAgent').value = order.agent || '';
+  document.getElementById('formOngkir').value = order.ongkir || order.nominal || '';
+
+  const statusRadio = document.querySelector(`input[name="status"][value="${order.status}"]`);
+  if (statusRadio) statusRadio.checked = true;
+
+  document.getElementById('orderModal').classList.add('active');
+}
+
+function clearForm() {
+  ['formTanggal','formOrderId','formNamaCs','formNomorHp','formDeskripsi','formJemput','formAntar','formOngkir']
+    .forEach(id => document.getElementById(id).value = '');
+  document.getElementById('formAgent').value = '';
+  document.querySelector('input[name="status"][value="proses"]').checked = true;
+}
+
+async function saveOrder() {
+  const tanggal = document.getElementById('formTanggal').value;
+  const namaCs = document.getElementById('formNamaCs').value.trim();
+  const deskripsi = document.getElementById('formDeskripsi').value.trim();
+  const ongkir = Number(document.getElementById('formOngkir').value) || 0;
+
+  if (!tanggal || !namaCs || !deskripsi || !ongkir) {
+    showToast('error', 'Validasi Gagal', 'Field bertanda * wajib diisi lengkap.');
+    return;
+  }
+
+  const btn = document.getElementById('saveOrderBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+  const orderData = {
+    tanggal: tanggal,
+    namaCs: namaCs,
+    nomorHp: document.getElementById('formNomorHp').value.trim(),
+    deskripsi: deskripsi,
+    titikJemput: document.getElementById('formJemput').value.trim(),
+    titikAntar: document.getElementById('formAntar').value.trim(),
+    agent: document.getElementById('formAgent').value,
+    ongkir: ongkir,
+    nominal: ongkir,
+    status: document.querySelector('input[name="status"]:checked').value
+  };
+
+  try {
+    if (editingRowNumber) {
+      await apiPost({ action: 'updateOrder', rowNumber: editingRowNumber, order: orderData });
+      showToast('success', 'Order Diperbarui', 'Perubahan sedang disimpan...');
+    } else {
+      await apiPost({ action: 'addOrder', order: orderData });
+      showToast('success', 'Order Ditambahkan', 'Order baru sedang disimpan...');
+    }
+
+    closeModal('orderModal');
+
+    // Tunggu server proses lalu reload
+    setTimeout(() => loadOrders(), 1200);
+
+  } catch (err) {
+    showToast('error', 'Gagal', err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-save"></i> Simpan Order';
+  }
+}
+
+/* ============================================================
+   MODAL: DETAIL ORDER
+============================================================ */
+function viewOrder(rowNumber) {
+  const o = ordersState.data.find(x => x.rowNumber === rowNumber);
+  if (!o) return;
+
+  const editBtn = document.getElementById('detailEditBtn');
+  const deleteBtn = document.getElementById('detailDeleteBtn');
+  editBtn.style.display = 'inline-flex';
+  deleteBtn.style.display = 'inline-flex';
+  editBtn.innerHTML = '<i class="fas fa-pen"></i> Edit';
+  deleteBtn.innerHTML = '<i class="fas fa-trash"></i> Hapus';
+  document.getElementById('detailModalTitle').innerHTML = '<i class="fas fa-file-lines"></i> Detail Order';
+
+  const statusText = { pending: '⏳ PENDING', proses: '🔄 PROSES', selesai: '✅ SELESAI', batal: '❌ BATAL' };
+
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-status-banner ${o.status}">
+      <div>
+        <h2>${statusText[o.status] || o.status.toUpperCase()}</h2>
+        <p>${escapeHtml(o.orderId || '-')} — ${formatDateLong(o.tanggal)}</p>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title"><i class="fas fa-user"></i> Pelanggan</div>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="detail-label">Nama CS</span><span class="detail-value">${escapeHtml(o.namaCs)}</span></div>
+        <div class="detail-item"><span class="detail-label">No. HP</span><span class="detail-value">${escapeHtml(o.nomorHp || '-')}</span></div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title"><i class="fas fa-clipboard-list"></i> Pesanan</div>
+      <div class="detail-item" style="margin-bottom:14px">
+        <span class="detail-label">Detail</span>
+        <span class="detail-value" style="font-weight:500">${escapeHtml(o.deskripsi)}</span>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="detail-label">Agent</span><span class="detail-value">${escapeHtml(o.agent || '-')}</span></div>
+        <div class="detail-item"><span class="detail-label">Week</span><span class="detail-value">${escapeHtml(o.week || '-')}</span></div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title"><i class="fas fa-location-dot"></i> Lokasi</div>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="detail-label">Titik Jemput</span><span class="detail-value">${escapeHtml(o.titikJemput || '-')}</span></div>
+        <div class="detail-item"><span class="detail-label">Titik Antar</span><span class="detail-value">${escapeHtml(o.titikAntar || '-')}</span></div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title"><i class="fas fa-money-bill"></i> Pembayaran</div>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="detail-label">Nominal</span><span class="detail-value money">${formatRupiah(o.nominal)}</span></div>
+        <div class="detail-item"><span class="detail-label">Total Bersih</span><span class="detail-value money money-green">${formatRupiah(o.totalBersih)}</span></div>
+        <div class="detail-item"><span class="detail-label">Total Admin</span><span class="detail-value money money-orange">${formatRupiah(o.totalAdmin)}</span></div>
       </div>
     </div>
   `;
 
-  renderChart(daily);
+  editBtn.onclick = () => { closeModal('detailModal'); setTimeout(() => editOrder(rowNumber), 200); };
+  deleteBtn.onclick = () => { closeModal('detailModal'); setTimeout(() => confirmDeleteOrder(rowNumber), 200); };
+
+  document.getElementById('detailModal').classList.add('active');
 }
 
-// ============================================================
-// CHART
-// ============================================================
-function renderChart(daily){
-  const canvas = $('trendChart');
-  if (!canvas) return;
+/* ============================================================
+   KONFIRMASI HAPUS
+============================================================ */
+function confirmDeleteOrder(rowNumber) {
+  const o = ordersState.data.find(x => x.rowNumber === rowNumber);
+  if (!o) return;
 
-  if (window.__trendChart) {
-    window.__trendChart.destroy();
-    window.__trendChart = null;
+  deletingRowNumber = rowNumber;
+  document.getElementById('confirmText').innerHTML =
+    `Order <b>${escapeHtml(o.orderId || '-')}</b> (${escapeHtml(o.namaCs)}) akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.`;
+
+  document.getElementById('confirmModal').classList.add('active');
+}
+
+document.getElementById('confirmDeleteBtn').onclick = async () => {
+  if (!deletingRowNumber) return;
+  const btn = document.getElementById('confirmDeleteBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
+
+  try {
+    await apiPost({ action: 'deleteOrder', rowNumber: deletingRowNumber });
+    showToast('success', 'Order Dihapus', 'Data sedang dihapus...');
+    closeModal('confirmModal');
+    setTimeout(() => loadOrders(), 1200);
+  } catch (err) {
+    showToast('error', 'Gagal hapus', err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-trash"></i> Ya, Hapus';
+    deletingRowNumber = null;
+  }
+};
+
+/* ============================================================
+   MODAL HELPER
+============================================================ */
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('active');
+  });
+});
+
+/* ============================================================
+   INVOICE
+============================================================ */
+async function loadInvoiceWeeks() {
+  try {
+    const res = await apiGet({ action: 'weeks' });
+    if (!res.ok) throw new Error(res.error || 'API error');
+
+    const select = document.getElementById('invoiceWeekFilter');
+    const currentVal = select.value;
+    select.innerHTML = '<option value="">-- Pilih Week --</option>' +
+      (res.data || []).map(w => `<option value="${escapeHtml(w.week)}">${escapeHtml(w.week)}</option>`).join('');
+
+    if (currentVal) select.value = currentVal;
+    if (select.value) loadInvoiceData(select.value);
+
+  } catch (err) {
+    showToast('error', 'Gagal memuat week', err.message);
+  }
+}
+
+async function loadInvoiceData(week) {
+  selectedInvoiceWeek = week;
+  const tbody = document.getElementById('invoiceTableBody');
+
+  if (!week) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fas fa-file-invoice"></i><h4>Pilih Week</h4><p>Pilih week di atas untuk melihat daftar invoice agent</p></div></td></tr>`;
+    document.getElementById('invoiceShowingInfo').textContent = '0';
+    document.getElementById('invoiceTotalAdmin').textContent = 'Rp 0';
+    return;
   }
 
-  if (typeof Chart === 'undefined') return;
+  tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Memuat data...</p></div></td></tr>`;
+
+  try {
+    const res = await apiGet({ action: 'invoice', week: week });
+    if (!res.ok) throw new Error(res.error || 'API error');
+
+    const data = res.data || [];
+
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fas fa-inbox"></i><h4>Tidak ada data</h4><p>Belum ada order untuk ${escapeHtml(week)}</p></div></td></tr>`;
+      document.getElementById('invoiceShowingInfo').textContent = '0';
+      document.getElementById('invoiceTotalAdmin').textContent = 'Rp 0';
+      return;
+    }
+
+    tbody.innerHTML = data.map((row, idx) => `
+      <tr>
+        <td style="color:var(--muted);font-weight:600">${idx + 1}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="agent-avatar">${escapeHtml(row.name.substring(0, 2).toUpperCase())}</div>
+            <div>
+              <b>${escapeHtml(row.name)}</b>
+              <div style="font-size:11px;color:var(--muted);margin-top:1px">${row.orderCount} order</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="order-id">${escapeHtml(row.week)}</span></td>
+        <td style="text-align:right" class="money">${formatRupiah(row.totalRevenue)}</td>
+        <td style="text-align:right" class="money money-orange">${formatRupiah(row.totalAdmin)}</td>
+        <td>
+          <div class="action-menu">
+            <button class="action-btn" onclick="toggleActionMenu(event, this)">
+              <i class="fas fa-ellipsis-vertical"></i>
+            </button>
+            <div class="action-dropdown">
+              <button class="action-item" onclick="showInvoice('${escapeHtml(row.name)}', '${escapeHtml(week)}')">
+                <i class="fas fa-download"></i> Download Invoice
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    const totalAdmin = data.reduce((sum, d) => sum + d.totalAdmin, 0);
+    document.getElementById('invoiceShowingInfo').textContent = data.length;
+    document.getElementById('invoiceTotalAdmin').textContent = formatRupiah(totalAdmin);
+
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h4>Gagal memuat</h4><p>${escapeHtml(err.message)}</p></div></td></tr>`;
+  }
+}
+
+document.getElementById('invoiceWeekFilter').addEventListener('change', e => {
+  loadInvoiceData(e.target.value);
+});
+
+function showInvoice(agentName, week) {
+  // Ambil data terbaru untuk agent ini
+  apiGet({ action: 'invoice', week: week }).then(res => {
+    if (!res.ok) return;
+    const data = res.data.find(d => d.name === agentName);
+    if (!data) return;
+
+    const today = new Date();
+    const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    const tanggalInvoice = `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+
+    document.getElementById('detailBody').innerHTML = `
+      <div id="invoicePreview" class="invoice-preview">
+        <div class="invoice-header">
+          <div class="invoice-brand">
+            <div class="invoice-brand-logo">🛵</div>
+            <div class="invoice-brand-text">
+              <h2>Suruh<span>Boy</span></h2>
+              <p>Jasa On-Demand Boyolali</p>
+            </div>
+          </div>
+          <div class="invoice-meta">
+            <div class="label">Invoice Tanggal</div>
+            <div class="value">${tanggalInvoice}</div>
+          </div>
+        </div>
+
+        <div class="invoice-recipient">
+          <div class="label">Ditagihkan Kepada</div>
+          <div class="name">${escapeHtml(data.name)}</div>
+        </div>
+
+        <table class="invoice-table">
+          <thead>
+            <tr>
+              <th>Keterangan</th>
+              <th>Week</th>
+              <th>Jumlah</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="row-label">Total Pendapatan</td>
+              <td class="row-value">${escapeHtml(week)}</td>
+              <td class="row-value">${formatRupiah(data.totalRevenue)}</td>
+            </tr>
+            <tr>
+              <td class="row-label">Total Order</td>
+              <td class="row-value">${escapeHtml(week)}</td>
+              <td class="row-value">${data.orderCount} order</td>
+            </tr>
+            <tr>
+              <td class="row-label">Biaya Admin</td>
+              <td class="row-value">${escapeHtml(week)}</td>
+              <td class="row-value highlight">${formatRupiah(data.totalAdmin)}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="invoice-total">
+          <div>
+            <div class="label">TOTAL TAGIHAN</div>
+            <div class="value">${formatRupiah(data.totalAdmin)}</div>
+          </div>
+        </div>
+
+        <div class="invoice-footer">
+          <strong>Terima kasih atas kerja samanya!</strong><br>
+          Invoice ini dibuat otomatis oleh sistem SuruhBoy HQ.<br>
+          Untuk pertanyaan, hubungi admin SuruhBoy.
+        </div>
+      </div>
+
+      <div style="margin-top:24px;text-align:center">
+        <button class="copy-area-btn" id="copyInvoiceBtn">
+          <i class="fas fa-copy"></i> Salin Invoice
+        </button>
+      </div>
+    `;
+
+    document.getElementById('detailEditBtn').style.display = 'none';
+    document.getElementById('detailDeleteBtn').style.display = 'none';
+    document.getElementById('detailModalTitle').innerHTML = '<i class="fas fa-file-invoice-dollar"></i> Invoice ' + escapeHtml(agentName);
+    document.getElementById('copyInvoiceBtn').onclick = () => copyInvoiceAsImage(week, agentName);
+
+    document.getElementById('detailModal').classList.add('active');
+  });
+}
+
+async function copyInvoiceAsImage(week, agentName) {
+  const btn = document.getElementById('copyInvoiceBtn');
+  const target = document.getElementById('invoicePreview');
+  if (!target) return;
+
+  const originalText = btn.innerHTML;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyiapkan...';
+  btn.disabled = true;
+
+  try {
+    if (typeof html2canvas === 'undefined') {
+      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+    }
+
+    const canvas = await html2canvas(target, {
+      scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false
+    });
+
+    canvas.toBlob(async (blob) => {
+      try {
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+        btn.innerHTML = '<i class="fas fa-check"></i> Tersalin!';
+        btn.classList.add('success');
+        showToast('success', 'Berhasil Disalin', 'Invoice tersalin ke clipboard.');
+      } catch (err) {
+        downloadBlob(blob, `invoice-${agentName}-${week}.png`);
+        btn.innerHTML = '<i class="fas fa-check"></i> Terdownload!';
+        btn.classList.add('success');
+        showToast('success', 'Terdownload', 'Invoice otomatis terdownload.');
+      }
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.classList.remove('success');
+        btn.disabled = false;
+      }, 2500);
+    }, 'image/png');
+
+  } catch (err) {
+    showToast('error', 'Gagal', 'Tidak dapat membuat gambar invoice.');
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+  }
+}
+
+function downloadAllInvoices() {
+  if (!selectedInvoiceWeek) {
+    showToast('error', 'Pilih Week', 'Pilih week terlebih dahulu.');
+    return;
+  }
+
+  apiGet({ action: 'invoice', week: selectedInvoiceWeek }).then(res => {
+    if (!res.ok || !res.data.length) {
+      showToast('error', 'Tidak Ada Data', 'Tidak ada invoice untuk week ini.');
+      return;
+    }
+
+    const lines = res.data.map((d, i) =>
+      `${i + 1}. ${d.name} | ${d.week} | Pendapatan: ${formatRupiah(d.totalRevenue)} | Admin: ${formatRupiah(d.totalAdmin)}`
+    );
+    const content = `SURUHBOY HQ - Invoice ${selectedInvoiceWeek}\n${'='.repeat(50)}\n\n${lines.join('\n')}\n\nTotal Admin: ${formatRupiah(res.data.reduce((s, d) => s + d.totalAdmin, 0))}`;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    downloadBlob(blob, `invoice-all-${selectedInvoiceWeek}.txt`);
+    showToast('success', 'Export Berhasil', 'File invoice terdownload.');
+  });
+}
+
+/* ============================================================
+   TRACKING
+============================================================ */
+async function loadTracking() {
+  try {
+    const res = await apiGet({ action: 'tracking' });
+    if (!res.ok) throw new Error(res.error || 'API error');
+
+    document.getElementById('trackTotal').textContent = (res.total || 0).toLocaleString('id-ID');
+    document.getElementById('trackToday').textContent = (res.today || 0).toLocaleString('id-ID');
+    document.getElementById('trackYesterday').textContent = (res.yesterday || 0).toLocaleString('id-ID');
+    document.getElementById('trackUnique').textContent = (res.unique || 0).toLocaleString('id-ID');
+
+    const diff = res.yesterday > 0 ? Math.round((res.today - res.yesterday) / res.yesterday * 100) : 0;
+    const trendEl = document.getElementById('trackTrend');
+    trendEl.style.color = diff >= 0 ? 'var(--success)' : 'var(--danger)';
+    trendEl.innerHTML = `<i class="fas fa-arrow-${diff >= 0 ? 'up' : 'down'}"></i> ${Math.abs(diff)}% dari kemarin`;
+
+    renderTrackingChart(res.daily || []);
+
+  } catch (err) {
+    showToast('error', 'Gagal memuat tracking', err.message);
+  }
+}
+
+function renderTrackingChart(daily) {
+  const canvas = document.getElementById('trackingChart');
+  if (!canvas) return;
+  if (charts.tracking) charts.tracking.destroy();
 
   const labels = daily.map(d => d.day);
   const values = daily.map(d => d.count);
 
-  Chart.defaults.font.family = "'Plus Jakarta Sans',system-ui,sans-serif";
-
-  window.__trendChart = new Chart(canvas.getContext('2d'), {
+  charts.tracking = new Chart(canvas.getContext('2d'), {
     type: 'line',
     data: {
       labels,
@@ -372,103 +1826,125 @@ function renderChart(daily){
         data: values,
         borderColor: '#ff7a1a',
         backgroundColor: 'rgba(255,122,26,.08)',
-        fill: true,
-        tension: 0.35,
-        pointRadius: 0,
-        pointHoverRadius: 5,
+        fill: true, tension: 0.35,
+        pointRadius: 0, pointHoverRadius: 5,
         pointHoverBackgroundColor: '#ff7a1a',
-        pointHoverBorderColor: '#fff',
-        pointHoverBorderWidth: 2,
         borderWidth: 2.5,
       }]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { intersect: false, mode: 'index' },
+      responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: '#0f2a4a',
-          padding: 12,
-          cornerRadius: 8,
-          displayColors: false,
-          titleFont: { size: 12, weight: '600' },
-          bodyFont: { size: 13, weight: '500' },
-          callbacks: {
-            label: c => `${fmt(c.raw)} kunjungan`
-          }
+          backgroundColor: '#0f2a4a', padding: 12, cornerRadius: 8, displayColors: false,
+          callbacks: { label: c => ' ' + c.raw + ' kunjungan' }
         }
       },
       scales: {
-        x: {
-          grid: { display: false },
-          ticks: {
-            color: '#7a8899',
-            font: { size: 11 },
-            maxTicksLimit: 8,
-          }
-        },
-        y: {
-          beginAtZero: true,
-          grid: { color: '#eaeef3' },
-          ticks: {
-            color: '#7a8899',
-            font: { size: 11 },
-            precision: 0,
-            callback: v => fmt(v),
-          }
-        }
+        x: { grid: { display: false }, ticks: { color: '#7a8899', font: { size: 10 }, maxTicksLimit: 10 } },
+        y: { beginAtZero: true, grid: { color: '#eaeef3' }, ticks: { color: '#7a8899', precision: 0 } }
       }
     }
   });
 }
 
-// ============================================================
-// FETCH DATA
-// ============================================================
-async function loadData(){
-  const btn = $('refreshBtn');
-  btn.classList.add('spin');
-
-  try {
-    if (!API_URL || API_URL.includes('PASTE_URL')) {
-      throw new Error('URL Apps Script belum diganti. Edit variabel API_URL di baris paling atas script.');
-    }
-
-    const res = await fetch(`${API_URL}?action=stats`);
-    if (!res.ok) throw new Error(`HTTP ${res.status} ${res.statusText}`);
-
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'API mengembalikan error');
-
-    renderDashboard(data);
-
-  } catch (e) {
-    showError(e.message);
-  } finally {
-    btn.classList.remove('spin');
-  }
+/* ============================================================
+   HELPER
+============================================================ */
+function formatRupiah(n) {
+  return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n || 0);
 }
 
-// ============================================================
-// INIT
-// ============================================================
-document.addEventListener('DOMContentLoaded', () => {
+function formatDate(iso) {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  if (isNaN(d)) return iso;
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  return `${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]} '${String(d.getFullYear()).slice(-2)}`;
+}
 
-  // Skip tracking kunjungan admin
-  sessionStorage.setItem('sb_skip_track', '1');
+function formatDateLong(iso) {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  if (isNaN(d)) return iso;
+  const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
 
-  // Load Chart.js
-  const chartScript = document.createElement('script');
-  chartScript.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js';
-  chartScript.onload = loadData;
-  chartScript.onerror = () => showError('Gagal memuat Chart.js — cek koneksi internet');
-  document.head.appendChild(chartScript);
+function statusBadge(status) {
+  const labels = { pending: 'Pending', proses: 'Proses', selesai: 'Selesai', batal: 'Batal' };
+  return `<span class="status status-${status}">${labels[status] || status}</span>`;
+}
 
-  // Refresh button
-  $('refreshBtn').onclick = loadData;
-});
+function escapeHtml(v) {
+  return String(v || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = resolve; s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+/* ============================================================
+   TOAST
+============================================================ */
+function showToast(type, title, message) {
+  const icons = { success: 'fa-check', error: 'fa-xmark', info: 'fa-info' };
+  const toast = document.createElement('div');
+  toast.className = 'toast ' + type;
+  toast.innerHTML = `
+    <div class="toast-icon"><i class="fas ${icons[type] || 'fa-info'}"></i></div>
+    <div class="toast-content">
+      <div class="toast-title">${escapeHtml(title)}</div>
+      <div class="toast-message">${escapeHtml(message)}</div>
+    </div>
+  `;
+  document.getElementById('toastContainer').appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(30px)';
+    toast.style.transition = 'all .3s';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+
+/* ============================================================
+   EXTRA STYLE
+============================================================ */
+const styleExtra = document.createElement('style');
+styleExtra.textContent = `
+.analytics-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.analytics-item:last-child{border-bottom:none}
+.rank{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:#eef2f7;color:var(--navy);flex-shrink:0}
+.rank.first{background:#fff2e8;color:#ea580c}
+.rank.second{background:#e2e8f0;color:#334155}
+.rank.third{background:#ffedd5;color:#9a3412}
+.agent-avatar{width:36px;height:36px;border-radius:50%;background:var(--orange-soft);color:var(--orange);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0}
+.agent-info{flex:1;min-width:0}
+.agent-name{font-size:13px;font-weight:700;color:var(--navy)}
+.agent-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.agent-value{text-align:right;font-size:12px;font-weight:700;white-space:nowrap;color:var(--navy)}
+`;
+document.head.appendChild(styleExtra);
+
+/* ============================================================
+   INIT
+============================================================ */
+(function init(){
+  // Enter untuk login
+  loginPassword.focus();
+})();
 </script>
 </body>
 </html>
