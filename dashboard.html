@@ -367,7 +367,7 @@ tbody tr:hover{background:#f8fafc}
         <div class="form-field"><label>Nomor HP</label><input type="text" id="fieldNoCS" placeholder="cth: 08123..."></div>
         <div class="form-field"><label>Agent <span class="req">*</span></label><input type="text" id="fieldAgent" placeholder="cth: Andi"></div>
         
-        <!-- 🔥 BIaya Pakai TEXT -->
+        <!-- 🔥 BIAYA PAKAI TEXT -->
         <div class="form-field"><label>Biaya <span class="req">*</span></label><input type="text" id="fieldNominal" placeholder="cth: 30rb atau Rp 30.000"></div>
         
         <div class="form-field"><label>Convert Nominal <span class="req">*</span></label><input type="number" id="fieldConvertNominal" placeholder="0" min="0"></div>
@@ -548,7 +548,7 @@ function escapeHtml(value) {
 function truncate(str, len) { const s = String(str || ''); return s.length > len ? s.slice(0, len) + '…' : s; }
 
 /* =========================================================
-   DASHBOARD LOAD & RENDER (KEMBALI KE ASLI)
+   DASHBOARD LOAD & RENDER
 ========================================================= */
 function loadDashboard() {
   ['statRevenue','statAdmin','statOrders','statAgents'].forEach(id => {
@@ -653,7 +653,7 @@ function renderWeeklyTable() {
 }
 
 /* =========================================================
-   ORDER MODULE (BEBAS DIEDIT)
+   ORDER MODULE (SERVER-SIDE PAGINATION)
 ========================================================= */
 function loadOrdersPage() {
   const tbody = document.getElementById('ordersTableBody');
@@ -711,6 +711,8 @@ function renderOrdersTable() {
     const nomorHP = String(raw[4] || '');
     const deskripsi = String(raw[5] || '');
     const agent = String(raw[8] || '');
+    
+    // PERBAIKAN INDEX: 18 (Periode), 20 (Kode), 21 (Order ID)
     const periodeMinggu = String(raw[18] || '');
     const kodeMinggu = String(raw[20] || '');
     const orderId = String(raw[21] || '');
@@ -797,6 +799,8 @@ function openOrderModal(mode, rowNumber) {
   document.getElementById('fieldAgent').value = raw[8] || '';
   document.getElementById('fieldNominal').value = raw[1] || ''; 
   document.getElementById('fieldConvertNominal').value = parseNominalClient(raw[10]);
+  
+  // PERBAIKAN INDEX
   document.getElementById('fieldPeriodeMinggu').value = raw[18] || '';
   document.getElementById('fieldKodeMinggu').value = raw[20] || '';
   document.getElementById('fieldOrderId').value = raw[21] || '';
