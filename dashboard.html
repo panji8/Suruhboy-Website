@@ -416,7 +416,7 @@ tbody tr:hover{background:#f8fafc}
 /* =========================================================
    ⚠️ GANTI DENGAN URL WEB APP HASIL DEPLOY
    ========================================================= */
-const API_URL = 'https://script.google.com/macros/s/AKfycbxGcoTYC-uvOTA0pWaip4dK5YGzIrThNUII1rQqirpi8zxKI_CbmeD6T1gH5b3yme2g/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbx4yFF43XzOnw9v56gowdMVFKWeo3MKHVmMRRdC9LO1adijpeqA9jT1KjXrXl0P7vCC/exec';
 
 /* =========================================================
    GLOBAL STATE
@@ -441,8 +441,8 @@ function apiGet(action, params = {}) {
     const cbName = '_sbhq_cb_' + (++_jsonpSeq);
     const timeout = setTimeout(() => {
       delete window[cbName]; try { document.body.removeChild(script); } catch (_) {}
-      reject(new Error('Request timeout'));
-    }, 20000);
+      reject(new Error('Request timeout. Cek koneksi atau pastikan Deploy Web App diset "Anyone".'));
+    }, 15000);
 
     window[cbName] = function (data) {
       clearTimeout(timeout); delete window[cbName];
@@ -456,19 +456,26 @@ function apiGet(action, params = {}) {
     script.onerror = function () {
       clearTimeout(timeout); delete window[cbName];
       try { document.body.removeChild(script); } catch (_) {}
-      reject(new Error('Network error'));
+      reject(new Error('Gagal koneksi ke server. Pastikan URL Web App benar.'));
     };
     document.body.appendChild(script);
   });
 }
 
 async function apiPost(action, payload) {
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ action, ...payload })
-  });
-  return res.json();
+  const formData = new URLSearchParams();
+  formData.append('payload', JSON.stringify({ action, ...payload }));
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString()
+    });
+    const text = await res.text();
+    return JSON.parse(text);
+  } catch (err) {
+    throw new Error('Gagal menyimpan data. Koneksi terputus.');
+  }
 }
 
 /* =========================================================
@@ -490,11 +497,10 @@ function parseNominalClient(value) {
   const num = Number(text);
   return isFinite(num) ? num : 0;
 }
-  function formatDateForClient(value) {
+function formatDateForClient(value) {
   if (value === null || value === undefined || value === '') return '';
   if (Object.prototype.toString.call(value) === '[object Date]') {
     if (isNaN(value.getTime())) return '';
-    // Format ke YYYY-MM-DD
     const yyyy = value.getFullYear();
     const mm = String(value.getMonth() + 1).padStart(2, '0');
     const dd = String(value.getDate()).padStart(2, '0');
@@ -540,7 +546,6 @@ function loadDashboard() {
   ['statRevenue','statAdmin','statOrders','statAgents'].forEach(id => {
     const el = document.getElementById(id); if (el) el.textContent = '...';
   });
-
   apiGet('dashboard')
     .then(function (data) {
       if (data && data.error) throw new Error(data.error);
@@ -640,7 +645,7 @@ function renderWeeklyTable() {
 }
 
 /* =========================================================
-   ORDER MODULE (SERVER-SIDE PAGINATION, 22 KOLOM)
+   ORDER MODULE (SERVER-SIDE PAGINATION)
 ========================================================= */
 function loadOrdersPage() {
   const tbody = document.getElementById('ordersTableBody');
@@ -692,7 +697,6 @@ function renderOrdersTable() {
 
   tbody.innerHTML = orderRows.map(function (item, i) {
     const raw = item.raw;
-    // Index Array: 1=Biaya, 2=Tanggal, 3=NamaCS, 4=NoHP, 5=Deskripsi, 8=Agent, 18=Periode, 20=KodeMinggu, 21=OrderID
     const biaya = parseNominalClient(raw[1]);
     const tanggal = formatDateForClient(raw[2]);
     const namaCS = String(raw[3] || '');
@@ -953,6 +957,5 @@ document.addEventListener('keydown', function (e) {
 });
 document.addEventListener('DOMContentLoaded', function () { loadDashboard(); });
 </script>
-
 </body>
 </html>
