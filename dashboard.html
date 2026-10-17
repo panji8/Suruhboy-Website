@@ -366,10 +366,7 @@ tbody tr:hover{background:#f8fafc}
         <div class="form-field"><label>Nama CS <span class="req">*</span></label><input type="text" id="fieldNamaCS" placeholder="cth: Budi"></div>
         <div class="form-field"><label>Nomor HP</label><input type="text" id="fieldNoCS" placeholder="cth: 08123..."></div>
         <div class="form-field"><label>Agent <span class="req">*</span></label><input type="text" id="fieldAgent" placeholder="cth: Andi"></div>
-        
-        <!-- 🔥 BIAYA PAKAI TEXT -->
-        <div class="form-field"><label>Biaya <span class="req">*</span></label><input type="text" id="fieldNominal" placeholder="cth: 30rb atau Rp 30.000"></div>
-        
+        <div class="form-field"><label>Biaya <span class="req">*</span></label><input type="number" id="fieldNominal" placeholder="0" min="0"></div>
         <div class="form-field"><label>Convert Nominal <span class="req">*</span></label><input type="number" id="fieldConvertNominal" placeholder="0" min="0"></div>
         <div class="form-field full"><label>Deskripsi</label><textarea id="fieldDeskripsi" placeholder="Detail pesanan..."></textarea></div>
         <div class="form-field"><label>Titik Jemput</label><input type="text" id="fieldTitikJemput" placeholder="Lokasi jemput"></div>
@@ -493,17 +490,12 @@ function parseNominalClient(value) {
   if (typeof value === 'number') return isFinite(value) ? value : 0;
   let text = String(value).trim();
   if (!text) return 0;
-  
-  let multiplier = 1;
-  if (text.toLowerCase().indexOf('rb') !== -1 || text.toLowerCase().indexOf('k') !== -1) multiplier = 1000;
-  if (text.toLowerCase().indexOf('jt') !== -1) multiplier = 1000000;
-  
-  text = text.replace(/rp/gi, '').replace(/\s/g, '').replace(/rb/gi, '').replace(/k/gi, '').replace(/jt/gi, '');
+  text = text.replace(/rp/gi, '').replace(/\s/g, '');
   if (text.indexOf('.') !== -1 && text.indexOf(',') === -1) text = text.replace(/\./g, '');
   if (text.indexOf('.') !== -1 && text.indexOf(',') !== -1) text = text.replace(/\./g, '').replace(',', '.');
   text = text.replace(/[^0-9.-]/g, '');
   const num = Number(text);
-  return isFinite(num) ? num * multiplier : 0;
+  return isFinite(num) ? num : 0;
 }
 function formatDateForClient(value) {
   if (value === null || value === undefined || value === '') return '';
@@ -711,8 +703,6 @@ function renderOrdersTable() {
     const nomorHP = String(raw[4] || '');
     const deskripsi = String(raw[5] || '');
     const agent = String(raw[8] || '');
-    
-    // PERBAIKAN INDEX: 18 (Periode), 20 (Kode), 21 (Order ID)
     const periodeMinggu = String(raw[18] || '');
     const kodeMinggu = String(raw[20] || '');
     const orderId = String(raw[21] || '');
@@ -797,10 +787,8 @@ function openOrderModal(mode, rowNumber) {
   document.getElementById('fieldNoCS').value = raw[4] || '';
   document.getElementById('fieldDeskripsi').value = raw[5] || '';
   document.getElementById('fieldAgent').value = raw[8] || '';
-  document.getElementById('fieldNominal').value = raw[1] || ''; 
+  document.getElementById('fieldNominal').value = parseNominalClient(raw[1]);
   document.getElementById('fieldConvertNominal').value = parseNominalClient(raw[10]);
-  
-  // PERBAIKAN INDEX
   document.getElementById('fieldPeriodeMinggu').value = raw[18] || '';
   document.getElementById('fieldKodeMinggu').value = raw[20] || '';
   document.getElementById('fieldOrderId').value = raw[21] || '';
@@ -857,7 +845,7 @@ function submitOrderForm() {
   if (!data['Tanggal']) return showFormError('Tanggal wajib diisi.');
   if (!data['Nama CS']) return showFormError('Nama CS wajib diisi.');
   if (!data['Agent']) return showFormError('Agent wajib diisi.');
-  if (!data['Biaya']) return showFormError('Biaya wajib diisi.');
+  if (!data['Biaya'] || Number(data['Biaya']) <= 0) return showFormError('Biaya wajib diisi dan lebih dari 0.');
   if (!data['Periode Minggu']) return showFormError('Periode Minggu wajib diisi.');
   if (!data['Kode Minggu']) return showFormError('Kode Minggu wajib diisi.');
   if (!data['Date Submit']) data['Date Submit'] = new Date().toISOString().slice(0, 10);
@@ -873,8 +861,7 @@ function submitOrderForm() {
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Gagal menyimpan.');
       showToast('Berhasil', orderMode === 'create' ? 'Order ditambahkan.' : 'Order diperbarui.', 'success');
-      closeOrderModal(); 
-      loadOrdersPage(); 
+      closeOrderModal(); loadOrdersPage(); setTimeout(loadDashboard, 400);
     })
     .catch(function (err) {
       console.error(err); showFormError('Gagal: ' + (err.message || 'Kesalahan.'));
@@ -910,7 +897,7 @@ function confirmDelete() {
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Gagal menghapus.');
       showToast('Berhasil', 'Order dihapus.', 'success');
-      closeConfirmModal(); loadOrdersPage();
+      closeConfirmModal(); loadOrdersPage(); setTimeout(loadDashboard, 400);
     })
     .catch(function (err) { console.error(err); showToast('Gagal', err.message, 'error'); })
     .finally(function () { btn.disabled = false; btn.innerHTML = originalHTML; });
@@ -926,9 +913,7 @@ function navigateTo(page) {
   const target = document.getElementById('page-' + page); if (target) target.style.display = 'block';
   const titles = { dashboard: '<i class="fas fa-th-large"></i> Dashboard', orders: '<i class="fas fa-shopping-bag"></i> Order', agents: '<i class="fas fa-user-tie"></i> Agent', recruitment: '<i class="fas fa-user-plus"></i> Rekrutmen', customers: '<i class="fas fa-users"></i> Pelanggan', finance: '<i class="fas fa-wallet"></i> Keuangan', reports: '<i class="fas fa-chart-bar"></i> Laporan', settings: '<i class="fas fa-gear"></i> Pengaturan', admin: '<i class="fas fa-shield-halved"></i> ADMIN' };
   document.getElementById('pageTitle').innerHTML = titles[page] || page;
-  
   if (page === 'orders') loadOrdersPage();
-  if (page === 'dashboard') loadDashboard();
 }
 
 function requestAdminAccess() {
