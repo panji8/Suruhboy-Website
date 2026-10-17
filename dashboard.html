@@ -287,7 +287,8 @@ tbody tr:hover{background:#f8fafc}
       <div class="dashboard-toolbar">
         <div><div class="dashboard-description">Daftar order — 10 per halaman, terbaru di atas</div></div>
         <div class="filter-area">
-          <button class="btn btn-success btn-sm" onclick="openOrderModal('create')"><i class="fas fa-plus"></i> Order Baru</button>
+          <!-- 🔥 TOMBOL ADD DI-GREY OUT -->
+          <button class="btn btn-success btn-sm" disabled title="Fitur Tambah dinonaktifkan"><i class="fas fa-plus"></i> Order Baru</button>
           <button class="btn btn-primary btn-sm" onclick="reloadOrdersPage()"><i class="fas fa-sync"></i> Refresh</button>
         </div>
       </div>
@@ -352,44 +353,28 @@ tbody tr:hover{background:#f8fafc}
   </div>
 </div>
 
-<!-- MODAL FORM ORDER -->
+<!-- MODAL FORM ORDER (EDIT BIAYA & AGENT) -->
 <div class="modal-overlay" id="orderModalOverlay">
-  <div class="modal">
+  <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
-      <h3 id="orderModalTitle">Order Baru</h3>
+      <h3 id="orderModalTitle">Edit Order</h3>
       <button class="modal-close" onclick="closeOrderModal()"><i class="fas fa-times"></i></button>
     </div>
     <div class="modal-body">
       <div class="form-error" id="orderFormError"></div>
-      <div class="form-grid">
-        <div class="form-field"><label>Tanggal <span class="req">*</span></label><input type="date" id="fieldTanggal"></div>
-        <div class="form-field"><label>Nama CS <span class="req">*</span></label><input type="text" id="fieldNamaCS" placeholder="cth: Budi"></div>
-        <div class="form-field"><label>Nomor HP</label><input type="text" id="fieldNoCS" placeholder="cth: 08123..."></div>
-        <div class="form-field"><label>Agent <span class="req">*</span></label><input type="text" id="fieldAgent" placeholder="cth: Andi"></div>
-        
-        <!-- 🔥 BIaya Pakai TEXT -->
-        <div class="form-field"><label>Biaya <span class="req">*</span></label><input type="text" id="fieldNominal" placeholder="cth: 30rb atau Rp 30.000"></div>
-        
-        <div class="form-field"><label>Convert Nominal <span class="req">*</span></label><input type="number" id="fieldConvertNominal" placeholder="0" min="0"></div>
-        <div class="form-field full"><label>Deskripsi</label><textarea id="fieldDeskripsi" placeholder="Detail pesanan..."></textarea></div>
-        <div class="form-field"><label>Titik Jemput</label><input type="text" id="fieldTitikJemput" placeholder="Lokasi jemput"></div>
-        <div class="form-field"><label>Titik Antar</label><input type="text" id="fieldTitikAntar" placeholder="Lokasi antar"></div>
-        <div class="form-field"><label>Week (Lama)</label><input type="text" id="fieldWeek" placeholder="cth: 2025-W42"></div>
-        <div class="form-field"><label>Week Helper A</label><input type="text" id="fieldWeekHelperA" placeholder="cth: A, B"></div>
-        <div class="form-field"><label>Week Helper</label><input type="text" id="fieldWeekHelper" placeholder="helper internal"></div>
-        <div class="form-field"><label>Periode Minggu <span class="req">*</span></label><input type="text" id="fieldPeriodeMinggu" placeholder="cth: Okt 2026"></div>
-        <div class="form-field"><label>Kode Minggu <span class="req">*</span></label><input type="text" id="fieldKodeMinggu" placeholder="cth: W42"></div>
-        <div class="form-field"><label>ORDER ID</label><input type="text" id="fieldOrderId" placeholder="cth: SB-001"></div>
-        <div class="form-field"><label>Validasi Pesanan</label>
-          <select id="fieldValidasi"><option value="">— Pilih —</option><option value="Pending">Pending</option><option value="Valid">Valid</option><option value="Ditolak">Ditolak</option></select>
+      
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <!-- Hanya Biaya -->
+        <div class="form-field">
+          <label>Biaya <span class="req">*</span></label>
+          <input type="text" id="fieldNominal" placeholder="cth: 30rb atau Rp 30.000">
         </div>
-        <div class="form-field"><label>Pelunasan Admin</label>
-          <select id="fieldPelunasan"><option value="">— Pilih —</option><option value="Belum">Belum</option><option value="Sudah">Sudah</option></select>
+        
+        <!-- Hanya Agent -->
+        <div class="form-field">
+          <label>Agent <span class="req">*</span></label>
+          <input type="text" id="fieldAgent" placeholder="cth: Andi">
         </div>
-        <div class="form-field"><label>Total Bersih</label><input type="number" id="fieldTotalBersih" placeholder="0" min="0"></div>
-        <div class="form-field"><label>Total Admin</label><input type="number" id="fieldTotalAdmin" placeholder="0" min="0"></div>
-        <div class="form-field"><label>Admin</label><input type="text" id="fieldAdmin" placeholder="admin pencatat"></div>
-        <div class="form-field"><label>Date Submit</label><input type="text" id="fieldDateSubmit" placeholder="otomatis jika kosong"></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -419,7 +404,7 @@ tbody tr:hover{background:#f8fafc}
 /* =========================================================
    ⚠️ GANTI DENGAN URL WEB APP HASIL DEPLOY
    ========================================================= */
-const API_URL = 'https://script.google.com/macros/s/AKfycbztSFH6_MVZ4_fnZ3VatttwC6oLJxEUhWiMyoacc6VPMBt_BHHbXyjrD9yrj46McDB7/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwOgDIAxKqZnFiDyz4TCB9J-Sm4qrx22Xt1cPQfWPeOic6gcOhhv8--xFZLkiNXaVCF/exec';
 
 /* =========================================================
    GLOBAL STATE
@@ -653,7 +638,7 @@ function renderWeeklyTable() {
 }
 
 /* =========================================================
-   ORDER MODULE
+   ORDER MODULE (SERVER-SIDE PAGINATION)
 ========================================================= */
 function loadOrdersPage() {
   const tbody = document.getElementById('ordersTableBody');
@@ -711,9 +696,9 @@ function renderOrdersTable() {
     const nomorHP = String(raw[4] || '');
     const deskripsi = String(raw[5] || '');
     const agent = String(raw[8] || '');
-    const periodeMinggu = String(raw[18] || ''); // Kolom 19
-    const kodeMinggu = String(raw[20] || '');    // Kolom 21
-    const orderId = String(raw[21] || '');       // Kolom 22
+    const periodeMinggu = String(raw[18] || '');
+    const kodeMinggu = String(raw[20] || '');
+    const orderId = String(raw[21] || '');
 
     return `
       <tr>
@@ -729,7 +714,7 @@ function renderOrdersTable() {
         <td>${escapeHtml(orderId || '—')}</td>
         <td>
           <div class="action-group">
-            <button class="icon-btn edit" title="Edit" onclick="openOrderModal('update', ${item.rowNumber})"><i class="fas fa-pen"></i></button>
+            <button class="icon-btn edit" title="Edit Biaya & Agent" onclick="openOrderModal('update', ${item.rowNumber})"><i class="fas fa-pen"></i></button>
             <button class="icon-btn delete" title="Hapus" onclick="askDeleteOrder(${item.rowNumber})"><i class="fas fa-trash"></i></button>
           </div>
         </td>
@@ -766,55 +751,23 @@ function gotoOrderPage(p) { if (p < 1 || p > orderTotalPages) return; orderPage 
 /* =========================================================
    ORDER MODULE — FORM & CRUD
 ========================================================= */
-function clearOrderForm() {
-  const ids = ['fieldTanggal','fieldNamaCS','fieldNoCS','fieldAgent','fieldNominal','fieldConvertNominal','fieldDeskripsi','fieldTitikJemput','fieldTitikAntar','fieldWeek','fieldWeekHelperA','fieldWeekHelper','fieldPeriodeMinggu','fieldKodeMinggu','fieldOrderId','fieldValidasi','fieldPelunasan','fieldTotalBersih','fieldTotalAdmin','fieldAdmin','fieldDateSubmit'];
-  ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-}
-
 function openOrderModal(mode, rowNumber) {
-  orderMode = mode; orderEditingRow = mode === 'update' ? rowNumber : null;
+  orderMode = 'update'; 
+  orderEditingRow = rowNumber;
+  
   const titleEl = document.getElementById('orderModalTitle');
-  const submitBtn = document.getElementById('orderSubmitBtn');
   const errorEl = document.getElementById('orderFormError');
-
   errorEl.classList.remove('active'); errorEl.textContent = '';
-
-  if (mode === 'create') {
-    titleEl.textContent = 'Order Baru'; submitBtn.innerHTML = '<i class="fas fa-save"></i> Simpan';
-    clearOrderForm(); document.getElementById('orderModalOverlay').classList.add('active'); return;
-  }
 
   const item = orderRows.find(r => Number(r.rowNumber) === Number(rowNumber));
   if (!item) { showToast('Gagal', 'Data order tidak ditemukan.', 'error'); return; }
 
-  titleEl.textContent = 'Edit Order #' + rowNumber; submitBtn.innerHTML = '<i class="fas fa-save"></i> Update';
+  titleEl.textContent = 'Edit Order #' + rowNumber;
   const raw = item.raw;
 
-  document.getElementById('fieldTanggal').value = formatDateForClient(raw[2]);
-  document.getElementById('fieldNamaCS').value = raw[3] || '';
-  document.getElementById('fieldNoCS').value = raw[4] || '';
-  document.getElementById('fieldDeskripsi').value = raw[5] || '';
-  document.getElementById('fieldAgent').value = raw[8] || '';
-  
-  // 🔥 Biaya diisi raw string (bisa "30rb")
-  document.getElementById('fieldNominal').value = raw[1] || ''; 
-  
-  document.getElementById('fieldConvertNominal').value = parseNominalClient(raw[10]);
-  document.getElementById('fieldPeriodeMinggu').value = raw[18] || ''; // Kolom 19
-  document.getElementById('fieldKodeMinggu').value = raw[20] || '';    // Kolom 21
-  document.getElementById('fieldOrderId').value = raw[21] || '';       // Kolom 22
-
-  document.getElementById('fieldWeek').value = raw[15] || '';
-  document.getElementById('fieldWeekHelperA').value = raw[17] || '';
-  document.getElementById('fieldWeekHelper').value = raw[16] || '';
-  document.getElementById('fieldTitikJemput').value = raw[6] || '';
-  document.getElementById('fieldTitikAntar').value = raw[7] || '';
-  document.getElementById('fieldValidasi').value = raw[13] || '';
-  document.getElementById('fieldPelunasan').value = raw[14] || '';
-  document.getElementById('fieldTotalBersih').value = parseNominalClient(raw[11]);
-  document.getElementById('fieldTotalAdmin').value = parseNominalClient(raw[12]);
-  document.getElementById('fieldAdmin').value = raw[9] || '';
-  document.getElementById('fieldDateSubmit').value = formatDateForClient(raw[0]);
+  // 🔥 Isi Form Cuma Biaya & Agent
+  document.getElementById('fieldNominal').value = raw[1] || ''; // Kolom B (Biaya)
+  document.getElementById('fieldAgent').value = raw[8] || '';   // Kolom I (Agent)
 
   document.getElementById('orderModalOverlay').classList.add('active');
 }
@@ -829,54 +782,24 @@ function submitOrderForm() {
   const errorEl = document.getElementById('orderFormError'); errorEl.classList.remove('active'); errorEl.textContent = '';
 
   const data = {
-    'Date Submit': document.getElementById('fieldDateSubmit').value,
-    'Biaya': document.getElementById('fieldNominal').value, // Bebas teks
-    'Tanggal': document.getElementById('fieldTanggal').value,
-    'Nama CS': document.getElementById('fieldNamaCS').value,
-    'Nomor HP': document.getElementById('fieldNoCS').value,
-    'Deskripsi': document.getElementById('fieldDeskripsi').value,
-    'Titik Jemput': document.getElementById('fieldTitikJemput').value,
-    'Titik Antar': document.getElementById('fieldTitikAntar').value,
-    'Agent': document.getElementById('fieldAgent').value,
-    'Admin': document.getElementById('fieldAdmin').value,
-    'Convert Nominal': document.getElementById('fieldConvertNominal').value,
-    'Total Bersih': document.getElementById('fieldTotalBersih').value,
-    'Total Admin': document.getElementById('fieldTotalAdmin').value,
-    'Validasi Pesanan': document.getElementById('fieldValidasi').value,
-    'Pelunasan Admin': document.getElementById('fieldPelunasan').value,
-    'Week': document.getElementById('fieldWeek').value,
-    'Week Helper': document.getElementById('fieldWeekHelper').value,
-    'Week Helper A': document.getElementById('fieldWeekHelperA').value,
-    'Periode Minggu': document.getElementById('fieldPeriodeMinggu').value,
-    'Kolom 20': '',
-    'Kode Minggu': document.getElementById('fieldKodeMinggu').value,
-    'Order ID': document.getElementById('fieldOrderId').value
+    'Biaya': document.getElementById('fieldNominal').value,
+    'Agent': document.getElementById('fieldAgent').value
   };
 
-  if (!data['Tanggal']) return showFormError('Tanggal wajib diisi.');
-  if (!data['Nama CS']) return showFormError('Nama CS wajib diisi.');
-  if (!data['Agent']) return showFormError('Agent wajib diisi.');
   if (!data['Biaya']) return showFormError('Biaya wajib diisi.');
-  if (!data['Periode Minggu']) return showFormError('Periode Minggu wajib diisi.');
-  if (!data['Kode Minggu']) return showFormError('Kode Minggu wajib diisi.');
-  if (!data['Date Submit']) data['Date Submit'] = new Date().toISOString().slice(0, 10);
+  if (!data['Agent']) return showFormError('Agent wajib diisi.');
 
   const submitBtn = document.getElementById('orderSubmitBtn');
   const originalHTML = submitBtn.innerHTML;
   submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
-  const promise = orderMode === 'create' ? apiPost('add', { data: data }) : apiPost('update', { rowNumber: orderEditingRow, data: data });
-
-  promise
+  apiPost('update', { rowNumber: orderEditingRow, data: data })
     .then(function (res) {
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Gagal menyimpan.');
-      showToast('Berhasil', orderMode === 'create' ? 'Order ditambahkan.' : 'Order diperbarui.', 'success');
+      showToast('Berhasil', 'Biaya & Agent diperbarui.', 'success');
       closeOrderModal(); 
-      
-      // Cuma reload tabel order, JANGAN reload dashboard di sini
       loadOrdersPage(); 
-      
     })
     .catch(function (err) {
       console.error(err); showFormError('Gagal: ' + (err.message || 'Kesalahan.'));
