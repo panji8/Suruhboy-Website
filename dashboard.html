@@ -416,7 +416,7 @@ tbody tr:hover{background:#f8fafc}
 /* =========================================================
    ⚠️ GANTI DENGAN URL WEB APP HASIL DEPLOY
    ========================================================= */
-const API_URL = 'https://script.google.com/macros/s/AKfycbxs2y0l4iLSz3zF1AGg0-MKLUzEDq7c1qcKFyTEBLwMYGdU-l8MwG13weJc_ZhaZqX_/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbx2A54CDR61r1yXN6AO_E4X8266fCcmsBnxI6rFfvYUNT-iij8msWRttd2H08gLyJHz/exec';
 
 /* =========================================================
    GLOBAL STATE
@@ -818,28 +818,28 @@ function submitOrderForm() {
   const errorEl = document.getElementById('orderFormError'); errorEl.classList.remove('active'); errorEl.textContent = '';
 
   const data = {
-    'Date Submit': document.getElementById('fieldDateSubmit').value,
-    'Biaya': document.getElementById('fieldNominal').value,
-    'Tanggal': document.getElementById('fieldTanggal').value,
-    'Nama CS': document.getElementById('fieldNamaCS').value,
-    'Nomor HP': document.getElementById('fieldNoCS').value,
-    'Deskripsi': document.getElementById('fieldDeskripsi').value,
-    'Titik Jemput': document.getElementById('fieldTitikJemput').value,
-    'Titik Antar': document.getElementById('fieldTitikAntar').value,
-    'Agent': document.getElementById('fieldAgent').value,
-    'Admin': document.getElementById('fieldAdmin').value,
-    'Convert Nominal': document.getElementById('fieldConvertNominal').value,
-    'Total Bersih': document.getElementById('fieldTotalBersih').value,
-    'Total Admin': document.getElementById('fieldTotalAdmin').value,
-    'Validasi Pesanan': document.getElementById('fieldValidasi').value,
-    'Pelunasan Admin': document.getElementById('fieldPelunasan').value,
-    'Week': document.getElementById('fieldWeek').value,
-    'Week Helper': document.getElementById('fieldWeekHelper').value,
-    'Week Helper A': document.getElementById('fieldWeekHelperA').value,
-    'Periode Minggu': document.getElementById('fieldPeriodeMinggu').value,
-    'Kolom 20': '',
-    'Kode Minggu': document.getElementById('fieldKodeMinggu').value,
-    'Order ID': document.getElementById('fieldOrderId').value
+    'Date Submit':      document.getElementById('fieldDateSubmit') ? document.getElementById('fieldDateSubmit').value : '',
+    'Biaya':            document.getElementById('fieldNominal') ? document.getElementById('fieldNominal').value : '',
+    'Tanggal':          document.getElementById('fieldTanggal') ? document.getElementById('fieldTanggal').value : '',
+    'Nama CS':          document.getElementById('fieldNamaCS') ? document.getElementById('fieldNamaCS').value : '',
+    'Nomor HP':         document.getElementById('fieldNoCS') ? document.getElementById('fieldNoCS').value : '',
+    'Deskripsi':        document.getElementById('fieldDeskripsi') ? document.getElementById('fieldDeskripsi').value : '',
+    'Titik Jemput':     document.getElementById('fieldTitikJemput') ? document.getElementById('fieldTitikJemput').value : '',
+    'Titik Antar':      document.getElementById('fieldTitikAntar') ? document.getElementById('fieldTitikAntar').value : '',
+    'Agent':            document.getElementById('fieldAgent') ? document.getElementById('fieldAgent').value : '',
+    'Admin':            document.getElementById('fieldAdmin') ? document.getElementById('fieldAdmin').value : '',
+    'Convert Nominal':  document.getElementById('fieldConvertNominal') ? document.getElementById('fieldConvertNominal').value : '',
+    'Total Bersih':     document.getElementById('fieldTotalBersih') ? document.getElementById('fieldTotalBersih').value : '',
+    'Total Admin':      document.getElementById('fieldTotalAdmin') ? document.getElementById('fieldTotalAdmin').value : '',
+    'Validasi Pesanan': document.getElementById('fieldValidasi') ? document.getElementById('fieldValidasi').value : '',
+    'Pelunasan Admin':  document.getElementById('fieldPelunasan') ? document.getElementById('fieldPelunasan').value : '',
+    'Week':             document.getElementById('fieldWeek') ? document.getElementById('fieldWeek').value : '',
+    'Week Helper':      document.getElementById('fieldWeekHelper') ? document.getElementById('fieldWeekHelper').value : '',
+    'Week Helper A':    document.getElementById('fieldWeekHelperA') ? document.getElementById('fieldWeekHelperA').value : '',
+    'Periode Minggu':   document.getElementById('fieldPeriodeMinggu') ? document.getElementById('fieldPeriodeMinggu').value : '',
+    'Kolom 20':         '',
+    'Kode Minggu':      document.getElementById('fieldKodeMinggu') ? document.getElementById('fieldKodeMinggu').value : '',
+    'Order ID':         document.getElementById('fieldOrderId') ? document.getElementById('fieldOrderId').value : ''
   };
 
   if (!data['Tanggal']) return showFormError('Tanggal wajib diisi.');
@@ -860,8 +860,12 @@ function submitOrderForm() {
     .then(function (res) {
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Gagal menyimpan.');
+      
       showToast('Berhasil', orderMode === 'create' ? 'Order ditambahkan.' : 'Order diperbarui.', 'success');
-      closeOrderModal(); loadOrdersPage(); setTimeout(loadDashboard, 400);
+      closeOrderModal(); 
+      
+      // Cukup refresh halaman order, JANGAN refresh dashboard otomatis biar nggak blank!
+      loadOrdersPage(); 
     })
     .catch(function (err) {
       console.error(err); showFormError('Gagal: ' + (err.message || 'Kesalahan.'));
@@ -897,7 +901,7 @@ function confirmDelete() {
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Gagal menghapus.');
       showToast('Berhasil', 'Order dihapus.', 'success');
-      closeConfirmModal(); loadOrdersPage(); setTimeout(loadDashboard, 400);
+      closeConfirmModal(); loadOrdersPage();
     })
     .catch(function (err) { console.error(err); showToast('Gagal', err.message, 'error'); })
     .finally(function () { btn.disabled = false; btn.innerHTML = originalHTML; });
@@ -913,7 +917,9 @@ function navigateTo(page) {
   const target = document.getElementById('page-' + page); if (target) target.style.display = 'block';
   const titles = { dashboard: '<i class="fas fa-th-large"></i> Dashboard', orders: '<i class="fas fa-shopping-bag"></i> Order', agents: '<i class="fas fa-user-tie"></i> Agent', recruitment: '<i class="fas fa-user-plus"></i> Rekrutmen', customers: '<i class="fas fa-users"></i> Pelanggan', finance: '<i class="fas fa-wallet"></i> Keuangan', reports: '<i class="fas fa-chart-bar"></i> Laporan', settings: '<i class="fas fa-gear"></i> Pengaturan', admin: '<i class="fas fa-shield-halved"></i> ADMIN' };
   document.getElementById('pageTitle').innerHTML = titles[page] || page;
+  
   if (page === 'orders') loadOrdersPage();
+  if (page === 'dashboard') loadDashboard(); // Pindah ke dashboard baru load datanya
 }
 
 function requestAdminAccess() {
