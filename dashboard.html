@@ -548,7 +548,7 @@ function escapeHtml(value) {
 function truncate(str, len) { const s = String(str || ''); return s.length > len ? s.slice(0, len) + '…' : s; }
 
 /* =========================================================
-   DASHBOARD LOAD & RENDER
+   DASHBOARD LOAD & RENDER (KEMBALI KE ASLI)
 ========================================================= */
 function loadDashboard() {
   ['statRevenue','statAdmin','statOrders','statAgents'].forEach(id => {
@@ -653,7 +653,7 @@ function renderWeeklyTable() {
 }
 
 /* =========================================================
-   ORDER MODULE
+   ORDER MODULE (BEBAS DIEDIT)
 ========================================================= */
 function loadOrdersPage() {
   const tbody = document.getElementById('ordersTableBody');
@@ -711,9 +711,9 @@ function renderOrdersTable() {
     const nomorHP = String(raw[4] || '');
     const deskripsi = String(raw[5] || '');
     const agent = String(raw[8] || '');
-    const periodeMinggu = String(raw[18] || ''); // Kolom 19
-    const kodeMinggu = String(raw[20] || '');    // Kolom 21
-    const orderId = String(raw[21] || '');       // Kolom 22
+    const periodeMinggu = String(raw[18] || '');
+    const kodeMinggu = String(raw[20] || '');
+    const orderId = String(raw[21] || '');
 
     return `
       <tr>
@@ -795,14 +795,11 @@ function openOrderModal(mode, rowNumber) {
   document.getElementById('fieldNoCS').value = raw[4] || '';
   document.getElementById('fieldDeskripsi').value = raw[5] || '';
   document.getElementById('fieldAgent').value = raw[8] || '';
-  
-  // 🔥 Biaya diisi raw string (bisa "30rb")
   document.getElementById('fieldNominal').value = raw[1] || ''; 
-  
   document.getElementById('fieldConvertNominal').value = parseNominalClient(raw[10]);
-  document.getElementById('fieldPeriodeMinggu').value = raw[18] || ''; // Kolom 19
-  document.getElementById('fieldKodeMinggu').value = raw[20] || '';    // Kolom 21
-  document.getElementById('fieldOrderId').value = raw[21] || '';       // Kolom 22
+  document.getElementById('fieldPeriodeMinggu').value = raw[18] || '';
+  document.getElementById('fieldKodeMinggu').value = raw[20] || '';
+  document.getElementById('fieldOrderId').value = raw[21] || '';
 
   document.getElementById('fieldWeek').value = raw[15] || '';
   document.getElementById('fieldWeekHelperA').value = raw[17] || '';
@@ -830,7 +827,7 @@ function submitOrderForm() {
 
   const data = {
     'Date Submit': document.getElementById('fieldDateSubmit').value,
-    'Biaya': document.getElementById('fieldNominal').value, // Bebas teks
+    'Biaya': document.getElementById('fieldNominal').value,
     'Tanggal': document.getElementById('fieldTanggal').value,
     'Nama CS': document.getElementById('fieldNamaCS').value,
     'Nomor HP': document.getElementById('fieldNoCS').value,
@@ -873,10 +870,7 @@ function submitOrderForm() {
       if (!res || !res.success) throw new Error('Gagal menyimpan.');
       showToast('Berhasil', orderMode === 'create' ? 'Order ditambahkan.' : 'Order diperbarui.', 'success');
       closeOrderModal(); 
-      
-      // Cuma reload tabel order, JANGAN reload dashboard di sini
       loadOrdersPage(); 
-      
     })
     .catch(function (err) {
       console.error(err); showFormError('Gagal: ' + (err.message || 'Kesalahan.'));
