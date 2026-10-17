@@ -55,9 +55,6 @@ button,input,select,textarea{font-family:inherit}
 .btn{padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
 .btn:disabled{opacity:.6;cursor:not-allowed}
 .btn-primary{background:var(--primary);color:white}.btn-primary:hover:not(:disabled){background:var(--primary-dark)}
-.btn-success{background:var(--success);color:white}.btn-success:hover:not(:disabled){background:#059669}
-.btn-danger{background:var(--danger);color:white}.btn-danger:hover:not(:disabled){background:#dc2626}
-.btn-ghost{background:transparent;color:var(--text-secondary);border:1px solid var(--border)}.btn-ghost:hover:not(:disabled){background:var(--bg)}
 .btn-sm{padding:7px 11px;font-size:11px}
 
 /* KPI */
@@ -108,12 +105,6 @@ tbody tr:hover{background:#f8fafc}
 .search-box input{width:100%;padding:9px 12px 9px 34px;border:1px solid var(--border);border-radius:8px;font-size:13px;outline:none}
 .search-box input:focus{border-color:var(--primary)}
 
-/* ACTION BUTTONS */
-.action-group{display:flex;gap:6px;justify-content:flex-end}
-.icon-btn{width:30px;height:30px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s}
-.icon-btn.edit{background:var(--info-bg);color:var(--info)}.icon-btn.edit:hover{background:var(--info);color:white}
-.icon-btn.delete{background:var(--danger-bg);color:var(--danger)}.icon-btn.delete:hover{background:var(--danger);color:white}
-
 /* PAGINATION */
 .pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--text-secondary);flex-wrap:wrap;gap:10px}
 .pagination-buttons{display:flex;gap:4px;flex-wrap:wrap}
@@ -121,35 +112,6 @@ tbody tr:hover{background:#f8fafc}
 .page-btn:hover:not(:disabled){border-color:var(--primary);color:var(--primary)}
 .page-btn.active{background:var(--primary);border-color:var(--primary);color:white}
 .page-btn:disabled{opacity:.4;cursor:not-allowed}
-
-/* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.65);z-index:9000;align-items:center;justify-content:center;padding:20px}
-.modal-overlay.active{display:flex}
-.modal{background:white;width:100%;max-width:720px;max-height:90vh;border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,.25)}
-.modal-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.modal-header h3{font-size:16px;font-weight:700}
-.modal-close{width:32px;height:32px;border:none;background:var(--bg);border-radius:8px;cursor:pointer;color:var(--text-secondary);font-size:14px}
-.modal-close:hover{background:var(--danger-bg);color:var(--danger)}
-.modal-body{padding:24px;overflow-y:auto}
-.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;background:#f8fafc}
-
-/* FORM */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.form-field{display:flex;flex-direction:column;gap:6px}
-.form-field.full{grid-column:1 / -1}
-.form-field label{font-size:12px;font-weight:600;color:var(--text-secondary)}
-.form-field label .req{color:var(--danger);margin-left:2px}
-.form-field input,.form-field textarea,.form-field select{padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;outline:none;font-family:inherit;transition:border-color .15s;background:white}
-.form-field input:focus,.form-field textarea:focus,.form-field select:focus{border-color:var(--primary)}
-.form-field textarea{resize:vertical;min-height:70px}
-.form-error{color:var(--danger);font-size:12px;padding:10px 12px;background:var(--danger-bg);border-radius:8px;display:none;margin-bottom:14px}
-.form-error.active{display:block}
-
-/* CONFIRM */
-.modal.confirm{max-width:420px}
-.confirm-icon{width:60px;height:60px;border-radius:50%;background:var(--danger-bg);color:var(--danger);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 14px}
-.confirm-text{text-align:center;color:var(--text-secondary);font-size:13px;line-height:1.6}
-.confirm-text strong{color:var(--text-primary);display:block;margin-bottom:4px;font-size:14px}
 
 /* UTILS */
 .spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
@@ -161,16 +123,8 @@ tbody tr:hover{background:#f8fafc}
 .toast.success{border-left-color:var(--success)}.toast.error{border-left-color:var(--danger)}
 .placeholder-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px;text-align:center;color:var(--text-secondary)}
 
-/* PASSWORD */
-.password-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:10000;align-items:center;justify-content:center}
-.password-overlay.active{display:flex}
-.password-modal{background:white;width:90%;max-width:400px;border-radius:14px;padding:30px;text-align:center}
-.password-modal input{width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;margin:15px 0 8px;text-align:center}
-.password-modal button{width:100%;padding:11px;border:none;border-radius:8px;cursor:pointer;margin-top:7px}
-.password-submit{background:var(--danger);color:white}.password-cancel{background:transparent}
-
 @media(max-width:1000px){.stats-grid{grid-template-columns:repeat(2,1fr)}.grid-2col,.analytics-grid{grid-template-columns:1fr}}
-@media(max-width:700px){.sidebar{width:72px}.logo-text,.sidebar-section,.sidebar-link span,.sidebar-user .user-info{display:none}.sidebar-link{justify-content:center}.main-content{margin-left:72px}.stats-grid{grid-template-columns:1fr}.dashboard-toolbar{align-items:flex-start;flex-direction:column}.form-grid{grid-template-columns:1fr}.table-toolbar{flex-direction:column;align-items:stretch}.search-box{max-width:none}}
+@media(max-width:700px){.sidebar{width:72px}.logo-text,.sidebar-section,.sidebar-link span,.sidebar-user .user-info{display:none}.sidebar-link{justify-content:center}.main-content{margin-left:72px}.stats-grid{grid-template-columns:1fr}.dashboard-toolbar{align-items:flex-start;flex-direction:column}.table-toolbar{flex-direction:column;align-items:stretch}.search-box{max-width:none}}
 </style>
 </head>
 <body>
@@ -185,26 +139,10 @@ tbody tr:hover{background:#f8fafc}
     <div class="sidebar-section">Menu Utama</div>
     <button class="sidebar-link active" data-page="dashboard" onclick="navigateTo('dashboard')"><i class="fas fa-th-large"></i><span>Dashboard</span></button>
     <button class="sidebar-link" data-page="orders" onclick="navigateTo('orders')"><i class="fas fa-shopping-bag"></i><span>Order</span><span class="badge" id="orderBadge">0</span></button>
-    <button class="sidebar-link" data-page="agents" onclick="navigateTo('agents')"><i class="fas fa-user-tie"></i><span>Agent</span></button>
-    <button class="sidebar-link" data-page="recruitment" onclick="navigateTo('recruitment')"><i class="fas fa-user-plus"></i><span>Rekrutmen</span></button>
-    <button class="sidebar-link" data-page="customers" onclick="navigateTo('customers')"><i class="fas fa-users"></i><span>Pelanggan</span></button>
-    <div class="sidebar-section">Bisnis</div>
-    <button class="sidebar-link" data-page="finance" onclick="navigateTo('finance')"><i class="fas fa-wallet"></i><span>Keuangan</span></button>
-    <div class="sidebar-section">Sistem</div>
-    <button class="sidebar-link" data-page="reports" onclick="navigateTo('reports')"><i class="fas fa-chart-bar"></i><span>Laporan</span></button>
-    <button class="sidebar-link" data-page="settings" onclick="navigateTo('settings')"><i class="fas fa-gear"></i><span>Pengaturan</span></button>
-    <div class="sidebar-section">Admin</div>
-    <button class="sidebar-link admin-link" data-page="admin" onclick="requestAdminAccess()"><i class="fas fa-shield-halved"></i><span>ADMIN 🔒</span></button>
+    <div class="sidebar-section">Lainnya</div>
+    <button class="sidebar-link" onclick="alert('Segera hadir')"><i class="fas fa-user-tie"></i><span>Agent</span></button>
+    <button class="sidebar-link" onclick="alert('Segera hadir')"><i class="fas fa-wallet"></i><span>Keuangan</span></button>
   </nav>
-  <div class="sidebar-footer">
-    <div class="sidebar-user">
-      <div class="avatar">SA</div>
-      <div class="user-info">
-        <div style="color:white;font-size:13px;font-weight:700;">Super Admin</div>
-        <div style="color:#94a3b8;font-size:10px;">SuruhBoy HQ</div>
-      </div>
-    </div>
-  </div>
 </aside>
 
 <!-- MAIN -->
@@ -282,12 +220,11 @@ tbody tr:hover{background:#f8fafc}
       </div>
     </div>
 
-    <!-- ORDERS -->
+    <!-- ORDERS (READ-ONLY) -->
     <div id="page-orders" class="page-content" style="display:none;">
       <div class="dashboard-toolbar">
         <div><div class="dashboard-description">Daftar order — 10 per halaman, terbaru di atas</div></div>
         <div class="filter-area">
-          <button class="btn btn-success btn-sm" onclick="openOrderModal('create')"><i class="fas fa-plus"></i> Order Baru</button>
           <button class="btn btn-primary btn-sm" onclick="reloadOrdersPage()"><i class="fas fa-sync"></i> Refresh</button>
         </div>
       </div>
@@ -301,7 +238,6 @@ tbody tr:hover{background:#f8fafc}
           <div style="display:flex;gap:8px;align-items:center;">
             <select id="orderSort" class="filter-select" onchange="onOrderSortChange()">
               <option value="newest">Terbaru</option><option value="oldest">Terlama</option>
-              <option value="nominalHigh">Nominal Tertinggi</option><option value="nominalLow">Nominal Terendah</option>
             </select>
             <span style="font-size:12px;color:var(--text-muted);" id="orderCount">0 order</span>
           </div>
@@ -313,11 +249,11 @@ tbody tr:hover{background:#f8fafc}
               <tr>
                 <th>#</th><th>Tanggal</th><th>Nama CS</th><th>Nomor HP</th><th>Agent</th>
                 <th>Deskripsi</th><th>Biaya</th><th>Periode Minggu</th><th>Kode Minggu</th>
-                <th>Order ID</th><th style="text-align:right;">Aksi</th>
+                <th>Order ID</th>
               </tr>
             </thead>
             <tbody id="ordersTableBody">
-              <tr><td colspan="11" class="empty">Memuat data...</td></tr>
+              <tr><td colspan="10" class="empty">Memuat data...</td></tr>
             </tbody>
           </table>
         </div>
@@ -329,86 +265,8 @@ tbody tr:hover{background:#f8fafc}
       </div>
     </div>
 
-    <!-- PLACEHOLDERS -->
-    <div id="page-agents" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Agent</h3></div></div>
-    <div id="page-recruitment" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Rekrutmen</h3></div></div>
-    <div id="page-customers" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Pelanggan</h3></div></div>
-    <div id="page-finance" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Keuangan</h3></div></div>
-    <div id="page-reports" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Laporan</h3></div></div>
-    <div id="page-settings" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Pengaturan</h3></div></div>
   </div>
 </main>
-
-<!-- MODAL PASSWORD -->
-<div class="password-overlay" id="passwordOverlay">
-  <div class="password-modal">
-    <div style="font-size:35px;color:var(--danger);margin-bottom:10px;">🔒</div>
-    <h3>Akses Terbatas</h3>
-    <p style="color:var(--text-secondary);font-size:12px;margin-top:5px;">Masukkan password untuk membuka ADMIN</p>
-    <input type="password" id="adminPasswordInput" placeholder="Password" onkeydown="if(event.key==='Enter') verifyPassword()">
-    <div id="passwordError" style="color:var(--danger);font-size:11px;display:none;">Password salah.</div>
-    <button class="password-submit" onclick="verifyPassword()">🔓 Buka ADMIN</button>
-    <button class="password-cancel" onclick="cancelAdminAccess()">Batal</button>
-  </div>
-</div>
-
-<!-- MODAL FORM ORDER -->
-<div class="modal-overlay" id="orderModalOverlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 id="orderModalTitle">Order Baru</h3>
-      <button class="modal-close" onclick="closeOrderModal()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="modal-body">
-      <div class="form-error" id="orderFormError"></div>
-      <div class="form-grid">
-        <div class="form-field"><label>Tanggal <span class="req">*</span></label><input type="date" id="fieldTanggal"></div>
-        <div class="form-field"><label>Nama CS <span class="req">*</span></label><input type="text" id="fieldNamaCS" placeholder="cth: Budi"></div>
-        <div class="form-field"><label>Nomor HP</label><input type="text" id="fieldNoCS" placeholder="cth: 08123..."></div>
-        <div class="form-field"><label>Agent <span class="req">*</span></label><input type="text" id="fieldAgent" placeholder="cth: Andi"></div>
-        <div class="form-field"><label>Biaya <span class="req">*</span></label><input type="number" id="fieldNominal" placeholder="0" min="0"></div>
-        <div class="form-field"><label>Convert Nominal <span class="req">*</span></label><input type="number" id="fieldConvertNominal" placeholder="0" min="0"></div>
-        <div class="form-field full"><label>Deskripsi</label><textarea id="fieldDeskripsi" placeholder="Detail pesanan..."></textarea></div>
-        <div class="form-field"><label>Titik Jemput</label><input type="text" id="fieldTitikJemput" placeholder="Lokasi jemput"></div>
-        <div class="form-field"><label>Titik Antar</label><input type="text" id="fieldTitikAntar" placeholder="Lokasi antar"></div>
-        <div class="form-field"><label>Week (Lama)</label><input type="text" id="fieldWeek" placeholder="cth: 2025-W42"></div>
-        <div class="form-field"><label>Week Helper A</label><input type="text" id="fieldWeekHelperA" placeholder="cth: A, B"></div>
-        <div class="form-field"><label>Week Helper</label><input type="text" id="fieldWeekHelper" placeholder="helper internal"></div>
-        <div class="form-field"><label>Periode Minggu <span class="req">*</span></label><input type="text" id="fieldPeriodeMinggu" placeholder="cth: Okt 2026"></div>
-        <div class="form-field"><label>Kode Minggu <span class="req">*</span></label><input type="text" id="fieldKodeMinggu" placeholder="cth: W42"></div>
-        <div class="form-field"><label>ORDER ID</label><input type="text" id="fieldOrderId" placeholder="cth: SB-001"></div>
-        <div class="form-field"><label>Validasi Pesanan</label>
-          <select id="fieldValidasi"><option value="">— Pilih —</option><option value="Pending">Pending</option><option value="Valid">Valid</option><option value="Ditolak">Ditolak</option></select>
-        </div>
-        <div class="form-field"><label>Pelunasan Admin</label>
-          <select id="fieldPelunasan"><option value="">— Pilih —</option><option value="Belum">Belum</option><option value="Sudah">Sudah</option></select>
-        </div>
-        <div class="form-field"><label>Total Bersih</label><input type="number" id="fieldTotalBersih" placeholder="0" min="0"></div>
-        <div class="form-field"><label>Total Admin</label><input type="number" id="fieldTotalAdmin" placeholder="0" min="0"></div>
-        <div class="form-field"><label>Admin</label><input type="text" id="fieldAdmin" placeholder="admin pencatat"></div>
-        <div class="form-field"><label>Date Submit</label><input type="text" id="fieldDateSubmit" placeholder="otomatis jika kosong"></div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost btn-sm" onclick="closeOrderModal()">Batal</button>
-      <button class="btn btn-primary btn-sm" id="orderSubmitBtn" onclick="submitOrderForm()"><i class="fas fa-save"></i> Simpan</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL CONFIRM DELETE -->
-<div class="modal-overlay" id="confirmModalOverlay">
-  <div class="modal confirm">
-    <div class="modal-body" style="padding:30px 24px;">
-      <div class="confirm-icon"><i class="fas fa-trash"></i></div>
-      <div class="confirm-text"><strong>Hapus order ini?</strong><span id="confirmDetail">—</span>Tindakan ini tidak bisa dibatalkan.</div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost btn-sm" onclick="closeConfirmModal()">Batal</button>
-      <button class="btn btn-danger btn-sm" id="confirmDeleteBtn" onclick="confirmDelete()"><i class="fas fa-trash"></i> Hapus</button>
-    </div>
-  </div>
-</div>
 
 <div class="toast-container" id="toastContainer"></div>
 
@@ -416,12 +274,11 @@ tbody tr:hover{background:#f8fafc}
 /* =========================================================
    ⚠️ GANTI DENGAN URL WEB APP HASIL DEPLOY
    ========================================================= */
-const API_URL = 'https://script.google.com/macros/s/AKfycbx2A54CDR61r1yXN6AO_E4X8266fCcmsBnxI6rFfvYUNT-iij8msWRttd2H08gLyJHz/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbz-FSP6m-Ca4BMJf8nJaGglG0guuP-xiQ8lQGOeloCveH0nQaZO1Xt1Jt0Uv7JXPZG_/exec';
 
 /* =========================================================
    GLOBAL STATE
 ========================================================= */
-let isAdminAuthenticated = false;
 let rawData = [];
 let filteredData = [];
 let weeklyData = [];
@@ -429,7 +286,6 @@ let revenueChart = null;
 
 let orderPage = 1, orderPageSize = 10, orderSearchQ = '', orderSortBy = 'newest';
 let orderTotal = 0, orderTotalPages = 1, orderRows = [];
-let orderMode = 'create', orderEditingRow = null, orderDeleteTarget = null;
 let _searchTimer = null;
 
 /* =========================================================
@@ -441,7 +297,7 @@ function apiGet(action, params = {}) {
     const cbName = '_sbhq_cb_' + (++_jsonpSeq);
     const timeout = setTimeout(() => {
       delete window[cbName]; try { document.body.removeChild(script); } catch (_) {}
-      reject(new Error('Request timeout. Cek koneksi atau pastikan Deploy Web App diset "Anyone".'));
+      reject(new Error('Request timeout.'));
     }, 15000);
 
     window[cbName] = function (data) {
@@ -456,26 +312,10 @@ function apiGet(action, params = {}) {
     script.onerror = function () {
       clearTimeout(timeout); delete window[cbName];
       try { document.body.removeChild(script); } catch (_) {}
-      reject(new Error('Gagal koneksi ke server. Pastikan URL Web App benar.'));
+      reject(new Error('Gagal koneksi ke server.'));
     };
     document.body.appendChild(script);
   });
-}
-
-async function apiPost(action, payload) {
-  const formData = new URLSearchParams();
-  formData.append('payload', JSON.stringify({ action, ...payload }));
-  try {
-    const res = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: formData.toString()
-    });
-    const text = await res.text();
-    return JSON.parse(text);
-  } catch (err) {
-    throw new Error('Gagal menyimpan data. Koneksi terputus.');
-  }
 }
 
 /* =========================================================
@@ -645,11 +485,11 @@ function renderWeeklyTable() {
 }
 
 /* =========================================================
-   ORDER MODULE (SERVER-SIDE PAGINATION)
+   ORDER MODULE (READ-ONLY)
 ========================================================= */
 function loadOrdersPage() {
   const tbody = document.getElementById('ordersTableBody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="11" class="empty"><div class="spinner"></div>Memuat...</td></tr>';
+  if (tbody) tbody.innerHTML = '<tr><td colspan="10" class="empty"><div class="spinner"></div>Memuat...</td></tr>';
 
   apiGet('ordersPage', { page: orderPage, pageSize: orderPageSize, search: orderSearchQ, sortBy: orderSortBy })
     .then(function (res) {
@@ -659,7 +499,7 @@ function loadOrdersPage() {
       renderOrdersTable();
     })
     .catch(function (err) {
-      console.error(err); if (tbody) tbody.innerHTML = '<tr><td colspan="11" class="empty">Gagal: ' + escapeHtml(err.message) + '</td></tr>';
+      console.error(err); if (tbody) tbody.innerHTML = '<tr><td colspan="10" class="empty">Gagal: ' + escapeHtml(err.message) + '</td></tr>';
       showToast('Gagal', err.message, 'error');
     });
 }
@@ -689,7 +529,7 @@ function renderOrdersTable() {
   if (countEl) countEl.textContent = orderTotal + ' order';
 
   if (!orderRows.length) {
-    tbody.innerHTML = '<tr><td colspan="11" class="empty">' + (orderSearchQ ? 'Tidak ada yang cocok.' : 'Belum ada order.') + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" class="empty">' + (orderSearchQ ? 'Tidak ada yang cocok.' : 'Belum ada order.') + '</td></tr>';
     if (infoEl) infoEl.textContent = '—'; if (btnsEl) btnsEl.innerHTML = ''; return;
   }
 
@@ -719,12 +559,6 @@ function renderOrdersTable() {
         <td>${escapeHtml(periodeMinggu || '—')}</td>
         <td>${escapeHtml(kodeMinggu || '—')}</td>
         <td>${escapeHtml(orderId || '—')}</td>
-        <td>
-          <div class="action-group">
-            <button class="icon-btn edit" title="Edit" onclick="openOrderModal('update', ${item.rowNumber})"><i class="fas fa-pen"></i></button>
-            <button class="icon-btn delete" title="Hapus" onclick="askDeleteOrder(${item.rowNumber})"><i class="fas fa-trash"></i></button>
-          </div>
-        </td>
       </tr>`;
   }).join('');
 
@@ -756,192 +590,18 @@ function renderOrderPagination() {
 function gotoOrderPage(p) { if (p < 1 || p > orderTotalPages) return; orderPage = p; loadOrdersPage(); }
 
 /* =========================================================
-   ORDER MODULE — FORM & CRUD
-========================================================= */
-function clearOrderForm() {
-  const ids = ['fieldTanggal','fieldNamaCS','fieldNoCS','fieldAgent','fieldNominal','fieldConvertNominal','fieldDeskripsi','fieldTitikJemput','fieldTitikAntar','fieldWeek','fieldWeekHelperA','fieldWeekHelper','fieldPeriodeMinggu','fieldKodeMinggu','fieldOrderId','fieldValidasi','fieldPelunasan','fieldTotalBersih','fieldTotalAdmin','fieldAdmin','fieldDateSubmit'];
-  ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-}
-
-function openOrderModal(mode, rowNumber) {
-  orderMode = mode; orderEditingRow = mode === 'update' ? rowNumber : null;
-  const titleEl = document.getElementById('orderModalTitle');
-  const submitBtn = document.getElementById('orderSubmitBtn');
-  const errorEl = document.getElementById('orderFormError');
-
-  errorEl.classList.remove('active'); errorEl.textContent = '';
-
-  if (mode === 'create') {
-    titleEl.textContent = 'Order Baru'; submitBtn.innerHTML = '<i class="fas fa-save"></i> Simpan';
-    clearOrderForm(); document.getElementById('orderModalOverlay').classList.add('active'); return;
-  }
-
-  const item = orderRows.find(r => Number(r.rowNumber) === Number(rowNumber));
-  if (!item) { showToast('Gagal', 'Data order tidak ditemukan.', 'error'); return; }
-
-  titleEl.textContent = 'Edit Order #' + rowNumber; submitBtn.innerHTML = '<i class="fas fa-save"></i> Update';
-  const raw = item.raw;
-
-  document.getElementById('fieldTanggal').value = formatDateForClient(raw[2]);
-  document.getElementById('fieldNamaCS').value = raw[3] || '';
-  document.getElementById('fieldNoCS').value = raw[4] || '';
-  document.getElementById('fieldDeskripsi').value = raw[5] || '';
-  document.getElementById('fieldAgent').value = raw[8] || '';
-  document.getElementById('fieldNominal').value = parseNominalClient(raw[1]);
-  document.getElementById('fieldConvertNominal').value = parseNominalClient(raw[10]);
-  document.getElementById('fieldPeriodeMinggu').value = raw[18] || '';
-  document.getElementById('fieldKodeMinggu').value = raw[20] || '';
-  document.getElementById('fieldOrderId').value = raw[21] || '';
-
-  document.getElementById('fieldWeek').value = raw[15] || '';
-  document.getElementById('fieldWeekHelperA').value = raw[17] || '';
-  document.getElementById('fieldWeekHelper').value = raw[16] || '';
-  document.getElementById('fieldTitikJemput').value = raw[6] || '';
-  document.getElementById('fieldTitikAntar').value = raw[7] || '';
-  document.getElementById('fieldValidasi').value = raw[13] || '';
-  document.getElementById('fieldPelunasan').value = raw[14] || '';
-  document.getElementById('fieldTotalBersih').value = parseNominalClient(raw[11]);
-  document.getElementById('fieldTotalAdmin').value = parseNominalClient(raw[12]);
-  document.getElementById('fieldAdmin').value = raw[9] || '';
-  document.getElementById('fieldDateSubmit').value = formatDateForClient(raw[0]);
-
-  document.getElementById('orderModalOverlay').classList.add('active');
-}
-
-function closeOrderModal() { document.getElementById('orderModalOverlay').classList.remove('active'); orderEditingRow = null; }
-
-function showFormError(msg) {
-  const el = document.getElementById('orderFormError'); el.textContent = msg; el.classList.add('active'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); return false;
-}
-
-function submitOrderForm() {
-  const errorEl = document.getElementById('orderFormError'); errorEl.classList.remove('active'); errorEl.textContent = '';
-
-  const data = {
-    'Date Submit':      document.getElementById('fieldDateSubmit') ? document.getElementById('fieldDateSubmit').value : '',
-    'Biaya':            document.getElementById('fieldNominal') ? document.getElementById('fieldNominal').value : '',
-    'Tanggal':          document.getElementById('fieldTanggal') ? document.getElementById('fieldTanggal').value : '',
-    'Nama CS':          document.getElementById('fieldNamaCS') ? document.getElementById('fieldNamaCS').value : '',
-    'Nomor HP':         document.getElementById('fieldNoCS') ? document.getElementById('fieldNoCS').value : '',
-    'Deskripsi':        document.getElementById('fieldDeskripsi') ? document.getElementById('fieldDeskripsi').value : '',
-    'Titik Jemput':     document.getElementById('fieldTitikJemput') ? document.getElementById('fieldTitikJemput').value : '',
-    'Titik Antar':      document.getElementById('fieldTitikAntar') ? document.getElementById('fieldTitikAntar').value : '',
-    'Agent':            document.getElementById('fieldAgent') ? document.getElementById('fieldAgent').value : '',
-    'Admin':            document.getElementById('fieldAdmin') ? document.getElementById('fieldAdmin').value : '',
-    'Convert Nominal':  document.getElementById('fieldConvertNominal') ? document.getElementById('fieldConvertNominal').value : '',
-    'Total Bersih':     document.getElementById('fieldTotalBersih') ? document.getElementById('fieldTotalBersih').value : '',
-    'Total Admin':      document.getElementById('fieldTotalAdmin') ? document.getElementById('fieldTotalAdmin').value : '',
-    'Validasi Pesanan': document.getElementById('fieldValidasi') ? document.getElementById('fieldValidasi').value : '',
-    'Pelunasan Admin':  document.getElementById('fieldPelunasan') ? document.getElementById('fieldPelunasan').value : '',
-    'Week':             document.getElementById('fieldWeek') ? document.getElementById('fieldWeek').value : '',
-    'Week Helper':      document.getElementById('fieldWeekHelper') ? document.getElementById('fieldWeekHelper').value : '',
-    'Week Helper A':    document.getElementById('fieldWeekHelperA') ? document.getElementById('fieldWeekHelperA').value : '',
-    'Periode Minggu':   document.getElementById('fieldPeriodeMinggu') ? document.getElementById('fieldPeriodeMinggu').value : '',
-    'Kolom 20':         '',
-    'Kode Minggu':      document.getElementById('fieldKodeMinggu') ? document.getElementById('fieldKodeMinggu').value : '',
-    'Order ID':         document.getElementById('fieldOrderId') ? document.getElementById('fieldOrderId').value : ''
-  };
-
-  if (!data['Tanggal']) return showFormError('Tanggal wajib diisi.');
-  if (!data['Nama CS']) return showFormError('Nama CS wajib diisi.');
-  if (!data['Agent']) return showFormError('Agent wajib diisi.');
-  if (!data['Biaya'] || Number(data['Biaya']) <= 0) return showFormError('Biaya wajib diisi dan lebih dari 0.');
-  if (!data['Periode Minggu']) return showFormError('Periode Minggu wajib diisi.');
-  if (!data['Kode Minggu']) return showFormError('Kode Minggu wajib diisi.');
-  if (!data['Date Submit']) data['Date Submit'] = new Date().toISOString().slice(0, 10);
-
-  const submitBtn = document.getElementById('orderSubmitBtn');
-  const originalHTML = submitBtn.innerHTML;
-  submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-
-  const promise = orderMode === 'create' ? apiPost('add', { data: data }) : apiPost('update', { rowNumber: orderEditingRow, data: data });
-
-  promise
-    .then(function (res) {
-      if (res && res.error) throw new Error(res.error);
-      if (!res || !res.success) throw new Error('Gagal menyimpan.');
-      
-      showToast('Berhasil', orderMode === 'create' ? 'Order ditambahkan.' : 'Order diperbarui.', 'success');
-      closeOrderModal(); 
-      
-      // Cukup refresh halaman order, JANGAN refresh dashboard otomatis biar nggak blank!
-      loadOrdersPage(); 
-    })
-    .catch(function (err) {
-      console.error(err); showFormError('Gagal: ' + (err.message || 'Kesalahan.'));
-      showToast('Gagal', err.message, 'error');
-    })
-    .finally(function () { submitBtn.disabled = false; submitBtn.innerHTML = originalHTML; });
-}
-
-function askDeleteOrder(rowNumber) {
-  const item = orderRows.find(r => Number(r.rowNumber) === Number(rowNumber));
-  orderDeleteTarget = rowNumber;
-  const detail = document.getElementById('confirmDetail');
-  if (detail) {
-    if (item) {
-      const raw = item.raw;
-      const namaCS = String(raw[3] || 'Tanpa nama'), orderId = String(raw[21] || '');
-      detail.textContent = '#' + rowNumber + ' — ' + namaCS + (orderId ? ' (' + orderId + ')' : '');
-    } else { detail.textContent = '#' + rowNumber; }
-  }
-  document.getElementById('confirmModalOverlay').classList.add('active');
-}
-
-function closeConfirmModal() { document.getElementById('confirmModalOverlay').classList.remove('active'); orderDeleteTarget = null; }
-
-function confirmDelete() {
-  if (!orderDeleteTarget) return;
-  const btn = document.getElementById('confirmDeleteBtn');
-  const originalHTML = btn.innerHTML;
-  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
-
-  apiPost('delete', { rowNumber: orderDeleteTarget })
-    .then(function (res) {
-      if (res && res.error) throw new Error(res.error);
-      if (!res || !res.success) throw new Error('Gagal menghapus.');
-      showToast('Berhasil', 'Order dihapus.', 'success');
-      closeConfirmModal(); loadOrdersPage();
-    })
-    .catch(function (err) { console.error(err); showToast('Gagal', err.message, 'error'); })
-    .finally(function () { btn.disabled = false; btn.innerHTML = originalHTML; });
-}
-
-/* =========================================================
-   NAVIGATION & AUTH
+   NAVIGATION
 ========================================================= */
 function navigateTo(page) {
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
   const active = document.querySelector(`.sidebar-link[data-page="${page}"]`); if (active) active.classList.add('active');
   document.querySelectorAll('.page-content').forEach(el => el.style.display = 'none');
   const target = document.getElementById('page-' + page); if (target) target.style.display = 'block';
-  const titles = { dashboard: '<i class="fas fa-th-large"></i> Dashboard', orders: '<i class="fas fa-shopping-bag"></i> Order', agents: '<i class="fas fa-user-tie"></i> Agent', recruitment: '<i class="fas fa-user-plus"></i> Rekrutmen', customers: '<i class="fas fa-users"></i> Pelanggan', finance: '<i class="fas fa-wallet"></i> Keuangan', reports: '<i class="fas fa-chart-bar"></i> Laporan', settings: '<i class="fas fa-gear"></i> Pengaturan', admin: '<i class="fas fa-shield-halved"></i> ADMIN' };
+  const titles = { dashboard: '<i class="fas fa-th-large"></i> Dashboard', orders: '<i class="fas fa-shopping-bag"></i> Order' };
   document.getElementById('pageTitle').innerHTML = titles[page] || page;
   
   if (page === 'orders') loadOrdersPage();
-  if (page === 'dashboard') loadDashboard(); // Pindah ke dashboard baru load datanya
-}
-
-function requestAdminAccess() {
-  if (isAdminAuthenticated) { navigateTo('admin'); return; }
-  document.getElementById('passwordOverlay').classList.add('active'); document.getElementById('adminPasswordInput').focus();
-}
-
-function verifyPassword() {
-  const input = document.getElementById('adminPasswordInput'), errorEl = document.getElementById('passwordError');
-  const pw = input.value; errorEl.style.display = 'none';
-  apiGet('verifyAdmin', { pw: pw })
-    .then(function (res) {
-      if (res && res.ok) {
-        isAdminAuthenticated = true; document.getElementById('passwordOverlay').classList.remove('active'); input.value = '';
-        showToast('Akses Diterima', 'ADMIN terbuka.', 'success'); navigateTo('admin');
-      } else { errorEl.style.display = 'block'; }
-    })
-    .catch(function (err) { console.error(err); showToast('Gagal', 'Verifikasi gagal: ' + err.message, 'error'); });
-}
-
-function cancelAdminAccess() {
-  document.getElementById('passwordOverlay').classList.remove('active'); document.getElementById('adminPasswordInput').value = ''; document.getElementById('passwordError').style.display = 'none';
+  if (page === 'dashboard') loadDashboard();
 }
 
 /* =========================================================
@@ -954,13 +614,6 @@ function showToast(title, message, type = 'info') {
   container.appendChild(toast); setTimeout(() => toast.remove(), 4000);
 }
 
-document.addEventListener('click', function (e) {
-  if (e.target.id === 'orderModalOverlay') closeOrderModal();
-  if (e.target.id === 'confirmModalOverlay') closeConfirmModal();
-});
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape') { closeOrderModal(); closeConfirmModal(); }
-});
 document.addEventListener('DOMContentLoaded', function () { loadDashboard(); });
 </script>
 </body>
