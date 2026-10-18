@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Dashboard — SuruhBoy HQ</title>
 
-<!-- 🔥 FAVICON -->
-<link rel="icon" type="image/png" href="favicon.png">
+<!-- 🔥 FAVICON PATH -->
+<link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -24,7 +27,7 @@
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh}
 button,input,select,textarea{font-family:inherit}
 
-/* SIDEBAR (Desktop) */
+/* SIDEBAR */
 .sidebar{width:var(--sidebar-width);height:100vh;position:fixed;top:0;left:0;background:linear-gradient(180deg,#1e1b4b 0%,#0f172a 100%);color:white;z-index:1000;display:flex;flex-direction:column;overflow-y:auto}
 .sidebar-logo{padding:20px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer}
 .logo-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px; overflow: hidden;}
@@ -177,44 +180,17 @@ tbody tr:hover{background:#f8fafc}
 
 /* 🔥 RESPONSIVE MOBILE (BOTTOM BAR) */
 @media(max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    height: auto;
-    top: auto;
-    bottom: 0;
-    flex-direction: row;
-    border-top: 1px solid rgba(255,255,255,.1);
-    padding: 0;
-    z-index: 1000;
-  }
+  .sidebar { width: 100%; height: auto; top: auto; bottom: 0; flex-direction: row; border-top: 1px solid rgba(255,255,255,.1); padding: 0; z-index: 1000; }
   .sidebar-logo, .sidebar-footer { display: none; }
-  .sidebar-nav {
-    flex-direction: row;
-    width: 100%;
-    padding: 0;
-    justify-content: space-around;
-  }
+  .sidebar-nav { flex-direction: row; width: 100%; padding: 0; justify-content: space-around; }
   .sidebar-section { display: none; }
-  .sidebar-link {
-    flex-direction: column;
-    justify-content: center;
-    padding: 10px 0;
-    margin: 0;
-    width: auto;
-    flex: 1;
-    border-radius: 0;
-  }
+  .sidebar-link { flex-direction: column; justify-content: center; padding: 10px 0; margin: 0; width: auto; flex: 1; border-radius: 0; }
   .sidebar-link i { font-size: 20px; margin-bottom: 4px; width: auto; }
   .sidebar-link span { font-size: 10px; }
   .badge { display: none; }
-  
-  .main-content {
-    margin-left: 0;
-    padding-bottom: 70px;
-  }
+  .main-content { margin-left: 0; padding-bottom: 70px; }
   .content { padding: 16px; }
   .header { padding: 0 16px; }
-
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .stat-card { padding: 15px; }
   .stat-info h3 { font-size: 18px; }
@@ -230,35 +206,31 @@ tbody tr:hover{background:#f8fafc}
 </head>
 <body>
 
-<!-- 🔥 1. LAYAR KUNCI GLOBAL (AWAL BUKA) -->
+<!-- LAYAR KUNCI GLOBAL -->
 <div id="lockScreen">
   <div class="lock-box">
-    <!-- GANTI favicon.png DENGAN NAMA FILE LOGO KAMU -->
     <div style="margin-bottom:16px;">
-      <img src="favicon.png" alt="Logo" style="width:80px;height:80px;object-fit:contain;">
+      <img src="favicon/android-chrome-192x192.png" alt="Logo" style="width:80px;height:80px;object-fit:contain;">
     </div>
     <h2 style="font-size:20px;margin-bottom:8px;">Akses Terbatas</h2>
     <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;">Masukkan sandi untuk membuka Dashboard.</p>
     <input type="password" id="globalPasswordInput" placeholder="Sandi..." style="width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px;text-align:center;font-size:15px;" onkeydown="if(event.key==='Enter') verifyGlobalPassword()">
     <div id="globalPasswordError" style="color:var(--danger);font-size:12px;margin-bottom:10px;display:none;">Sandi salah, coba lagi.</div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;" onclick="verifyGlobalPassword()">Buka Akses</button>
+    <button class="btn btn-primary" id="loginBtn" style="width:100%;justify-content:center;padding:12px;" onclick="verifyGlobalPassword()">Buka Akses</button>
   </div>
 </div>
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo" onclick="navigateTo('dashboard')">
-    <!-- GANTI favicon.png DENGAN NAMA FILE LOGO KAMU -->
     <div class="logo-icon" style="background:none;">
-      <img src="favicon.png" alt="Logo" style="width:100%;height:100%;border-radius:12px;object-fit:cover;">
+      <img src="favicon/android-chrome-192x192.png" alt="Logo" style="width:100%;height:100%;border-radius:12px;object-fit:cover;">
     </div>
     <div class="logo-text">SuruhBoy<span>HQ</span></div>
   </div>
   <nav class="sidebar-nav">
-    <!-- 🔥 3. SIDEBAR CUMA 5 MENU -->
     <button class="sidebar-link active" data-page="dashboard" onclick="navigateTo('dashboard')"><i class="fas fa-th-large"></i><span>Dashboard</span></button>
     <button class="sidebar-link" data-page="orders" onclick="navigateTo('orders')"><i class="fas fa-shopping-bag"></i><span>Order</span><span class="badge" id="orderBadge">0</span></button>
-    
     <button class="sidebar-link" onclick="showToast('Info', 'Menu Agent sedang dikembangkan.', 'info')"><i class="fas fa-user-tie"></i><span>Agent</span></button>
     <button class="sidebar-link" onclick="showToast('Info', 'Menu Rekrutmen sedang dikembangkan.', 'info')"><i class="fas fa-user-plus"></i><span>Rekrutmen</span></button>
     <button class="sidebar-link" onclick="showToast('Info', 'Menu Pengaturan sedang dikembangkan.', 'info')"><i class="fas fa-gear"></i><span>Pengaturan</span></button>
@@ -431,7 +403,7 @@ tbody tr:hover{background:#f8fafc}
   </div>
 </div>
 
-<!-- 🔥 2. MODAL PASSWORD HAPUS -->
+<!-- MODAL PASSWORD HAPUS -->
 <div class="modal-overlay" id="confirmModalOverlay">
   <div class="modal confirm">
     <div class="modal-body" style="padding:30px 24px;">
@@ -456,16 +428,15 @@ tbody tr:hover{background:#f8fafc}
 
 <script>
 /* =========================================================
-   ⚠️ GANTI DENGAN URL WEB APP HASIL DEPLOY
+   ⚠️ CONFIG & PASSWORD (DItulis di sini)
    ========================================================= */
 const API_URL = 'https://script.google.com/macros/s/AKfycbxAmTd3SWa17zWjMbCS2CXJ0BhsAFp0KZq4eNhYZRSt8a5gCaCY4JhpIEd2IRObkU9Q/exec';
+const PASSWORD_GLOBAL = '123456'; // 🔥 Sandi Buka Dashboard
+const PASSWORD_HAPUS = '123456';  // 🔥 Sandi Hapus
 
 /* =========================================================
-   GLOBAL STATE & PASSWORD
+   GLOBAL STATE
 ========================================================= */
-const PASSWORD_GLOBAL = '123456'; // Sandi Buka Dashboard
-const PASSWORD_HAPUS = '123456';  // Sandi Hapus Order
-
 let isAdminAuthenticated = false;
 let rawData = [];
 let filteredData = [];
@@ -478,13 +449,14 @@ let orderMode = 'create', orderEditingRow = null, orderDeleteTarget = null;
 let _searchTimer = null;
 
 /* =========================================================
-   SISTEM PASSWORD
+   LOGIN LOGIC (Cek Sandi di HTML)
 ========================================================= */
 function verifyGlobalPassword() {
-  const input = document.getElementById('globalPasswordInput').value;
+  const input = document.getElementById('globalPasswordInput');
   const errorEl = document.getElementById('globalPasswordError');
+  const pw = input.value;
   
-  if (input === PASSWORD_GLOBAL) {
+  if (pw === PASSWORD_GLOBAL) {
     document.getElementById('lockScreen').style.display = 'none';
     loadDashboard(); // Load data setelah terbuka
   } else {
@@ -501,7 +473,7 @@ function apiGet(action, params = {}) {
     const cbName = '_sbhq_cb_' + (++_jsonpSeq);
     const timeout = setTimeout(() => {
       delete window[cbName]; try { document.body.removeChild(script); } catch (_) {}
-      reject(new Error('Request timeout. Cek koneksi atau pastikan Deploy Web App diset "Anyone".'));
+      reject(new Error('Request timeout.'));
     }, 15000);
 
     window[cbName] = function (data) {
@@ -516,7 +488,7 @@ function apiGet(action, params = {}) {
     script.onerror = function () {
       clearTimeout(timeout); delete window[cbName];
       try { document.body.removeChild(script); } catch (_) {}
-      reject(new Error('Gagal koneksi ke server. Pastikan URL Web App benar.'));
+      reject(new Error('Gagal koneksi.'));
     };
     document.body.appendChild(script);
   });
@@ -525,6 +497,7 @@ function apiGet(action, params = {}) {
 async function apiPost(action, payload) {
   const formData = new URLSearchParams();
   formData.append('payload', JSON.stringify({ action, ...payload }));
+  
   try {
     const res = await fetch(API_URL, {
       method: 'POST',
@@ -550,11 +523,9 @@ function parseNominalClient(value) {
   if (typeof value === 'number') return isFinite(value) ? value : 0;
   let text = String(value).trim();
   if (!text) return 0;
-  
   let multiplier = 1;
   if (text.toLowerCase().indexOf('rb') !== -1 || text.toLowerCase().indexOf('k') !== -1) multiplier = 1000;
   if (text.toLowerCase().indexOf('jt') !== -1) multiplier = 1000000;
-  
   text = text.replace(/rp/gi, '').replace(/\s/g, '').replace(/rb/gi, '').replace(/k/gi, '').replace(/jt/gi, '');
   if (text.indexOf('.') !== -1 && text.indexOf(',') === -1) text = text.replace(/\./g, '');
   if (text.indexOf('.') !== -1 && text.indexOf(',') !== -1) text = text.replace(/\./g, '').replace(',', '.');
@@ -880,7 +851,7 @@ function submitOrderForm() {
 }
 
 /* =========================================================
-   HAPUS DENGAN PASSWORD
+   HAPUS DENGAN PASSWORD (Cek Sandi di HTML)
 ========================================================= */
 function askDeleteOrder(rowNumber) {
   const item = orderRows.find(r => Number(r.rowNumber) === Number(rowNumber));
@@ -931,7 +902,11 @@ function confirmDelete() {
       showToast('Berhasil', 'Order dihapus.', 'success');
       closeConfirmModal(); loadOrdersPage();
     })
-    .catch(function (err) { console.error(err); showToast('Gagal', err.message, 'error'); })
+    .catch(function (err) { 
+      errorEl.textContent = err.message;
+      errorEl.style.display = 'block';
+      showToast('Gagal', err.message, 'error'); 
+    })
     .finally(function () { btn.disabled = false; btn.innerHTML = originalHTML; });
 }
 
