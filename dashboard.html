@@ -189,7 +189,7 @@ tbody tr:hover{background:#f8fafc}
   /* Sembunyikan Desktop Sidebar & Header */
   .sidebar { display: none; }
   .header { display: none; }
-  .main-content { margin-left: 0; padding-bottom: 90px; }
+  .main-content { margin-left: 0; padding-bottom: 100px; }
   .content { padding: 0; }
 
   /* Tampilkan Mobile UI */
@@ -241,23 +241,36 @@ tbody tr:hover{background:#f8fafc}
   .recent-info p { font-size: 12px; color: var(--text-muted); }
   .recent-price { font-size: 14px; font-weight: 800; color: var(--teal); }
 
-  /* Bottom Nav Floating */
-  .bottom-nav {
-    display: flex; position: fixed; bottom: 20px; left: 20px; right: 20px;
-    background: white; border-radius: 30px; padding: 10px 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.1); justify-content: space-between; z-index: 1000;
+  /* 🔥 BOTTOM NAVIGATION BAR (Gaya Referensi) */
+  .bottom-nav-container {
+    display: block; position: fixed; bottom: 20px; left: 20px; right: 20px; z-index: 1000;
   }
-  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--text-muted); text-decoration: none; font-size: 10px; font-weight: 500; padding: 8px 12px; border-radius: 20px; transition: 0.2s; }
+  .bottom-nav {
+    display: flex; background: white; border-radius: 30px; padding: 8px 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.1); justify-content: space-between; align-items: center;
+  }
+  .nav-item { 
+    display: flex; align-items: center; gap: 8px; color: #94a3b8; 
+    text-decoration: none; font-size: 14px; font-weight: 600; 
+    padding: 10px 16px; border-radius: 20px; transition: all 0.3s ease;
+  }
   .nav-item i { font-size: 18px; }
+  .nav-item span { display: none; } /* Teks disembunyikan default */
+  
+  /* Menu aktif: Ikon berwarna putih, background teal, teks muncul */
   .nav-item.active { background: var(--teal); color: white; }
-  .nav-item.active span { color: white; }
-  
-  /* Sembunyikan semua page-content untuk mobile (karena cuma nampilin UI dummy) */
+  .nav-item.active span { display: block; }
+
+  /* Sembunyikan page-content default (untuk home) */
   .page-content { display: none !important; }
+  #page-dashboard { display: none !important; }
   
-  /* Tapi kalau masuk menu Order, kita tampilkan versi tabel mobile */
-  #page-orders.mobile-show { display: block !important; padding: 20px; background: white; margin: 20px; border-radius: 16px; }
+  /* Tampilkan page-content lain kalau lagi aktif */
+  .page-content.mobile-show { display: block !important; padding: 20px; background: white; margin: 20px; border-radius: 16px; }
 }
+
+/* Utility untuk desktop */
+.bottom-nav-container { display: none; }
 </style>
 </head>
 <body>
@@ -507,21 +520,26 @@ tbody tr:hover{background:#f8fafc}
   </div>
 </main>
 
-<!-- 🔥 BOTTOM NAVIGATION (Tampil hanya di HP) -->
-<nav class="bottom-nav">
-  <a href="#" class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard'); return false;">
-    <i class="fas fa-home"></i><span>Home</span>
-  </a>
-  <a href="#" class="nav-item" data-page="orders" onclick="navigateTo('orders'); return false;">
-    <i class="fas fa-calendar-alt"></i><span>Order</span>
-  </a>
-  <a href="#" class="nav-item" onclick="showToast('Info', 'Segera hadir', 'info'); return false;">
-    <i class="fas fa-comment-dots"></i><span>Chat</span>
-  </a>
-  <a href="#" class="nav-item" onclick="showToast('Info', 'Segera hadir', 'info'); return false;">
-    <i class="fas fa-user"></i><span>Profil</span>
-  </a>
-</nav>
+<!-- 🔥 BOTTOM NAVIGATION (Tampil hanya di HP) - Sesuai Gambar -->
+<div class="bottom-nav-container">
+  <nav class="bottom-nav">
+    <a href="#" class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard'); return false;">
+      <i class="fas fa-home"></i><span>Home</span>
+    </a>
+    <a href="#" class="nav-item" data-page="orders" onclick="navigateTo('orders'); return false;">
+      <i class="fas fa-calendar-alt"></i><span>Order</span>
+    </a>
+    <a href="#" class="nav-item" onclick="showToast('Info', 'Menu Rekrutmen segera hadir', 'info'); return false;">
+      <i class="fas fa-comment-dots"></i><span>Rekrutmen</span>
+    </a>
+    <a href="#" class="nav-item" onclick="showToast('Info', 'Menu Agent segera hadir', 'info'); return false;">
+      <i class="fas fa-user"></i><span>Agent</span>
+    </a>
+    <a href="#" class="nav-item" onclick="showToast('Info', 'Menu Pengaturan segera hadir', 'info'); return false;">
+      <i class="fas fa-cog"></i><span>Setelan</span>
+    </a>
+  </nav>
+</div>
 
 <!-- MODAL FORM ORDER (EDIT BIAYA & AGENT) -->
 <div class="modal-overlay" id="orderModalOverlay">
@@ -1062,35 +1080,54 @@ function confirmDelete() {
    NAVIGATION & AUTH
 ========================================================= */
 function navigateTo(page) {
-  // Untuk Desktop
+  // Untuk Desktop Sidebar
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-  const active = document.querySelector(`.sidebar-link[data-page="${page}"]`); if (active) active.classList.add('active');
+  const activeSidebar = document.querySelector(`.sidebar-link[data-page="${page}"]`); if (activeSidebar) activeSidebar.classList.add('active');
   
   // Untuk Mobile Bottom Nav
   document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
   const activeMobile = document.querySelector(`.nav-item[data-page="${page}"]`); if (activeMobile) activeMobile.classList.add('active');
 
+  // Sembunyikan semua halaman
   document.querySelectorAll('.page-content').forEach(el => {
     el.style.display = 'none';
     el.classList.remove('mobile-show');
   });
+
+  // Sembunyikan UI Home Mobile (default)
+  const mobileHomeUI = document.querySelectorAll('.mobile-header, .mobile-search, .mobile-banner, .mobile-categories, .mobile-recent');
   
-  const target = document.getElementById('page-' + page); 
-  if (target) {
+  if (page === 'dashboard') {
     if (window.innerWidth <= 768) {
-      // Khusus mobile, kalau bukan home, kita tampilkan container khusus mobile
-      if (page === 'dashboard') {
-        // Tampilan home mobile udah ada di HTML (statis), jadi page-content disembunyikan
-        document.getElementById('page-dashboard').style.display = 'none';
-      } else {
-        document.getElementById('page-' + page).style.display = 'block';
-        document.getElementById('page-' + page).classList.add('mobile-show');
-      }
+      // Tampilkan UI Home Mobile
+      mobileHomeUI.forEach(el => el.style.display = el.classList.contains('mobile-header') || el.classList.contains('mobile-search') || el.classList.contains('mobile-banner') || el.classList.contains('mobile-categories') || el.classList.contains('mobile-recent') ? (el.classList.contains('mobile-header') || el.classList.contains('mobile-search') || el.classList.contains('mobile-banner') || el.classList.contains('mobile-categories') || el.classList.contains('mobile-recent') ? (el.style.display = el.classList.contains('mobile-banner') || el.classList.contains('mobile-categories') || el.classList.contains('mobile-recent') ? 'flex' : (el.classList.contains('mobile-search') ? 'flex' : 'block')) : 'block') : 'block');
+      // Fix CSS display block
+      document.querySelector('.mobile-header').style.display = 'block';
+      document.querySelector('.mobile-search').style.display = 'flex';
+      document.querySelector('.mobile-banner').style.display = 'flex';
+      document.querySelector('.mobile-categories').style.display = 'block';
+      document.querySelector('.mobile-recent').style.display = 'block';
     } else {
-      target.style.display = 'block';
+      // Desktop
+      document.getElementById('page-dashboard').style.display = 'block';
+      mobileHomeUI.forEach(el => el.style.display = 'none');
+    }
+  } else {
+    // Kalau bukan dashboard, sembunyikan UI Home Mobile
+    mobileHomeUI.forEach(el => el.style.display = 'none');
+    
+    const target = document.getElementById('page-' + page);
+    if (target) {
+      if (window.innerWidth <= 768) {
+        target.style.display = 'block';
+        target.classList.add('mobile-show');
+      } else {
+        target.style.display = 'block';
+      }
     }
   }
 
+  // Ganti judul di header desktop
   const titles = { 
     dashboard: '<i class="fas fa-th-large"></i> Dashboard', 
     orders: '<i class="fas fa-shopping-bag"></i> Order',
@@ -1098,7 +1135,6 @@ function navigateTo(page) {
     recruitment: '<i class="fas fa-user-plus"></i> Rekrutmen',
     settings: '<i class="fas fa-gear"></i> Pengaturan'
   };
-  
   document.getElementById('pageTitle').innerHTML = titles[page] || page;
   
   if (page === 'orders') loadOrdersPage();
