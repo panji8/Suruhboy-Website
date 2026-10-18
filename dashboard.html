@@ -2,8 +2,12 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Dashboard — SuruhBoy HQ</title>
+
+<!-- 🔥 FAVICON -->
+<link rel="icon" type="image/png" href="favicon.png">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -20,17 +24,17 @@
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh}
 button,input,select,textarea{font-family:inherit}
 
-/* SIDEBAR */
+/* SIDEBAR (Desktop) */
 .sidebar{width:var(--sidebar-width);height:100vh;position:fixed;top:0;left:0;background:linear-gradient(180deg,#1e1b4b 0%,#0f172a 100%);color:white;z-index:1000;display:flex;flex-direction:column;overflow-y:auto}
 .sidebar-logo{padding:20px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer}
-.logo-icon{width:40px;height:40px;border-radius:12px;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:20px}
+.logo-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px; overflow: hidden;}
 .logo-text{font-weight:700;font-size:18px}.logo-text span{color:#a5b4fc}
-.sidebar-nav{flex:1;padding:16px 12px}
+.sidebar-nav{flex:1;padding:16px 12px; display: flex; flex-direction: column;}
 .sidebar-section{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.35);padding:16px 12px 8px;font-weight:600}
 .sidebar-link{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:8px;color:rgba(255,255,255,.65);font-size:14px;font-weight:500;cursor:pointer;border:none;background:none;width:100%;text-align:left;margin-bottom:2px}
 .sidebar-link:hover{background:rgba(255,255,255,.08);color:white}
 .sidebar-link.active{background:var(--primary);color:white;font-weight:600}
-.sidebar-link.admin-link{border:1px dashed rgba(255,255,255,.2)}
+.sidebar-link.disabled{opacity:0.4; cursor:not-allowed;}
 .sidebar-link i{width:20px;text-align:center}
 .badge{margin-left:auto;background:var(--danger);color:white;font-size:10px;padding:3px 8px;border-radius:20px}
 .sidebar-footer{padding:16px 12px;border-top:1px solid rgba(255,255,255,.08)}
@@ -38,7 +42,7 @@ button,input,select,textarea{font-family:inherit}
 .avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700}
 
 /* MAIN */
-.main-content{margin-left:var(--sidebar-width);min-height:100vh}
+.main-content{margin-left:var(--sidebar-width);min-height:100vh; padding-bottom: 20px;}
 .header{height:var(--header-height);background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:100}
 .page-title{font-size:18px;font-weight:700}
 .content{padding:24px}
@@ -161,40 +165,103 @@ tbody tr:hover{background:#f8fafc}
 .toast.success{border-left-color:var(--success)}.toast.error{border-left-color:var(--danger)}
 .placeholder-card{background:white;border:1px solid var(--border);border-radius:var(--radius-lg);padding:40px;text-align:center;color:var(--text-secondary)}
 
-/* PASSWORD */
-.password-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:10000;align-items:center;justify-content:center}
-.password-overlay.active{display:flex}
-.password-modal{background:white;width:90%;max-width:400px;border-radius:14px;padding:30px;text-align:center}
-.password-modal input{width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;margin:15px 0 8px;text-align:center}
-.password-modal button{width:100%;padding:11px;border:none;border-radius:8px;cursor:pointer;margin-top:7px}
-.password-submit{background:var(--danger);color:white}.password-cancel{background:transparent}
+/* LAYAR KUNCI GLOBAL */
+#lockScreen {
+  position: fixed; inset: 0; background: var(--bg); z-index: 99999;
+  display: flex; align-items: center; justify-content: center;
+}
+.lock-box {
+  background: white; border-radius: 14px; padding: 40px; width: 90%; max-width: 400px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.15); text-align: center;
+}
 
-@media(max-width:1000px){.stats-grid{grid-template-columns:repeat(2,1fr)}.grid-2col,.analytics-grid{grid-template-columns:1fr}}
-@media(max-width:700px){.sidebar{width:72px}.logo-text,.sidebar-section,.sidebar-link span,.sidebar-user .user-info{display:none}.sidebar-link{justify-content:center}.main-content{margin-left:72px}.stats-grid{grid-template-columns:1fr}.dashboard-toolbar{align-items:flex-start;flex-direction:column}.form-grid{grid-template-columns:1fr}.table-toolbar{flex-direction:column;align-items:stretch}.search-box{max-width:none}}
+/* 🔥 RESPONSIVE MOBILE (BOTTOM BAR) */
+@media(max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    top: auto;
+    bottom: 0;
+    flex-direction: row;
+    border-top: 1px solid rgba(255,255,255,.1);
+    padding: 0;
+    z-index: 1000;
+  }
+  .sidebar-logo, .sidebar-footer { display: none; }
+  .sidebar-nav {
+    flex-direction: row;
+    width: 100%;
+    padding: 0;
+    justify-content: space-around;
+  }
+  .sidebar-section { display: none; }
+  .sidebar-link {
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px 0;
+    margin: 0;
+    width: auto;
+    flex: 1;
+    border-radius: 0;
+  }
+  .sidebar-link i { font-size: 20px; margin-bottom: 4px; width: auto; }
+  .sidebar-link span { font-size: 10px; }
+  .badge { display: none; }
+  
+  .main-content {
+    margin-left: 0;
+    padding-bottom: 70px;
+  }
+  .content { padding: 16px; }
+  .header { padding: 0 16px; }
+
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stat-card { padding: 15px; }
+  .stat-info h3 { font-size: 18px; }
+  .grid-2col, .analytics-grid { grid-template-columns: 1fr; }
+  .dashboard-toolbar { flex-direction: column; align-items: flex-start; }
+  .filter-area { width: 100%; }
+  .filter-select { flex: 1; }
+  .form-grid { grid-template-columns: 1fr; }
+  .table-toolbar { flex-direction: column; align-items: stretch; }
+  .search-box { max-width: none; }
+}
 </style>
 </head>
 <body>
 
+<!-- 🔥 1. LAYAR KUNCI GLOBAL (AWAL BUKA) -->
+<div id="lockScreen">
+  <div class="lock-box">
+    <!-- GANTI favicon.png DENGAN NAMA FILE LOGO KAMU -->
+    <div style="margin-bottom:16px;">
+      <img src="favicon.png" alt="Logo" style="width:80px;height:80px;object-fit:contain;">
+    </div>
+    <h2 style="font-size:20px;margin-bottom:8px;">Akses Terbatas</h2>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;">Masukkan sandi untuk membuka Dashboard.</p>
+    <input type="password" id="globalPasswordInput" placeholder="Sandi..." style="width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px;text-align:center;font-size:15px;" onkeydown="if(event.key==='Enter') verifyGlobalPassword()">
+    <div id="globalPasswordError" style="color:var(--danger);font-size:12px;margin-bottom:10px;display:none;">Sandi salah, coba lagi.</div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px;" onclick="verifyGlobalPassword()">Buka Akses</button>
+  </div>
+</div>
+
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo" onclick="navigateTo('dashboard')">
-    <div class="logo-icon">🛵</div>
+    <!-- GANTI favicon.png DENGAN NAMA FILE LOGO KAMU -->
+    <div class="logo-icon" style="background:none;">
+      <img src="favicon.png" alt="Logo" style="width:100%;height:100%;border-radius:12px;object-fit:cover;">
+    </div>
     <div class="logo-text">SuruhBoy<span>HQ</span></div>
   </div>
   <nav class="sidebar-nav">
-    <div class="sidebar-section">Menu Utama</div>
+    <!-- 🔥 3. SIDEBAR CUMA 5 MENU -->
     <button class="sidebar-link active" data-page="dashboard" onclick="navigateTo('dashboard')"><i class="fas fa-th-large"></i><span>Dashboard</span></button>
     <button class="sidebar-link" data-page="orders" onclick="navigateTo('orders')"><i class="fas fa-shopping-bag"></i><span>Order</span><span class="badge" id="orderBadge">0</span></button>
-    <button class="sidebar-link" data-page="agents" onclick="navigateTo('agents')"><i class="fas fa-user-tie"></i><span>Agent</span></button>
-    <button class="sidebar-link" data-page="recruitment" onclick="navigateTo('recruitment')"><i class="fas fa-user-plus"></i><span>Rekrutmen</span></button>
-    <button class="sidebar-link" data-page="customers" onclick="navigateTo('customers')"><i class="fas fa-users"></i><span>Pelanggan</span></button>
-    <div class="sidebar-section">Bisnis</div>
-    <button class="sidebar-link" data-page="finance" onclick="navigateTo('finance')"><i class="fas fa-wallet"></i><span>Keuangan</span></button>
-    <div class="sidebar-section">Sistem</div>
-    <button class="sidebar-link" data-page="reports" onclick="navigateTo('reports')"><i class="fas fa-chart-bar"></i><span>Laporan</span></button>
-    <button class="sidebar-link" data-page="settings" onclick="navigateTo('settings')"><i class="fas fa-gear"></i><span>Pengaturan</span></button>
-    <div class="sidebar-section">Admin</div>
-    <button class="sidebar-link admin-link" data-page="admin" onclick="requestAdminAccess()"><i class="fas fa-shield-halved"></i><span>ADMIN 🔒</span></button>
+    
+    <button class="sidebar-link" onclick="showToast('Info', 'Menu Agent sedang dikembangkan.', 'info')"><i class="fas fa-user-tie"></i><span>Agent</span></button>
+    <button class="sidebar-link" onclick="showToast('Info', 'Menu Rekrutmen sedang dikembangkan.', 'info')"><i class="fas fa-user-plus"></i><span>Rekrutmen</span></button>
+    <button class="sidebar-link" onclick="showToast('Info', 'Menu Pengaturan sedang dikembangkan.', 'info')"><i class="fas fa-gear"></i><span>Pengaturan</span></button>
   </nav>
   <div class="sidebar-footer">
     <div class="sidebar-user">
@@ -287,7 +354,6 @@ tbody tr:hover{background:#f8fafc}
       <div class="dashboard-toolbar">
         <div><div class="dashboard-description">Daftar order — 10 per halaman, terbaru di atas</div></div>
         <div class="filter-area">
-          <!-- 🔥 TOMBOL ADD DI-GREY OUT -->
           <button class="btn btn-success btn-sm" disabled title="Fitur Tambah dinonaktifkan"><i class="fas fa-plus"></i> Order Baru</button>
           <button class="btn btn-primary btn-sm" onclick="reloadOrdersPage()"><i class="fas fa-sync"></i> Refresh</button>
         </div>
@@ -331,27 +397,11 @@ tbody tr:hover{background:#f8fafc}
     </div>
 
     <!-- PLACEHOLDERS -->
-    <div id="page-agents" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Agent</h3></div></div>
-    <div id="page-recruitment" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Rekrutmen</h3></div></div>
-    <div id="page-customers" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Pelanggan</h3></div></div>
-    <div id="page-finance" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Keuangan</h3></div></div>
-    <div id="page-reports" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Laporan</h3></div></div>
-    <div id="page-settings" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Pengaturan</h3></div></div>
+    <div id="page-agents" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Agent</h3><p>Modul Agent segera hadir.</p></div></div>
+    <div id="page-recruitment" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Rekrutmen</h3><p>Modul Rekrutmen segera hadir.</p></div></div>
+    <div id="page-settings" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Pengaturan</h3><p>Modul Pengaturan segera hadir.</p></div></div>
   </div>
 </main>
-
-<!-- MODAL PASSWORD -->
-<div class="password-overlay" id="passwordOverlay">
-  <div class="password-modal">
-    <div style="font-size:35px;color:var(--danger);margin-bottom:10px;">🔒</div>
-    <h3>Akses Terbatas</h3>
-    <p style="color:var(--text-secondary);font-size:12px;margin-top:5px;">Masukkan password untuk membuka ADMIN</p>
-    <input type="password" id="adminPasswordInput" placeholder="Password" onkeydown="if(event.key==='Enter') verifyPassword()">
-    <div id="passwordError" style="color:var(--danger);font-size:11px;display:none;">Password salah.</div>
-    <button class="password-submit" onclick="verifyPassword()">🔓 Buka ADMIN</button>
-    <button class="password-cancel" onclick="cancelAdminAccess()">Batal</button>
-  </div>
-</div>
 
 <!-- MODAL FORM ORDER (EDIT BIAYA & AGENT) -->
 <div class="modal-overlay" id="orderModalOverlay">
@@ -364,13 +414,10 @@ tbody tr:hover{background:#f8fafc}
       <div class="form-error" id="orderFormError"></div>
       
       <div style="display:flex; flex-direction:column; gap:16px;">
-        <!-- Hanya Biaya -->
         <div class="form-field">
           <label>Biaya <span class="req">*</span></label>
           <input type="text" id="fieldNominal" placeholder="cth: 30rb atau Rp 30.000">
         </div>
-        
-        <!-- Hanya Agent -->
         <div class="form-field">
           <label>Agent <span class="req">*</span></label>
           <input type="text" id="fieldAgent" placeholder="cth: Andi">
@@ -384,12 +431,19 @@ tbody tr:hover{background:#f8fafc}
   </div>
 </div>
 
-<!-- MODAL CONFIRM DELETE -->
+<!-- 🔥 2. MODAL PASSWORD HAPUS -->
 <div class="modal-overlay" id="confirmModalOverlay">
   <div class="modal confirm">
     <div class="modal-body" style="padding:30px 24px;">
       <div class="confirm-icon"><i class="fas fa-trash"></i></div>
-      <div class="confirm-text"><strong>Hapus order ini?</strong><span id="confirmDetail">—</span>Tindakan ini tidak bisa dibatalkan.</div>
+      <div class="confirm-text">
+        <strong>Hapus order ini?</strong>
+        <span id="confirmDetail">—</span>
+      </div>
+      <div style="margin-top:16px;">
+        <input type="password" id="deletePasswordInput" placeholder="Masukkan Sandi Hapus..." style="width:100%;padding:11px;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:14px;" onkeydown="if(event.key==='Enter') confirmDelete()">
+        <div id="deletePasswordError" style="color:var(--danger);font-size:12px;margin-top:8px;display:none;">Sandi salah!</div>
+      </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost btn-sm" onclick="closeConfirmModal()">Batal</button>
@@ -407,8 +461,11 @@ tbody tr:hover{background:#f8fafc}
 const API_URL = 'https://script.google.com/macros/s/AKfycbxAmTd3SWa17zWjMbCS2CXJ0BhsAFp0KZq4eNhYZRSt8a5gCaCY4JhpIEd2IRObkU9Q/exec';
 
 /* =========================================================
-   GLOBAL STATE
+   GLOBAL STATE & PASSWORD
 ========================================================= */
+const PASSWORD_GLOBAL = '123456'; // Sandi Buka Dashboard
+const PASSWORD_HAPUS = '123456';  // Sandi Hapus Order
+
 let isAdminAuthenticated = false;
 let rawData = [];
 let filteredData = [];
@@ -419,6 +476,21 @@ let orderPage = 1, orderPageSize = 10, orderSearchQ = '', orderSortBy = 'newest'
 let orderTotal = 0, orderTotalPages = 1, orderRows = [];
 let orderMode = 'create', orderEditingRow = null, orderDeleteTarget = null;
 let _searchTimer = null;
+
+/* =========================================================
+   SISTEM PASSWORD
+========================================================= */
+function verifyGlobalPassword() {
+  const input = document.getElementById('globalPasswordInput').value;
+  const errorEl = document.getElementById('globalPasswordError');
+  
+  if (input === PASSWORD_GLOBAL) {
+    document.getElementById('lockScreen').style.display = 'none';
+    loadDashboard(); // Load data setelah terbuka
+  } else {
+    errorEl.style.display = 'block';
+  }
+}
 
 /* =========================================================
    API TRANSPORT
@@ -638,7 +710,7 @@ function renderWeeklyTable() {
 }
 
 /* =========================================================
-   ORDER MODULE (SERVER-SIDE PAGINATION)
+   ORDER MODULE
 ========================================================= */
 function loadOrdersPage() {
   const tbody = document.getElementById('ordersTableBody');
@@ -690,7 +762,7 @@ function renderOrdersTable() {
 
   tbody.innerHTML = orderRows.map(function (item, i) {
     const raw = item.raw;
-    const biaya = parseNominalClient(raw[1]);
+    const biaya = String(raw[1] || ''); 
     const tanggal = formatDateForClient(raw[2]);
     const namaCS = String(raw[3] || '');
     const nomorHP = String(raw[4] || '');
@@ -708,7 +780,7 @@ function renderOrdersTable() {
         <td>${escapeHtml(nomorHP || '—')}</td>
         <td>${escapeHtml(agent || '—')}</td>
         <td>${escapeHtml(truncate(deskripsi || '—', 30))}</td>
-        <td class="money">${formatRupiah(biaya)}</td>
+        <td class="money">${escapeHtml(biaya || '—')}</td>
         <td>${escapeHtml(periodeMinggu || '—')}</td>
         <td>${escapeHtml(kodeMinggu || '—')}</td>
         <td>${escapeHtml(orderId || '—')}</td>
@@ -765,7 +837,6 @@ function openOrderModal(mode, rowNumber) {
   titleEl.textContent = 'Edit Order #' + rowNumber;
   const raw = item.raw;
 
-  // 🔥 Isi Form Cuma Biaya & Agent
   document.getElementById('fieldNominal').value = raw[1] || ''; // Kolom B (Biaya)
   document.getElementById('fieldAgent').value = raw[8] || '';   // Kolom I (Agent)
 
@@ -808,9 +879,13 @@ function submitOrderForm() {
     .finally(function () { submitBtn.disabled = false; submitBtn.innerHTML = originalHTML; });
 }
 
+/* =========================================================
+   HAPUS DENGAN PASSWORD
+========================================================= */
 function askDeleteOrder(rowNumber) {
   const item = orderRows.find(r => Number(r.rowNumber) === Number(rowNumber));
   orderDeleteTarget = rowNumber;
+  
   const detail = document.getElementById('confirmDetail');
   if (detail) {
     if (item) {
@@ -819,13 +894,32 @@ function askDeleteOrder(rowNumber) {
       detail.textContent = '#' + rowNumber + ' — ' + namaCS + (orderId ? ' (' + orderId + ')' : '');
     } else { detail.textContent = '#' + rowNumber; }
   }
+  
+  document.getElementById('deletePasswordInput').value = '';
+  document.getElementById('deletePasswordError').style.display = 'none';
+  
   document.getElementById('confirmModalOverlay').classList.add('active');
+  document.getElementById('deletePasswordInput').focus();
 }
 
-function closeConfirmModal() { document.getElementById('confirmModalOverlay').classList.remove('active'); orderDeleteTarget = null; }
+function closeConfirmModal() { 
+  document.getElementById('confirmModalOverlay').classList.remove('active'); 
+  orderDeleteTarget = null; 
+}
 
 function confirmDelete() {
   if (!orderDeleteTarget) return;
+
+  const inputPass = document.getElementById('deletePasswordInput').value;
+  const errorEl = document.getElementById('deletePasswordError');
+
+  if (inputPass !== PASSWORD_HAPUS) {
+    errorEl.style.display = 'block';
+    return; 
+  }
+
+  errorEl.style.display = 'none';
+
   const btn = document.getElementById('confirmDeleteBtn');
   const originalHTML = btn.innerHTML;
   btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
@@ -849,33 +943,19 @@ function navigateTo(page) {
   const active = document.querySelector(`.sidebar-link[data-page="${page}"]`); if (active) active.classList.add('active');
   document.querySelectorAll('.page-content').forEach(el => el.style.display = 'none');
   const target = document.getElementById('page-' + page); if (target) target.style.display = 'block';
-  const titles = { dashboard: '<i class="fas fa-th-large"></i> Dashboard', orders: '<i class="fas fa-shopping-bag"></i> Order', agents: '<i class="fas fa-user-tie"></i> Agent', recruitment: '<i class="fas fa-user-plus"></i> Rekrutmen', customers: '<i class="fas fa-users"></i> Pelanggan', finance: '<i class="fas fa-wallet"></i> Keuangan', reports: '<i class="fas fa-chart-bar"></i> Laporan', settings: '<i class="fas fa-gear"></i> Pengaturan', admin: '<i class="fas fa-shield-halved"></i> ADMIN' };
+  
+  const titles = { 
+    dashboard: '<i class="fas fa-th-large"></i> Dashboard', 
+    orders: '<i class="fas fa-shopping-bag"></i> Order',
+    agents: '<i class="fas fa-user-tie"></i> Agent',
+    recruitment: '<i class="fas fa-user-plus"></i> Rekrutmen',
+    settings: '<i class="fas fa-gear"></i> Pengaturan'
+  };
+  
   document.getElementById('pageTitle').innerHTML = titles[page] || page;
   
   if (page === 'orders') loadOrdersPage();
   if (page === 'dashboard') loadDashboard();
-}
-
-function requestAdminAccess() {
-  if (isAdminAuthenticated) { navigateTo('admin'); return; }
-  document.getElementById('passwordOverlay').classList.add('active'); document.getElementById('adminPasswordInput').focus();
-}
-
-function verifyPassword() {
-  const input = document.getElementById('adminPasswordInput'), errorEl = document.getElementById('passwordError');
-  const pw = input.value; errorEl.style.display = 'none';
-  apiGet('verifyAdmin', { pw: pw })
-    .then(function (res) {
-      if (res && res.ok) {
-        isAdminAuthenticated = true; document.getElementById('passwordOverlay').classList.remove('active'); input.value = '';
-        showToast('Akses Diterima', 'ADMIN terbuka.', 'success'); navigateTo('admin');
-      } else { errorEl.style.display = 'block'; }
-    })
-    .catch(function (err) { console.error(err); showToast('Gagal', 'Verifikasi gagal: ' + err.message, 'error'); });
-}
-
-function cancelAdminAccess() {
-  document.getElementById('passwordOverlay').classList.remove('active'); document.getElementById('adminPasswordInput').value = ''; document.getElementById('passwordError').style.display = 'none';
 }
 
 /* =========================================================
@@ -895,7 +975,6 @@ document.addEventListener('click', function (e) {
 document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') { closeOrderModal(); closeConfirmModal(); }
 });
-document.addEventListener('DOMContentLoaded', function () { loadDashboard(); });
 </script>
 </body>
 </html>
