@@ -19,7 +19,6 @@
   --primary:#4f46e5;--primary-dark:#3730a3;--primary-bg:#eef2ff;
   --success:#10b981;--success-bg:#ecfdf5;--warning:#f59e0b;--warning-bg:#fffbeb;
   --danger:#ef4444;--danger-bg:#fef2f2;--info:#3b82f6;--info-bg:#eff6ff;
-  --teal:#0f766e; --teal-light:#ccfbf1;
   --sidebar-width:260px;--header-height:64px;--bg:#f1f5f9;--card-bg:#ffffff;
   --text-primary:#0f172a;--text-secondary:#475569;--text-muted:#94a3b8;
   --border:#e2e8f0;--shadow:0 1px 3px rgba(0,0,0,.08);--radius:10px;--radius-lg:14px;
@@ -28,9 +27,7 @@
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh}
 button,input,select,textarea{font-family:inherit}
 
-/* =========================================================
-   DESKTOP STYLE (SIDEBAR & MAIN)
-========================================================= */
+/* SIDEBAR */
 .sidebar{width:var(--sidebar-width);height:100vh;position:fixed;top:0;left:0;background:linear-gradient(180deg,#1e1b4b 0%,#0f172a 100%);color:white;z-index:1000;display:flex;flex-direction:column;overflow-y:auto}
 .sidebar-logo{padding:20px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer}
 .logo-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px; overflow: hidden;}
@@ -47,6 +44,7 @@ button,input,select,textarea{font-family:inherit}
 .sidebar-user{display:flex;align-items:center;gap:10px;padding:8px}
 .avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700}
 
+/* MAIN */
 .main-content{margin-left:var(--sidebar-width);min-height:100vh; padding-bottom: 20px;}
 .header{height:var(--header-height);background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:100}
 .page-title{font-size:18px;font-weight:700}
@@ -180,102 +178,35 @@ tbody tr:hover{background:#f8fafc}
   box-shadow: 0 20px 50px rgba(0,0,0,.15); text-align: center;
 }
 
-/* 🔥 UI MOBILE BARU (Hanya berlaku di bawah 768px) */
-.mobile-header, .mobile-search, .mobile-banner, .mobile-categories, .mobile-recent { display: none; }
-
+/* 🔥 RESPONSIVE MOBILE (BOTTOM BAR) */
 @media(max-width: 768px) {
-  body { background: #f8fafc; }
-  
-  /* Sembunyikan Desktop Sidebar & Header */
-  .sidebar { display: none; }
-  .header { display: none; }
-  .main-content { margin-left: 0; padding-bottom: 100px; }
-  .content { padding: 0; }
-
-  /* Tampilkan Mobile UI */
-  .mobile-header {
-    display: block; background: var(--teal); color: white;
-    padding: 50px 20px 20px; border-radius: 0 0 24px 24px;
-    position: relative;
-  }
-  .mobile-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .mobile-location { font-size: 12px; opacity: 0.8; }
-  .mobile-location strong { display: block; font-size: 14px; opacity: 1; }
-  .mobile-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid white; }
-  
-  .mobile-search {
-    display: flex; align-items: center; gap: 10px; background: white;
-    border-radius: 30px; padding: 12px 20px; color: var(--text-muted);
-    font-size: 14px; margin-top: -20px; position: relative; z-index: 10;
-    box-shadow: 0 4px 10px rgba(0,0,0,.05); margin-left: 20px; margin-right: 20px;
-  }
-
-  .mobile-banner {
-    display: flex; flex-direction: column; background: var(--teal-light);
-    margin: 20px; border-radius: 20px; padding: 24px; position: relative;
-    overflow: hidden;
-  }
-  .mobile-banner h3 { font-size: 18px; font-weight: 800; color: var(--teal); line-height: 1.2; margin-bottom: 8px; width: 60%; z-index: 2; }
-  .mobile-banner p { font-size: 11px; color: var(--teal); opacity: 0.8; width: 60%; margin-bottom: 16px; z-index: 2; }
-  .mobile-banner .btn { align-self: flex-start; padding: 8px 16px; font-size: 12px; background: var(--teal); color: white; border-radius: 20px; z-index: 2; }
-  .mobile-banner img { position: absolute; right: -10px; bottom: -10px; width: 140px; opacity: 0.9; z-index: 1; }
-
-  .mobile-categories { display: block; padding: 0 20px; margin-bottom: 20px; }
-  .mobile-section-title { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-  .mobile-section-title h4 { font-size: 16px; font-weight: 700; }
-  .mobile-section-title a { font-size: 12px; color: var(--teal); font-weight: 600; text-decoration: none; }
-  
-  .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .category-item {
-    display: flex; align-items: center; gap: 12px; background: white;
-    padding: 16px; border-radius: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.04);
-    border: 1px solid #f1f5f9;
-  }
-  .category-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--teal-light); color: var(--teal); display: flex; align-items: center; justify-content: center; font-size: 16px; }
-  .category-item span { font-size: 13px; font-weight: 600; }
-
-  /* Recent Orders */
-  .mobile-recent { display: block; padding: 0 20px; }
-  .recent-card { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.04); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-  .recent-info h5 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-  .recent-info p { font-size: 12px; color: var(--text-muted); }
-  .recent-price { font-size: 14px; font-weight: 800; color: var(--teal); }
-
-  /* 🔥 BOTTOM NAVIGATION BAR (Gaya Referensi) */
-  .bottom-nav-container {
-    display: block; position: fixed; bottom: 20px; left: 20px; right: 20px; z-index: 1000;
-  }
-  .bottom-nav {
-    display: flex; background: white; border-radius: 30px; padding: 8px 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,.1); justify-content: space-between; align-items: center;
-  }
-  .nav-item { 
-    display: flex; align-items: center; gap: 8px; color: #94a3b8; 
-    text-decoration: none; font-size: 14px; font-weight: 600; 
-    padding: 10px 16px; border-radius: 20px; transition: all 0.3s ease;
-  }
-  .nav-item i { font-size: 18px; }
-  .nav-item span { display: none; } /* Teks disembunyikan default */
-  
-  /* Menu aktif: Ikon berwarna putih, background teal, teks muncul */
-  .nav-item.active { background: var(--teal); color: white; }
-  .nav-item.active span { display: block; }
-
-  /* Sembunyikan page-content default (untuk home) */
-  .page-content { display: none !important; }
-  #page-dashboard { display: none !important; }
-  
-  /* Tampilkan page-content lain kalau lagi aktif */
-  .page-content.mobile-show { display: block !important; padding: 20px; background: white; margin: 20px; border-radius: 16px; }
+  .sidebar { width: 100%; height: auto; top: auto; bottom: 0; flex-direction: row; border-top: 1px solid rgba(255,255,255,.1); padding: 0; z-index: 1000; }
+  .sidebar-logo, .sidebar-footer { display: none; }
+  .sidebar-nav { flex-direction: row; width: 100%; padding: 0; justify-content: space-around; }
+  .sidebar-section { display: none; }
+  .sidebar-link { flex-direction: column; justify-content: center; padding: 10px 0; margin: 0; width: auto; flex: 1; border-radius: 0; }
+  .sidebar-link i { font-size: 20px; margin-bottom: 4px; width: auto; }
+  .sidebar-link span { font-size: 10px; }
+  .badge { display: none; }
+  .main-content { margin-left: 0; padding-bottom: 70px; }
+  .content { padding: 16px; }
+  .header { padding: 0 16px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .stat-card { padding: 15px; }
+  .stat-info h3 { font-size: 18px; }
+  .grid-2col, .analytics-grid { grid-template-columns: 1fr; }
+  .dashboard-toolbar { flex-direction: column; align-items: flex-start; }
+  .filter-area { width: 100%; }
+  .filter-select { flex: 1; }
+  .form-grid { grid-template-columns: 1fr; }
+  .table-toolbar { flex-direction: column; align-items: stretch; }
+  .search-box { max-width: none; }
 }
-
-/* Utility untuk desktop */
-.bottom-nav-container { display: none; }
 </style>
 </head>
 <body>
 
-<!-- LAYAR KUNCI -->
+<!-- LAYAR KUNCI GLOBAL -->
 <div id="lockScreen">
   <div class="lock-box">
     <div style="margin-bottom:16px;">
@@ -289,7 +220,7 @@ tbody tr:hover{background:#f8fafc}
   </div>
 </div>
 
-<!-- SIDEBAR (DESKTOP) -->
+<!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo" onclick="navigateTo('dashboard')">
     <div class="logo-icon" style="background:none;">
@@ -317,8 +248,6 @@ tbody tr:hover{background:#f8fafc}
 
 <!-- MAIN -->
 <main class="main-content">
-  
-  <!-- HEADER DESKTOP -->
   <header class="header">
     <div>
       <h1 class="page-title" id="pageTitle"><i class="fas fa-th-large"></i> Dashboard</h1>
@@ -326,80 +255,6 @@ tbody tr:hover{background:#f8fafc}
     <button class="btn btn-primary btn-sm" onclick="loadDashboard()"><i class="fas fa-sync"></i> Refresh</button>
   </header>
 
-  <!-- 🔥 MOBILE UI (Tampil hanya di HP) -->
-  <div class="mobile-header">
-    <div class="mobile-header-top">
-      <div class="mobile-location">
-        Your Location
-        <strong>SuruhBoy HQ <i class="fas fa-chevron-down" style="font-size:10px;"></i></strong>
-      </div>
-      <div>
-        <img src="https://ui-avatars.com/api/?name=Admin&background=0D8ABC&color=fff" class="mobile-avatar" alt="User">
-      </div>
-    </div>
-  </div>
-
-  <div class="mobile-search">
-    <i class="fas fa-search"></i>
-    <span>Search for a service...</span>
-  </div>
-
-  <div class="mobile-banner">
-    <h3>YOUR SOLUTION, ONE TAP AWAY!</h3>
-    <p>Seamless, Fast & Reliable Services at Your Fingertips</p>
-    <button class="btn" onclick="navigateTo('orders')">Explore</button>
-    <!-- Ilustrasi dummy -->
-    <img src="https://cdn-icons-png.flaticon.com/512/3063/3063822.png" alt="Banner">
-  </div>
-
-  <div class="mobile-categories">
-    <div class="mobile-section-title">
-      <h4>Service Categories</h4>
-      <a href="#">View all ></a>
-    </div>
-    <div class="category-grid">
-      <div class="category-item" onclick="navigateTo('orders')">
-        <div class="category-icon"><i class="fas fa-shopping-bag"></i></div>
-        <span>Order</span>
-      </div>
-      <div class="category-item" onclick="showToast('Info', 'Segera hadir', 'info')">
-        <div class="category-icon"><i class="fas fa-user-tie"></i></div>
-        <span>Agent</span>
-      </div>
-      <div class="category-item" onclick="showToast('Info', 'Segera hadir', 'info')">
-        <div class="category-icon"><i class="fas fa-user-plus"></i></div>
-        <span>Rekrutmen</span>
-      </div>
-      <div class="category-item" onclick="showToast('Info', 'Segera hadir', 'info')">
-        <div class="category-icon"><i class="fas fa-gear"></i></div>
-        <span>Pengaturan</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="mobile-recent">
-    <div class="mobile-section-title">
-      <h4>Recent Orders</h4>
-      <a href="#" onclick="navigateTo('orders')">View all ></a>
-    </div>
-    <!-- Nanti data ini diisi otomatis pakai JS, untuk sekarang dummy dulu -->
-    <div class="recent-card" onclick="navigateTo('orders')">
-      <div class="recent-info">
-        <h5>Order #SRB-001</h5>
-        <p>Nama CS • Belikan sparepart</p>
-      </div>
-      <div class="recent-price">Rp 30.000</div>
-    </div>
-    <div class="recent-card" onclick="navigateTo('orders')">
-      <div class="recent-info">
-        <h5>Order #SRB-002</h5>
-        <p>Nama CS • List Hara Chicken</p>
-      </div>
-      <div class="recent-price">Rp 13.000</div>
-    </div>
-  </div>
-
-  <!-- CONTENT DESKTOP (Tetap ada, tapi disembunyikan di mobile) -->
   <div class="content">
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page-content">
@@ -519,27 +374,6 @@ tbody tr:hover{background:#f8fafc}
     <div id="page-settings" class="page-content" style="display:none;"><div class="placeholder-card"><h3>Pengaturan</h3><p>Modul Pengaturan segera hadir.</p></div></div>
   </div>
 </main>
-
-<!-- 🔥 BOTTOM NAVIGATION (Tampil hanya di HP) - Sesuai Gambar -->
-<div class="bottom-nav-container">
-  <nav class="bottom-nav">
-    <a href="#" class="nav-item active" data-page="dashboard" onclick="navigateTo('dashboard'); return false;">
-      <i class="fas fa-home"></i><span>Home</span>
-    </a>
-    <a href="#" class="nav-item" data-page="orders" onclick="navigateTo('orders'); return false;">
-      <i class="fas fa-calendar-alt"></i><span>Order</span>
-    </a>
-    <a href="#" class="nav-item" onclick="showToast('Info', 'Menu Rekrutmen segera hadir', 'info'); return false;">
-      <i class="fas fa-comment-dots"></i><span>Rekrutmen</span>
-    </a>
-    <a href="#" class="nav-item" onclick="showToast('Info', 'Menu Agent segera hadir', 'info'); return false;">
-      <i class="fas fa-user"></i><span>Agent</span>
-    </a>
-    <a href="#" class="nav-item" onclick="showToast('Info', 'Menu Pengaturan segera hadir', 'info'); return false;">
-      <i class="fas fa-cog"></i><span>Setelan</span>
-    </a>
-  </nav>
-</div>
 
 <!-- MODAL FORM ORDER (EDIT BIAYA & AGENT) -->
 <div class="modal-overlay" id="orderModalOverlay">
@@ -1080,54 +914,11 @@ function confirmDelete() {
    NAVIGATION & AUTH
 ========================================================= */
 function navigateTo(page) {
-  // Untuk Desktop Sidebar
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
-  const activeSidebar = document.querySelector(`.sidebar-link[data-page="${page}"]`); if (activeSidebar) activeSidebar.classList.add('active');
+  const active = document.querySelector(`.sidebar-link[data-page="${page}"]`); if (active) active.classList.add('active');
+  document.querySelectorAll('.page-content').forEach(el => el.style.display = 'none');
+  const target = document.getElementById('page-' + page); if (target) target.style.display = 'block';
   
-  // Untuk Mobile Bottom Nav
-  document.querySelectorAll('.nav-item').forEach(l => l.classList.remove('active'));
-  const activeMobile = document.querySelector(`.nav-item[data-page="${page}"]`); if (activeMobile) activeMobile.classList.add('active');
-
-  // Sembunyikan semua halaman
-  document.querySelectorAll('.page-content').forEach(el => {
-    el.style.display = 'none';
-    el.classList.remove('mobile-show');
-  });
-
-  // Sembunyikan UI Home Mobile (default)
-  const mobileHomeUI = document.querySelectorAll('.mobile-header, .mobile-search, .mobile-banner, .mobile-categories, .mobile-recent');
-  
-  if (page === 'dashboard') {
-    if (window.innerWidth <= 768) {
-      // Tampilkan UI Home Mobile
-      mobileHomeUI.forEach(el => el.style.display = el.classList.contains('mobile-header') || el.classList.contains('mobile-search') || el.classList.contains('mobile-banner') || el.classList.contains('mobile-categories') || el.classList.contains('mobile-recent') ? (el.classList.contains('mobile-header') || el.classList.contains('mobile-search') || el.classList.contains('mobile-banner') || el.classList.contains('mobile-categories') || el.classList.contains('mobile-recent') ? (el.style.display = el.classList.contains('mobile-banner') || el.classList.contains('mobile-categories') || el.classList.contains('mobile-recent') ? 'flex' : (el.classList.contains('mobile-search') ? 'flex' : 'block')) : 'block') : 'block');
-      // Fix CSS display block
-      document.querySelector('.mobile-header').style.display = 'block';
-      document.querySelector('.mobile-search').style.display = 'flex';
-      document.querySelector('.mobile-banner').style.display = 'flex';
-      document.querySelector('.mobile-categories').style.display = 'block';
-      document.querySelector('.mobile-recent').style.display = 'block';
-    } else {
-      // Desktop
-      document.getElementById('page-dashboard').style.display = 'block';
-      mobileHomeUI.forEach(el => el.style.display = 'none');
-    }
-  } else {
-    // Kalau bukan dashboard, sembunyikan UI Home Mobile
-    mobileHomeUI.forEach(el => el.style.display = 'none');
-    
-    const target = document.getElementById('page-' + page);
-    if (target) {
-      if (window.innerWidth <= 768) {
-        target.style.display = 'block';
-        target.classList.add('mobile-show');
-      } else {
-        target.style.display = 'block';
-      }
-    }
-  }
-
-  // Ganti judul di header desktop
   const titles = { 
     dashboard: '<i class="fas fa-th-large"></i> Dashboard', 
     orders: '<i class="fas fa-shopping-bag"></i> Order',
@@ -1135,6 +926,7 @@ function navigateTo(page) {
     recruitment: '<i class="fas fa-user-plus"></i> Rekrutmen',
     settings: '<i class="fas fa-gear"></i> Pengaturan'
   };
+  
   document.getElementById('pageTitle').innerHTML = titles[page] || page;
   
   if (page === 'orders') loadOrdersPage();
