@@ -58,6 +58,23 @@ button,input,select,textarea{font-family:inherit}
 .filter-select{border:1px solid var(--border);background:white;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:600;outline:none}
 .filter-select:focus{border-color:var(--primary)}
 
+/* SEARCH BAR TAMBAHAN */
+.search-input {
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  background: white;
+  width: 100%;
+  max-width: 300px;
+  transition: 0.2s;
+}
+.search-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
 /* BUTTON */
 .btn{padding:8px 14px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
 .btn:disabled{opacity:.6;cursor:not-allowed}
@@ -440,7 +457,12 @@ tbody tr:hover{background:#f8fafc}
         </div>
 
         <!-- DAFTAR AGENT (TABEL) -->
-        <h3 style="font-size:16px; font-weight:700; margin-bottom:16px; margin-top:24px;"><i class="fas fa-address-book" style="color:var(--primary)"></i> Daftar Agent</h3>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; margin-top:24px;">
+          <h3 style="font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px; margin:0;">
+            <i class="fas fa-address-book" style="color:var(--primary)"></i> Daftar Agent
+          </h3>
+          <input type="text" id="agent-search" class="search-input" placeholder="Cari nama atau nomor HP..." oninput="renderAgents()">
+        </div>
         <div class="list-container">
           <div id="agent-list-body"></div>
         </div>
@@ -456,8 +478,10 @@ tbody tr:hover{background:#f8fafc}
               <i class="fas fa-file-invoice" style="color:var(--primary)"></i> Tagihan Admin
             </h3>
             <div style="display:flex; align-items:center; gap:8px;">
+              <input type="text" id="invoice-search" class="search-input" style="max-width:200px;" placeholder="Cari nama agent..." oninput="renderInvoices()">
+              
               <label style="font-size:13px; font-weight:600; color:var(--text-secondary);">Filter Periode:</label>
-              <select id="inv-periode-filter" class="form-control" style="width:auto; min-width:200px; padding:8px 12px;" onchange="loadInvoicesByPeriode()">
+              <select id="inv-periode-filter" class="form-control" style="width:auto; min-width:150px; padding:8px 12px;" onchange="loadInvoicesByPeriode()">
                 <option value="">— Pilih Periode —</option>
               </select>
             </div>
@@ -1085,21 +1109,29 @@ function renderAgents() {
   const container = document.getElementById('agent-list-body');
   const infoEl = document.getElementById('agentPaginationInfo');
   const btnsEl = document.getElementById('agentPaginationBtns');
+  const searchVal = document.getElementById('agent-search').value.toLowerCase();
 
-  agentData.sort((a, b) => a.nama.localeCompare(b.nama));
+  // Filter data berdasarkan search
+  let filtered = agentData.filter(a => 
+    a.nama.toLowerCase().includes(searchVal) || 
+    a.wa.toLowerCase().includes(searchVal)
+  );
+  
+  filtered.sort((a, b) => a.nama.localeCompare(b.nama));
 
-  const total = agentData.length;
+  const total = filtered.length;
   const totalPages = Math.ceil(total / agentPageSize) || 1;
   
   if (agentCurrentPage > totalPages) agentCurrentPage = totalPages;
+  if (agentCurrentPage < 1) agentCurrentPage = 1;
 
   const start = (agentCurrentPage - 1) * agentPageSize;
   const end = Math.min(start + agentPageSize, total);
-  const sliced = agentData.slice(start, end);
+  const sliced = filtered.slice(start, end);
 
   let html = '';
   if (!sliced.length) {
-    html = `<div style="padding:20px;text-align:center;color:var(--text-muted);">Belum ada data agent.</div>`;
+    html = `<div style="padding:20px;text-align:center;color:var(--text-muted);">Agent tidak ditemukan.</div>`;
   } else {
     sliced.forEach(agent => {
       const initial = agent.nama.substring(0, 2).toUpperCase();
@@ -1134,7 +1166,7 @@ function renderAgents() {
 
   container.innerHTML = html;
 
-  document.getElementById('stat-total-agent').textContent = total;
+  document.getElementById('stat-total-agent').textContent = agentData.length;
   document.getElementById('stat-active-agent').textContent = agentData.filter(a => a.status === 'Aktif').length;
 
   if (infoEl) infoEl.textContent = 'Menampilkan ' + (start + 1) + '–' + end + ' dari ' + total + ' agent';
@@ -1345,20 +1377,24 @@ function renderInvoices() {
   const infoEl = document.getElementById('invoicePaginationInfo');
   const btnsEl = document.getElementById('invoicePaginationBtns');
   const periode = document.getElementById('inv-periode-filter').value;
+  const searchVal = document.getElementById('invoice-search').value.toLowerCase();
 
-  const total = invoiceRawData.length;
+  let filtered = invoiceRawData.filter(item => item.nama.toLowerCase().includes(searchVal));
+
+  const total = filtered.length;
   if (total === 0) {
-    container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);">Tidak ada tagihan di periode ini.</div>';
+    container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);">Tidak ada tagihan ditemukan.</div>';
     if (pagContainer) pagContainer.style.display = 'none';
     return;
   }
 
   const totalPages = Math.ceil(total / invoicePageSize) || 1;
   if (invoiceCurrentPage > totalPages) invoiceCurrentPage = totalPages;
+  if (invoiceCurrentPage < 1) invoiceCurrentPage = 1;
 
   const start = (invoiceCurrentPage - 1) * invoicePageSize;
   const end = Math.min(start + invoicePageSize, total);
-  const sliced = invoiceRawData.slice(start, end);
+  const sliced = filtered.slice(start, end);
 
   let html = '';
   sliced.forEach((item, index) => {
@@ -1439,6 +1475,96 @@ function kirimInvoiceWA(namaAgent, periode, totalBersih, totalAdmin, checkboxId)
   let noHp = agent.wa.replace(/\D/g, '');
   if (noHp.startsWith('0')) noHp = '62' + noHp.substring(1);
 
+  // ====================================================
+  // GENERATE GAMBAR INVOICE (CANVAS)
+  // ====================================================
+  const canvas = document.createElement('canvas');
+  canvas.width = 600;
+  canvas.height = 800;
+  const ctx = canvas.getContext('2d');
+
+  // Background Putih
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Header Teal
+  ctx.fillStyle = '#0f766e';
+  ctx.fillRect(0, 0, canvas.width, 150);
+
+  // Teks Header
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 32px Inter, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('SURUHBOY HQ', canvas.width/2, 70);
+  
+  ctx.font = '16px Inter, Arial, sans-serif';
+  ctx.fillText('Invoice Tagihan Admin', canvas.width/2, 100);
+
+  // Garis putus-putus
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(50, 200);
+  ctx.lineTo(550, 200);
+  ctx.stroke();
+  ctx.setLineDash([]); // Reset
+
+  // Detail Invoice
+  ctx.fillStyle = '#475569';
+  ctx.textAlign = 'left';
+  ctx.font = '16px Inter, Arial, sans-serif';
+
+  let y = 250;
+  ctx.fillText('Nama Agent', 50, y);
+  ctx.fillStyle = '#0f172a'; ctx.font = 'bold 18px Inter, Arial, sans-serif';
+  ctx.fillText(namaAgent, 200, y);
+  
+  y += 40;
+  ctx.fillStyle = '#475569'; ctx.font = '16px Inter, Arial, sans-serif';
+  ctx.fillText('Periode', 50, y);
+  ctx.fillStyle = '#0f172a'; ctx.font = 'bold 18px Inter, Arial, sans-serif';
+  ctx.fillText(periode, 200, y);
+
+  y += 60;
+  ctx.fillStyle = '#475569'; ctx.font = '16px Inter, Arial, sans-serif';
+  ctx.fillText('Total Penghasilan', 50, y);
+  ctx.fillStyle = '#0f172a'; ctx.font = 'bold 18px Inter, Arial, sans-serif';
+  ctx.fillText(formatRupiah(totalBersih), 200, y);
+
+  y += 40;
+  ctx.fillStyle = '#475569'; ctx.font = '16px Inter, Arial, sans-serif';
+  ctx.fillText('Admin (10%)', 50, y);
+  ctx.fillStyle = '#0f172a'; ctx.font = 'bold 18px Inter, Arial, sans-serif';
+  ctx.fillText(formatRupiah(totalAdmin), 200, y);
+
+  // Total Tagihan (Box)
+  y += 80;
+  ctx.fillStyle = '#ecfdf5';
+  ctx.fillRect(50, y, 500, 80);
+  ctx.fillStyle = '#10b981';
+  ctx.font = 'bold 16px Inter, Arial, sans-serif';
+  ctx.fillText('TOTAL TAGIHAN', 70, y + 30);
+  ctx.font = 'bold 32px Inter, Arial, sans-serif';
+  ctx.fillText(formatRupiah(totalAdmin), 70, y + 60);
+
+  // Footer
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '12px Inter, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('Terima kasih telah bekerja sama.', canvas.width/2, 730);
+  ctx.fillText('SuruhBoy HQ', canvas.width/2, 750);
+
+  // Convert ke PNG & Download
+  const dataUrl = canvas.toDataURL('image/png');
+  const link = document.createElement('a');
+  link.download = `Invoice_${namaAgent.replace(/\s+/g, '_')}_${periode.replace(/\s+/g, '_')}.png`;
+  link.href = dataUrl;
+  link.click();
+
+  // ====================================================
+  // BUKA WHATSAPP
+  // ====================================================
   const pesan = `Admin Periode ${periode}
 
 Agent : ${namaAgent}
@@ -1450,7 +1576,9 @@ Admin : ${formatRupiah(totalAdmin)}
   const encodedPesan = encodeURIComponent(pesan);
   const url = `https://wa.me/${noHp}?text=${encodedPesan}`;
 
-  window.open(url, '_blank');
+  setTimeout(() => {
+    window.open(url, '_blank');
+  }, 800);
 
   const chk = document.getElementById(checkboxId);
   if (chk && !chk.checked) {
