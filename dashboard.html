@@ -14,7 +14,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-/* SAMA PERSIS DENGAN SEBELUMNYA */
 :root{
   --primary:#4f46e5;--primary-dark:#3730a3;--primary-bg:#eef2ff;
   --success:#10b981;--success-bg:#ecfdf5;--warning:#f59e0b;--warning-bg:#fffbeb;
@@ -192,32 +191,30 @@ tbody tr:hover{background:#f8fafc}
 .a-stat-icon.orange{background:#fff7ed;color:#f97316}
 .a-stat-info h4{font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
 .a-stat-info span{font-size:22px;font-weight:800}
-.agent-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.agent-card{background:white;padding:16px 20px;border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;transition:transform 0.2s}
-.agent-card:hover{transform:translateY(-2px);box-shadow:0 10px 25px -5px rgba(0,0,0,0.08)}
-.agent-left{display:flex;align-items:center;gap:16px}
-.agent-ava{width:48px;height:48px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#0f766e;border:2px solid #e2e8f0}
-.agent-nm{font-weight:700;font-size:15px;margin-bottom:4px}
-.agent-wa{font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:4px}
-.agent-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
-.switch{position:relative;display:inline-block;width:44px;height:24px}
-.switch input{opacity:0;width:0;height:0}
-.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#cbd5e1;transition:.3s;border-radius:30px}
-.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background-color:white;transition:.3s;border-radius:50%}
-input:checked + .slider{background-color:#10b981}
-input:checked + .slider:before{transform:translateX(20px)}
-.a-status-text{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
-.a-status-text.on{color:#10b981}
-.a-status-text.off{color:#f59e0b}
-.a-status-text.non{color:#ef4444}
 
-/* INVOICE SECTION */
-.invoice-wrapper{background:white;border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);padding:24px;margin-top:24px}
-.invoice-grid{display:grid;grid-template-columns:1fr;gap:16px}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px}
-.form-control{width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:10px;font-size:14px;background:#f8fafc;transition:0.2s}
-.form-control:focus{background:white;border-color:#0f766e;box-shadow:0 0 0 3px #ccfbf1;outline:none}
+/* LIST STYLE (TABEL CLEAN) */
+.list-container{background:white;border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+.list-item{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border)}
+.list-item:last-child{border-bottom:none}
+.list-item:hover{background:#f8fafc}
+.list-left{display:flex;align-items:center;gap:12px}
+.list-avatar{width:36px;height:36px;border-radius:50%;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#0f766e;border:1px solid #e2e8f0}
+.list-nm{font-weight:600;font-size:14px}
+.list-wa{font-size:12px;color:var(--text-muted)}
+.list-right{display:flex;align-items:center;gap:16px}
+.list-status{font-size:11px;font-weight:700;text-transform:uppercase}
+.list-status.on{color:var(--success)}
+.list-status.off{color:var(--warning)}
+.list-status.non{color:var(--danger)}
+
+/* INVOICE LIST */
+.inv-item{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.inv-item:last-child{border-bottom:none}
+.inv-left{display:flex;flex-direction:column;gap:4px}
+.inv-nm{font-weight:700;font-size:14px}
+.inv-detail{font-size:12px;color:var(--text-muted)}
+.inv-right{display:flex;align-items:center;gap:12px}
+.inv-total{font-weight:800;font-size:15px;color:var(--primary)}
 
 /* RESPONSIVE */
 @media(max-width: 768px) {
@@ -233,12 +230,14 @@ input:checked + .slider:before{transform:translateX(20px)}
   .content { padding: 16px; }
   .header { padding: 0 16px; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .grid-2col, .analytics-grid, .agent-grid, .agent-stats { grid-template-columns: 1fr; }
+  .grid-2col, .analytics-grid, .agent-stats { grid-template-columns: 1fr; }
   .dashboard-toolbar { flex-direction: column; align-items: flex-start; }
   .filter-area { width: 100%; }
   .form-grid { grid-template-columns: 1fr; }
   .table-toolbar { flex-direction: column; align-items: stretch; }
   .search-box { max-width: none; }
+  .list-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .list-right { width: 100%; justify-content: space-between; }
 }
 </style>
 </head>
@@ -435,9 +434,17 @@ input:checked + .slider:before{transform:translateX(20px)}
           </div>
         </div>
 
+        <!-- DAFTAR AGENT (TABEL) -->
         <h3 style="font-size:16px; font-weight:700; margin-bottom:16px; margin-top:24px;"><i class="fas fa-address-book" style="color:var(--primary)"></i> Daftar Agent</h3>
-        <div class="agent-grid" id="agent-list-container"></div>
+        <div class="list-container">
+          <div id="agent-list-body"></div>
+        </div>
+        <div class="pagination" style="border-radius:0 0 16px 16px; border:1px solid var(--border); border-top:none; background:white; padding:12px 20px;">
+          <div id="agentPaginationInfo">—</div>
+          <div class="pagination-buttons" id="agentPaginationBtns"></div>
+        </div>
 
+        <!-- SECTION TAGIHAN & INVOICE (TABEL) -->
         <div class="invoice-wrapper" style="margin-top:32px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
             <h3 style="font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px; margin:0;">
@@ -445,14 +452,20 @@ input:checked + .slider:before{transform:translateX(20px)}
             </h3>
             <div style="display:flex; align-items:center; gap:8px;">
               <label style="font-size:13px; font-weight:600; color:var(--text-secondary);">Filter Periode:</label>
-              <select id="inv-periode-filter" class="form-control" style="width:auto; min-width:200px;" onchange="loadInvoicesByPeriode()">
+              <select id="inv-periode-filter" class="form-control" style="width:auto; min-width:200px; padding:8px 12px;" onchange="loadInvoicesByPeriode()">
                 <option value="">— Pilih Periode —</option>
               </select>
             </div>
           </div>
           
-          <div id="invoice-list-container" class="agent-grid">
-            <div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);">Pilih periode di atas untuk melihat tagihan.</div>
+          <div class="list-container">
+            <div id="invoice-list-body">
+              <div style="padding:20px; text-align:center; color:var(--text-muted);">Pilih periode di atas untuk melihat tagihan.</div>
+            </div>
+          </div>
+          <div class="pagination" id="invoice-pagination-container" style="display:none; border-radius:0 0 16px 16px; border:1px solid var(--border); border-top:none; background:white; padding:12px 20px;">
+            <div id="invoicePaginationInfo">—</div>
+            <div class="pagination-buttons" id="invoicePaginationBtns"></div>
           </div>
         </div>
 
@@ -548,7 +561,7 @@ input:checked + .slider:before{transform:translateX(20px)}
 
 <script>
 /* =========================================================
-   CONFIG
+   CONFIG & PASSWORD
 ========================================================= */
 const API_URL_MAIN = 'https://script.google.com/macros/s/AKfycbxAmTd3SWa17zWjMbCS2CXJ0BhsAFp0KZq4eNhYZRSt8a5gCaCY4JhpIEd2IRObkU9Q/exec';
 const API_URL_AGENT = 'https://script.google.com/macros/s/AKfycbzoh5MV5u9J_w9_ug0t_52ZVeDilzLlZlwSI3d6mrCynWqL0dB0VI7PxWXQSvJNsRtJKQ/exec'; // 👈 GANTI INI
@@ -569,6 +582,13 @@ let _searchTimer = null;
 
 let agentData = [];
 let agentMode = 'create', agentEditingNama = null;
+let agentCurrentPage = 1;
+let agentPageSize = 5; // 5 Agent per page
+
+// Invoice state
+let invoiceRawData = [];
+let invoiceCurrentPage = 1;
+let invoicePageSize = 5; // 5 Tagihan per page
 
 /* =========================================================
    API TRANSPORT
@@ -1040,8 +1060,8 @@ function confirmDelete() {
    AGENT MODULE (Panggil API Agent)
 ========================================================= */
 function loadAgents() {
-  const container = document.getElementById('agent-list-container');
-  if (container) container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;color:#94a3b8;">Memuat data agent...</div>';
+  const container = document.getElementById('agent-list-body');
+  if (container) container.innerHTML = '<div style="padding:20px;text-align:center;color:#94a3b8;">Memuat data agent...</div>';
 
   apiGetAgent('agents')
     .then(function (data) {
@@ -1052,55 +1072,85 @@ function loadAgents() {
     })
     .catch(function (err) {
       console.error(err);
-      if (container) container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:20px;color:#ef4444;">Gagal memuat agent: ${err.message}</div>`;
+      if (container) container.innerHTML = `<div style="padding:20px;text-align:center;color:#ef4444;">Gagal memuat agent: ${err.message}</div>`;
     });
 }
 
 function renderAgents() {
-  const container = document.getElementById('agent-list-container');
-  let html = '';
-  
+  const container = document.getElementById('agent-list-body');
+  const infoEl = document.getElementById('agentPaginationInfo');
+  const btnsEl = document.getElementById('agentPaginationBtns');
+
+  // Urut abjad
   agentData.sort((a, b) => a.nama.localeCompare(b.nama));
 
-  agentData.forEach(agent => {
-    const initial = agent.nama.substring(0, 2).toUpperCase();
-    const isChecked = agent.status === 'Aktif';
-    let statusLabel = agent.status;
-    let statusClass = isChecked ? 'on' : (agent.status === 'Inaktif' ? 'off' : 'non');
+  const total = agentData.length;
+  const totalPages = Math.ceil(total / agentPageSize) || 1;
+  
+  if (agentCurrentPage > totalPages) agentCurrentPage = totalPages;
 
-    html += `
-      <div class="agent-card">
-        <div class="agent-left">
-          <div class="agent-ava">${initial}</div>
-          <div>
-            <div class="agent-nm">${escapeHtml(agent.nama)}</div>
-            <div class="agent-wa"><i class="fab fa-whatsapp"></i> +${escapeHtml(agent.wa)}</div>
+  const start = (agentCurrentPage - 1) * agentPageSize;
+  const end = Math.min(start + agentPageSize, total);
+  const sliced = agentData.slice(start, end);
+
+  let html = '';
+  if (!sliced.length) {
+    html = `<div style="padding:20px;text-align:center;color:var(--text-muted);">Belum ada data agent.</div>`;
+  } else {
+    sliced.forEach(agent => {
+      const initial = agent.nama.substring(0, 2).toUpperCase();
+      const isChecked = agent.status === 'Aktif';
+      let statusLabel = agent.status;
+      let statusClass = isChecked ? 'on' : (agent.status === 'Inaktif' ? 'off' : 'non');
+
+      html += `
+        <div class="list-item">
+          <div class="list-left">
+            <div class="list-avatar">${initial}</div>
+            <div>
+              <div class="list-nm">${escapeHtml(agent.nama)}</div>
+              <div class="list-wa"><i class="fab fa-whatsapp" style="font-size:10px;"></i> +${escapeHtml(agent.wa)}</div>
+            </div>
           </div>
-        </div>
-        <div class="agent-right">
-          <div style="display:flex; gap:4px; margin-bottom:8px;">
-            <button class="btn-icon" title="Edit" onclick="openAgentModal('update', '${escapeHtml(agent.nama)}')"><i class="fas fa-pen"></i></button>
-            <button class="btn-icon delete" title="Hapus" onclick="askDeleteAgent('${escapeHtml(agent.nama)}')"><i class="fas fa-trash"></i></button>
-          </div>
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span class="a-status-text ${statusClass}">${statusLabel}</span>
+          <div class="list-right">
+            <span class="list-status ${statusClass}">${statusLabel}</span>
             <label class="switch">
               <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleAgentStatus('${escapeHtml(agent.nama)}', this.checked)">
               <span class="slider"></span>
             </label>
+            <div style="display:flex; gap:4px; margin-left:8px;">
+              <button class="btn-icon" title="Edit" onclick="openAgentModal('update', '${escapeHtml(agent.nama)}')"><i class="fas fa-pen"></i></button>
+              <button class="btn-icon delete" title="Hapus" onclick="askDeleteAgent('${escapeHtml(agent.nama)}')"><i class="fas fa-trash"></i></button>
+            </div>
           </div>
         </div>
-      </div>
-    `;
-  });
-  
+      `;
+    });
+  }
+
   container.innerHTML = html;
-  updateAgentStats();
+
+  // Update stats
+  document.getElementById('stat-total-agent').textContent = total;
+  document.getElementById('stat-active-agent').textContent = agentData.filter(a => a.status === 'Aktif').length;
+
+  // Pagination
+  if (infoEl) infoEl.textContent = 'Menampilkan ' + (start + 1) + '–' + end + ' dari ' + total + ' agent';
+  
+  if (btnsEl) {
+    let phtml = '';
+    phtml += `<button class="page-btn" ${agentCurrentPage === 1 ? 'disabled' : ''} onclick="gotoAgentPage(${agentCurrentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
+    for (let p = 1; p <= totalPages; p++) {
+      phtml += `<button class="page-btn ${p === agentCurrentPage ? 'active' : ''}" onclick="gotoAgentPage(${p})">${p}</button>`;
+    }
+    phtml += `<button class="page-btn" ${agentCurrentPage === totalPages ? 'disabled' : ''} onclick="gotoAgentPage(${agentCurrentPage + 1})"><i class="fas fa-chevron-right"></i></button>`;
+    btnsEl.innerHTML = phtml;
+  }
 }
 
-function updateAgentStats() {
-  document.getElementById('stat-total-agent').textContent = agentData.length;
-  document.getElementById('stat-active-agent').textContent = agentData.filter(a => a.status === 'Aktif').length;
+function gotoAgentPage(p) {
+  agentCurrentPage = p;
+  renderAgents();
 }
 
 function toggleAgentStatus(namaAgent, isChecked) {
@@ -1189,15 +1239,13 @@ function askDeleteAgent(namaAgent) {
 }
 
 /* =========================================================
-   INVOICE LOGIC (REVISI TOTAL)
-   Baca dari API 'dashboard' (Sheet Responses)
+   INVOICE LOGIC (TABEL)
 ========================================================= */
-// 1. Isi Dropdown Periode (Urut berdasarkan Week Helper A)
 function populatePeriodeFilter() {
   const select = document.getElementById('inv-periode-filter');
   if (!select) return;
   
-  // Ambil periode unik dari rawData (Data Dashboard yg udah di-load)
+  // Ambil periode unik dari rawData
   const map = {};
   rawData.forEach(row => {
     const week = String(row.week || '').trim();
@@ -1207,7 +1255,6 @@ function populatePeriodeFilter() {
     }
   });
 
-  // Urutkan berdasarkan Helper
   const sortedWeeks = Object.values(map).sort((a, b) => a.helperNum - b.helperNum);
   
   let html = '<option value="">— Pilih Periode —</option>';
@@ -1218,32 +1265,30 @@ function populatePeriodeFilter() {
   select.innerHTML = html;
 }
 
-// 2. Load Data Tagihan berdasarkan Periode
 function loadInvoicesByPeriode() {
   const periode = document.getElementById('inv-periode-filter').value;
-  const container = document.getElementById('invoice-list-container');
-  
+  const container = document.getElementById('invoice-list-body');
+  const pagContainer = document.getElementById('invoice-pagination-container');
+
   if (!periode) {
-    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);">Pilih periode di atas untuk melihat tagihan.</div>';
+    container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);">Pilih periode di atas untuk melihat tagihan.</div>';
+    if (pagContainer) pagContainer.style.display = 'none';
     return;
   }
 
-  container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);"><div class="spinner"></div>Menghitung tagihan...</div>';
+  container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);"><div class="spinner"></div>Menghitung tagihan...</div>';
+  if (pagContainer) pagContainer.style.display = 'none';
 
-  // 🔥 PANGGIL API 'dashboard' UNTUK AMBIL DATA DARI SHEET 'Responses'
   apiGetMain('dashboard')
     .then(function(data) {
       if (data && data.error) throw new Error(data.error);
       
       const map = {};
-
-      // Looping data Responses (yang udah rapi dari Code.gs)
       data.forEach(row => {
         const rowAgent = String(row.agent || '').trim();
         const rowPeriode = String(row.week || '').trim();
-        const rowNominal = parseNominalClient(row.convertNominal); // Convert Nominal = Penghasilan Bersih
+        const rowNominal = parseNominalClient(row.convertNominal);
 
-        // Filter berdasarkan periode & pastikan ada nama agent
         if (rowPeriode === periode && rowAgent) {
           if (!map[rowAgent]) {
             map[rowAgent] = { nama: rowAgent, totalBersih: 0, count: 0 };
@@ -1253,57 +1298,100 @@ function loadInvoicesByPeriode() {
         }
       });
 
-      const list = Object.values(map).sort((a,b) => a.nama.localeCompare(b.nama));
+      invoiceRawData = Object.values(map).sort((a,b) => a.nama.localeCompare(b.nama));
+      invoiceCurrentPage = 1;
+      renderInvoices();
 
-      if (!list.length) {
-        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);">Tidak ada data agent di periode ini.</div>`;
-        return;
-      }
-
-      let html = '';
-      list.forEach(item => {
-        // Hitung admin 10%
-        const totalAdmin = item.totalBersih * 0.10;
-        
-        html += `
-          <div class="agent-card" style="flex-direction:column; align-items:stretch; gap:12px;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div class="agent-nm">${escapeHtml(item.nama)}</div>
-              <div style="font-size:16px; font-weight:800; color:var(--primary);">${formatRupiah(totalAdmin)}</div>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--text-secondary);">
-              <div>Total Bersih: ${formatRupiah(item.totalBersih)}</div>
-              <div>Admin (10%)</div>
-            </div>
-            <button class="btn btn-success" style="width:100%; justify-content:center;" onclick="kirimInvoiceWA('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', ${totalAdmin})">
-              <i class="fab fa-whatsapp"></i> Kirim Tagihan
-            </button>
-          </div>
-        `;
-      });
-      
-      container.innerHTML = html;
     })
     .catch(function(err) {
       console.error(err);
-      container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--danger);">Gagal: ${err.message}</div>`;
+      container.innerHTML = `<div style="padding:20px; text-align:center; color:var(--danger);">Gagal: ${err.message}</div>`;
     });
 }
 
-// 3. Kirim Invoice (Sinkronisasi Nomor WA dari DB Agent)
-function kirimInvoiceWA(namaAgent, periode, totalAdmin) {
-  const agent = agentData.find(a => a.nama.toLowerCase() === namaAgent.toLowerCase());
-  
-  if (!agent) {
-    return alert(`Agent "${namaAgent}" tidak ditemukan di database Agent. Pastikan nama sama persis.`);
-  }
-  if (!agent.wa) {
-    return alert(`Nomor WhatsApp untuk agent "${namaAgent}" belum diisi di database.`);
+function renderInvoices() {
+  const container = document.getElementById('invoice-list-body');
+  const pagContainer = document.getElementById('invoice-pagination-container');
+  const infoEl = document.getElementById('invoicePaginationInfo');
+  const btnsEl = document.getElementById('invoicePaginationBtns');
+  const periode = document.getElementById('inv-periode-filter').value;
+
+  const total = invoiceRawData.length;
+  if (total === 0) {
+    container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);">Tidak ada tagihan di periode ini.</div>';
+    if (pagContainer) pagContainer.style.display = 'none';
+    return;
   }
 
-  const pesan = `Halo ${namaAgent},\n\nBerikut tagihan Admin Anda untuk periode ${periode}.\n\nTotal Tagihan: *${formatRupiah(totalAdmin)}*\n\nTerlampir bukti invoice. Mohon segera diselesaikan. Terima kasih.`;
+  const totalPages = Math.ceil(total / invoicePageSize) || 1;
+  if (invoiceCurrentPage > totalPages) invoiceCurrentPage = totalPages;
+
+  const start = (invoiceCurrentPage - 1) * invoicePageSize;
+  const end = Math.min(start + invoicePageSize, total);
+  const sliced = invoiceRawData.slice(start, end);
+
+  let html = '';
+  sliced.forEach(item => {
+    const totalAdmin = item.totalBersih * 0.10;
+    html += `
+      <div class="inv-item">
+        <div class="inv-left">
+          <div class="inv-nm">${escapeHtml(item.nama)}</div>
+          <div class="inv-detail">Total Bersih: ${formatRupiah(item.totalBersih)}</div>
+        </div>
+        <div class="inv-right">
+          <div class="inv-total">${formatRupiah(totalAdmin)}</div>
+          <button class="btn btn-success btn-sm" onclick="kirimInvoiceWA('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', ${item.totalBersih}, ${totalAdmin})">
+            <i class="fab fa-whatsapp"></i> Kirim
+          </button>
+        </div>
+      </div>
+    `;
+  });
+
+  container.innerHTML = html;
   
-  alert(`MENGIRIM KE WA: +${agent.wa}\n\nPESAN:\n${pesan}\n\n(Disimulasikan: Mengirim gambar invoice)`);
+  if (pagContainer) pagContainer.style.display = 'flex';
+  if (infoEl) infoEl.textContent = 'Menampilkan ' + (start + 1) + '–' + end + ' dari ' + total;
+  
+  if (btnsEl) {
+    let phtml = '';
+    phtml += `<button class="page-btn" ${invoiceCurrentPage === 1 ? 'disabled' : ''} onclick="gotoInvoicePage(${invoiceCurrentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
+    for (let p = 1; p <= totalPages; p++) {
+      phtml += `<button class="page-btn ${p === invoiceCurrentPage ? 'active' : ''}" onclick="gotoInvoicePage(${p})">${p}</button>`;
+    }
+    phtml += `<button class="page-btn" ${invoiceCurrentPage === totalPages ? 'disabled' : ''} onclick="gotoInvoicePage(${invoiceCurrentPage + 1})"><i class="fas fa-chevron-right"></i></button>`;
+    btnsEl.innerHTML = phtml;
+  }
+}
+
+function gotoInvoicePage(p) {
+  invoiceCurrentPage = p;
+  renderInvoices();
+}
+
+function kirimInvoiceWA(namaAgent, periode, totalBersih, totalAdmin) {
+  const agent = agentData.find(a => a.nama.toLowerCase() === namaAgent.toLowerCase());
+  
+  if (!agent || !agent.wa) {
+    return alert(`Nomor WhatsApp untuk agent "${namaAgent}" tidak ditemukan.`);
+  }
+
+  let noHp = agent.wa.replace(/\D/g, '');
+  if (noHp.startsWith('0')) noHp = '62' + noHp.substring(1);
+
+  const pesan = `Admin Periode ${periode}
+
+Agent : ${namaAgent}
+Penghasilan : ${formatRupiah(totalBersih)}
+Admin : ${formatRupiah(totalAdmin)}
+
+(Terlampir gambar invoice)`;
+
+  const encodedPesan = encodeURIComponent(pesan);
+  const url = `https://wa.me/${noHp}?text=${encodedPesan}`;
+
+  window.open(url, '_blank');
 }
 
 /* =========================================================
