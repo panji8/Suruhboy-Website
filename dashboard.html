@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Dashboard — SuruhBoy HQ</title>
 
-<!-- FAVICON -->
 <link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
@@ -15,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
+/* SAMA PERSIS DENGAN SEBELUMNYA */
 :root{
   --primary:#4f46e5;--primary-dark:#3730a3;--primary-bg:#eef2ff;
   --success:#10b981;--success-bg:#ecfdf5;--warning:#f59e0b;--warning-bg:#fffbeb;
@@ -179,9 +179,7 @@ tbody tr:hover{background:#f8fafc}
   box-shadow: 0 20px 50px rgba(0,0,0,.15); text-align: center;
 }
 
-/* =========================================================
-   AGENT MODULE STYLE (Clean Card)
-========================================================= */
+/* AGENT MODULE STYLE */
 .agent-container{max-width:1000px;margin:0 auto}
 .agent-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px}
 .agent-header h2{font-size:24px;font-weight:800;letter-spacing:-0.5px}
@@ -437,11 +435,9 @@ input:checked + .slider:before{transform:translateX(20px)}
           </div>
         </div>
 
-        <!-- DAFTAR AGENT (CRUD) -->
         <h3 style="font-size:16px; font-weight:700; margin-bottom:16px; margin-top:24px;"><i class="fas fa-address-book" style="color:var(--primary)"></i> Daftar Agent</h3>
         <div class="agent-grid" id="agent-list-container"></div>
 
-        <!-- SECTION TAGIHAN & INVOICE -->
         <div class="invoice-wrapper" style="margin-top:32px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
             <h3 style="font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px; margin:0;">
@@ -469,7 +465,7 @@ input:checked + .slider:before{transform:translateX(20px)}
   </div>
 </main>
 
-<!-- MODAL FORM ORDER (EDIT BIAYA & AGENT) -->
+<!-- MODAL FORM ORDER -->
 <div class="modal-overlay" id="orderModalOverlay">
   <div class="modal" style="max-width: 400px;">
     <div class="modal-header">
@@ -552,12 +548,9 @@ input:checked + .slider:before{transform:translateX(20px)}
 
 <script>
 /* =========================================================
-   ⚠️ CONFIG & PASSWORD
-   ========================================================= */
-// URL untuk Dashboard & Order (Spreadsheet 1)
+   CONFIG
+========================================================= */
 const API_URL_MAIN = 'https://script.google.com/macros/s/AKfycbxAmTd3SWa17zWjMbCS2CXJ0BhsAFp0KZq4eNhYZRSt8a5gCaCY4JhpIEd2IRObkU9Q/exec';
-
-// URL untuk Agent (Spreadsheet 2)
 const API_URL_AGENT = 'https://script.google.com/macros/s/AKfycbzoh5MV5u9J_w9_ug0t_52ZVeDilzLlZlwSI3d6mrCynWqL0dB0VI7PxWXQSvJNsRtJKQ/exec'; // 👈 GANTI INI
 
 const PASSWORD_GLOBAL = '123456'; 
@@ -1055,7 +1048,7 @@ function loadAgents() {
       if (data && data.error) throw new Error(data.error);
       agentData = Array.isArray(data) ? data : [];
       renderAgents();
-      populatePeriodeFilter(); // Isi filter periode dari rawData
+      populatePeriodeFilter(); 
     })
     .catch(function (err) {
       console.error(err);
@@ -1196,7 +1189,8 @@ function askDeleteAgent(namaAgent) {
 }
 
 /* =========================================================
-   INVOICE LOGIC (BARU)
+   INVOICE LOGIC (REVISI TOTAL)
+   Baca dari API 'dashboard' (Sheet Responses)
 ========================================================= */
 // 1. Isi Dropdown Periode (Urut berdasarkan Week Helper A)
 function populatePeriodeFilter() {
@@ -1236,26 +1230,25 @@ function loadInvoicesByPeriode() {
 
   container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);"><div class="spinner"></div>Menghitung tagihan...</div>';
 
-  // Panggil API Main (bukan API Agent) untuk data Order
-  apiGetMain('ordersPage', { page: 1, pageSize: 9999 })
-    .then(function(res) {
-      if (res && res.error) throw new Error(res.error);
-      if (!res || !res.success) throw new Error('Response tidak valid.');
+  // 🔥 PANGGIL API 'dashboard' UNTUK AMBIL DATA DARI SHEET 'Responses'
+  apiGetMain('dashboard')
+    .then(function(data) {
+      if (data && data.error) throw new Error(data.error);
       
-      const rows = res.rows || [];
       const map = {};
 
-      rows.forEach(item => {
-        const raw = item.raw;
-        const rowAgent = String(raw[8] || '').trim();
-        const rowPeriode = String(raw[18] || '').trim();
-        const rowBiaya = parseNominalClient(raw[1]);
+      // Looping data Responses (yang udah rapi dari Code.gs)
+      data.forEach(row => {
+        const rowAgent = String(row.agent || '').trim();
+        const rowPeriode = String(row.week || '').trim();
+        const rowNominal = parseNominalClient(row.convertNominal); // Convert Nominal = Penghasilan Bersih
 
+        // Filter berdasarkan periode & pastikan ada nama agent
         if (rowPeriode === periode && rowAgent) {
           if (!map[rowAgent]) {
-            map[rowAgent] = { nama: rowAgent, total: 0, count: 0 };
+            map[rowAgent] = { nama: rowAgent, totalBersih: 0, count: 0 };
           }
-          map[rowAgent].total += rowBiaya;
+          map[rowAgent].totalBersih += rowNominal;
           map[rowAgent].count++;
         }
       });
@@ -1263,13 +1256,14 @@ function loadInvoicesByPeriode() {
       const list = Object.values(map).sort((a,b) => a.nama.localeCompare(b.nama));
 
       if (!list.length) {
-        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);">Tidak ada orderan di periode ini.</div>`;
+        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);">Tidak ada data agent di periode ini.</div>`;
         return;
       }
 
       let html = '';
       list.forEach(item => {
-        const totalAdmin = item.total * 0.10; // Default 10%
+        // Hitung admin 10%
+        const totalAdmin = item.totalBersih * 0.10;
         
         html += `
           <div class="agent-card" style="flex-direction:column; align-items:stretch; gap:12px;">
@@ -1278,7 +1272,7 @@ function loadInvoicesByPeriode() {
               <div style="font-size:16px; font-weight:800; color:var(--primary);">${formatRupiah(totalAdmin)}</div>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--text-secondary);">
-              <div>Total Bersih: ${formatRupiah(item.total)}</div>
+              <div>Total Bersih: ${formatRupiah(item.totalBersih)}</div>
               <div>Admin (10%)</div>
             </div>
             <button class="btn btn-success" style="width:100%; justify-content:center;" onclick="kirimInvoiceWA('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', ${totalAdmin})">
