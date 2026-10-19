@@ -216,6 +216,11 @@ tbody tr:hover{background:#f8fafc}
 .inv-right{display:flex;align-items:center;gap:12px}
 .inv-total{font-weight:800;font-size:15px;color:var(--primary)}
 
+/* CHECKBOX STYLE */
+.inv-check { display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; }
+.inv-check input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--success); }
+.inv-check-label { font-weight: 600; color: var(--text-muted); }
+
 /* RESPONSIVE */
 @media(max-width: 768px) {
   .sidebar { width: 100%; height: auto; top: auto; bottom: 0; flex-direction: row; border-top: 1px solid rgba(255,255,255,.1); padding: 0; z-index: 1000; }
@@ -564,7 +569,7 @@ tbody tr:hover{background:#f8fafc}
    CONFIG & PASSWORD
 ========================================================= */
 const API_URL_MAIN = 'https://script.google.com/macros/s/AKfycbxAmTd3SWa17zWjMbCS2CXJ0BhsAFp0KZq4eNhYZRSt8a5gCaCY4JhpIEd2IRObkU9Q/exec';
-const API_URL_AGENT = 'https://script.google.com/macros/s/AKfycbzoh5MV5u9J_w9_ug0t_52ZVeDilzLlZlwSI3d6mrCynWqL0dB0VI7PxWXQSvJNsRtJKQ/exec'; // 👈 GANTI INI
+const API_URL_AGENT = 'https://script.google.com/macros/s/AKfycbwDeziTU1ZPhMEJAQx4iw6RvYjkLQL_J9-Fb2nlmXlcVEBc3q02mD7Kjp1PEpid5oBXhw/exec'; // 👈 GANTI INI
 
 const PASSWORD_GLOBAL = '123456'; 
 const PASSWORD_HAPUS = '123456';  
@@ -583,12 +588,12 @@ let _searchTimer = null;
 let agentData = [];
 let agentMode = 'create', agentEditingNama = null;
 let agentCurrentPage = 1;
-let agentPageSize = 5; // 5 Agent per page
+let agentPageSize = 5; 
 
 // Invoice state
 let invoiceRawData = [];
 let invoiceCurrentPage = 1;
-let invoicePageSize = 5; // 5 Tagihan per page
+let invoicePageSize = 5; 
 
 /* =========================================================
    API TRANSPORT
@@ -1081,7 +1086,6 @@ function renderAgents() {
   const infoEl = document.getElementById('agentPaginationInfo');
   const btnsEl = document.getElementById('agentPaginationBtns');
 
-  // Urut abjad
   agentData.sort((a, b) => a.nama.localeCompare(b.nama));
 
   const total = agentData.length;
@@ -1130,11 +1134,9 @@ function renderAgents() {
 
   container.innerHTML = html;
 
-  // Update stats
   document.getElementById('stat-total-agent').textContent = total;
   document.getElementById('stat-active-agent').textContent = agentData.filter(a => a.status === 'Aktif').length;
 
-  // Pagination
   if (infoEl) infoEl.textContent = 'Menampilkan ' + (start + 1) + '–' + end + ' dari ' + total + ' agent';
   
   if (btnsEl) {
@@ -1245,7 +1247,6 @@ function populatePeriodeFilter() {
   const select = document.getElementById('inv-periode-filter');
   if (!select) return;
   
-  // Ambil periode unik dari rawData
   const map = {};
   rawData.forEach(row => {
     const week = String(row.week || '').trim();
@@ -1279,22 +1280,51 @@ function loadInvoicesByPeriode() {
   container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);"><div class="spinner"></div>Menghitung tagihan...</div>';
   if (pagContainer) pagContainer.style.display = 'none';
 
-  apiGetMain('dashboard')
-    .then(function(data) {
-      if (data && data.error) throw new Error(data.error);
+  // Ambil 2 data sekaligus (Order dari Main, Status dari Agent)
+  Promise.all([
+    apiGetMain('dashboard'),
+    apiGetAgent('getInvoiceStatus', { periode: periode })
+  ])
+    .then(function(results) {
+      const dataOrder = results[0];
+      const dataStatus = results[1];
+
+      if (dataOrder && dataOrder.error) throw new Error(dataOrder.error);
       
+      const mapStatus = {};
+      if (Array.isArray(dataStatus)) {
+        dataStatus.forEach(s => {
+          mapStatus[s.nama.toLowerCase()] = s;
+        });
+      }
+
       const map = {};
-      data.forEach(row => {
+      dataOrder.forEach(row => {
         const rowAgent = String(row.agent || '').trim();
         const rowPeriode = String(row.week || '').trim();
         const rowNominal = parseNominalClient(row.convertNominal);
 
         if (rowPeriode === periode && rowAgent) {
           if (!map[rowAgent]) {
-            map[rowAgent] = { nama: rowAgent, totalBersih: 0, count: 0 };
+            map[rowAgent] = { 
+              nama: rowAgent, 
+              totalBersih: 0, 
+              count: 0, 
+              statusKirim: 'Belum', 
+              statusBayar: 'Belum' 
+            };
           }
           map[rowAgent].totalBersih += rowNominal;
           map[rowAgent].count++;
+        }
+      });
+
+      // Gabungkan status dari Sheet Invoices
+      Object.keys(map).forEach(nama => {
+        const st = mapStatus[nama.toLowerCase()];
+        if (st) {
+          map[nama].statusKirim = st.statusKirim || 'Belum';
+          map[nama].statusBayar = st.statusBayar || 'Belum';
         }
       });
 
@@ -1331,19 +1361,34 @@ function renderInvoices() {
   const sliced = invoiceRawData.slice(start, end);
 
   let html = '';
-  sliced.forEach(item => {
+  sliced.forEach((item, index) => {
     const totalAdmin = item.totalBersih * 0.10;
+    const idKirim = `chk-kirim-${start + index}`;
+    const idBayar = `chk-bayar-${start + index}`;
+
     html += `
-      <div class="inv-item">
-        <div class="inv-left">
+      <div class="inv-item" style="flex-direction: column; align-items: stretch; padding: 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
           <div class="inv-nm">${escapeHtml(item.nama)}</div>
-          <div class="inv-detail">Total Bersih: ${formatRupiah(item.totalBersih)}</div>
-        </div>
-        <div class="inv-right">
           <div class="inv-total">${formatRupiah(totalAdmin)}</div>
-          <button class="btn btn-success btn-sm" onclick="kirimInvoiceWA('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', ${item.totalBersih}, ${totalAdmin})">
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+          <div class="inv-detail">Penghasilan: ${formatRupiah(item.totalBersih)}</div>
+          <button class="btn btn-success btn-sm" onclick="kirimInvoiceWA('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', ${item.totalBersih}, ${totalAdmin}, '${idKirim}')">
             <i class="fab fa-whatsapp"></i> Kirim
           </button>
+        </div>
+
+        <div style="display:flex; gap: 16px; border-top: 1px dashed var(--border); padding-top: 12px;">
+          <label class="inv-check">
+            <input type="checkbox" id="${idKirim}" ${item.statusKirim === 'Sudah' ? 'checked' : ''} onchange="updateInvoiceStatus('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', 'kirim', this.checked)">
+            <span class="inv-check-label">Sudah Kirim</span>
+          </label>
+          <label class="inv-check">
+            <input type="checkbox" id="${idBayar}" ${item.statusBayar === 'Sudah' ? 'checked' : ''} onchange="updateInvoiceStatus('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', 'bayar', this.checked)">
+            <span class="inv-check-label">Sudah Bayar</span>
+          </label>
         </div>
       </div>
     `;
@@ -1370,7 +1415,21 @@ function gotoInvoicePage(p) {
   renderInvoices();
 }
 
-function kirimInvoiceWA(namaAgent, periode, totalBersih, totalAdmin) {
+function updateInvoiceStatus(namaAgent, periode, type, isChecked) {
+  const statusStr = isChecked ? 'Sudah' : 'Belum';
+  
+  apiPostAgent('updateInvoiceStatus', { namaAgent, periode, type, status: statusStr })
+    .then(function(res) {
+      if (res && res.error) throw new Error(res.error);
+      showToast('Berhasil', 'Status dicatat di Sheet Invoices.', 'success');
+    })
+    .catch(function(err) {
+      showToast('Gagal', err.message, 'error');
+      loadInvoicesByPeriode(); 
+    });
+}
+
+function kirimInvoiceWA(namaAgent, periode, totalBersih, totalAdmin, checkboxId) {
   const agent = agentData.find(a => a.nama.toLowerCase() === namaAgent.toLowerCase());
   
   if (!agent || !agent.wa) {
@@ -1392,6 +1451,12 @@ Admin : ${formatRupiah(totalAdmin)}
   const url = `https://wa.me/${noHp}?text=${encodedPesan}`;
 
   window.open(url, '_blank');
+
+  const chk = document.getElementById(checkboxId);
+  if (chk && !chk.checked) {
+    chk.checked = true;
+    updateInvoiceStatus(namaAgent, periode, 'kirim', true);
+  }
 }
 
 /* =========================================================
