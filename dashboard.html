@@ -28,9 +28,7 @@
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text-primary);min-height:100vh}
 button,input,select,textarea{font-family:inherit}
 
-/* =========================================================
-   DESKTOP STYLE (SIDEBAR & MAIN)
-========================================================= */
+/* SIDEBAR */
 .sidebar{width:var(--sidebar-width);height:100vh;position:fixed;top:0;left:0;background:linear-gradient(180deg,#1e1b4b 0%,#0f172a 100%);color:white;z-index:1000;display:flex;flex-direction:column;overflow-y:auto}
 .sidebar-logo{padding:20px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);cursor:pointer}
 .logo-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px; overflow: hidden;}
@@ -47,6 +45,7 @@ button,input,select,textarea{font-family:inherit}
 .sidebar-user{display:flex;align-items:center;gap:10px;padding:8px}
 .avatar{width:36px;height:36px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700}
 
+/* MAIN */
 .main-content{margin-left:var(--sidebar-width);min-height:100vh; padding-bottom: 20px;}
 .header{height:var(--header-height);background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:100}
 .page-title{font-size:18px;font-weight:700}
@@ -216,21 +215,11 @@ input:checked + .slider:before{transform:translateX(20px)}
 
 /* INVOICE SECTION */
 .invoice-wrapper{background:white;border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);padding:24px;margin-top:24px}
-.invoice-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.invoice-grid{display:grid;grid-template-columns:1fr;gap:16px} /* Ubah jadi 1 kolom */
 .form-group{margin-bottom:16px}
 .form-group label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px}
 .form-control{width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:10px;font-size:14px;background:#f8fafc;transition:0.2s}
 .form-control:focus{background:white;border-color:#0f766e;box-shadow:0 0 0 3px #ccfbf1;outline:none}
-.invoice-preview{background:linear-gradient(145deg, #ffffff, #f8fafc);border:1px dashed #cbd5e1;border-radius:12px;padding:24px}
-.inv-header{text-align:center;margin-bottom:24px}
-.inv-header h4{font-size:18px;font-weight:900;letter-spacing:-1px;color:#0f766e}
-.inv-header p{font-size:11px;color:var(--text-secondary);margin-top:4px}
-.inv-row{display:flex;justify-content:space-between;margin-bottom:12px;font-size:13px}
-.inv-row span{color:var(--text-secondary)}
-.inv-row strong{font-weight:600}
-.inv-total{background:#0f766e;color:white;padding:16px;border-radius:12px;margin-top:24px;display:flex;justify-content:space-between;align-items:center}
-.inv-total span{font-size:12px;opacity:0.9;font-weight:600}
-.inv-total strong{font-size:20px;font-weight:800}
 
 /* RESPONSIVE */
 @media(max-width: 768px) {
@@ -246,7 +235,7 @@ input:checked + .slider:before{transform:translateX(20px)}
   .content { padding: 16px; }
   .header { padding: 0 16px; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .grid-2col, .analytics-grid, .agent-grid, .agent-stats, .invoice-grid { grid-template-columns: 1fr; }
+  .grid-2col, .analytics-grid, .agent-grid, .agent-stats { grid-template-columns: 1fr; }
   .dashboard-toolbar { flex-direction: column; align-items: flex-start; }
   .filter-area { width: 100%; }
   .form-grid { grid-template-columns: 1fr; }
@@ -425,8 +414,8 @@ input:checked + .slider:before{transform:translateX(20px)}
         
         <div class="agent-header">
           <div>
-            <h2>Agent & Invoice</h2>
-            <p>Kelola agent dan buat tagihan otomatis dari data Order.</p>
+            <h2>Agent Management</h2>
+            <p>Kelola data agent dan pantau tagihan admin.</p>
           </div>
           <button class="btn btn-primary" onclick="openAgentModal('create')"><i class="fas fa-plus"></i> Tambah Agent</button>
         </div>
@@ -446,89 +435,28 @@ input:checked + .slider:before{transform:translateX(20px)}
               <span id="stat-active-agent">0</span>
             </div>
           </div>
-          <div class="a-stat-box">
-            <div class="a-stat-icon orange"><i class="fas fa-file-invoice-dollar"></i></div>
-            <div class="a-stat-info">
-              <h4>Total Tagihan</h4>
-              <span id="stat-bill-agent">Rp 0</span>
+        </div>
+
+        <!-- DAFTAR AGENT (CRUD) -->
+        <h3 style="font-size:16px; font-weight:700; margin-bottom:16px; margin-top:24px;"><i class="fas fa-address-book" style="color:var(--primary)"></i> Daftar Agent</h3>
+        <div class="agent-grid" id="agent-list-container"></div>
+
+        <!-- SECTION TAGIHAN & INVOICE -->
+        <div class="invoice-wrapper" style="margin-top:32px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+            <h3 style="font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px; margin:0;">
+              <i class="fas fa-file-invoice" style="color:var(--primary)"></i> Tagihan Admin
+            </h3>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <label style="font-size:13px; font-weight:600; color:var(--text-secondary);">Filter Periode:</label>
+              <select id="inv-periode-filter" class="form-control" style="width:auto; min-width:200px;" onchange="loadInvoicesByPeriode()">
+                <option value="">— Pilih Periode —</option>
+              </select>
             </div>
           </div>
-        </div>
-
-        <div class="agent-grid" id="agent-list-container">
-          <!-- Diisi JS -->
-        </div>
-
-        <div class="invoice-wrapper">
-          <h3 style="font-size:16px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:8px;">
-            <i class="fas fa-file-invoice" style="color:var(--primary)"></i> Tagihan & Invoice
-          </h3>
-          <div class="invoice-grid">
-            
-            <!-- FORM KIRI -->
-            <div>
-              <div class="form-group">
-                <label>Pilih Agent</label>
-                <select id="inv-agent" class="form-control" onchange="hitungTagihan()">
-                  <option value="">— Pilih Agent —</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Pilih Minggu (Periode)</label>
-                <select id="inv-periode" class="form-control" onchange="hitungTagihan()">
-                  <option value="">— Pilih Periode —</option>
-                </select>
-              </div>
-              
-              <div style="background:var(--bg); padding:16px; border-radius:10px; border:1px dashed var(--border); margin-bottom:20px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                  <span style="font-size:13px; color:var(--text-sub);">Total Penghasilan Agent:</span>
-                  <strong id="display-penghasilan" style="font-size:14px;">Rp 0</strong>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <span style="font-size:13px; color:var(--text-sub);">Persentase Admin:</span>
-                  <div style="display:flex; align-items:center; gap:4px;">
-                    <input type="number" id="inv-persen" class="form-control" value="10" min="0" max="100" style="width:70px; padding:6px 10px; text-align:center;" oninput="hitungTagihan()">
-                    <span style="font-size:14px; font-weight:600;">%</span>
-                  </div>
-                </div>
-              </div>
-
-              <button class="btn btn-primary" style="width:100%; justify-content:center;" onclick="kirimWA()">
-                <i class="fab fa-whatsapp" style="font-size:16px;"></i> Kirim Invoice ke WA
-              </button>
-            </div>
-
-            <!-- PREVIEW KANAN -->
-            <div>
-              <div class="invoice-preview">
-                <div class="inv-header">
-                  <h4>SURUHBOY HQ</h4>
-                  <p>Invoice Tagihan Admin</p>
-                </div>
-                <div class="inv-row">
-                  <span>Nama Agent</span>
-                  <strong id="prev-nama">—</strong>
-                </div>
-                <div class="inv-row">
-                  <span>Periode</span>
-                  <strong id="prev-periode">—</strong>
-                </div>
-                <div class="inv-row">
-                  <span>Total Penghasilan</span>
-                  <strong id="prev-penghasilan">Rp 0</strong>
-                </div>
-                <div class="inv-row">
-                  <span>Admin (<span id="prev-persen">10</span>%)</span>
-                  <strong id="prev-admin">Rp 0</strong>
-                </div>
-                <div class="inv-total">
-                  <span>TOTAL TAGIHAN</span>
-                  <strong id="prev-total">Rp 0</strong>
-                </div>
-              </div>
-            </div>
-
+          
+          <div id="invoice-list-container" class="agent-grid">
+            <div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);">Pilih periode di atas untuk melihat tagihan.</div>
           </div>
         </div>
 
@@ -624,7 +552,7 @@ input:checked + .slider:before{transform:translateX(20px)}
 
 <script>
 /* =========================================================
-   CONFIG & PASSWORD (2 API URL BERBEDA)
+   ⚠️ CONFIG & PASSWORD
    ========================================================= */
 // URL untuk Dashboard & Order (Spreadsheet 1)
 const API_URL_MAIN = 'https://script.google.com/macros/s/AKfycbxAmTd3SWa17zWjMbCS2CXJ0BhsAFp0KZq4eNhYZRSt8a5gCaCY4JhpIEd2IRObkU9Q/exec';
@@ -650,10 +578,9 @@ let agentData = [];
 let agentMode = 'create', agentEditingNama = null;
 
 /* =========================================================
-   API TRANSPORT (Main & Agent)
+   API TRANSPORT
 ========================================================= */
 let _jsonpSeq = 0;
-
 function apiGet(url, action, params = {}) {
   return new Promise((resolve, reject) => {
     const cbName = '_sbhq_cb_' + (++_jsonpSeq);
@@ -696,7 +623,6 @@ async function apiPost(url, action, payload) {
   }
 }
 
-// Wrapper untuk mempermudah
 function apiGetMain(action, params) { return apiGet(API_URL_MAIN, action, params); }
 function apiPostMain(action, payload) { return apiPost(API_URL_MAIN, action, payload); }
 function apiGetAgent(action, params) { return apiGet(API_URL_AGENT, action, params); }
@@ -1129,12 +1055,11 @@ function loadAgents() {
       if (data && data.error) throw new Error(data.error);
       agentData = Array.isArray(data) ? data : [];
       renderAgents();
-      populateAgentSelect();
-      populatePeriodeSelect();
+      populatePeriodeFilter(); // Isi filter periode dari rawData
     })
     .catch(function (err) {
       console.error(err);
-      if (container) container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:20px;color:#ef4444;">Gagal memuat: ${err.message}</div>`;
+      if (container) container.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:20px;color:#ef4444;">Gagal memuat agent: ${err.message}</div>`;
     });
 }
 
@@ -1271,86 +1196,120 @@ function askDeleteAgent(namaAgent) {
 }
 
 /* =========================================================
-   INVOICE LOGIC
+   INVOICE LOGIC (BARU)
 ========================================================= */
-function populateAgentSelect() {
-  const select = document.getElementById('inv-agent');
-  let html = '<option value="">— Pilih Agent —</option>';
-  agentData.filter(a => a.status === 'Aktif').forEach(a => {
-    html += `<option value="${escapeHtml(a.nama)}">${escapeHtml(a.nama)}</option>`;
-  });
-  select.innerHTML = html;
-}
-
-function populatePeriodeSelect() {
-  const select = document.getElementById('inv-periode');
-  let html = '<option value="">— Pilih Periode —</option>';
+// 1. Isi Dropdown Periode (Urut berdasarkan Week Helper A)
+function populatePeriodeFilter() {
+  const select = document.getElementById('inv-periode-filter');
+  if (!select) return;
   
-  const periods = new Set();
+  // Ambil periode unik dari rawData (Data Dashboard yg udah di-load)
+  const map = {};
   rawData.forEach(row => {
-    if (row.week) periods.add(String(row.week).trim());
+    const week = String(row.week || '').trim();
+    const helper = String(row.weekHelperA || '').trim();
+    if (week && !map[week]) {
+      map[week] = { week: week, helper: helper, helperNum: weekHelperToNumber(helper) };
+    }
   });
 
-  Array.from(periods).sort().forEach(p => {
-    html += `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`;
+  // Urutkan berdasarkan Helper
+  const sortedWeeks = Object.values(map).sort((a, b) => a.helperNum - b.helperNum);
+  
+  let html = '<option value="">— Pilih Periode —</option>';
+  sortedWeeks.forEach(item => {
+    html += `<option value="${escapeHtml(item.week)}">${escapeHtml(item.week)}</option>`;
   });
-
+  
   select.innerHTML = html;
 }
 
-function hitungTagihan() {
-  const agentName = document.getElementById('inv-agent').value;
-  const periode = document.getElementById('inv-periode').value;
-  const persen = parseFloat(document.getElementById('inv-persen').value) || 0;
-
-  if (!agentName || !periode) {
-    resetInvoiceUI();
+// 2. Load Data Tagihan berdasarkan Periode
+function loadInvoicesByPeriode() {
+  const periode = document.getElementById('inv-periode-filter').value;
+  const container = document.getElementById('invoice-list-container');
+  
+  if (!periode) {
+    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);">Pilih periode di atas untuk melihat tagihan.</div>';
     return;
   }
 
-  document.getElementById('display-penghasilan').textContent = 'Menghitung...';
+  container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);"><div class="spinner"></div>Menghitung tagihan...</div>';
 
-  apiGetMain('invoiceData', { agentName: agentName, periode: periode })
+  // Panggil API Main (bukan API Agent) untuk data Order
+  apiGetMain('ordersPage', { page: 1, pageSize: 9999 })
     .then(function(res) {
       if (res && res.error) throw new Error(res.error);
+      if (!res || !res.success) throw new Error('Response tidak valid.');
       
-      const totalPenghasilan = res.totalPenghasilan || 0;
-      const totalAdmin = (totalPenghasilan * persen) / 100;
+      const rows = res.rows || [];
+      const map = {};
 
-      document.getElementById('display-penghasilan').textContent = formatRupiah(totalPenghasilan);
-      document.getElementById('prev-nama').textContent = agentName;
-      document.getElementById('prev-periode').textContent = periode;
-      document.getElementById('prev-penghasilan').textContent = formatRupiah(totalPenghasilan);
-      document.getElementById('prev-persen').textContent = persen;
-      document.getElementById('prev-admin').textContent = formatRupiah(totalAdmin);
-      document.getElementById('prev-total').textContent = formatRupiah(totalAdmin);
+      rows.forEach(item => {
+        const raw = item.raw;
+        const rowAgent = String(raw[8] || '').trim();
+        const rowPeriode = String(raw[18] || '').trim();
+        const rowBiaya = parseNominalClient(raw[1]);
+
+        if (rowPeriode === periode && rowAgent) {
+          if (!map[rowAgent]) {
+            map[rowAgent] = { nama: rowAgent, total: 0, count: 0 };
+          }
+          map[rowAgent].total += rowBiaya;
+          map[rowAgent].count++;
+        }
+      });
+
+      const list = Object.values(map).sort((a,b) => a.nama.localeCompare(b.nama));
+
+      if (!list.length) {
+        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--text-muted);">Tidak ada orderan di periode ini.</div>`;
+        return;
+      }
+
+      let html = '';
+      list.forEach(item => {
+        const totalAdmin = item.total * 0.10; // Default 10%
+        
+        html += `
+          <div class="agent-card" style="flex-direction:column; align-items:stretch; gap:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div class="agent-nm">${escapeHtml(item.nama)}</div>
+              <div style="font-size:16px; font-weight:800; color:var(--primary);">${formatRupiah(totalAdmin)}</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--text-secondary);">
+              <div>Total Order: ${formatRupiah(item.total)}</div>
+              <div>Admin (10%)</div>
+            </div>
+            <button class="btn btn-success" style="width:100%; justify-content:center;" onclick="kirimInvoiceWA('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', ${totalAdmin})">
+              <i class="fab fa-whatsapp"></i> Kirim Tagihan
+            </button>
+          </div>
+        `;
+      });
       
-      document.getElementById('stat-bill-agent').textContent = formatRupiah(totalAdmin);
+      container.innerHTML = html;
     })
     .catch(function(err) {
-      document.getElementById('display-penghasilan').textContent = 'Error';
-      showToast('Gagal', err.message, 'error');
+      console.error(err);
+      container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:20px; color:var(--danger);">Gagal: ${err.message}</div>`;
     });
 }
 
-function resetInvoiceUI() {
-  document.getElementById('display-penghasilan').textContent = 'Rp 0';
-  document.getElementById('prev-nama').textContent = '—';
-  document.getElementById('prev-periode').textContent = '—';
-  document.getElementById('prev-penghasilan').textContent = 'Rp 0';
-  document.getElementById('prev-admin').textContent = 'Rp 0';
-  document.getElementById('prev-total').textContent = 'Rp 0';
-  document.getElementById('stat-bill-agent').textContent = 'Rp 0';
-}
+// 3. Kirim Invoice (Sinkronisasi Nomor WA dari DB Agent)
+function kirimInvoiceWA(namaAgent, periode, totalAdmin) {
+  const agent = agentData.find(a => a.nama.toLowerCase() === namaAgent.toLowerCase());
+  
+  if (!agent) {
+    return alert(`Agent "${namaAgent}" tidak ditemukan di database Agent. Pastikan nama sama persis.`);
+  }
+  if (!agent.wa) {
+    return alert(`Nomor WhatsApp untuk agent "${namaAgent}" belum diisi di database.`);
+  }
 
-function kirimWA() {
-  const agentName = document.getElementById('inv-agent').value;
-  if (!agentName) return alert('Pilih agent dulu!');
+  const pesan = `Halo ${namaAgent},\n\nBerikut tagihan Admin Anda untuk periode ${periode}.\n\nTotal Tagihan: *${formatRupiah(totalAdmin)}*\n\nTerlampir bukti invoice. Mohon segera diselesaikan. Terima kasih.`;
   
-  const periode = document.getElementById('inv-periode').value;
-  const total = document.getElementById('prev-total').textContent;
-  
-  alert(`Simulasi Kirim WA ke ${agentName}:\n\nHalo ${agentName}, berikut tagihan admin untuk periode ${periode} sebesar ${total}. Mohon segera diselesaikan. Terima kasih.`);
+  alert(`MENGIRIM KE WA: +${agent.wa}\n\nPESAN:\n${pesan}\n\n(Disimulasikan: Mengirim gambar invoice)`);
 }
 
 /* =========================================================
