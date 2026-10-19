@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Dashboard — SuruhBoy HQ</title>
 
-<!-- 🔥 FAVICON PATH -->
+<!-- FAVICON -->
 <link rel="icon" type="image/x-icon" href="favicon/favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
@@ -215,7 +215,7 @@ input:checked + .slider:before{transform:translateX(20px)}
 
 /* INVOICE SECTION */
 .invoice-wrapper{background:white;border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);padding:24px;margin-top:24px}
-.invoice-grid{display:grid;grid-template-columns:1fr;gap:16px} /* Ubah jadi 1 kolom */
+.invoice-grid{display:grid;grid-template-columns:1fr;gap:16px}
 .form-group{margin-bottom:16px}
 .form-group label{display:block;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px}
 .form-control{width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:10px;font-size:14px;background:#f8fafc;transition:0.2s}
@@ -408,7 +408,7 @@ input:checked + .slider:before{transform:translateX(20px)}
       </div>
     </div>
 
-    <!-- AGENTS (NEW UI) -->
+    <!-- AGENTS -->
     <div id="page-agents" class="page-content" style="display:none;">
       <div class="agent-container">
         
@@ -1278,7 +1278,7 @@ function loadInvoicesByPeriode() {
               <div style="font-size:16px; font-weight:800; color:var(--primary);">${formatRupiah(totalAdmin)}</div>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--text-secondary);">
-              <div>Total Order: ${formatRupiah(item.total)}</div>
+              <div>Total Bersih: ${formatRupiah(item.total)}</div>
               <div>Admin (10%)</div>
             </div>
             <button class="btn btn-success" style="width:100%; justify-content:center;" onclick="kirimInvoiceWA('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', ${totalAdmin})">
