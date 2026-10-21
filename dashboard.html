@@ -1010,7 +1010,7 @@ function submitOrderForm() {
   const originalHTML = submitBtn.innerHTML;
   submitBtn.disabled = true; submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
-  apiPostMain('updateOrder', { rowNumber: orderEditingRow, data: data })
+  apiPostMain('update', { rowNumber: orderEditingRow, data: data })
     .then(function (res) {
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Gagal menyimpan.');
@@ -1070,7 +1070,7 @@ function confirmDelete() {
   const originalHTML = btn.innerHTML;
   btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menghapus...';
 
-  apiPostMain('deleteOrder', { rowNumber: orderDeleteTarget })
+  apiPostMain('delete', { rowNumber: orderDeleteTarget })
     .then(function (res) {
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Gagal menghapus.');
@@ -1411,9 +1411,9 @@ function renderInvoices() {
         
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
           <div class="inv-detail">Penghasilan: ${formatRupiah(item.totalBersih)}</div>
-          <button class="btn btn-success btn-sm" onclick="kirimInvoiceWA('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', ${item.totalBersih}, ${totalAdmin}, '${idKirim}')">
-            <i class="fab fa-whatsapp"></i> Kirim
-          </button>
+          <button class="btn btn-primary btn-sm" onclick="downloadInvoice('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', ${item.totalBersih}, ${totalAdmin}, '${idKirim}')">
+  <i class="fas fa-download"></i> Invoice
+</button>
         </div>
 
         <div style="display:flex; gap: 16px; border-top: 1px dashed var(--border); padding-top: 12px;">
@@ -1465,16 +1465,7 @@ function updateInvoiceStatus(namaAgent, periode, type, isChecked) {
     });
 }
 
-function kirimInvoiceWA(namaAgent, periode, totalBersih, totalAdmin, checkboxId) {
-  const agent = agentData.find(a => a.nama.toLowerCase() === namaAgent.toLowerCase());
-  
-  if (!agent || !agent.wa) {
-    return alert(`Nomor WhatsApp untuk agent "${namaAgent}" tidak ditemukan.`);
-  }
-
-  let noHp = agent.wa.replace(/\D/g, '');
-  if (noHp.startsWith('0')) noHp = '62' + noHp.substring(1);
-
+function downloadInvoice(namaAgent, periode, totalBersih, totalAdmin, checkboxId) {
   // ====================================================
   // GENERATE GAMBAR INVOICE (CANVAS)
   // ====================================================
@@ -1555,31 +1546,26 @@ function kirimInvoiceWA(namaAgent, periode, totalBersih, totalAdmin, checkboxId)
   ctx.fillText('Terima kasih telah bekerja sama.', canvas.width/2, 730);
   ctx.fillText('SuruhBoy HQ', canvas.width/2, 750);
 
-  // Convert ke PNG & Download
+  // ====================================================
+  // DOWNLOAD GAMBAR
+  // ====================================================
+  // Ubah canvas jadi Data URL
   const dataUrl = canvas.toDataURL('image/png');
+  
+  // Buat elemen <a> untuk download
   const link = document.createElement('a');
   link.download = `Invoice_${namaAgent.replace(/\s+/g, '_')}_${periode.replace(/\s+/g, '_')}.png`;
   link.href = dataUrl;
+  
+  // Trigger download langsung (tanpa setTimeout)
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
 
-  // ====================================================
-  // BUKA WHATSAPP
-  // ====================================================
-  const pesan = `Admin Periode ${periode}
+  // Tampilkan notif sukses
+  showToast('Berhasil', 'Invoice berhasil diunduh.', 'success');
 
-Agent : ${namaAgent}
-Penghasilan : ${formatRupiah(totalBersih)}
-Admin : ${formatRupiah(totalAdmin)}
-
-(Terlampir gambar invoice)`;
-
-  const encodedPesan = encodeURIComponent(pesan);
-  const url = `https://wa.me/${noHp}?text=${encodedPesan}`;
-
-  setTimeout(() => {
-    window.open(url, '_blank');
-  }, 800);
-
+  // Ceklis otomatis "Sudah Kirim"
   const chk = document.getElementById(checkboxId);
   if (chk && !chk.checked) {
     chk.checked = true;
