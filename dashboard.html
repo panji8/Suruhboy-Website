@@ -224,6 +224,20 @@ tbody tr:hover{background:#f8fafc}
 .list-status.off{color:var(--warning)}
 .list-status.non{color:var(--danger)}
 
+/* SWITCH */
+.switch{position:relative;display:inline-block;width:38px;height:22px}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#cbd5e1;transition:.2s;border-radius:22px}
+.slider:before{position:absolute;content:"";height:16px;width:16px;left:3px;bottom:3px;background:white;transition:.2s;border-radius:50%}
+.switch input:checked + .slider{background:var(--success)}
+.switch input:checked + .slider:before{transform:translateX(16px)}
+
+/* BUTTON ICON SMALL */
+.btn-icon{width:28px;height:28px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;background:var(--info-bg);color:var(--info);transition:all .15s}
+.btn-icon:hover{background:var(--info);color:white}
+.btn-icon.delete{background:var(--danger-bg);color:var(--danger)}
+.btn-icon.delete:hover{background:var(--danger);color:white}
+
 /* INVOICE LIST */
 .inv-item{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
 .inv-item:last-child{border-bottom:none}
@@ -337,11 +351,11 @@ tbody tr:hover{background:#f8fafc}
 
       <div class="grid-2col">
         <div class="card">
-          <div class="card-header"><div><h3>📈 Pemasukan 5 Minggu Terakhir</h3><div class="card-subtitle">Diurutkan berdasarkan Week Helper A</div></div></div>
+          <div class="card-header"><div>📈 Pemasukan 5 Minggu Terakhir</h3><div class="card-subtitle">Diurutkan berdasarkan Week Helper A</div></div></div>
           <div class="card-body"><div class="chart-container"><canvas id="revenueChart"></canvas></div></div>
         </div>
         <div class="card">
-          <div class="card-header"><div><h3>🧾 Ringkasan Admin</h3><div class="card-subtitle">Perhitungan otomatis 10%</div></div></div>
+          <div class="card-header"><div>🧾 Ringkasan Admin</h3><div class="card-subtitle">Perhitungan otomatis 10%</div></div></div>
           <div class="card-body">
             <div style="display:grid;gap:18px;">
               <div><div style="color:var(--text-muted);font-size:11px;margin-bottom:5px;">Pemasukan</div><div id="adminRevenue" style="font-size:23px;font-weight:800;">Rp 0</div></div>
@@ -358,11 +372,11 @@ tbody tr:hover{background:#f8fafc}
 
       <div class="grid-2col">
         <div class="card">
-          <div class="card-header"><div><h3>🏆 Agent Paling Aktif</h3><div class="card-subtitle">Berdasarkan jumlah order</div></div></div>
+          <div class="card-header"><div>🏆 Agent Paling Aktif</h3><div class="card-subtitle">Berdasarkan jumlah order</div></div></div>
           <div class="card-body"><ul class="analytics-list" id="topAgentsList"><li class="empty">Memuat...</li></ul></div>
         </div>
         <div class="card">
-          <div class="card-header"><div><h3>💰 Agent Pemasukan Tertinggi</h3><div class="card-subtitle">Berdasarkan Convert Nominal</div></div></div>
+          <div class="card-header"><div>💰 Agent Pemasukan Tertinggi</h3><div class="card-subtitle">Berdasarkan Convert Nominal</div></div></div>
           <div class="card-body"><ul class="analytics-list" id="topRevenueAgentsList"><li class="empty">Memuat...</li></ul></div>
         </div>
       </div>
@@ -477,13 +491,17 @@ tbody tr:hover{background:#f8fafc}
             <h3 style="font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px; margin:0;">
               <i class="fas fa-file-invoice" style="color:var(--primary)"></i> Tagihan Admin
             </h3>
-            <div style="display:flex; align-items:center; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
               <input type="text" id="invoice-search" class="search-input" style="max-width:200px;" placeholder="Cari nama agent..." oninput="renderInvoices()">
               
               <label style="font-size:13px; font-weight:600; color:var(--text-secondary);">Filter Periode:</label>
               <select id="inv-periode-filter" class="form-control" style="width:auto; min-width:150px; padding:8px 12px;" onchange="loadInvoicesByPeriode()">
                 <option value="">— Pilih Periode —</option>
               </select>
+
+              <button class="btn btn-success btn-sm" id="btnDownloadAll" onclick="downloadAllInvoices()" disabled>
+                <i class="fas fa-download"></i> Download Semua
+              </button>
             </div>
           </div>
           
@@ -586,6 +604,32 @@ tbody tr:hover{background:#f8fafc}
   </div>
 </div>
 
+<!-- MODAL NOMINAL BAYAR -->
+<div class="modal-overlay" id="payModalOverlay">
+  <div class="modal" style="max-width: 420px;">
+    <div class="modal-header">
+      <h3>Konfirmasi Pembayaran</h3>
+      <button class="modal-close" onclick="closePayModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div id="payModalInfo" style="margin-bottom:16px; font-size:13px; color:var(--text-secondary);"></div>
+      <div class="form-field">
+        <label>Nominal yang Dibayar <span class="req">*</span></label>
+        <input type="text" id="payNominalInput" placeholder="cth: 50000 atau 50rb">
+      </div>
+      <div class="form-field" style="margin-top:12px;">
+        <label>Catatan (otomatis jika selisih)</label>
+        <input type="text" id="payCatatanInput" placeholder="Opsional...">
+      </div>
+      <div id="paySelisihInfo" style="margin-top:12px; font-size:12px; display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closePayModal()">Batal</button>
+      <button class="btn btn-success btn-sm" id="paySubmitBtn" onclick="submitPayModal()"><i class="fas fa-check"></i> Simpan</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-container" id="toastContainer"></div>
 
 <script>
@@ -593,7 +637,7 @@ tbody tr:hover{background:#f8fafc}
    CONFIG & PASSWORD
 ========================================================= */
 const API_URL_MAIN = 'https://script.google.com/macros/s/AKfycbxAmTd3SWa17zWjMbCS2CXJ0BhsAFp0KZq4eNhYZRSt8a5gCaCY4JhpIEd2IRObkU9Q/exec';
-const API_URL_AGENT = 'https://script.google.com/macros/s/AKfycbwDeziTU1ZPhMEJAQx4iw6RvYjkLQL_J9-Fb2nlmXlcVEBc3q02mD7Kjp1PEpid5oBXhw/exec'; // 👈 GANTI INI
+const API_URL_AGENT = 'https://script.google.com/macros/s/AKfycbwPwNiLJ75RWormXC0cMsZgIbjBCX0IWxWChvKWPX5tahJG1jegiHdlQaFtkB8Q48Uosw/exec';
 
 const PASSWORD_GLOBAL = '123456'; 
 const PASSWORD_HAPUS = '123456';  
@@ -618,6 +662,7 @@ let agentPageSize = 5;
 let invoiceRawData = [];
 let invoiceCurrentPage = 1;
 let invoicePageSize = 5; 
+let _payContext = null;
 
 /* =========================================================
    API TRANSPORT
@@ -1026,7 +1071,7 @@ function submitOrderForm() {
 }
 
 /* =========================================================
-   HAPUS DENGAN PASSWORD (Cek Sandi di HTML)
+   HAPUS DENGAN PASSWORD
 ========================================================= */
 function askDeleteOrder(rowNumber) {
   const item = orderRows.find(r => Number(r.rowNumber) === Number(rowNumber));
@@ -1086,7 +1131,7 @@ function confirmDelete() {
 }
 
 /* =========================================================
-   AGENT MODULE (Panggil API Agent)
+   AGENT MODULE
 ========================================================= */
 function loadAgents() {
   const container = document.getElementById('agent-list-body');
@@ -1101,7 +1146,7 @@ function loadAgents() {
     })
     .catch(function (err) {
       console.error(err);
-      if (container) container.innerHTML = `<div style="padding:20px;text-align:center;color:#ef4444;">Gagal memuat agent: ${err.message}</div>`;
+      if (container) container.innerHTML = `<div style="padding:20px;text-align:center;color:#ef4444;">Gagal memuat agent: ${escapeHtml(err.message)}</div>`;
     });
 }
 
@@ -1109,9 +1154,9 @@ function renderAgents() {
   const container = document.getElementById('agent-list-body');
   const infoEl = document.getElementById('agentPaginationInfo');
   const btnsEl = document.getElementById('agentPaginationBtns');
-  const searchVal = document.getElementById('agent-search').value.toLowerCase();
+  const searchEl = document.getElementById('agent-search');
+  const searchVal = searchEl ? searchEl.value.toLowerCase() : '';
 
-  // Filter data berdasarkan search
   let filtered = agentData.filter(a => 
     a.nama.toLowerCase().includes(searchVal) || 
     a.wa.toLowerCase().includes(searchVal)
@@ -1273,7 +1318,7 @@ function askDeleteAgent(namaAgent) {
 }
 
 /* =========================================================
-   INVOICE LOGIC (TABEL)
+   INVOICE LOGIC
 ========================================================= */
 function populatePeriodeFilter() {
   const select = document.getElementById('inv-periode-filter');
@@ -1302,17 +1347,19 @@ function loadInvoicesByPeriode() {
   const periode = document.getElementById('inv-periode-filter').value;
   const container = document.getElementById('invoice-list-body');
   const pagContainer = document.getElementById('invoice-pagination-container');
+  const btnAll = document.getElementById('btnDownloadAll');
 
   if (!periode) {
     container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);">Pilih periode di atas untuk melihat tagihan.</div>';
     if (pagContainer) pagContainer.style.display = 'none';
+    if (btnAll) btnAll.disabled = true;
     return;
   }
 
   container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);"><div class="spinner"></div>Menghitung tagihan...</div>';
   if (pagContainer) pagContainer.style.display = 'none';
+  if (btnAll) btnAll.disabled = true;
 
-  // Ambil 2 data sekaligus (Order dari Main, Status dari Agent)
   Promise.all([
     apiGetMain('dashboard'),
     apiGetAgent('getInvoiceStatus', { periode: periode })
@@ -1320,54 +1367,47 @@ function loadInvoicesByPeriode() {
     .then(function(results) {
       const dataOrder = results[0];
       const dataStatus = results[1];
-
       if (dataOrder && dataOrder.error) throw new Error(dataOrder.error);
-      
+      if (dataStatus && dataStatus.error) throw new Error(dataStatus.error);
+
       const mapStatus = {};
       if (Array.isArray(dataStatus)) {
-        dataStatus.forEach(s => {
-          mapStatus[s.nama.toLowerCase()] = s;
-        });
+        dataStatus.forEach(s => { mapStatus[s.nama.toLowerCase()] = s; });
       }
 
       const map = {};
-      dataOrder.forEach(row => {
+      (Array.isArray(dataOrder) ? dataOrder : []).forEach(row => {
         const rowAgent = String(row.agent || '').trim();
         const rowPeriode = String(row.week || '').trim();
         const rowNominal = parseNominalClient(row.convertNominal);
-
         if (rowPeriode === periode && rowAgent) {
           if (!map[rowAgent]) {
-            map[rowAgent] = { 
-              nama: rowAgent, 
-              totalBersih: 0, 
-              count: 0, 
-              statusKirim: 'Belum', 
-              statusBayar: 'Belum' 
-            };
+            map[rowAgent] = { nama: rowAgent, totalBersih: 0, count: 0, statusKirim: 'Belum', statusBayar: 'Belum', nominalDibayar: '', catatan: '' };
           }
           map[rowAgent].totalBersih += rowNominal;
           map[rowAgent].count++;
         }
       });
 
-      // Gabungkan status dari Sheet Invoices
       Object.keys(map).forEach(nama => {
         const st = mapStatus[nama.toLowerCase()];
         if (st) {
           map[nama].statusKirim = st.statusKirim || 'Belum';
           map[nama].statusBayar = st.statusBayar || 'Belum';
+          map[nama].nominalDibayar = st.nominalDibayar || '';
+          map[nama].catatan = st.catatan || '';
         }
       });
 
       invoiceRawData = Object.values(map).sort((a,b) => a.nama.localeCompare(b.nama));
       invoiceCurrentPage = 1;
       renderInvoices();
-
+      if (btnAll) btnAll.disabled = invoiceRawData.length === 0;
     })
     .catch(function(err) {
       console.error(err);
-      container.innerHTML = `<div style="padding:20px; text-align:center; color:var(--danger);">Gagal: ${err.message}</div>`;
+      container.innerHTML = `<div style="padding:20px; text-align:center; color:var(--danger);">Gagal: ${escapeHtml(err.message)}</div>`;
+      if (btnAll) btnAll.disabled = true;
     });
 }
 
@@ -1377,11 +1417,12 @@ function renderInvoices() {
   const infoEl = document.getElementById('invoicePaginationInfo');
   const btnsEl = document.getElementById('invoicePaginationBtns');
   const periode = document.getElementById('inv-periode-filter').value;
-  const searchVal = document.getElementById('invoice-search').value.toLowerCase();
+  const searchEl = document.getElementById('invoice-search');
+  const searchVal = searchEl ? searchEl.value.toLowerCase() : '';
 
   let filtered = invoiceRawData.filter(item => item.nama.toLowerCase().includes(searchVal));
-
   const total = filtered.length;
+
   if (total === 0) {
     container.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);">Tidak ada tagihan ditemukan.</div>';
     if (pagContainer) pagContainer.style.display = 'none';
@@ -1402,6 +1443,25 @@ function renderInvoices() {
     const idKirim = `chk-kirim-${start + index}`;
     const idBayar = `chk-bayar-${start + index}`;
 
+    // Notice selisih bayar
+    let noticeHtml = '';
+    if (item.statusBayar === 'Sudah' && item.nominalDibayar) {
+      const nominal = parseNominalClient(item.nominalDibayar);
+      const selisih = nominal - totalAdmin;
+      if (Math.abs(selisih) > 1) {
+        const warna = selisih < 0 ? 'var(--danger)' : 'var(--success)';
+        const label = selisih < 0 ? 'Kurang' : 'Lebih';
+        noticeHtml = `<div style="margin-top:8px; padding:8px 10px; background:${selisih < 0 ? 'var(--danger-bg)' : 'var(--success-bg)'}; color:${warna}; border-radius:6px; font-size:11px; font-weight:600;">
+          ⚠️ Pembayaran ${label} ${formatRupiah(Math.abs(selisih))} dari tagihan (dibayar: ${formatRupiah(nominal)})
+          ${item.catatan ? '<br><span style="font-weight:400;">Catatan: ' + escapeHtml(item.catatan) + '</span>' : ''}
+        </div>`;
+      } else if (item.catatan) {
+        noticeHtml = `<div style="margin-top:8px; padding:8px 10px; background:var(--info-bg); color:var(--info); border-radius:6px; font-size:11px;">
+          📝 ${escapeHtml(item.catatan)}
+        </div>`;
+      }
+    }
+
     html += `
       <div class="inv-item" style="flex-direction: column; align-items: stretch; padding: 16px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
@@ -1412,29 +1472,30 @@ function renderInvoices() {
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
           <div class="inv-detail">Penghasilan: ${formatRupiah(item.totalBersih)}</div>
           <button class="btn btn-primary btn-sm" onclick="downloadInvoice('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', ${item.totalBersih}, ${totalAdmin}, '${idKirim}')">
-  <i class="fas fa-download"></i> Invoice
-</button>
+            <i class="fas fa-download"></i> Invoice
+          </button>
         </div>
 
         <div style="display:flex; gap: 16px; border-top: 1px dashed var(--border); padding-top: 12px;">
           <label class="inv-check">
-            <input type="checkbox" id="${idKirim}" ${item.statusKirim === 'Sudah' ? 'checked' : ''} onchange="updateInvoiceStatus('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', 'kirim', this.checked)">
+            <input type="checkbox" id="${idKirim}" ${item.statusKirim === 'Sudah' ? 'checked' : ''} onchange="onKirimCheckboxChange('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', this)">
             <span class="inv-check-label">Sudah Kirim</span>
           </label>
           <label class="inv-check">
-            <input type="checkbox" id="${idBayar}" ${item.statusBayar === 'Sudah' ? 'checked' : ''} onchange="updateInvoiceStatus('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', 'bayar', this.checked)">
+            <input type="checkbox" id="${idBayar}" ${item.statusBayar === 'Sudah' ? 'checked' : ''} onchange="onBayarCheckboxChange('${escapeHtml(item.nama)}', '${escapeHtml(periode)}', this, ${totalAdmin})">
             <span class="inv-check-label">Sudah Bayar</span>
           </label>
         </div>
+        ${noticeHtml}
       </div>
     `;
   });
 
   container.innerHTML = html;
-  
+
   if (pagContainer) pagContainer.style.display = 'flex';
   if (infoEl) infoEl.textContent = 'Menampilkan ' + (start + 1) + '–' + end + ' dari ' + total;
-  
+
   if (btnsEl) {
     let phtml = '';
     phtml += `<button class="page-btn" ${invoiceCurrentPage === 1 ? 'disabled' : ''} onclick="gotoInvoicePage(${invoiceCurrentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
@@ -1451,38 +1512,151 @@ function gotoInvoicePage(p) {
   renderInvoices();
 }
 
-function updateInvoiceStatus(namaAgent, periode, type, isChecked) {
+/* =========================================================
+   UPDATE STATUS INVOICE (KIRIM & BAYAR)
+========================================================= */
+function onKirimCheckboxChange(namaAgent, periode, checkboxEl) {
+  const isChecked = checkboxEl.checked;
+  updateInvoiceStatus(namaAgent, periode, 'kirim', isChecked)
+    .catch(function () { checkboxEl.checked = !isChecked; });
+}
+
+function updateInvoiceStatus(namaAgent, periode, type, isChecked, nominalDibayar, catatan) {
   const statusStr = isChecked ? 'Sudah' : 'Belum';
-  
-  apiPostAgent('updateInvoiceStatus', { namaAgent, periode, type, status: statusStr })
+  const payload = { namaAgent, periode, type, status: statusStr };
+  if (type === 'bayar' && isChecked) {
+    if (nominalDibayar !== undefined) payload.nominalDibayar = nominalDibayar;
+    if (catatan !== undefined) payload.catatan = catatan;
+  }
+
+  return apiPostAgent('updateInvoiceStatus', payload)
     .then(function(res) {
       if (res && res.error) throw new Error(res.error);
-      showToast('Berhasil', 'Status dicatat di Sheet Invoices.', 'success');
+      if (!res || !res.success) throw new Error('Gagal update status.');
+      showToast('Berhasil', 'Status diperbarui.', 'success');
+      // Update local state
+      const item = invoiceRawData.find(x => x.nama.toLowerCase() === namaAgent.toLowerCase());
+      if (item) {
+        if (type === 'kirim') item.statusKirim = statusStr;
+        if (type === 'bayar') {
+          item.statusBayar = statusStr;
+          if (isChecked) {
+            item.nominalDibayar = nominalDibayar || '';
+            item.catatan = catatan || '';
+          } else {
+            item.nominalDibayar = '';
+            item.catatan = '';
+          }
+        }
+      }
+      renderInvoices();
+      return res;
     })
     .catch(function(err) {
-      showToast('Gagal', err.message, 'error');
-      loadInvoicesByPeriode(); 
+      console.error(err);
+      showToast('Gagal', err.message || 'Kesalahan.', 'error');
+      throw err;
     });
 }
 
-function downloadInvoice(namaAgent, periode, totalBersih, totalAdmin, checkboxId) {
-  // ====================================================
-  // GENERATE GAMBAR INVOICE (CANVAS)
-  // ====================================================
+/* =========================================================
+   MODAL PEMBAYARAN (nominal berbeda)
+========================================================= */
+function onBayarCheckboxChange(namaAgent, periode, checkboxEl, totalTagihan) {
+  if (!checkboxEl.checked) {
+    updateInvoiceStatus(namaAgent, periode, 'bayar', false)
+      .catch(function () { checkboxEl.checked = true; });
+    return;
+  }
+  // Check → buka modal input nominal
+  _payContext = { namaAgent, periode, checkboxEl, totalTagihan };
+  
+  const info = document.getElementById('payModalInfo');
+  info.innerHTML = `Agent: <strong>${escapeHtml(namaAgent)}</strong><br>Tagihan: <strong>${formatRupiah(totalTagihan)}</strong><br>Periode: ${escapeHtml(periode)}`;
+  
+  const nominalInput = document.getElementById('payNominalInput');
+  nominalInput.value = String(totalTagihan);
+  document.getElementById('payCatatanInput').value = '';
+  document.getElementById('paySelisihInfo').style.display = 'none';
+  nominalInput.oninput = updatePaySelisihInfo;
+  
+  updatePaySelisihInfo();
+  document.getElementById('payModalOverlay').classList.add('active');
+  nominalInput.focus();
+  nominalInput.select();
+}
+
+function updatePaySelisihInfo() {
+  if (!_payContext) return;
+  const nominal = parseNominalClient(document.getElementById('payNominalInput').value);
+  const selisih = nominal - _payContext.totalTagihan;
+  const infoEl = document.getElementById('paySelisihInfo');
+  
+  if (Math.abs(selisih) < 1) {
+    infoEl.style.display = 'block';
+    infoEl.style.color = 'var(--success)';
+    infoEl.textContent = '✅ Nominal sesuai tagihan.';
+  } else {
+    const label = selisih < 0 ? 'Kurang' : 'Lebih';
+    const warna = selisih < 0 ? 'var(--danger)' : 'var(--warning)';
+    infoEl.style.display = 'block';
+    infoEl.style.color = warna;
+    infoEl.textContent = `⚠️ Pembayaran ${label} ${formatRupiah(Math.abs(selisih))} dari tagihan.`;
+    const catatanInput = document.getElementById('payCatatanInput');
+    if (!catatanInput.value) {
+      catatanInput.value = `${label} ${formatRupiah(Math.abs(selisih))} dari tagihan`;
+    }
+  }
+}
+
+function closePayModal() {
+  document.getElementById('payModalOverlay').classList.remove('active');
+  if (_payContext && _payContext.checkboxEl) _payContext.checkboxEl.checked = false;
+  _payContext = null;
+}
+
+function submitPayModal() {
+  if (!_payContext) return;
+  const nominal = parseNominalClient(document.getElementById('payNominalInput').value);
+  const catatan = document.getElementById('payCatatanInput').value.trim();
+  
+  if (nominal <= 0) {
+    showToast('Gagal', 'Nominal harus lebih dari 0.', 'error');
+    return;
+  }
+  
+  const btn = document.getElementById('paySubmitBtn');
+  const orig = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+  
+  const ctx = _payContext;
+  updateInvoiceStatus(ctx.namaAgent, ctx.periode, 'bayar', true, nominal, catatan)
+    .then(() => {
+      document.getElementById('payModalOverlay').classList.remove('active');
+      _payContext = null;
+    })
+    .catch(() => {
+      // modal tetap terbuka
+    })
+    .finally(() => { btn.disabled = false; btn.innerHTML = orig; });
+}
+
+/* =========================================================
+   DOWNLOAD INVOICE (GAMBAR PNG)
+========================================================= */
+function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   const canvas = document.createElement('canvas');
   canvas.width = 600;
   canvas.height = 800;
   const ctx = canvas.getContext('2d');
 
-  // Background Putih
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Header Teal
+  // Header
   ctx.fillStyle = '#0f766e';
   ctx.fillRect(0, 0, canvas.width, 150);
 
-  // Teks Header
   ctx.fillStyle = '#ffffff';
   ctx.font = 'bold 32px Inter, Arial, sans-serif';
   ctx.textAlign = 'center';
@@ -1499,9 +1673,9 @@ function downloadInvoice(namaAgent, periode, totalBersih, totalAdmin, checkboxId
   ctx.moveTo(50, 200);
   ctx.lineTo(550, 200);
   ctx.stroke();
-  ctx.setLineDash([]); // Reset
+  ctx.setLineDash([]);
 
-  // Detail Invoice
+  // Detail
   ctx.fillStyle = '#475569';
   ctx.textAlign = 'left';
   ctx.font = '16px Inter, Arial, sans-serif';
@@ -1529,7 +1703,7 @@ function downloadInvoice(namaAgent, periode, totalBersih, totalAdmin, checkboxId
   ctx.fillStyle = '#0f172a'; ctx.font = 'bold 18px Inter, Arial, sans-serif';
   ctx.fillText(formatRupiah(totalAdmin), 200, y);
 
-  // Total Tagihan (Box)
+  // Box total
   y += 80;
   ctx.fillStyle = '#ecfdf5';
   ctx.fillRect(50, y, 500, 80);
@@ -1546,35 +1720,79 @@ function downloadInvoice(namaAgent, periode, totalBersih, totalAdmin, checkboxId
   ctx.fillText('Terima kasih telah bekerja sama.', canvas.width/2, 730);
   ctx.fillText('SuruhBoy HQ', canvas.width/2, 750);
 
-  // ====================================================
-  // DOWNLOAD GAMBAR
-  // ====================================================
-  // Ubah canvas jadi Data URL
+  return canvas;
+}
+
+function triggerDownload(canvas, filename) {
   const dataUrl = canvas.toDataURL('image/png');
-  
-  // Buat elemen <a> untuk download
   const link = document.createElement('a');
-  link.download = `Invoice_${namaAgent.replace(/\s+/g, '_')}_${periode.replace(/\s+/g, '_')}.png`;
+  link.download = filename;
   link.href = dataUrl;
-  
-  // Trigger download langsung (tanpa setTimeout)
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
 
-  // Tampilkan notif sukses
+function downloadInvoice(namaAgent, periode, totalBersih, totalAdmin, checkboxId) {
+  const canvas = drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin);
+  const filename = `Invoice_${namaAgent.replace(/\s+/g, '_')}_${periode.replace(/\s+/g, '_')}.png`;
+  triggerDownload(canvas, filename);
   showToast('Berhasil', 'Invoice berhasil diunduh.', 'success');
 
-  // Ceklis otomatis "Sudah Kirim"
+  // Ceklis otomatis "Sudah Kirim" jika belum
   const chk = document.getElementById(checkboxId);
   if (chk && !chk.checked) {
     chk.checked = true;
-    updateInvoiceStatus(namaAgent, periode, 'kirim', true);
+    updateInvoiceStatus(namaAgent, periode, 'kirim', true).catch(function () {
+      if (chk) chk.checked = false;
+    });
   }
 }
 
 /* =========================================================
-   NAVIGATION & AUTH
+   DOWNLOAD SEMUA INVOICE
+========================================================= */
+async function downloadAllInvoices() {
+  const periode = document.getElementById('inv-periode-filter').value;
+  if (!periode) { showToast('Gagal', 'Pilih periode terlebih dahulu.', 'error'); return; }
+  if (!invoiceRawData.length) { showToast('Gagal', 'Tidak ada data invoice.', 'error'); return; }
+
+  const btn = document.getElementById('btnDownloadAll');
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+  const list = invoiceRawData.slice();
+  let sukses = 0;
+
+  for (let i = 0; i < list.length; i++) {
+    const item = list[i];
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${i + 1}/${list.length}`;
+
+    const totalAdmin = item.totalBersih * 0.10;
+    const canvas = drawInvoiceCanvas(item.nama, periode, item.totalBersih, totalAdmin);
+    const filename = `Invoice_${item.nama.replace(/\s+/g, '_')}_${periode.replace(/\s+/g, '_')}.png`;
+    triggerDownload(canvas, filename);
+    sukses++;
+
+    // Update status kirim di backend (tanpa await penuh agar cepat, tapi tetap dicatat)
+    if (item.statusKirim !== 'Sudah') {
+      try {
+        await updateInvoiceStatus(item.nama, periode, 'kirim', true);
+      } catch (_) { /* abaikan */ }
+    }
+
+    // Jeda antar download supaya browser tidak memblokir
+    await new Promise(r => setTimeout(r, 350));
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = orig;
+  showToast('Berhasil', `${sukses} invoice diunduh.`, 'success');
+}
+
+/* =========================================================
+   NAVIGATION
 ========================================================= */
 function navigateTo(page) {
   window.currentPage = page;
@@ -1613,9 +1831,10 @@ document.addEventListener('click', function (e) {
   if (e.target.id === 'orderModalOverlay') closeOrderModal();
   if (e.target.id === 'confirmModalOverlay') closeConfirmModal();
   if (e.target.id === 'agentModalOverlay') closeAgentModal();
+  if (e.target.id === 'payModalOverlay') closePayModal();
 });
 document.addEventListener('keydown', function (e) {
-  if (e.key === 'Escape') { closeOrderModal(); closeConfirmModal(); closeAgentModal(); }
+  if (e.key === 'Escape') { closeOrderModal(); closeConfirmModal(); closeAgentModal(); closePayModal(); }
 });
 </script>
 </body>
