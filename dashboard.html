@@ -642,6 +642,9 @@ const API_URL_AGENT = 'https://script.google.com/macros/s/AKfycbwB_3vDgfeoo4Zmdv
 const PASSWORD_GLOBAL = '123456'; 
 const PASSWORD_HAPUS = '123456';  
 
+// Path gambar QRIS — pastikan file qrisuruhboy.png ada di root repository
+const QRIS_IMAGE_URL = 'qrisuruhboy.png';
+
 /* =========================================================
    GLOBAL STATE
 ========================================================= */
@@ -663,6 +666,9 @@ let invoiceRawData = [];
 let invoiceCurrentPage = 1;
 let invoicePageSize = 5; 
 let _payContext = null;
+
+// QRIS image cache
+let _qrisImageCache = null;
 
 /* =========================================================
    API TRANSPORT
@@ -1642,14 +1648,28 @@ function submitPayModal() {
 }
 
 /* =========================================================
-   DOWNLOAD INVOICE (GAMBAR PNG)
+   DOWNLOAD INVOICE (GAMBAR PNG) — DENGAN QRIS
 ========================================================= */
-function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
+
+// Preload gambar QRIS sekali saja (di-cache)
+function preloadQrisImage() {
+  if (_qrisImageCache) return Promise.resolve(_qrisImageCache);
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => { _qrisImageCache = img; resolve(img); };
+    img.onerror = () => reject(new Error('Gagal memuat gambar QRIS. Pastikan qrisuruhboy.png ada di root repository.'));
+    img.src = QRIS_IMAGE_URL + '?v=' + Date.now();
+  });
+}
+
+async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   const canvas = document.createElement('canvas');
   canvas.width = 600;
-  canvas.height = 800;
+  canvas.height = 1050; // diperbesar untuk area QRIS
   const ctx = canvas.getContext('2d');
 
+  // Background
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -1660,10 +1680,10 @@ function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.fillStyle = '#ffffff';
   ctx.font = 'bold 32px Inter, Arial, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('SURUHBOY HQ', canvas.width/2, 70);
-  
+  ctx.fillText('SURUHBOY HQ', canvas.width / 2, 70);
+
   ctx.font = '16px Inter, Arial, sans-serif';
-  ctx.fillText('Invoice Tagihan Admin', canvas.width/2, 100);
+  ctx.fillText('Invoice Tagihan Admin', canvas.width / 2, 100);
 
   // Garis putus-putus
   ctx.strokeStyle = '#e2e8f0';
@@ -1684,7 +1704,7 @@ function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.fillText('Nama Agent', 50, y);
   ctx.fillStyle = '#0f172a'; ctx.font = 'bold 18px Inter, Arial, sans-serif';
   ctx.fillText(namaAgent, 200, y);
-  
+
   y += 40;
   ctx.fillStyle = '#475569'; ctx.font = '16px Inter, Arial, sans-serif';
   ctx.fillText('Periode', 50, y);
@@ -1713,12 +1733,50 @@ function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.font = 'bold 32px Inter, Arial, sans-serif';
   ctx.fillText(formatRupiah(totalAdmin), 70, y + 60);
 
+  // ===== AREA QRIS =====
+  y += 100;
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(50, y, 500, 380);
+  ctx.strokeStyle = '#0f766e';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6, 4]);
+  ctx.strokeRect(50, y, 500, 380);
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#0f766e';
+  ctx.font = 'bold 18px Inter, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('SCAN UNTUK BAYAR (QRIS)', canvas.width / 2, y + 35);
+
+  try {
+    const qrisImg = await preloadQrisImage();
+    // Gambar QRIS di tengah area, max 300x300
+    const maxSize = 300;
+    const ratio = Math.min(maxSize / qrisImg.width, maxSize / qrisImg.height);
+    const drawW = qrisImg.width * ratio;
+    const drawH = qrisImg.height * ratio;
+    const drawX = (canvas.width - drawW) / 2;
+    const drawY = y + 55;
+    ctx.drawImage(qrisImg, drawX, drawY, drawW, drawH);
+  } catch (err) {
+    ctx.fillStyle = '#ef4444';
+    ctx.font = '14px Inter, Arial, sans-serif';
+    ctx.fillText('Gambar QRIS tidak ditemukan', canvas.width / 2, y + 180);
+    ctx.font = '12px Inter, Arial, sans-serif';
+    ctx.fillText('Pastikan file qrisuruhboy.png ada di root repository.', canvas.width / 2, y + 205);
+    console.warn(err);
+  }
+
+  ctx.fillStyle = '#475569';
+  ctx.font = '13px Inter, Arial, sans-serif';
+  ctx.fillText('Atas nama: SuruhBoy HQ', canvas.width / 2, y + 355);
+
   // Footer
   ctx.fillStyle = '#94a3b8';
   ctx.font = '12px Inter, Arial, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('Terima kasih telah bekerja sama.', canvas.width/2, 730);
-  ctx.fillText('SuruhBoy HQ', canvas.width/2, 750);
+  ctx.fillText('Terima kasih telah bekerja sama.', canvas.width / 2, 980);
+  ctx.fillText('SuruhBoy HQ', canvas.width / 2, 1000);
 
   return canvas;
 }
@@ -1733,19 +1791,23 @@ function triggerDownload(canvas, filename) {
   document.body.removeChild(link);
 }
 
-function downloadInvoice(namaAgent, periode, totalBersih, totalAdmin, checkboxId) {
-  const canvas = drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin);
-  const filename = `Invoice_${namaAgent.replace(/\s+/g, '_')}_${periode.replace(/\s+/g, '_')}.png`;
-  triggerDownload(canvas, filename);
-  showToast('Berhasil', 'Invoice berhasil diunduh.', 'success');
+async function downloadInvoice(namaAgent, periode, totalBersih, totalAdmin, checkboxId) {
+  try {
+    const canvas = await drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin);
+    const filename = `Invoice_${namaAgent.replace(/\s+/g, '_')}_${periode.replace(/\s+/g, '_')}.png`;
+    triggerDownload(canvas, filename);
+    showToast('Berhasil', 'Invoice berhasil diunduh.', 'success');
 
-  // Ceklis otomatis "Sudah Kirim" jika belum
-  const chk = document.getElementById(checkboxId);
-  if (chk && !chk.checked) {
-    chk.checked = true;
-    updateInvoiceStatus(namaAgent, periode, 'kirim', true).catch(function () {
-      if (chk) chk.checked = false;
-    });
+    // Ceklis otomatis "Sudah Kirim" jika belum
+    const chk = document.getElementById(checkboxId);
+    if (chk && !chk.checked) {
+      chk.checked = true;
+      updateInvoiceStatus(namaAgent, periode, 'kirim', true).catch(function () {
+        if (chk) chk.checked = false;
+      });
+    }
+  } catch (err) {
+    showToast('Gagal', err.message || 'Gagal membuat invoice.', 'error');
   }
 }
 
@@ -1762,6 +1824,9 @@ async function downloadAllInvoices() {
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
 
+  // Pastikan QRIS sudah ter-load sekali
+  try { await preloadQrisImage(); } catch (e) { console.warn(e); }
+
   const list = invoiceRawData.slice();
   let sukses = 0;
 
@@ -1769,17 +1834,21 @@ async function downloadAllInvoices() {
     const item = list[i];
     btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${i + 1}/${list.length}`;
 
-    const totalAdmin = item.totalBersih * 0.10;
-    const canvas = drawInvoiceCanvas(item.nama, periode, item.totalBersih, totalAdmin);
-    const filename = `Invoice_${item.nama.replace(/\s+/g, '_')}_${periode.replace(/\s+/g, '_')}.png`;
-    triggerDownload(canvas, filename);
-    sukses++;
+    try {
+      const totalAdmin = item.totalBersih * 0.10;
+      const canvas = await drawInvoiceCanvas(item.nama, periode, item.totalBersih, totalAdmin);
+      const filename = `Invoice_${item.nama.replace(/\s+/g, '_')}_${periode.replace(/\s+/g, '_')}.png`;
+      triggerDownload(canvas, filename);
+      sukses++;
 
-    // Update status kirim di backend (tanpa await penuh agar cepat, tapi tetap dicatat)
-    if (item.statusKirim !== 'Sudah') {
-      try {
-        await updateInvoiceStatus(item.nama, periode, 'kirim', true);
-      } catch (_) { /* abaikan */ }
+      // Update status kirim di backend
+      if (item.statusKirim !== 'Sudah') {
+        try {
+          await updateInvoiceStatus(item.nama, periode, 'kirim', true);
+        } catch (_) { /* abaikan */ }
+      }
+    } catch (err) {
+      console.error('Gagal generate invoice untuk', item.nama, err);
     }
 
     // Jeda antar download supaya browser tidak memblokir
