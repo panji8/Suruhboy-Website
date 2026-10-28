@@ -1648,7 +1648,7 @@ function submitPayModal() {
 }
 
 /* =========================================================
-   DOWNLOAD INVOICE (GAMBAR PNG) — DENGAN QRIS
+   DOWNLOAD INVOICE (GAMBAR PNG) — DENGAN QRIS, HIGH RESOLUSI
 ========================================================= */
 
 // Preload gambar QRIS sekali saja (di-cache)
@@ -1664,26 +1664,34 @@ function preloadQrisImage() {
 }
 
 async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
+  // ====== RESOLUSI TINGGI (2x) ======
+  const SCALE = 2;            // 2x untuk Retina / cetak
+  const W = 600 * SCALE;      // 1200
+  const H = 1050 * SCALE;     // 2100
+
   const canvas = document.createElement('canvas');
-  canvas.width = 600;
-  canvas.height = 1050; // diperbesar untuk area QRIS
+  canvas.width = W;
+  canvas.height = H;
   const ctx = canvas.getContext('2d');
+
+  // Scale seluruh context — semua koordinat tetap pakai skala lama
+  ctx.scale(SCALE, SCALE);
 
   // Background
   ctx.fillStyle = '#ffffff';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillRect(0, 0, 600, 1050);
 
   // Header
   ctx.fillStyle = '#0f766e';
-  ctx.fillRect(0, 0, canvas.width, 150);
+  ctx.fillRect(0, 0, 600, 150);
 
   ctx.fillStyle = '#ffffff';
   ctx.font = 'bold 32px Inter, Arial, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('SURUHBOY HQ', canvas.width / 2, 70);
+  ctx.fillText('SURUHBOY HQ', 300, 70);
 
   ctx.font = '16px Inter, Arial, sans-serif';
-  ctx.fillText('Invoice Tagihan Admin', canvas.width / 2, 100);
+  ctx.fillText('Invoice Tagihan Admin', 300, 100);
 
   // Garis putus-putus
   ctx.strokeStyle = '#e2e8f0';
@@ -1746,37 +1754,44 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.fillStyle = '#0f766e';
   ctx.font = 'bold 18px Inter, Arial, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('SCAN UNTUK BAYAR (QRIS)', canvas.width / 2, y + 35);
+  ctx.fillText('SCAN UNTUK BAYAR (QRIS)', 300, y + 35);
 
   try {
     const qrisImg = await preloadQrisImage();
-    // Gambar QRIS di tengah area, max 300x300
-    const maxSize = 300;
+
+    // Ukuran QRIS lebih besar agar modul jelas (420px di skala 1x)
+    const maxSize = 420;
     const ratio = Math.min(maxSize / qrisImg.width, maxSize / qrisImg.height);
     const drawW = qrisImg.width * ratio;
     const drawH = qrisImg.height * ratio;
-    const drawX = (canvas.width - drawW) / 2;
+    const drawX = (600 - drawW) / 2;
     const drawY = y + 55;
+
+    // Matikan smoothing agar QRIS tetap TAJAM (tidak di-blur browser)
+    ctx.imageSmoothingEnabled = false;
     ctx.drawImage(qrisImg, drawX, drawY, drawW, drawH);
+    // Hidupkan kembali untuk elemen lain (jika ada)
+    ctx.imageSmoothingEnabled = true;
+
   } catch (err) {
     ctx.fillStyle = '#ef4444';
     ctx.font = '14px Inter, Arial, sans-serif';
-    ctx.fillText('Gambar QRIS tidak ditemukan', canvas.width / 2, y + 180);
+    ctx.fillText('Gambar QRIS tidak ditemukan', 300, y + 180);
     ctx.font = '12px Inter, Arial, sans-serif';
-    ctx.fillText('Pastikan file qrisuruhboy.png ada di root repository.', canvas.width / 2, y + 205);
+    ctx.fillText('Pastikan file qrisuruhboy.png ada di root repository.', 300, y + 205);
     console.warn(err);
   }
 
   ctx.fillStyle = '#475569';
   ctx.font = '13px Inter, Arial, sans-serif';
-  ctx.fillText('Atas nama: SuruhBoy HQ', canvas.width / 2, y + 355);
+  ctx.fillText('Atas nama: SuruhBoy HQ', 300, y + 355);
 
   // Footer
   ctx.fillStyle = '#94a3b8';
   ctx.font = '12px Inter, Arial, sans-serif';
   ctx.textAlign = 'center';
-  ctx.fillText('Terima kasih telah bekerja sama.', canvas.width / 2, 980);
-  ctx.fillText('SuruhBoy HQ', canvas.width / 2, 1000);
+  ctx.fillText('Terima kasih telah bekerja sama.', 300, 980);
+  ctx.fillText('SuruhBoy HQ', 300, 1000);
 
   return canvas;
 }
