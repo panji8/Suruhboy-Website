@@ -664,7 +664,7 @@ let isAdminAuthenticated = false;
 let rawData = [], filteredData = [], weeklyData = [], revenueChart = null;
 
 // === ORDER STATE (FULL CLIENT-SIDE) ===
-let allOrdersRaw = [];          // semua order mentah dari API dashboard
+let allOrdersRaw = [];          // semua order mentah dari API (diambil dengan pageSize besar)
 let orderPage = 1, orderPageSize = 10;
 let orderSearchQ = '', orderSortBy = 'newest';
 let orderWeekFilter = '', orderAgentFilter = '';
@@ -803,32 +803,6 @@ function escapeHtml(value) {
 }
 function truncate(str, len) { const s = String(str || ''); return s.length > len ? s.slice(0, len) + '…' : s; }
 
-// === Normalisasi row mentah (dari dashboard) ke bentuk order yang dipakai tabel ===
-// Format array: [1]=biaya, [2]=tanggal, [3]=namaCS, [4]=nomorHP, [5]=deskripsi,
-// [8]=agent, [12]=convertNominal, [18]=periodeMinggu, [20]=kodeMinggu, [21]=orderId
-function normalizeOrderRowFromDashboard(row, idx) {
-  return {
-    rowNumber: row.rowNumber != null ? row.rowNumber : (idx + 2),
-    raw: [
-      row.raw && row.raw[0] != null ? row.raw[0] : '',
-      row.biaya != null ? row.biaya : (row.raw && row.raw[1] != null ? row.raw[1] : ''),
-      row.tanggal != null ? row.tanggal : (row.raw && row.raw[2] != null ? row.raw[2] : ''),
-      row.namaCS != null ? row.namaCS : (row.raw && row.raw[3] != null ? row.raw[3] : ''),
-      row.nomorHP != null ? row.nomorHP : (row.raw && row.raw[4] != null ? row.raw[4] : ''),
-      row.deskripsi != null ? row.deskripsi : (row.raw && row.raw[5] != null ? row.raw[5] : ''),
-      '', '', 
-      row.agent != null ? row.agent : (row.raw && row.raw[8] != null ? row.raw[8] : ''),
-      '', '', '',
-      row.convertNominal != null ? row.convertNominal : (row.raw && row.raw[12] != null ? row.raw[12] : ''),
-      '', '', '', '', '',
-      row.week != null ? row.week : (row.raw && row.raw[18] != null ? row.raw[18] : ''),
-      '',
-      row.weekHelperA != null ? row.weekHelperA : (row.raw && row.raw[20] != null ? row.raw[20] : ''),
-      row.orderId != null ? row.orderId : (row.raw && row.raw[21] != null ? row.raw[21] : '')
-    ]
-  };
-}
-
 /* =========================================================
    LOGIN
 ========================================================= */
@@ -951,20 +925,21 @@ function renderWeeklyTable() {
 }
 
 /* =========================================================
-   ORDER MODULE — FULL CLIENT-SIDE (filter, sort, pagination)
+   ORDER MODULE — FULL CLIENT-SIDE
 ========================================================= */
 function loadOrdersPage() {
   const tbody = document.getElementById('ordersTableBody');
   if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty"><div class="spinner"></div>Memuat...</td></tr>';
 
-  // Selalu ambil dari API dashboard (return semua data), lalu olah di client.
-  apiGetMain('dashboard')
-    .then(function (data) {
-      if (data && data.error) throw new Error(data.error);
-      const arr = Array.isArray(data) ? data : [];
-      allOrdersRaw = arr.map(normalizeOrderRowFromDashboard);
-      // Simpan juga ke rawData supaya filter week/agent dashboard tetap sinkron
-      rawData = arr;
+  // Ambil SEMUA data dari API ordersPage (pageSize besar), filter di client.
+  apiGetMain('ordersPage', { page: 1, pageSize: 9999, search: '', sortBy: 'newest' })
+    .then(function (res) {
+      if (res && res.error) throw new Error(res.error);
+      if (!res || !res.success) throw new Error('Response tidak valid.');
+      
+      // Simpan data mentah hasil API asli (raw array sudah benar formatnya)
+      allOrdersRaw = res.rows || []; 
+      
       populateOrderFilters();
       applyOrderFiltersAndRender();
     })
@@ -1299,7 +1274,6 @@ function confirmDelete() {
    DOWNLOAD ORDERS — EXCEL & PDF (export SEMUA hasil filter)
 ========================================================= */
 function getOrderExportRows() {
-  // Export seluruh hasil filter (bukan cuma halaman aktif)
   return orderFilteredAll.map(function (item, i) {
     const raw = item.raw;
     return {
