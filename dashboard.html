@@ -1001,7 +1001,7 @@ function renderOrdersTable() {
     const agent = String(raw[8] || '');
     const periodeMinggu = String(raw[18] || '');
     const kodeMinggu = String(raw[20] || '');
-    const convertNominal = String(raw[19] || '');  // kolom 14 (index 19) = Convert Nominal
+    const convertNominal = String(raw[12] || '');  // kolom 14 (index 19) = Convert Nominal
     const orderId = String(raw[21] || '');
 
     return `
