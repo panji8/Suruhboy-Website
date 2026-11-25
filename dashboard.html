@@ -1090,7 +1090,7 @@ function renderOrdersTable() {
     const periodeMinggu = String(raw[18] || '');
     const kodeMinggu = String(raw[20] || '');
     const orderId = String(raw[21] || '');
-    const convertNominalRaw = raw[12];
+    const convertNominalRaw = raw[13];
 
     return `
       <tr>
@@ -1287,7 +1287,7 @@ function getOrderExportRows() {
       'Periode Minggu': String(raw[18] || '-'),
       'Kode Minggu': String(raw[20] || '-'),
       'Order ID': String(raw[21] || '-'),
-      'Convert Nominal': (raw[12] !== undefined && raw[12] !== '') ? parseNominalClient(raw[12]) : 0
+      'Convert Nominal': (raw[13] !== undefined && raw[13] !== '') ? parseNominalClient(raw[12]) : 0
     };
   });
 }
