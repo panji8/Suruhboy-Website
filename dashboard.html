@@ -635,7 +635,7 @@ let rawData = [], filteredData = [], weeklyData = [], revenueChart = null;
 
 let orderPage = 1, orderPageSize = 10, orderSearchQ = '', orderSortBy = 'newest', orderWeekFilter = '';
 let orderTotal = 0, orderTotalPages = 1, orderRows = [];
-let _cachedOrderRows = [];   // cache hasil filter (semua baris, bukan cuma halaman aktif)
+let _cachedOrderRows = [];
 let orderMode = 'create', orderEditingRow = null, orderDeleteTarget = null;
 let _searchTimer = null;
 
@@ -772,23 +772,77 @@ function escapeHtml(value) {
 }
 function truncate(str, len) { const s = String(str || ''); return s.length > len ? s.slice(0, len) + '…' : s; }
 
-/* 🔧 FIX: Normalisasi rawData supaya setiap baris pasti punya rowIndex.
-   Backend kadang mengirim nama field berbeda (rowNumber / row) atau tidak sama sekali.
-   Fallback: posisi array + 2 (baris 1 = header di sheet). */
+/* =========================================================
+   🔧 FIX UTAMA — MAPPING BERDASARKAN URUTAN KOLOM (raw[index])
+   Backend mengirim array of array (bukan object).
+   Kolom database yang dipakai (0-based index):
+     raw[1]  = Biaya
+     raw[2]  = Tanggal
+     raw[3]  = Nama CS
+     raw[4]  = Nomor HP
+     raw[5]  = Deskripsi
+     raw[8]  = Agent
+     raw[13] = Convert Nominal
+     raw[18] = Periode Minggu
+     raw[20] = Kode Minggu
+     raw[21] = Order ID
+   rowIndex (nomor baris di sheet) diasumsikan = index array + 2
+   (baris 1 = header), tapi bisa di-override kalau backend kirim field row.
+========================================================= */
+const ORDER_COLUMN_MAP = {
+  biaya:          1,
+  tanggal:        2,
+  namaCS:         3,
+  nomorHP:        4,
+  deskripsi:      5,
+  agent:          8,
+  convertNominal: 13,
+  week:           18,
+  weekCode:       20,
+  orderId:        21,
+};
+
 function normalizeRawData(data) {
   if (!Array.isArray(data)) return [];
+
   return data.map(function (row, i) {
     if (!row || typeof row !== 'object') return row;
-    const hasRowIndex = row.rowIndex !== undefined && row.rowIndex !== null && row.rowIndex !== '';
-    if (hasRowIndex) return row;
-    let fallback = i + 2;
-    if (row.rowNumber !== undefined && row.rowNumber !== null && row.rowNumber !== '') fallback = row.rowNumber;
-    else if (row.row !== undefined && row.row !== null && row.row !== '') fallback = row.row;
-    return Object.assign({}, row, { rowIndex: fallback });
+
+    const normalized = {};
+
+    // Kalau row ternyata array → pakai mapping index
+    if (Array.isArray(row)) {
+      Object.keys(ORDER_COLUMN_MAP).forEach(function (key) {
+        const idx = ORDER_COLUMN_MAP[key];
+        normalized[key] = (idx < row.length) ? row[idx] : '';
+      });
+      // rowIndex: cek kalau backend menyertakan index baris di posisi lain (opsional)
+      // Default: index array + 2 (karena baris 1 = header di sheet)
+      normalized.rowIndex = i + 2;
+      return normalized;
+    }
+
+    // Kalau row object (fallback, siapa tahu backend berubah) → pakai alias
+    Object.keys(row).forEach(function (k) { normalized[k] = row[k]; });
+    Object.keys(ORDER_COLUMN_MAP).forEach(function (key) {
+      if (normalized[key] === undefined || normalized[key] === null || normalized[key] === '') {
+        // coba cari key yang mirip
+        const found = Object.keys(row).find(function (k) {
+          return k.toLowerCase() === key.toLowerCase();
+        });
+        if (found !== undefined) normalized[key] = row[found];
+      }
+    });
+    if (normalized.rowIndex === undefined || normalized.rowIndex === null || normalized.rowIndex === '') {
+      let fallback = i + 2;
+      if (normalized.rowNumber !== undefined && normalized.rowNumber !== null && normalized.rowNumber !== '') fallback = normalized.rowNumber;
+      else if (normalized.row !== undefined && normalized.row !== null && normalized.row !== '') fallback = normalized.row;
+      normalized.rowIndex = fallback;
+    }
+    return normalized;
   });
 }
 
-/* 🔧 FIX: Cari order di cache dulu, fallback ke rawData (halaman lain). */
 function findOrderByRowIndex(rowIndex) {
   if (rowIndex === undefined || rowIndex === null || rowIndex === '') return null;
   let item = _cachedOrderRows.find(function (r) { return Number(r.rowIndex) === Number(rowIndex); });
@@ -822,10 +876,9 @@ function loadDashboard() {
   apiGetMain('dashboard')
     .then(function (data) {
       if (data && data.error) throw new Error(data.error);
-      // 🔧 FIX: normalisasi rowIndex
       rawData = normalizeRawData(data);
       applyFilter();
-      populateOrderWeekFilter(); // isi dropdown week di Order
+      populateOrderWeekFilter();
       showToast('Dashboard', rawData.length + ' data dibaca.', 'success');
       const badge = document.getElementById('orderBadge');
       if (badge) badge.textContent = rawData.length;
@@ -947,16 +1000,13 @@ function onOrderWeekFilterChange() {
   loadOrdersPage();
 }
 
-// Hitung baris order terfilter (client-side, dari rawData)
 function computeOrderRows() {
   let rows = rawData.slice();
 
-  // Filter week
   if (orderWeekFilter) {
     rows = rows.filter(r => String(r.week || '').trim() === orderWeekFilter);
   }
 
-  // Search
   const q = (orderSearchQ || '').toLowerCase().trim();
   if (q) {
     rows = rows.filter(r => {
@@ -967,10 +1017,8 @@ function computeOrderRows() {
     });
   }
 
-  // Sort
   const valNum = (r) => parseNominalClient(r.convertNominal);
   const valDate = (r) => {
-    // best effort parse; fallback ke rowIndex
     const d = new Date(r.tanggal);
     return isNaN(d.getTime()) ? 0 : d.getTime();
   };
@@ -988,16 +1036,13 @@ function computeOrderRows() {
 function loadOrdersPage() {
   const tbody = document.getElementById('ordersTableBody');
 
-  // Kalau rawData kosong (misal user langsung buka menu Order), ambil dulu
   if (!rawData || !rawData.length) {
     if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty"><div class="spinner"></div>Memuat data...</td></tr>';
     apiGetMain('dashboard')
       .then(function (data) {
         if (data && data.error) throw new Error(data.error);
-        // 🔧 FIX: normalisasi rowIndex
         rawData = normalizeRawData(data);
         populateOrderWeekFilter();
-        // setelah load, panggil ulang
         _renderOrdersPageFromCache();
       })
       .catch(function (err) {
@@ -1012,11 +1057,9 @@ function loadOrdersPage() {
 }
 
 function _renderOrdersPageFromCache() {
-  // compute filtered rows (semua baris, bukan hanya halaman aktif)
   const filtered = computeOrderRows();
   _cachedOrderRows = filtered;
 
-  // pagination
   orderTotal = filtered.length;
   orderTotalPages = Math.max(1, Math.ceil(orderTotal / orderPageSize));
   if (orderPage > orderTotalPages) orderPage = orderTotalPages;
@@ -1070,7 +1113,6 @@ function renderOrdersTable() {
   const start = (orderPage - 1) * orderPageSize;
 
   tbody.innerHTML = orderRows.map(function (row, i) {
-    // Data dari API dashboard berupa objek, jadi pakai field langsung
     const rowIndex       = row.rowIndex;
     const tanggal        = formatDateForClient(row.tanggal);
     const namaCS         = String(row.namaCS || '');
@@ -1083,7 +1125,6 @@ function renderOrdersTable() {
     const convertNominal = row.convertNominal;
     const orderId        = String(row.orderId || '');
 
-    // 🔧 FIX: pastikan rowIndex valid. Kalau tidak ada, fallback ke nomor baris tampil.
     const safeRowIndex = (rowIndex !== undefined && rowIndex !== null && rowIndex !== '')
       ? rowIndex
       : (start + i + 1);
@@ -1146,7 +1187,7 @@ function gotoOrderPage(p) {
 }
 
 /* =========================================================
-   DOWNLOAD CSV (bisa dibuka Excel/Sheets)
+   DOWNLOAD CSV
 ========================================================= */
 function downloadOrdersCSV() {
   if (!_cachedOrderRows || !_cachedOrderRows.length) {
@@ -1175,7 +1216,6 @@ function downloadOrdersCSV() {
     ];
   });
 
-  // CSV escape: bungkus dengan double-quote, escape quote ganda
   const csvEscape = (val) => {
     const s = String(val === null || val === undefined ? '' : val);
     return '"' + s.replace(/"/g, '""') + '"';
@@ -1186,7 +1226,6 @@ function downloadOrdersCSV() {
   rows.forEach(r => lines.push(r.map(csvEscape).join(';')));
   const csvContent = lines.join('\r\n');
 
-  // BOM UTF-8 supaya Excel baca karakter Indonesia dengan benar
   const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
 
   const filenameParts = ['Order'];
@@ -1216,7 +1255,6 @@ function openOrderModal(mode, rowIndex) {
   const errorEl = document.getElementById('orderFormError');
   errorEl.classList.remove('active'); errorEl.textContent = '';
 
-  // 🔧 FIX: pakai findOrderByRowIndex agar fallback ke rawData
   const item = findOrderByRowIndex(rowIndex);
   if (!item) { showToast('Gagal', 'Data order tidak ditemukan (rowIndex: ' + rowIndex + ').', 'error'); return; }
 
@@ -1252,11 +1290,9 @@ function submitOrderForm() {
       if (!res || !res.success) throw new Error('Gagal menyimpan.');
       showToast('Berhasil', 'Biaya & Agent diperbarui.', 'success');
       closeOrderModal();
-      // refresh data dari server biar sinkron
       apiGetMain('dashboard')
         .then(function (fresh) {
           if (Array.isArray(fresh)) {
-            // 🔧 FIX: normalisasi rowIndex
             rawData = normalizeRawData(fresh);
             applyFilter();
             loadOrdersPage();
@@ -1277,7 +1313,6 @@ function submitOrderForm() {
    HAPUS DENGAN PASSWORD
 ========================================================= */
 function askDeleteOrder(rowIndex) {
-  // 🔧 FIX: pakai findOrderByRowIndex agar fallback ke rawData
   const item = findOrderByRowIndex(rowIndex);
   orderDeleteTarget = rowIndex;
   const detail = document.getElementById('confirmDetail');
@@ -1324,7 +1359,6 @@ function confirmDelete() {
       apiGetMain('dashboard')
         .then(function (fresh) {
           if (Array.isArray(fresh)) {
-            // 🔧 FIX: normalisasi rowIndex
             rawData = normalizeRawData(fresh);
             applyFilter();
             loadOrdersPage();
@@ -1584,9 +1618,11 @@ function loadInvoicesByPeriode() {
 
       const map = {};
       (Array.isArray(dataOrder) ? dataOrder : []).forEach(row => {
-        const rowAgent = String(row.agent || '').trim();
-        const rowPeriode = String(row.week || '').trim();
-        const rowNominal = parseNominalClient(row.convertNominal);
+        // 🔧 FIX: normalisasi row dulu agar konsisten walau data dari API mentah
+        const n = Array.isArray(row) ? normalizeRawData([row])[0] : row;
+        const rowAgent = String(n.agent || '').trim();
+        const rowPeriode = String(n.week || '').trim();
+        const rowNominal = parseNominalClient(n.convertNominal);
 
         if (rowPeriode === periode && rowAgent) {
           if (!map[rowAgent]) {
@@ -1847,13 +1883,12 @@ function submitPayModal() {
       _payContext = null;
     })
     .catch(() => {
-      // modal tetap terbuka
     })
     .finally(() => { btn.disabled = false; btn.innerHTML = orig; });
 }
 
 /* =========================================================
-   DOWNLOAD INVOICE (GAMBAR PNG) — DENGAN QRIS, HIGH RESOLUSI
+   DOWNLOAD INVOICE (GAMBAR PNG) — DENGAN QRIS
 ========================================================= */
 function preloadQrisImage() {
   if (_qrisImageCache) return Promise.resolve(_qrisImageCache);
