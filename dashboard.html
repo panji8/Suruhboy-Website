@@ -772,6 +772,30 @@ function escapeHtml(value) {
 }
 function truncate(str, len) { const s = String(str || ''); return s.length > len ? s.slice(0, len) + '…' : s; }
 
+/* 🔧 FIX: Normalisasi rawData supaya setiap baris pasti punya rowIndex.
+   Backend kadang mengirim nama field berbeda (rowNumber / row) atau tidak sama sekali.
+   Fallback: posisi array + 2 (baris 1 = header di sheet). */
+function normalizeRawData(data) {
+  if (!Array.isArray(data)) return [];
+  return data.map(function (row, i) {
+    if (!row || typeof row !== 'object') return row;
+    const hasRowIndex = row.rowIndex !== undefined && row.rowIndex !== null && row.rowIndex !== '';
+    if (hasRowIndex) return row;
+    let fallback = i + 2;
+    if (row.rowNumber !== undefined && row.rowNumber !== null && row.rowNumber !== '') fallback = row.rowNumber;
+    else if (row.row !== undefined && row.row !== null && row.row !== '') fallback = row.row;
+    return Object.assign({}, row, { rowIndex: fallback });
+  });
+}
+
+/* 🔧 FIX: Cari order di cache dulu, fallback ke rawData (halaman lain). */
+function findOrderByRowIndex(rowIndex) {
+  if (rowIndex === undefined || rowIndex === null || rowIndex === '') return null;
+  let item = _cachedOrderRows.find(function (r) { return Number(r.rowIndex) === Number(rowIndex); });
+  if (!item) item = rawData.find(function (r) { return Number(r.rowIndex) === Number(rowIndex); });
+  return item || null;
+}
+
 /* =========================================================
    LOGIN
 ========================================================= */
@@ -798,7 +822,8 @@ function loadDashboard() {
   apiGetMain('dashboard')
     .then(function (data) {
       if (data && data.error) throw new Error(data.error);
-      rawData = Array.isArray(data) ? data : [];
+      // 🔧 FIX: normalisasi rowIndex
+      rawData = normalizeRawData(data);
       applyFilter();
       populateOrderWeekFilter(); // isi dropdown week di Order
       showToast('Dashboard', rawData.length + ' data dibaca.', 'success');
@@ -969,7 +994,8 @@ function loadOrdersPage() {
     apiGetMain('dashboard')
       .then(function (data) {
         if (data && data.error) throw new Error(data.error);
-        rawData = Array.isArray(data) ? data : [];
+        // 🔧 FIX: normalisasi rowIndex
+        rawData = normalizeRawData(data);
         populateOrderWeekFilter();
         // setelah load, panggil ulang
         _renderOrdersPageFromCache();
@@ -986,7 +1012,7 @@ function loadOrdersPage() {
 }
 
 function _renderOrdersPageFromCache() {
-  // compute filtered rows
+  // compute filtered rows (semua baris, bukan hanya halaman aktif)
   const filtered = computeOrderRows();
   _cachedOrderRows = filtered;
 
@@ -1057,6 +1083,11 @@ function renderOrdersTable() {
     const convertNominal = row.convertNominal;
     const orderId        = String(row.orderId || '');
 
+    // 🔧 FIX: pastikan rowIndex valid. Kalau tidak ada, fallback ke nomor baris tampil.
+    const safeRowIndex = (rowIndex !== undefined && rowIndex !== null && rowIndex !== '')
+      ? rowIndex
+      : (start + i + 1);
+
     return `
       <tr>
         <td>${start + i + 1}</td>
@@ -1072,8 +1103,8 @@ function renderOrdersTable() {
         <td>${escapeHtml(orderId || '—')}</td>
         <td>
           <div class="action-group">
-            <button class="icon-btn edit" title="Edit Biaya & Agent" onclick="openOrderModal('update', ${rowIndex})"><i class="fas fa-pen"></i></button>
-            <button class="icon-btn delete" title="Hapus" onclick="askDeleteOrder(${rowIndex})"><i class="fas fa-trash"></i></button>
+            <button class="icon-btn edit" title="Edit Biaya & Agent" onclick="openOrderModal('update', ${safeRowIndex})"><i class="fas fa-pen"></i></button>
+            <button class="icon-btn delete" title="Hapus" onclick="askDeleteOrder(${safeRowIndex})"><i class="fas fa-trash"></i></button>
           </div>
         </td>
       </tr>`;
@@ -1185,8 +1216,9 @@ function openOrderModal(mode, rowIndex) {
   const errorEl = document.getElementById('orderFormError');
   errorEl.classList.remove('active'); errorEl.textContent = '';
 
-  const item = _cachedOrderRows.find(r => Number(r.rowIndex) === Number(rowIndex));
-  if (!item) { showToast('Gagal', 'Data order tidak ditemukan.', 'error'); return; }
+  // 🔧 FIX: pakai findOrderByRowIndex agar fallback ke rawData
+  const item = findOrderByRowIndex(rowIndex);
+  if (!item) { showToast('Gagal', 'Data order tidak ditemukan (rowIndex: ' + rowIndex + ').', 'error'); return; }
 
   titleEl.textContent = 'Edit Order #' + rowIndex;
   document.getElementById('fieldNominal').value = item.biaya || '';
@@ -1224,7 +1256,8 @@ function submitOrderForm() {
       apiGetMain('dashboard')
         .then(function (fresh) {
           if (Array.isArray(fresh)) {
-            rawData = fresh;
+            // 🔧 FIX: normalisasi rowIndex
+            rawData = normalizeRawData(fresh);
             applyFilter();
             loadOrdersPage();
           } else {
@@ -1244,7 +1277,8 @@ function submitOrderForm() {
    HAPUS DENGAN PASSWORD
 ========================================================= */
 function askDeleteOrder(rowIndex) {
-  const item = _cachedOrderRows.find(r => Number(r.rowIndex) === Number(rowIndex));
+  // 🔧 FIX: pakai findOrderByRowIndex agar fallback ke rawData
+  const item = findOrderByRowIndex(rowIndex);
   orderDeleteTarget = rowIndex;
   const detail = document.getElementById('confirmDetail');
   if (detail) {
@@ -1289,7 +1323,12 @@ function confirmDelete() {
       closeConfirmModal();
       apiGetMain('dashboard')
         .then(function (fresh) {
-          if (Array.isArray(fresh)) { rawData = fresh; applyFilter(); loadOrdersPage(); }
+          if (Array.isArray(fresh)) {
+            // 🔧 FIX: normalisasi rowIndex
+            rawData = normalizeRawData(fresh);
+            applyFilter();
+            loadOrdersPage();
+          }
           else loadOrdersPage();
         })
         .catch(function () { loadOrdersPage(); });
