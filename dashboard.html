@@ -1062,21 +1062,18 @@ function renderOrdersTable() {
 
   tbody.innerHTML = orderRows.map(function (row, i) {
     // NOTE: data dari API dashboard (bukan raw array), jadi pakai field langsung
-    const tanggal = formatDateForClient(row.tanggal);
-    const namaCS = String(row.namaCS || '');
-    const nomorHP = String(row.nomorHP || '');
-    const deskripsi = String(row.deskripsi || '');
-    const agent = String(row.agent || '');
-    const biaya = String(row.biaya || '');
-    const periodeMinggu = String(row.week || '');
-    const kodeMinggu = String(row.weekCode || '');
-    // Convert Nominal = kolom 13 spreadsheet → API field 'convertNominal'
-    const convertNominalRaw = (row.convertNominal !== undefined && row.convertNominal !== null && row.convertNominal !== '')
-      ? row.convertNominal
-      : '';
-    const orderId = String(row.orderId || '');
-    const rowIndex = row.rowIndex;
-
+    const  raw = item.raw;
+    const biaya = String(raw[1] || '');
+    const tanggal = formatDateForClient(raw[2])
+    const namaCS = String(raw[3] || '');
+    const nomorHP = String(raw[4] || '');
+    const deskripsi = String(raw[5] || '');
+    const agent = String(raw[8] || '');
+    const periodeMinggu = String(raw[18] || '');
+    const kodeMinggu = String(raw[20] || '');
+    const convertNominal = String(raw[13] || '');
+    const orderOD = String(raw[21] || '');
+    
     return `
       <tr>
         <td>${start + i + 1}</td>
