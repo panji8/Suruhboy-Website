@@ -397,9 +397,9 @@ tbody tr:hover{background:#f8fafc}
     <!-- ORDERS -->
     <div id="page-orders" class="page-content" style="display:none;">
       <div class="dashboard-toolbar">
-        <div><div class="dashboard-description">Daftar order — 10 per halaman, terbaru di atas</div></div>
+        <div><div class="dashboard-description">Daftar order — filter & pagination di sisi client (langsung responsif)</div></div>
         <div class="filter-area">
-          <button class="btn btn-success btn-sm" disabled title="Fitur Tambah dinonaktifkan"><i class="fas fa-plus"></i> Order Baru</button>
+          <button class="btn btn-success btn-sm" onclick="downloadOrdersCSV()"><i class="fas fa-file-csv"></i> Download CSV</button>
           <button class="btn btn-primary btn-sm" onclick="reloadOrdersPage()"><i class="fas fa-sync"></i> Refresh</button>
         </div>
       </div>
@@ -656,6 +656,7 @@ let isAdminAuthenticated = false;
 let rawData = [], filteredData = [], weeklyData = [], revenueChart = null;
 let orderPage = 1, orderPageSize = 10, orderSearchQ = '', orderSortBy = 'newest', orderWeekFilter = '';
 let orderTotal = 0, orderTotalPages = 1, orderRows = [];
+let _cachedOrderRows = [];   // cache hasil filter (semua baris, bukan cuma halaman aktif)
 let orderMode = 'create', orderEditingRow = null, orderDeleteTarget = null;
 let _searchTimer = null;
 
@@ -911,7 +912,7 @@ function renderWeeklyTable() {
 }
 
 /* =========================================================
-   ORDER MODULE
+   ORDER MODULE (CLIENT-SIDE: filter, sort, paginate, download)
 ========================================================= */
 function populateOrderWeekFilter() {
   const sel = document.getElementById('orderWeekFilter');
@@ -920,11 +921,9 @@ function populateOrderWeekFilter() {
   const prevValue = orderWeekFilter;
   let html = '<option value="">Semua Week</option>';
   weeks.forEach(item => {
-    // tampilkan week + helper sebagai keterangan, format sama seperti di dashboard
     html += `<option value="${escapeHtml(item.week)}">${escapeHtml(item.week)} — Helper ${escapeHtml(item.helper || '-')}</option>`;
   });
   sel.innerHTML = html;
-  // restore pilihan jika masih ada
   if (prevValue && weeks.some(w => w.week === prevValue)) {
     sel.value = prevValue;
   } else {
@@ -940,39 +939,106 @@ function onOrderWeekFilterChange() {
   loadOrdersPage();
 }
 
-function loadOrdersPage() {
-  const tbody = document.getElementById('ordersTableBody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty"><div class="spinner"></div>Memuat...</td></tr>';
+// Hitung baris order terfilter (client-side, dari rawData)
+function computeOrderRows() {
+  let rows = rawData.slice();
 
-  const params = { page: orderPage, pageSize: orderPageSize, search: orderSearchQ, sortBy: orderSortBy };
-  if (orderWeekFilter) params.weekFilter = orderWeekFilter;
+  // Filter week
+  if (orderWeekFilter) {
+    rows = rows.filter(r => String(r.week || '').trim() === orderWeekFilter);
+  }
 
-  apiGetMain('ordersPage', params)
-    .then(function (res) {
-      if (res && res.error) throw new Error(res.error);
-      if (!res || !res.success) throw new Error('Response tidak valid.');
-      orderRows = res.rows || []; orderPage = res.page || 1; orderTotal = res.total || 0; orderTotalPages = res.totalPages || 1;
-      renderOrdersTable();
-    })
-    .catch(function (err) {
-      console.error(err); if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty">Gagal: ' + escapeHtml(err.message) + '</td></tr>';
-      showToast('Gagal', err.message, 'error');
+  // Search
+  const q = (orderSearchQ || '').toLowerCase().trim();
+  if (q) {
+    rows = rows.filter(r => {
+      const fields = [
+        r.tanggal, r.namaCS, r.nomorHP, r.deskripsi, r.agent, r.orderId, r.week, r.weekCode
+      ].map(v => String(v || '').toLowerCase());
+      return fields.some(v => v.includes(q));
     });
+  }
+
+  // Sort
+  const valNum = (r) => parseNominalClient(r.convertNominal);
+  const valDate = (r) => {
+    // best effort parse; fallback ke rowIndex
+    const d = new Date(r.tanggal);
+    return isNaN(d.getTime()) ? 0 : d.getTime();
+  };
+  const sorters = {
+    newest: (a,b) => (valDate(b) - valDate(a)) || ((b.rowIndex||0) - (a.rowIndex||0)),
+    oldest: (a,b) => (valDate(a) - valDate(b)) || ((a.rowIndex||0) - (b.rowIndex||0)),
+    nominalHigh: (a,b) => valNum(b) - valNum(a),
+    nominalLow: (a,b) => valNum(a) - valNum(b),
+  };
+  rows.sort(sorters[orderSortBy] || sorters.newest);
+
+  return rows;
 }
 
-function reloadOrdersPage() { orderPage = 1; loadOrdersPage(); }
+function loadOrdersPage() {
+  const tbody = document.getElementById('ordersTableBody');
+
+  // Kalau rawData kosong (misal user langsung buka menu Order), ambil dulu
+  if (!rawData || !rawData.length) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty"><div class="spinner"></div>Memuat data...</td></tr>';
+    apiGetMain('dashboard')
+      .then(function (data) {
+        if (data && data.error) throw new Error(data.error);
+        rawData = Array.isArray(data) ? data : [];
+        populateOrderWeekFilter();
+        // setelah load, panggil ulang
+        _renderOrdersPageFromCache();
+      })
+      .catch(function (err) {
+        console.error(err);
+        if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty">Gagal: ' + escapeHtml(err.message) + '</td></tr>';
+        showToast('Gagal', err.message, 'error');
+      });
+    return;
+  }
+
+  _renderOrdersPageFromCache();
+}
+
+function _renderOrdersPageFromCache() {
+  // compute filtered rows
+  const filtered = computeOrderRows();
+  _cachedOrderRows = filtered;
+
+  // pagination
+  orderTotal = filtered.length;
+  orderTotalPages = Math.max(1, Math.ceil(orderTotal / orderPageSize));
+  if (orderPage > orderTotalPages) orderPage = orderTotalPages;
+  if (orderPage < 1) orderPage = 1;
+
+  const start = (orderPage - 1) * orderPageSize;
+  orderRows = filtered.slice(start, start + orderPageSize);
+
+  renderOrdersTable();
+}
+
+function reloadOrdersPage() {
+  orderPage = 1;
+  loadOrdersPage();
+}
 
 function onOrderSearchInput() {
   clearTimeout(_searchTimer);
   _searchTimer = setTimeout(function () {
     const input = document.getElementById('orderSearch');
-    orderSearchQ = input ? input.value.trim() : ''; orderPage = 1; loadOrdersPage();
-  }, 350);
+    orderSearchQ = input ? input.value.trim() : '';
+    orderPage = 1;
+    loadOrdersPage();
+  }, 250);
 }
 
 function onOrderSortChange() {
-  const sel = document.getElementById('orderSort'); orderSortBy = sel ? sel.value : 'newest';
-  orderPage = 1; loadOrdersPage();
+  const sel = document.getElementById('orderSort');
+  orderSortBy = sel ? sel.value : 'newest';
+  orderPage = 1;
+  loadOrdersPage();
 }
 
 function renderOrdersTable() {
@@ -985,24 +1051,31 @@ function renderOrdersTable() {
   if (countEl) countEl.textContent = orderTotal + ' order';
 
   if (!orderRows.length) {
-    tbody.innerHTML = '<tr><td colspan="12" class="empty">' + (orderSearchQ ? 'Tidak ada yang cocok.' : 'Belum ada order.') + '</td></tr>';
-    if (infoEl) infoEl.textContent = '—'; if (btnsEl) btnsEl.innerHTML = ''; return;
+    const msg = (orderSearchQ || orderWeekFilter) ? 'Tidak ada order yang cocok dengan filter.' : 'Belum ada order.';
+    tbody.innerHTML = '<tr><td colspan="12" class="empty">' + msg + '</td></tr>';
+    if (infoEl) infoEl.textContent = '—';
+    if (btnsEl) btnsEl.innerHTML = '';
+    return;
   }
 
   const start = (orderPage - 1) * orderPageSize;
 
-  tbody.innerHTML = orderRows.map(function (item, i) {
-    const raw = item.raw;
-    const biaya = String(raw[1] || ''); 
-    const tanggal = formatDateForClient(raw[2]);
-    const namaCS = String(raw[3] || '');
-    const nomorHP = String(raw[4] || '');
-    const deskripsi = String(raw[5] || '');
-    const agent = String(raw[8] || '');
-    const periodeMinggu = String(raw[18] || '');
-    const kodeMinggu = String(raw[20] || '');
-    const convertNominal = String(raw[13] || '');  // kolom 14 (index 19) = Convert Nominal
-    const orderId = String(raw[21] || '');
+  tbody.innerHTML = orderRows.map(function (row, i) {
+    // NOTE: data dari API dashboard (bukan raw array), jadi pakai field langsung
+    const tanggal = formatDateForClient(row.tanggal);
+    const namaCS = String(row.namaCS || '');
+    const nomorHP = String(row.nomorHP || '');
+    const deskripsi = String(row.deskripsi || '');
+    const agent = String(row.agent || '');
+    const biaya = String(row.biaya || '');
+    const periodeMinggu = String(row.week || '');
+    const kodeMinggu = String(row.weekCode || '');
+    // Convert Nominal = kolom 13 spreadsheet → API field 'convertNominal'
+    const convertNominalRaw = (row.convertNominal !== undefined && row.convertNominal !== null && row.convertNominal !== '')
+      ? row.convertNominal
+      : '';
+    const orderId = String(row.orderId || '');
+    const rowIndex = row.rowIndex;
 
     return `
       <tr>
@@ -1015,18 +1088,22 @@ function renderOrdersTable() {
         <td class="money">${escapeHtml(biaya || '—')}</td>
         <td>${escapeHtml(periodeMinggu || '—')}</td>
         <td>${escapeHtml(kodeMinggu || '—')}</td>
-        <td class="money-green">${convertNominal ? formatRupiah(parseNominalClient(convertNominal)) : '—'}</td>
+        <td class="money-green">${convertNominalRaw !== '' ? formatRupiah(parseNominalClient(convertNominalRaw)) : '—'}</td>
         <td>${escapeHtml(orderId || '—')}</td>
         <td>
           <div class="action-group">
-            <button class="icon-btn edit" title="Edit Biaya & Agent" onclick="openOrderModal('update', ${item.rowNumber})"><i class="fas fa-pen"></i></button>
-            <button class="icon-btn delete" title="Hapus" onclick="askDeleteOrder(${item.rowNumber})"><i class="fas fa-trash"></i></button>
+            <button class="icon-btn edit" title="Edit Biaya & Agent" onclick="openOrderModal('update', ${rowIndex})"><i class="fas fa-pen"></i></button>
+            <button class="icon-btn delete" title="Hapus" onclick="askDeleteOrder(${rowIndex})"><i class="fas fa-trash"></i></button>
           </div>
         </td>
       </tr>`;
   }).join('');
 
-  if (infoEl) { const from = start + 1; const to = Math.min(start + orderPageSize, orderTotal); infoEl.textContent = 'Menampilkan ' + from + '–' + to + ' dari ' + orderTotal; }
+  if (infoEl) {
+    const from = start + 1;
+    const to = Math.min(start + orderPageSize, orderTotal);
+    infoEl.textContent = 'Menampilkan ' + from + '–' + to + ' dari ' + orderTotal;
+  }
   renderOrderPagination();
 }
 
@@ -1051,27 +1128,91 @@ function renderOrderPagination() {
   btnsEl.innerHTML = html;
 }
 
-function gotoOrderPage(p) { if (p < 1 || p > orderTotalPages) return; orderPage = p; loadOrdersPage(); }
+function gotoOrderPage(p) {
+  if (p < 1 || p > orderTotalPages) return;
+  orderPage = p;
+  _renderOrdersPageFromCache();
+}
+
+/* =========================================================
+   DOWNLOAD CSV (bisa dibuka Excel/Sheets)
+========================================================= */
+function downloadOrdersCSV() {
+  if (!_cachedOrderRows || !_cachedOrderRows.length) {
+    showToast('Info', 'Tidak ada data untuk diunduh.', 'info');
+    return;
+  }
+
+  const headers = [
+    'No','Tanggal','Nama CS','Nomor HP','Agent','Deskripsi','Biaya',
+    'Periode Minggu','Kode Minggu','Convert Nominal','Order ID'
+  ];
+
+  const rows = _cachedOrderRows.map((row, i) => {
+    return [
+      i + 1,
+      formatDateForClient(row.tanggal) || '',
+      row.namaCS || '',
+      row.nomorHP || '',
+      row.agent || '',
+      row.deskripsi || '',
+      row.biaya || '',
+      row.week || '',
+      row.weekCode || '',
+      parseNominalClient(row.convertNominal) || 0,
+      row.orderId || ''
+    ];
+  });
+
+  // CSV escape: bungkus dengan double-quote, escape quote ganda
+  const csvEscape = (val) => {
+    const s = String(val === null || val === undefined ? '' : val);
+    return '"' + s.replace(/"/g, '""') + '"';
+  };
+
+  const lines = [];
+  lines.push(headers.map(csvEscape).join(';'));
+  rows.forEach(r => lines.push(r.map(csvEscape).join(';')));
+  const csvContent = lines.join('\r\n');
+
+  // BOM UTF-8 supaya Excel baca karakter Indonesia dengan benar
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+
+  const filenameParts = ['Order'];
+  if (orderWeekFilter) filenameParts.push(orderWeekFilter.replace(/\s+/g, '_'));
+  if (orderSearchQ) filenameParts.push('search');
+  const filename = filenameParts.join('_') + '_' + new Date().toISOString().slice(0,10) + '.csv';
+
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+  showToast('Berhasil', _cachedOrderRows.length + ' baris diunduh sebagai CSV.', 'success');
+}
 
 /* =========================================================
    ORDER MODULE — FORM & CRUD
 ========================================================= */
-function openOrderModal(mode, rowNumber) {
-  orderMode = 'update'; 
-  orderEditingRow = rowNumber;
-  
+function openOrderModal(mode, rowIndex) {
+  orderMode = 'update';
+  orderEditingRow = rowIndex;
+
   const titleEl = document.getElementById('orderModalTitle');
   const errorEl = document.getElementById('orderFormError');
   errorEl.classList.remove('active'); errorEl.textContent = '';
 
-  const item = orderRows.find(r => Number(r.rowNumber) === Number(rowNumber));
+  const item = _cachedOrderRows.find(r => Number(r.rowIndex) === Number(rowIndex));
   if (!item) { showToast('Gagal', 'Data order tidak ditemukan.', 'error'); return; }
 
-  titleEl.textContent = 'Edit Order #' + rowNumber;
-  const raw = item.raw;
+  titleEl.textContent = 'Edit Order #' + rowIndex;
 
-  document.getElementById('fieldNominal').value = raw[1] || ''; 
-  document.getElementById('fieldAgent').value = raw[8] || '';   
+  document.getElementById('fieldNominal').value = item.biaya || '';
+  document.getElementById('fieldAgent').value = item.agent || '';
 
   document.getElementById('orderModalOverlay').classList.add('active');
 }
@@ -1102,8 +1243,19 @@ function submitOrderForm() {
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Gagal menyimpan.');
       showToast('Berhasil', 'Biaya & Agent diperbarui.', 'success');
-      closeOrderModal(); 
-      loadOrdersPage(); 
+      closeOrderModal();
+      // refresh data dari server biar sinkron
+      apiGetMain('dashboard')
+        .then(function (fresh) {
+          if (Array.isArray(fresh)) {
+            rawData = fresh;
+            applyFilter();
+            loadOrdersPage();
+          } else {
+            loadOrdersPage();
+          }
+        })
+        .catch(function () { loadOrdersPage(); });
     })
     .catch(function (err) {
       console.error(err); showFormError('Gagal: ' + (err.message || 'Kesalahan.'));
@@ -1115,29 +1267,29 @@ function submitOrderForm() {
 /* =========================================================
    HAPUS DENGAN PASSWORD
 ========================================================= */
-function askDeleteOrder(rowNumber) {
-  const item = orderRows.find(r => Number(r.rowNumber) === Number(rowNumber));
-  orderDeleteTarget = rowNumber;
-  
+function askDeleteOrder(rowIndex) {
+  const item = _cachedOrderRows.find(r => Number(r.rowIndex) === Number(rowIndex));
+  orderDeleteTarget = rowIndex;
+
   const detail = document.getElementById('confirmDetail');
   if (detail) {
     if (item) {
-      const raw = item.raw;
-      const namaCS = String(raw[3] || 'Tanpa nama'), orderId = String(raw[21] || '');
-      detail.textContent = '#' + rowNumber + ' — ' + namaCS + (orderId ? ' (' + orderId + ')' : '');
-    } else { detail.textContent = '#' + rowNumber; }
+      const namaCS = String(item.namaCS || 'Tanpa nama');
+      const orderId = String(item.orderId || '');
+      detail.textContent = '#' + rowIndex + ' — ' + namaCS + (orderId ? ' (' + orderId + ')' : '');
+    } else { detail.textContent = '#' + rowIndex; }
   }
-  
+
   document.getElementById('deletePasswordInput').value = '';
   document.getElementById('deletePasswordError').style.display = 'none';
-  
+
   document.getElementById('confirmModalOverlay').classList.add('active');
   document.getElementById('deletePasswordInput').focus();
 }
 
-function closeConfirmModal() { 
-  document.getElementById('confirmModalOverlay').classList.remove('active'); 
-  orderDeleteTarget = null; 
+function closeConfirmModal() {
+  document.getElementById('confirmModalOverlay').classList.remove('active');
+  orderDeleteTarget = null;
 }
 
 function confirmDelete() {
@@ -1148,7 +1300,7 @@ function confirmDelete() {
 
   if (inputPass !== PASSWORD_HAPUS) {
     errorEl.style.display = 'block';
-    return; 
+    return;
   }
 
   errorEl.style.display = 'none';
@@ -1162,12 +1314,18 @@ function confirmDelete() {
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Gagal menghapus.');
       showToast('Berhasil', 'Order dihapus.', 'success');
-      closeConfirmModal(); loadOrdersPage();
+      closeConfirmModal();
+      apiGetMain('dashboard')
+        .then(function (fresh) {
+          if (Array.isArray(fresh)) { rawData = fresh; applyFilter(); loadOrdersPage(); }
+          else loadOrdersPage();
+        })
+        .catch(function () { loadOrdersPage(); });
     })
-    .catch(function (err) { 
+    .catch(function (err) {
       errorEl.textContent = err.message;
       errorEl.style.display = 'block';
-      showToast('Gagal', err.message, 'error'); 
+      showToast('Gagal', err.message, 'error');
     })
     .finally(function () { btn.disabled = false; btn.innerHTML = originalHTML; });
 }
@@ -1184,7 +1342,7 @@ function loadAgents() {
       if (data && data.error) throw new Error(data.error);
       agentData = Array.isArray(data) ? data : [];
       renderAgents();
-      populatePeriodeFilter(); 
+      populatePeriodeFilter();
     })
     .catch(function (err) {
       console.error(err);
@@ -1199,16 +1357,16 @@ function renderAgents() {
   const searchEl = document.getElementById('agent-search');
   const searchVal = searchEl ? searchEl.value.toLowerCase() : '';
 
-  let filtered = agentData.filter(a => 
-    a.nama.toLowerCase().includes(searchVal) || 
+  let filtered = agentData.filter(a =>
+    a.nama.toLowerCase().includes(searchVal) ||
     a.wa.toLowerCase().includes(searchVal)
   );
-  
+
   filtered.sort((a, b) => a.nama.localeCompare(b.nama));
 
   const total = filtered.length;
   const totalPages = Math.ceil(total / agentPageSize) || 1;
-  
+
   if (agentCurrentPage > totalPages) agentCurrentPage = totalPages;
   if (agentCurrentPage < 1) agentCurrentPage = 1;
 
@@ -1257,7 +1415,7 @@ function renderAgents() {
   document.getElementById('stat-active-agent').textContent = agentData.filter(a => a.status === 'Aktif').length;
 
   if (infoEl) infoEl.textContent = 'Menampilkan ' + (start + 1) + '–' + end + ' dari ' + total + ' agent';
-  
+
   if (btnsEl) {
     let phtml = '';
     phtml += `<button class="page-btn" ${agentCurrentPage === 1 ? 'disabled' : ''} onclick="gotoAgentPage(${agentCurrentPage - 1})"><i class="fas fa-chevron-left"></i></button>`;
@@ -1276,23 +1434,23 @@ function gotoAgentPage(p) {
 
 function toggleAgentStatus(namaAgent, isChecked) {
   const statusBaru = isChecked ? 'Aktif' : 'Inaktif';
-  
+
   apiPostAgent('updateAgentStatus', { namaAgent: namaAgent, status: statusBaru })
     .then(function (res) {
       if (res && res.error) throw new Error(res.error);
       showToast('Berhasil', 'Status agent diubah.', 'success');
-      loadAgents(); 
+      loadAgents();
     })
     .catch(function (err) {
       showToast('Gagal', err.message, 'error');
-      loadAgents(); 
+      loadAgents();
     });
 }
 
 function openAgentModal(mode, namaAgent) {
   agentMode = mode;
   agentEditingNama = mode === 'update' ? namaAgent : null;
-  
+
   const titleEl = document.getElementById('agentModalTitle');
   const errorEl = document.getElementById('agentFormError');
   errorEl.classList.remove('active'); errorEl.textContent = '';
@@ -1365,7 +1523,7 @@ function askDeleteAgent(namaAgent) {
 function populatePeriodeFilter() {
   const select = document.getElementById('inv-periode-filter');
   if (!select) return;
-  
+
   const map = {};
   rawData.forEach(row => {
     const week = String(row.week || '').trim();
@@ -1376,12 +1534,12 @@ function populatePeriodeFilter() {
   });
 
   const sortedWeeks = Object.values(map).sort((a, b) => a.helperNum - b.helperNum);
-  
+
   let html = '<option value="">— Pilih Periode —</option>';
   sortedWeeks.forEach(item => {
     html += `<option value="${escapeHtml(item.week)}">${escapeHtml(item.week)}</option>`;
   });
-  
+
   select.innerHTML = html;
 }
 
@@ -1485,7 +1643,6 @@ function renderInvoices() {
     const idKirim = `chk-kirim-${start + index}`;
     const idBayar = `chk-bayar-${start + index}`;
 
-    // Notice selisih bayar
     let noticeHtml = '';
     if (item.statusBayar === 'Sudah' && item.nominalDibayar) {
       const nominal = parseNominalClient(item.nominalDibayar);
@@ -1576,7 +1733,6 @@ function updateInvoiceStatus(namaAgent, periode, type, isChecked, nominalDibayar
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Gagal update status.');
       showToast('Berhasil', 'Status diperbarui.', 'success');
-      // Update local state
       const item = invoiceRawData.find(x => x.nama.toLowerCase() === namaAgent.toLowerCase());
       if (item) {
         if (type === 'kirim') item.statusKirim = statusStr;
@@ -1610,18 +1766,17 @@ function onBayarCheckboxChange(namaAgent, periode, checkboxEl, totalTagihan) {
       .catch(function () { checkboxEl.checked = true; });
     return;
   }
-  // Check → buka modal input nominal
   _payContext = { namaAgent, periode, checkboxEl, totalTagihan };
-  
+
   const info = document.getElementById('payModalInfo');
   info.innerHTML = `Agent: <strong>${escapeHtml(namaAgent)}</strong><br>Tagihan: <strong>${formatRupiah(totalTagihan)}</strong><br>Periode: ${escapeHtml(periode)}`;
-  
+
   const nominalInput = document.getElementById('payNominalInput');
   nominalInput.value = String(totalTagihan);
   document.getElementById('payCatatanInput').value = '';
   document.getElementById('paySelisihInfo').style.display = 'none';
   nominalInput.oninput = updatePaySelisihInfo;
-  
+
   updatePaySelisihInfo();
   document.getElementById('payModalOverlay').classList.add('active');
   nominalInput.focus();
@@ -1633,7 +1788,7 @@ function updatePaySelisihInfo() {
   const nominal = parseNominalClient(document.getElementById('payNominalInput').value);
   const selisih = nominal - _payContext.totalTagihan;
   const infoEl = document.getElementById('paySelisihInfo');
-  
+
   if (Math.abs(selisih) < 1) {
     infoEl.style.display = 'block';
     infoEl.style.color = 'var(--success)';
@@ -1661,16 +1816,16 @@ function submitPayModal() {
   if (!_payContext) return;
   const nominal = parseNominalClient(document.getElementById('payNominalInput').value);
   const catatan = document.getElementById('payCatatanInput').value.trim();
-  
+
   if (nominal <= 0) {
     showToast('Gagal', 'Nominal harus lebih dari 0.', 'error');
     return;
   }
-  
+
   const btn = document.getElementById('paySubmitBtn');
   const orig = btn.innerHTML;
   btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-  
+
   const ctx = _payContext;
   updateInvoiceStatus(ctx.namaAgent, ctx.periode, 'bayar', true, nominal, catatan)
     .then(() => {
@@ -1686,8 +1841,6 @@ function submitPayModal() {
 /* =========================================================
    DOWNLOAD INVOICE (GAMBAR PNG) — DENGAN QRIS, HIGH RESOLUSI
 ========================================================= */
-
-// Preload gambar QRIS sekali saja (di-cache)
 function preloadQrisImage() {
   if (_qrisImageCache) return Promise.resolve(_qrisImageCache);
   return new Promise((resolve, reject) => {
@@ -1700,24 +1853,20 @@ function preloadQrisImage() {
 }
 
 async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
-  // ====== RESOLUSI TINGGI (2x) ======
-  const SCALE = 2;            // 2x untuk Retina / cetak
-  const W = 600 * SCALE;      // 1200
-  const H = 1050 * SCALE;     // 2100
+  const SCALE = 2;
+  const W = 600 * SCALE;
+  const H = 1050 * SCALE;
 
   const canvas = document.createElement('canvas');
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext('2d');
 
-  // Scale seluruh context — semua koordinat tetap pakai skala lama
   ctx.scale(SCALE, SCALE);
 
-  // Background
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, 600, 1050);
 
-  // Header
   ctx.fillStyle = '#0f766e';
   ctx.fillRect(0, 0, 600, 150);
 
@@ -1729,7 +1878,6 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.font = '16px Inter, Arial, sans-serif';
   ctx.fillText('Invoice Tagihan Admin', 300, 100);
 
-  // Garis putus-putus
   ctx.strokeStyle = '#e2e8f0';
   ctx.lineWidth = 2;
   ctx.setLineDash([5, 5]);
@@ -1739,7 +1887,6 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Detail
   ctx.fillStyle = '#475569';
   ctx.textAlign = 'left';
   ctx.font = '16px Inter, Arial, sans-serif';
@@ -1767,7 +1914,6 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.fillStyle = '#0f172a'; ctx.font = 'bold 18px Inter, Arial, sans-serif';
   ctx.fillText(formatRupiah(totalAdmin), 200, y);
 
-  // Box total
   y += 80;
   ctx.fillStyle = '#ecfdf5';
   ctx.fillRect(50, y, 500, 80);
@@ -1777,7 +1923,6 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.font = 'bold 32px Inter, Arial, sans-serif';
   ctx.fillText(formatRupiah(totalAdmin), 70, y + 60);
 
-  // ===== AREA QRIS =====
   y += 100;
   ctx.fillStyle = '#f8fafc';
   ctx.fillRect(50, y, 500, 380);
@@ -1795,7 +1940,6 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   try {
     const qrisImg = await preloadQrisImage();
 
-    // Ukuran QRIS lebih besar agar modul jelas (420px di skala 1x)
     const maxSize = 420;
     const ratio = Math.min(maxSize / qrisImg.width, maxSize / qrisImg.height);
     const drawW = qrisImg.width * ratio;
@@ -1803,10 +1947,8 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
     const drawX = (600 - drawW) / 2;
     const drawY = y + 55;
 
-    // Matikan smoothing agar QRIS tetap TAJAM (tidak di-blur browser)
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(qrisImg, drawX, drawY, drawW, drawH);
-    // Hidupkan kembali untuk elemen lain (jika ada)
     ctx.imageSmoothingEnabled = true;
 
   } catch (err) {
@@ -1822,7 +1964,6 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.font = '13px Inter, Arial, sans-serif';
   ctx.fillText('Atas nama: SuruhBoy HQ', 300, y + 355);
 
-  // Footer
   ctx.fillStyle = '#94a3b8';
   ctx.font = '12px Inter, Arial, sans-serif';
   ctx.textAlign = 'center';
@@ -1849,7 +1990,6 @@ async function downloadInvoice(namaAgent, periode, totalBersih, totalAdmin, chec
     triggerDownload(canvas, filename);
     showToast('Berhasil', 'Invoice berhasil diunduh.', 'success');
 
-    // Ceklis otomatis "Sudah Kirim" jika belum
     const chk = document.getElementById(checkboxId);
     if (chk && !chk.checked) {
       chk.checked = true;
@@ -1875,7 +2015,6 @@ async function downloadAllInvoices() {
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
 
-  // Pastikan QRIS sudah ter-load sekali
   try { await preloadQrisImage(); } catch (e) { console.warn(e); }
 
   const list = invoiceRawData.slice();
@@ -1892,17 +2031,15 @@ async function downloadAllInvoices() {
       triggerDownload(canvas, filename);
       sukses++;
 
-      // Update status kirim di backend
       if (item.statusKirim !== 'Sudah') {
         try {
           await updateInvoiceStatus(item.nama, periode, 'kirim', true);
-        } catch (_) { /* abaikan */ }
+        } catch (_) { }
       }
     } catch (err) {
       console.error('Gagal generate invoice untuk', item.nama, err);
     }
 
-    // Jeda antar download supaya browser tidak memblokir
     await new Promise(r => setTimeout(r, 350));
   }
 
@@ -1916,22 +2053,22 @@ async function downloadAllInvoices() {
 ========================================================= */
 function navigateTo(page) {
   window.currentPage = page;
-  
+
   document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
   const active = document.querySelector(`.sidebar-link[data-page="${page}"]`); if (active) active.classList.add('active');
   document.querySelectorAll('.page-content').forEach(el => el.style.display = 'none');
   const target = document.getElementById('page-' + page); if (target) target.style.display = 'block';
-  
-  const titles = { 
-    dashboard: '<i class="fas fa-th-large"></i> Dashboard', 
+
+  const titles = {
+    dashboard: '<i class="fas fa-th-large"></i> Dashboard',
     orders: '<i class="fas fa-shopping-bag"></i> Order',
     agents: '<i class="fas fa-user-tie"></i> Agent',
     recruitment: '<i class="fas fa-user-plus"></i> Rekrutmen',
     settings: '<i class="fas fa-gear"></i> Pengaturan'
   };
-  
+
   document.getElementById('pageTitle').innerHTML = titles[page] || page;
-  
+
   if (page === 'orders') { populateOrderWeekFilter(); loadOrdersPage(); }
   if (page === 'dashboard') loadDashboard();
   if (page === 'agents') loadAgents();
