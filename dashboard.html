@@ -410,7 +410,10 @@ tbody tr:hover{background:#f8fafc}
             <i class="fas fa-search"></i>
             <input type="text" id="orderSearch" placeholder="Cari nama CS, agent, order ID, deskripsi..." oninput="onOrderSearchInput()">
           </div>
-          <div style="display:flex;gap:8px;align-items:center;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <select id="orderWeekFilter" class="filter-select" onchange="onOrderWeekFilterChange()">
+              <option value="">Semua Week</option>
+            </select>
             <select id="orderSort" class="filter-select" onchange="onOrderSortChange()">
               <option value="newest">Terbaru</option><option value="oldest">Terlama</option>
               <option value="nominalHigh">Nominal Tertinggi</option><option value="nominalLow">Nominal Terendah</option>
@@ -425,11 +428,11 @@ tbody tr:hover{background:#f8fafc}
               <tr>
                 <th>#</th><th>Tanggal</th><th>Nama CS</th><th>Nomor HP</th><th>Agent</th>
                 <th>Deskripsi</th><th>Biaya</th><th>Periode Minggu</th><th>Kode Minggu</th>
-                <th>Order ID</th><th style="text-align:right;">Aksi</th>
+                <th>Convert Nominal</th><th>Order ID</th><th style="text-align:right;">Aksi</th>
               </tr>
             </thead>
             <tbody id="ordersTableBody">
-              <tr><td colspan="11" class="empty">Memuat data...</td></tr>
+              <tr><td colspan="12" class="empty">Memuat data...</td></tr>
             </tbody>
           </table>
         </div>
@@ -651,7 +654,7 @@ const QRIS_IMAGE_URL = 'qrisuruhboy.png';
 let currentPage = 'dashboard';
 let isAdminAuthenticated = false;
 let rawData = [], filteredData = [], weeklyData = [], revenueChart = null;
-let orderPage = 1, orderPageSize = 10, orderSearchQ = '', orderSortBy = 'newest';
+let orderPage = 1, orderPageSize = 10, orderSearchQ = '', orderSortBy = 'newest', orderWeekFilter = '';
 let orderTotal = 0, orderTotalPages = 1, orderRows = [];
 let orderMode = 'create', orderEditingRow = null, orderDeleteTarget = null;
 let _searchTimer = null;
@@ -813,6 +816,7 @@ function loadDashboard() {
       if (data && data.error) throw new Error(data.error);
       rawData = Array.isArray(data) ? data : [];
       applyFilter();
+      populateOrderWeekFilter(); // isi dropdown week di Order
       showToast('Dashboard', rawData.length + ' data dibaca.', 'success');
       const badge = document.getElementById('orderBadge');
       if (badge) badge.textContent = rawData.length;
@@ -909,11 +913,41 @@ function renderWeeklyTable() {
 /* =========================================================
    ORDER MODULE
 ========================================================= */
+function populateOrderWeekFilter() {
+  const sel = document.getElementById('orderWeekFilter');
+  if (!sel) return;
+  const weeks = getUniqueWeeks(rawData);
+  const prevValue = orderWeekFilter;
+  let html = '<option value="">Semua Week</option>';
+  weeks.forEach(item => {
+    // tampilkan week + helper sebagai keterangan, format sama seperti di dashboard
+    html += `<option value="${escapeHtml(item.week)}">${escapeHtml(item.week)} — Helper ${escapeHtml(item.helper || '-')}</option>`;
+  });
+  sel.innerHTML = html;
+  // restore pilihan jika masih ada
+  if (prevValue && weeks.some(w => w.week === prevValue)) {
+    sel.value = prevValue;
+  } else {
+    orderWeekFilter = '';
+    sel.value = '';
+  }
+}
+
+function onOrderWeekFilterChange() {
+  const sel = document.getElementById('orderWeekFilter');
+  orderWeekFilter = sel ? sel.value : '';
+  orderPage = 1;
+  loadOrdersPage();
+}
+
 function loadOrdersPage() {
   const tbody = document.getElementById('ordersTableBody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="11" class="empty"><div class="spinner"></div>Memuat...</td></tr>';
+  if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty"><div class="spinner"></div>Memuat...</td></tr>';
 
-  apiGetMain('ordersPage', { page: orderPage, pageSize: orderPageSize, search: orderSearchQ, sortBy: orderSortBy })
+  const params = { page: orderPage, pageSize: orderPageSize, search: orderSearchQ, sortBy: orderSortBy };
+  if (orderWeekFilter) params.weekFilter = orderWeekFilter;
+
+  apiGetMain('ordersPage', params)
     .then(function (res) {
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Response tidak valid.');
@@ -921,7 +955,7 @@ function loadOrdersPage() {
       renderOrdersTable();
     })
     .catch(function (err) {
-      console.error(err); if (tbody) tbody.innerHTML = '<tr><td colspan="11" class="empty">Gagal: ' + escapeHtml(err.message) + '</td></tr>';
+      console.error(err); if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty">Gagal: ' + escapeHtml(err.message) + '</td></tr>';
       showToast('Gagal', err.message, 'error');
     });
 }
@@ -951,7 +985,7 @@ function renderOrdersTable() {
   if (countEl) countEl.textContent = orderTotal + ' order';
 
   if (!orderRows.length) {
-    tbody.innerHTML = '<tr><td colspan="11" class="empty">' + (orderSearchQ ? 'Tidak ada yang cocok.' : 'Belum ada order.') + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="12" class="empty">' + (orderSearchQ ? 'Tidak ada yang cocok.' : 'Belum ada order.') + '</td></tr>';
     if (infoEl) infoEl.textContent = '—'; if (btnsEl) btnsEl.innerHTML = ''; return;
   }
 
@@ -967,6 +1001,7 @@ function renderOrdersTable() {
     const agent = String(raw[8] || '');
     const periodeMinggu = String(raw[18] || '');
     const kodeMinggu = String(raw[20] || '');
+    const convertNominal = String(raw[19] || '');  // kolom 14 (index 19) = Convert Nominal
     const orderId = String(raw[21] || '');
 
     return `
@@ -980,6 +1015,7 @@ function renderOrdersTable() {
         <td class="money">${escapeHtml(biaya || '—')}</td>
         <td>${escapeHtml(periodeMinggu || '—')}</td>
         <td>${escapeHtml(kodeMinggu || '—')}</td>
+        <td class="money-green">${convertNominal ? formatRupiah(parseNominalClient(convertNominal)) : '—'}</td>
         <td>${escapeHtml(orderId || '—')}</td>
         <td>
           <div class="action-group">
@@ -1896,7 +1932,7 @@ function navigateTo(page) {
   
   document.getElementById('pageTitle').innerHTML = titles[page] || page;
   
-  if (page === 'orders') loadOrdersPage();
+  if (page === 'orders') { populateOrderWeekFilter(); loadOrdersPage(); }
   if (page === 'dashboard') loadDashboard();
   if (page === 'agents') loadAgents();
 }
