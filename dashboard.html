@@ -13,6 +13,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
 :root{
   --primary:#4f46e5;--primary-dark:#3730a3;--primary-bg:#eef2ff;
@@ -325,7 +328,7 @@ tbody tr:hover{background:#f8fafc}
     <div>
       <h1 class="page-title" id="pageTitle"><i class="fas fa-th-large"></i> Dashboard</h1>
     </div>
-    <button class="btn btn-primary btn-sm" onclick="if(window.currentPage==='agents') loadAgents(); else loadDashboard();"><i class="fas fa-sync"></i> Refresh</button>
+    <button class="btn btn-primary btn-sm" onclick="if(window.currentPage==='agents') loadAgents(); else if(window.currentPage==='orders') reloadOrdersPage(); else loadDashboard();"><i class="fas fa-sync"></i> Refresh</button>
   </header>
 
   <div class="content">
@@ -405,16 +408,24 @@ tbody tr:hover{background:#f8fafc}
       </div>
 
       <div class="card">
-        <div class="table-toolbar">
-          <div class="search-box">
+        <div class="table-toolbar" style="flex-wrap:wrap; gap:8px;">
+          <div class="search-box" style="flex:1; min-width:200px;">
             <i class="fas fa-search"></i>
             <input type="text" id="orderSearch" placeholder="Cari nama CS, agent, order ID, deskripsi..." oninput="onOrderSearchInput()">
           </div>
-          <div style="display:flex;gap:8px;align-items:center;">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <select id="orderWeekFilter" class="filter-select" onchange="onOrderWeekFilterChange()">
+              <option value="">Semua Kode Minggu</option>
+            </select>
+            <select id="orderAgentFilter" class="filter-select" onchange="onOrderAgentFilterChange()">
+              <option value="">Semua Agent</option>
+            </select>
             <select id="orderSort" class="filter-select" onchange="onOrderSortChange()">
               <option value="newest">Terbaru</option><option value="oldest">Terlama</option>
               <option value="nominalHigh">Nominal Tertinggi</option><option value="nominalLow">Nominal Terendah</option>
             </select>
+            <button class="btn btn-success btn-sm" onclick="downloadOrdersExcel()"><i class="fas fa-file-excel"></i> Excel</button>
+            <button class="btn btn-danger btn-sm" onclick="downloadOrdersPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
             <span style="font-size:12px;color:var(--text-muted);" id="orderCount">0 order</span>
           </div>
         </div>
@@ -425,11 +436,11 @@ tbody tr:hover{background:#f8fafc}
               <tr>
                 <th>#</th><th>Tanggal</th><th>Nama CS</th><th>Nomor HP</th><th>Agent</th>
                 <th>Deskripsi</th><th>Biaya</th><th>Periode Minggu</th><th>Kode Minggu</th>
-                <th>Order ID</th><th style="text-align:right;">Aksi</th>
+                <th>Order ID</th><th>Convert Nominal</th><th style="text-align:right;">Aksi</th>
               </tr>
             </thead>
             <tbody id="ordersTableBody">
-              <tr><td colspan="11" class="empty">Memuat data...</td></tr>
+              <tr><td colspan="12" class="empty">Memuat data...</td></tr>
             </tbody>
           </table>
         </div>
@@ -651,8 +662,15 @@ const QRIS_IMAGE_URL = 'qrisuruhboy.png';
 let currentPage = 'dashboard';
 let isAdminAuthenticated = false;
 let rawData = [], filteredData = [], weeklyData = [], revenueChart = null;
-let orderPage = 1, orderPageSize = 10, orderSearchQ = '', orderSortBy = 'newest';
-let orderTotal = 0, orderTotalPages = 1, orderRows = [];
+
+// === ORDER STATE (FULL CLIENT-SIDE) ===
+let allOrdersRaw = [];          // semua order mentah dari API dashboard
+let orderPage = 1, orderPageSize = 10;
+let orderSearchQ = '', orderSortBy = 'newest';
+let orderWeekFilter = '', orderAgentFilter = '';
+let orderRows = [];             // baris halaman aktif (untuk render)
+let orderTotal = 0, orderTotalPages = 1;
+let orderFilteredAll = [];      // semua order setelah filter+sort (untuk export)
 let orderMode = 'create', orderEditingRow = null, orderDeleteTarget = null;
 let _searchTimer = null;
 
@@ -785,6 +803,32 @@ function escapeHtml(value) {
 }
 function truncate(str, len) { const s = String(str || ''); return s.length > len ? s.slice(0, len) + '…' : s; }
 
+// === Normalisasi row mentah (dari dashboard) ke bentuk order yang dipakai tabel ===
+// Format array: [1]=biaya, [2]=tanggal, [3]=namaCS, [4]=nomorHP, [5]=deskripsi,
+// [8]=agent, [12]=convertNominal, [18]=periodeMinggu, [20]=kodeMinggu, [21]=orderId
+function normalizeOrderRowFromDashboard(row, idx) {
+  return {
+    rowNumber: row.rowNumber != null ? row.rowNumber : (idx + 2),
+    raw: [
+      row.raw && row.raw[0] != null ? row.raw[0] : '',
+      row.biaya != null ? row.biaya : (row.raw && row.raw[1] != null ? row.raw[1] : ''),
+      row.tanggal != null ? row.tanggal : (row.raw && row.raw[2] != null ? row.raw[2] : ''),
+      row.namaCS != null ? row.namaCS : (row.raw && row.raw[3] != null ? row.raw[3] : ''),
+      row.nomorHP != null ? row.nomorHP : (row.raw && row.raw[4] != null ? row.raw[4] : ''),
+      row.deskripsi != null ? row.deskripsi : (row.raw && row.raw[5] != null ? row.raw[5] : ''),
+      '', '', 
+      row.agent != null ? row.agent : (row.raw && row.raw[8] != null ? row.raw[8] : ''),
+      '', '', '',
+      row.convertNominal != null ? row.convertNominal : (row.raw && row.raw[12] != null ? row.raw[12] : ''),
+      '', '', '', '', '',
+      row.week != null ? row.week : (row.raw && row.raw[18] != null ? row.raw[18] : ''),
+      '',
+      row.weekHelperA != null ? row.weekHelperA : (row.raw && row.raw[20] != null ? row.raw[20] : ''),
+      row.orderId != null ? row.orderId : (row.raw && row.raw[21] != null ? row.raw[21] : '')
+    ]
+  };
+}
+
 /* =========================================================
    LOGIN
 ========================================================= */
@@ -907,38 +951,141 @@ function renderWeeklyTable() {
 }
 
 /* =========================================================
-   ORDER MODULE
+   ORDER MODULE — FULL CLIENT-SIDE (filter, sort, pagination)
 ========================================================= */
 function loadOrdersPage() {
   const tbody = document.getElementById('ordersTableBody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="11" class="empty"><div class="spinner"></div>Memuat...</td></tr>';
+  if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty"><div class="spinner"></div>Memuat...</td></tr>';
 
-  apiGetMain('ordersPage', { page: orderPage, pageSize: orderPageSize, search: orderSearchQ, sortBy: orderSortBy })
-    .then(function (res) {
-      if (res && res.error) throw new Error(res.error);
-      if (!res || !res.success) throw new Error('Response tidak valid.');
-      orderRows = res.rows || []; orderPage = res.page || 1; orderTotal = res.total || 0; orderTotalPages = res.totalPages || 1;
-      renderOrdersTable();
+  // Selalu ambil dari API dashboard (return semua data), lalu olah di client.
+  apiGetMain('dashboard')
+    .then(function (data) {
+      if (data && data.error) throw new Error(data.error);
+      const arr = Array.isArray(data) ? data : [];
+      allOrdersRaw = arr.map(normalizeOrderRowFromDashboard);
+      // Simpan juga ke rawData supaya filter week/agent dashboard tetap sinkron
+      rawData = arr;
+      populateOrderFilters();
+      applyOrderFiltersAndRender();
     })
     .catch(function (err) {
-      console.error(err); if (tbody) tbody.innerHTML = '<tr><td colspan="11" class="empty">Gagal: ' + escapeHtml(err.message) + '</td></tr>';
+      console.error(err);
+      if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty">Gagal: ' + escapeHtml(err.message) + '</td></tr>';
       showToast('Gagal', err.message, 'error');
     });
 }
 
-function reloadOrdersPage() { orderPage = 1; loadOrdersPage(); }
+function populateOrderFilters() {
+  const weekSelect = document.getElementById('orderWeekFilter');
+  const agentSelect = document.getElementById('orderAgentFilter');
+
+  if (weekSelect) {
+    const weeks = new Set();
+    allOrdersRaw.forEach(item => {
+      const kode = String(item.raw[20] || '').trim(); // Kode Minggu
+      if (kode) weeks.add(kode);
+    });
+    const currentVal = orderWeekFilter || weekSelect.value;
+    let html = '<option value="">Semua Kode Minggu</option>';
+    Array.from(weeks).sort().forEach(w => {
+      html += `<option value="${escapeHtml(w)}">${escapeHtml(w)}</option>`;
+    });
+    weekSelect.innerHTML = html;
+    weekSelect.value = weeks.has(currentVal) ? currentVal : '';
+    if (!weeks.has(currentVal)) orderWeekFilter = '';
+  }
+
+  if (agentSelect) {
+    const agents = new Set();
+    allOrdersRaw.forEach(item => {
+      const a = String(item.raw[8] || '').trim();
+      if (a) agents.add(a);
+    });
+    const currentVal = orderAgentFilter || agentSelect.value;
+    let html = '<option value="">Semua Agent</option>';
+    Array.from(agents).sort().forEach(a => {
+      html += `<option value="${escapeHtml(a)}">${escapeHtml(a)}</option>`;
+    });
+    agentSelect.innerHTML = html;
+    agentSelect.value = agents.has(currentVal) ? currentVal : '';
+    if (!agents.has(currentVal)) orderAgentFilter = '';
+  }
+}
+
+function getOrderSearchBlob(item) {
+  const r = item.raw;
+  return [
+    r[3], r[4], r[8], r[5], r[21], r[20], r[18], r[1]
+  ].map(v => String(v || '').toLowerCase()).join(' ');
+}
+
+function applyOrderFiltersAndRender() {
+  // 1) Filter
+  let rows = allOrdersRaw.slice();
+  const q = orderSearchQ.trim().toLowerCase();
+  if (q) rows = rows.filter(item => getOrderSearchBlob(item).indexOf(q) !== -1);
+  if (orderWeekFilter) rows = rows.filter(item => String(item.raw[20] || '').trim() === orderWeekFilter);
+  if (orderAgentFilter) rows = rows.filter(item => String(item.raw[8] || '').trim().toLowerCase() === orderAgentFilter.toLowerCase());
+
+  // 2) Sort
+  rows.sort((a, b) => {
+    if (orderSortBy === 'nominalHigh') return parseNominalClient(b.raw[12]) - parseNominalClient(a.raw[12]);
+    if (orderSortBy === 'nominalLow') return parseNominalClient(a.raw[12]) - parseNominalClient(b.raw[12]);
+    if (orderSortBy === 'oldest') return a.rowNumber - b.rowNumber;
+    // newest default
+    return b.rowNumber - a.rowNumber;
+  });
+
+  orderFilteredAll = rows;
+  orderTotal = rows.length;
+  orderTotalPages = Math.max(1, Math.ceil(orderTotal / orderPageSize));
+  if (orderPage > orderTotalPages) orderPage = orderTotalPages;
+  if (orderPage < 1) orderPage = 1;
+
+  const start = (orderPage - 1) * orderPageSize;
+  orderRows = rows.slice(start, start + orderPageSize);
+  renderOrdersTable();
+}
+
+function reloadOrdersPage() {
+  orderPage = 1;
+  orderSearchQ = ''; orderWeekFilter = ''; orderAgentFilter = ''; orderSortBy = 'newest';
+  const s = document.getElementById('orderSearch'); if (s) s.value = '';
+  const w = document.getElementById('orderWeekFilter'); if (w) w.value = '';
+  const a = document.getElementById('orderAgentFilter'); if (a) a.value = '';
+  const so = document.getElementById('orderSort'); if (so) so.value = 'newest';
+  loadOrdersPage();
+}
 
 function onOrderSearchInput() {
   clearTimeout(_searchTimer);
   _searchTimer = setTimeout(function () {
     const input = document.getElementById('orderSearch');
-    orderSearchQ = input ? input.value.trim() : ''; orderPage = 1; loadOrdersPage();
-  }, 350);
+    orderSearchQ = input ? input.value.trim() : '';
+    orderPage = 1;
+    applyOrderFiltersAndRender();
+  }, 300);
 }
 
 function onOrderSortChange() {
-  const sel = document.getElementById('orderSort'); orderSortBy = sel ? sel.value : 'newest';
-  orderPage = 1; loadOrdersPage();
+  const sel = document.getElementById('orderSort');
+  orderSortBy = sel ? sel.value : 'newest';
+  orderPage = 1;
+  applyOrderFiltersAndRender();
+}
+
+function onOrderWeekFilterChange() {
+  const sel = document.getElementById('orderWeekFilter');
+  orderWeekFilter = sel ? sel.value : '';
+  orderPage = 1;
+  applyOrderFiltersAndRender();
+}
+
+function onOrderAgentFilterChange() {
+  const sel = document.getElementById('orderAgentFilter');
+  orderAgentFilter = sel ? sel.value : '';
+  orderPage = 1;
+  applyOrderFiltersAndRender();
 }
 
 function renderOrdersTable() {
@@ -951,7 +1098,7 @@ function renderOrdersTable() {
   if (countEl) countEl.textContent = orderTotal + ' order';
 
   if (!orderRows.length) {
-    tbody.innerHTML = '<tr><td colspan="11" class="empty">' + (orderSearchQ ? 'Tidak ada yang cocok.' : 'Belum ada order.') + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="12" class="empty">' + ((orderSearchQ || orderWeekFilter || orderAgentFilter) ? 'Tidak ada yang cocok.' : 'Belum ada order.') + '</td></tr>';
     if (infoEl) infoEl.textContent = '—'; if (btnsEl) btnsEl.innerHTML = ''; return;
   }
 
@@ -959,7 +1106,7 @@ function renderOrdersTable() {
 
   tbody.innerHTML = orderRows.map(function (item, i) {
     const raw = item.raw;
-    const biaya = String(raw[1] || ''); 
+    const biaya = String(raw[1] || '');
     const tanggal = formatDateForClient(raw[2]);
     const namaCS = String(raw[3] || '');
     const nomorHP = String(raw[4] || '');
@@ -968,6 +1115,7 @@ function renderOrdersTable() {
     const periodeMinggu = String(raw[18] || '');
     const kodeMinggu = String(raw[20] || '');
     const orderId = String(raw[21] || '');
+    const convertNominalRaw = raw[12];
 
     return `
       <tr>
@@ -981,6 +1129,7 @@ function renderOrdersTable() {
         <td>${escapeHtml(periodeMinggu || '—')}</td>
         <td>${escapeHtml(kodeMinggu || '—')}</td>
         <td>${escapeHtml(orderId || '—')}</td>
+        <td class="money-green">${(convertNominalRaw !== undefined && convertNominalRaw !== '') ? formatRupiah(parseNominalClient(convertNominalRaw)) : '—'}</td>
         <td>
           <div class="action-group">
             <button class="icon-btn edit" title="Edit Biaya & Agent" onclick="openOrderModal('update', ${item.rowNumber})"><i class="fas fa-pen"></i></button>
@@ -990,7 +1139,11 @@ function renderOrdersTable() {
       </tr>`;
   }).join('');
 
-  if (infoEl) { const from = start + 1; const to = Math.min(start + orderPageSize, orderTotal); infoEl.textContent = 'Menampilkan ' + from + '–' + to + ' dari ' + orderTotal; }
+  if (infoEl) {
+    const from = start + 1;
+    const to = Math.min(start + orderPageSize, orderTotal);
+    infoEl.textContent = 'Menampilkan ' + from + '–' + to + ' dari ' + orderTotal;
+  }
   renderOrderPagination();
 }
 
@@ -1015,7 +1168,13 @@ function renderOrderPagination() {
   btnsEl.innerHTML = html;
 }
 
-function gotoOrderPage(p) { if (p < 1 || p > orderTotalPages) return; orderPage = p; loadOrdersPage(); }
+function gotoOrderPage(p) {
+  if (p < 1 || p > orderTotalPages) return;
+  orderPage = p;
+  const start = (orderPage - 1) * orderPageSize;
+  orderRows = orderFilteredAll.slice(start, start + orderPageSize);
+  renderOrdersTable();
+}
 
 /* =========================================================
    ORDER MODULE — FORM & CRUD
@@ -1028,7 +1187,7 @@ function openOrderModal(mode, rowNumber) {
   const errorEl = document.getElementById('orderFormError');
   errorEl.classList.remove('active'); errorEl.textContent = '';
 
-  const item = orderRows.find(r => Number(r.rowNumber) === Number(rowNumber));
+  const item = allOrdersRaw.find(r => Number(r.rowNumber) === Number(rowNumber));
   if (!item) { showToast('Gagal', 'Data order tidak ditemukan.', 'error'); return; }
 
   titleEl.textContent = 'Edit Order #' + rowNumber;
@@ -1080,7 +1239,7 @@ function submitOrderForm() {
    HAPUS DENGAN PASSWORD
 ========================================================= */
 function askDeleteOrder(rowNumber) {
-  const item = orderRows.find(r => Number(r.rowNumber) === Number(rowNumber));
+  const item = allOrdersRaw.find(r => Number(r.rowNumber) === Number(rowNumber));
   orderDeleteTarget = rowNumber;
   
   const detail = document.getElementById('confirmDetail');
@@ -1134,6 +1293,105 @@ function confirmDelete() {
       showToast('Gagal', err.message, 'error'); 
     })
     .finally(function () { btn.disabled = false; btn.innerHTML = originalHTML; });
+}
+
+/* =========================================================
+   DOWNLOAD ORDERS — EXCEL & PDF (export SEMUA hasil filter)
+========================================================= */
+function getOrderExportRows() {
+  // Export seluruh hasil filter (bukan cuma halaman aktif)
+  return orderFilteredAll.map(function (item, i) {
+    const raw = item.raw;
+    return {
+      No: i + 1,
+      Tanggal: formatDateForClient(raw[2]) || '-',
+      'Nama CS': String(raw[3] || '-'),
+      'Nomor HP': String(raw[4] || '-'),
+      Agent: String(raw[8] || '-'),
+      Deskripsi: String(raw[5] || '-'),
+      Biaya: String(raw[1] || '-'),
+      'Periode Minggu': String(raw[18] || '-'),
+      'Kode Minggu': String(raw[20] || '-'),
+      'Order ID': String(raw[21] || '-'),
+      'Convert Nominal': (raw[12] !== undefined && raw[12] !== '') ? parseNominalClient(raw[12]) : 0
+    };
+  });
+}
+
+function buildOrderExportSuffix() {
+  const parts = [];
+  if (orderWeekFilter) parts.push('Week_' + orderWeekFilter.replace(/\s+/g, '_'));
+  if (orderAgentFilter) parts.push('Agent_' + orderAgentFilter.replace(/\s+/g, '_'));
+  if (orderSearchQ) parts.push('Cari_' + orderSearchQ.replace(/\s+/g, '_'));
+  return parts.length ? '_' + parts.join('_') : '';
+}
+
+function downloadOrdersExcel() {
+  if (!orderFilteredAll.length) { showToast('Gagal', 'Tidak ada data untuk diunduh.', 'error'); return; }
+
+  try {
+    const data = getOrderExportRows();
+    const ws = XLSX.utils.json_to_sheet(data);
+
+    ws['!cols'] = [
+      { wch: 5 }, { wch: 12 }, { wch: 18 }, { wch: 15 }, { wch: 15 },
+      { wch: 30 }, { wch: 12 }, { wch: 16 }, { wch: 12 }, { wch: 18 }, { wch: 15 }
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Orders');
+
+    const filename = `Orders${buildOrderExportSuffix()}_${new Date().toISOString().slice(0,10)}.xlsx`;
+    XLSX.writeFile(wb, filename);
+    showToast('Berhasil', `Excel diunduh (${data.length} baris).`, 'success');
+  } catch (err) {
+    console.error(err);
+    showToast('Gagal', 'Gagal membuat Excel: ' + err.message, 'error');
+  }
+}
+
+function downloadOrdersPDF() {
+  if (!orderFilteredAll.length) { showToast('Gagal', 'Tidak ada data untuk diunduh.', 'error'); return; }
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+
+    const data = getOrderExportRows();
+    const headers = [['No', 'Tanggal', 'Nama CS', 'Nomor HP', 'Agent', 'Deskripsi', 'Biaya', 'Periode', 'Kode Week', 'Order ID', 'Convert Nominal']];
+    const body = data.map(r => [
+      r.No, r.Tanggal, r['Nama CS'], r['Nomor HP'], r.Agent,
+      (r.Deskripsi || '').substring(0, 25),
+      r.Biaya, r['Periode Minggu'], r['Kode Minggu'], r['Order ID'],
+      formatRupiah(r['Convert Nominal'])
+    ]);
+
+    doc.setFontSize(14);
+    doc.text('Daftar Order — SuruhBoy HQ', 14, 15);
+    doc.setFontSize(9);
+    doc.setTextColor(100);
+    const filterInfo = [];
+    if (orderWeekFilter) filterInfo.push('Kode Minggu: ' + orderWeekFilter);
+    if (orderAgentFilter) filterInfo.push('Agent: ' + orderAgentFilter);
+    if (orderSearchQ) filterInfo.push('Cari: ' + orderSearchQ);
+    doc.text('Filter: ' + (filterInfo.length ? filterInfo.join(' | ') : 'Semua') + ' | Tanggal cetak: ' + new Date().toLocaleDateString('id-ID'), 14, 22);
+
+    doc.autoTable({
+      head: headers,
+      body: body,
+      startY: 28,
+      styles: { fontSize: 7, cellPadding: 1.5 },
+      headStyles: { fillColor: [79, 70, 229], textColor: 255, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: [248, 250, 252] },
+      margin: { left: 8, right: 8 }
+    });
+
+    doc.save(`Orders${buildOrderExportSuffix()}_${new Date().toISOString().slice(0,10)}.pdf`);
+    showToast('Berhasil', `PDF diunduh (${data.length} baris).`, 'success');
+  } catch (err) {
+    console.error(err);
+    showToast('Gagal', 'Gagal membuat PDF: ' + err.message, 'error');
+  }
 }
 
 /* =========================================================
@@ -1449,7 +1707,6 @@ function renderInvoices() {
     const idKirim = `chk-kirim-${start + index}`;
     const idBayar = `chk-bayar-${start + index}`;
 
-    // Notice selisih bayar
     let noticeHtml = '';
     if (item.statusBayar === 'Sudah' && item.nominalDibayar) {
       const nominal = parseNominalClient(item.nominalDibayar);
@@ -1540,7 +1797,6 @@ function updateInvoiceStatus(namaAgent, periode, type, isChecked, nominalDibayar
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Gagal update status.');
       showToast('Berhasil', 'Status diperbarui.', 'success');
-      // Update local state
       const item = invoiceRawData.find(x => x.nama.toLowerCase() === namaAgent.toLowerCase());
       if (item) {
         if (type === 'kirim') item.statusKirim = statusStr;
@@ -1574,7 +1830,6 @@ function onBayarCheckboxChange(namaAgent, periode, checkboxEl, totalTagihan) {
       .catch(function () { checkboxEl.checked = true; });
     return;
   }
-  // Check → buka modal input nominal
   _payContext = { namaAgent, periode, checkboxEl, totalTagihan };
   
   const info = document.getElementById('payModalInfo');
@@ -1641,17 +1896,13 @@ function submitPayModal() {
       document.getElementById('payModalOverlay').classList.remove('active');
       _payContext = null;
     })
-    .catch(() => {
-      // modal tetap terbuka
-    })
+    .catch(() => {})
     .finally(() => { btn.disabled = false; btn.innerHTML = orig; });
 }
 
 /* =========================================================
    DOWNLOAD INVOICE (GAMBAR PNG) — DENGAN QRIS, HIGH RESOLUSI
 ========================================================= */
-
-// Preload gambar QRIS sekali saja (di-cache)
 function preloadQrisImage() {
   if (_qrisImageCache) return Promise.resolve(_qrisImageCache);
   return new Promise((resolve, reject) => {
@@ -1664,24 +1915,20 @@ function preloadQrisImage() {
 }
 
 async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
-  // ====== RESOLUSI TINGGI (2x) ======
-  const SCALE = 2;            // 2x untuk Retina / cetak
-  const W = 600 * SCALE;      // 1200
-  const H = 1050 * SCALE;     // 2100
+  const SCALE = 2;
+  const W = 600 * SCALE;
+  const H = 1050 * SCALE;
 
   const canvas = document.createElement('canvas');
   canvas.width = W;
   canvas.height = H;
   const ctx = canvas.getContext('2d');
 
-  // Scale seluruh context — semua koordinat tetap pakai skala lama
   ctx.scale(SCALE, SCALE);
 
-  // Background
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, 600, 1050);
 
-  // Header
   ctx.fillStyle = '#0f766e';
   ctx.fillRect(0, 0, 600, 150);
 
@@ -1693,7 +1940,6 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.font = '16px Inter, Arial, sans-serif';
   ctx.fillText('Invoice Tagihan Admin', 300, 100);
 
-  // Garis putus-putus
   ctx.strokeStyle = '#e2e8f0';
   ctx.lineWidth = 2;
   ctx.setLineDash([5, 5]);
@@ -1703,7 +1949,6 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Detail
   ctx.fillStyle = '#475569';
   ctx.textAlign = 'left';
   ctx.font = '16px Inter, Arial, sans-serif';
@@ -1731,7 +1976,6 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.fillStyle = '#0f172a'; ctx.font = 'bold 18px Inter, Arial, sans-serif';
   ctx.fillText(formatRupiah(totalAdmin), 200, y);
 
-  // Box total
   y += 80;
   ctx.fillStyle = '#ecfdf5';
   ctx.fillRect(50, y, 500, 80);
@@ -1741,7 +1985,6 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.font = 'bold 32px Inter, Arial, sans-serif';
   ctx.fillText(formatRupiah(totalAdmin), 70, y + 60);
 
-  // ===== AREA QRIS =====
   y += 100;
   ctx.fillStyle = '#f8fafc';
   ctx.fillRect(50, y, 500, 380);
@@ -1758,8 +2001,6 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
 
   try {
     const qrisImg = await preloadQrisImage();
-
-    // Ukuran QRIS lebih besar agar modul jelas (420px di skala 1x)
     const maxSize = 420;
     const ratio = Math.min(maxSize / qrisImg.width, maxSize / qrisImg.height);
     const drawW = qrisImg.width * ratio;
@@ -1767,12 +2008,9 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
     const drawX = (600 - drawW) / 2;
     const drawY = y + 55;
 
-    // Matikan smoothing agar QRIS tetap TAJAM (tidak di-blur browser)
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(qrisImg, drawX, drawY, drawW, drawH);
-    // Hidupkan kembali untuk elemen lain (jika ada)
     ctx.imageSmoothingEnabled = true;
-
   } catch (err) {
     ctx.fillStyle = '#ef4444';
     ctx.font = '14px Inter, Arial, sans-serif';
@@ -1786,7 +2024,6 @@ async function drawInvoiceCanvas(namaAgent, periode, totalBersih, totalAdmin) {
   ctx.font = '13px Inter, Arial, sans-serif';
   ctx.fillText('Atas nama: SuruhBoy HQ', 300, y + 355);
 
-  // Footer
   ctx.fillStyle = '#94a3b8';
   ctx.font = '12px Inter, Arial, sans-serif';
   ctx.textAlign = 'center';
@@ -1813,7 +2050,6 @@ async function downloadInvoice(namaAgent, periode, totalBersih, totalAdmin, chec
     triggerDownload(canvas, filename);
     showToast('Berhasil', 'Invoice berhasil diunduh.', 'success');
 
-    // Ceklis otomatis "Sudah Kirim" jika belum
     const chk = document.getElementById(checkboxId);
     if (chk && !chk.checked) {
       chk.checked = true;
@@ -1839,7 +2075,6 @@ async function downloadAllInvoices() {
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
 
-  // Pastikan QRIS sudah ter-load sekali
   try { await preloadQrisImage(); } catch (e) { console.warn(e); }
 
   const list = invoiceRawData.slice();
@@ -1856,17 +2091,13 @@ async function downloadAllInvoices() {
       triggerDownload(canvas, filename);
       sukses++;
 
-      // Update status kirim di backend
       if (item.statusKirim !== 'Sudah') {
-        try {
-          await updateInvoiceStatus(item.nama, periode, 'kirim', true);
-        } catch (_) { /* abaikan */ }
+        try { await updateInvoiceStatus(item.nama, periode, 'kirim', true); } catch (_) {}
       }
     } catch (err) {
       console.error('Gagal generate invoice untuk', item.nama, err);
     }
 
-    // Jeda antar download supaya browser tidak memblokir
     await new Promise(r => setTimeout(r, 350));
   }
 
@@ -1922,4 +2153,4 @@ document.addEventListener('keydown', function (e) {
 });
 </script>
 </body>
-</html>  
+</html>
