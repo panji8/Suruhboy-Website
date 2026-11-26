@@ -212,7 +212,7 @@ tbody tr:hover{background:#f8fafc}
 .a-stat-info h4{font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px}
 .a-stat-info span{font-size:22px;font-weight:800}
 
-/* LIST STYLE (TABEL CLEAN) */
+/* LIST STYLE */
 .list-container{background:white;border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
 .list-item{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border)}
 .list-item:last-child{border-bottom:none}
@@ -255,6 +255,11 @@ tbody tr:hover{background:#f8fafc}
 .inv-check input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--success); }
 .inv-check-label { font-weight: 600; color: var(--text-muted); }
 
+/* PAGE-SIZE SELECTOR */
+.page-size-label{font-size:12px;color:var(--text-muted);font-weight:600}
+.page-size-select{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;outline:none;background:white;cursor:pointer}
+.page-size-select:focus{border-color:var(--primary)}
+
 /* RESPONSIVE */
 @media(max-width: 768px) {
   .sidebar { width: 100%; height: auto; top: auto; bottom: 0; flex-direction: row; border-top: 1px solid rgba(255,255,255,.1); padding: 0; z-index: 1000; }
@@ -277,6 +282,8 @@ tbody tr:hover{background:#f8fafc}
   .search-box { max-width: none; }
   .list-item { flex-direction: column; align-items: flex-start; gap: 10px; }
   .list-right { width: 100%; justify-content: space-between; }
+  .pagination { flex-direction: column; align-items: stretch; }
+  .pagination > div:first-child { display: flex; justify-content: space-between; align-items: center; }
 }
 </style>
 </head>
@@ -400,7 +407,7 @@ tbody tr:hover{background:#f8fafc}
     <!-- ORDERS -->
     <div id="page-orders" class="page-content" style="display:none;">
       <div class="dashboard-toolbar">
-        <div><div class="dashboard-description">Daftar order — 10 per halaman, terbaru di atas</div></div>
+        <div><div class="dashboard-description">Daftar order — pilih ukuran halaman 10/15/20/50</div></div>
         <div class="filter-area">
           <button class="btn btn-success btn-sm" disabled title="Fitur Tambah dinonaktifkan"><i class="fas fa-plus"></i> Order Baru</button>
           <button class="btn btn-primary btn-sm" onclick="reloadOrdersPage()"><i class="fas fa-sync"></i> Refresh</button>
@@ -446,7 +453,16 @@ tbody tr:hover{background:#f8fafc}
         </div>
 
         <div class="pagination">
-          <div id="orderPaginationInfo">—</div>
+          <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <span id="orderPaginationInfo">—</span>
+            <span class="page-size-label">Tampilkan:</span>
+            <select id="orderPageSizeSelect" class="page-size-select" onchange="onOrderPageSizeChange()">
+              <option value="10">10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+            </select>
+          </div>
           <div class="pagination-buttons" id="orderPaginationBtns"></div>
         </div>
       </div>
@@ -481,7 +497,7 @@ tbody tr:hover{background:#f8fafc}
           </div>
         </div>
 
-        <!-- DAFTAR AGENT (TABEL) -->
+        <!-- DAFTAR AGENT -->
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; margin-top:24px;">
           <h3 style="font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px; margin:0;">
             <i class="fas fa-address-book" style="color:var(--primary)"></i> Daftar Agent
@@ -496,7 +512,7 @@ tbody tr:hover{background:#f8fafc}
           <div class="pagination-buttons" id="agentPaginationBtns"></div>
         </div>
 
-        <!-- SECTION TAGIHAN & INVOICE (TABEL) -->
+        <!-- SECTION TAGIHAN & INVOICE -->
         <div class="invoice-wrapper" style="margin-top:32px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
             <h3 style="font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px; margin:0;">
@@ -653,8 +669,10 @@ const API_URL_AGENT = 'https://script.google.com/macros/s/AKfycbwB_3vDgfeoo4Zmdv
 const PASSWORD_GLOBAL = '123456'; 
 const PASSWORD_HAPUS = '123456';  
 
-// Path gambar QRIS — pastikan file qrisuruhboy.png ada di root repository
 const QRIS_IMAGE_URL = 'qrisuruhboy.png';
+
+// Index kolom Convert Nominal di array raw (kolom ke-13 spreadsheet = index 12)
+const CONVERT_NOMINAL_INDEX = 12;
 
 /* =========================================================
    GLOBAL STATE
@@ -663,14 +681,14 @@ let currentPage = 'dashboard';
 let isAdminAuthenticated = false;
 let rawData = [], filteredData = [], weeklyData = [], revenueChart = null;
 
-// === ORDER STATE (FULL CLIENT-SIDE) ===
-let allOrdersRaw = [];          // semua order mentah (dari loop fetch)
+// === ORDER STATE ===
+let allOrdersRaw = [];
 let orderPage = 1, orderPageSize = 10;
 let orderSearchQ = '', orderSortBy = 'newest';
 let orderWeekFilter = '', orderAgentFilter = '';
-let orderRows = [];             // baris halaman aktif
+let orderRows = [];
 let orderTotal = 0, orderTotalPages = 1;
-let orderFilteredAll = [];      // semua order setelah filter+sort (untuk export)
+let orderFilteredAll = [];
 let orderMode = 'create', orderEditingRow = null, orderDeleteTarget = null;
 let _searchTimer = null;
 
@@ -687,9 +705,6 @@ let _payContext = null;
 
 // QRIS image cache
 let _qrisImageCache = null;
-
-// Index kolom Convert Nominal di array raw (kolom ke-13 spreadsheet = index 12)
-const CONVERT_NOMINAL_INDEX = 12;
 
 /* =========================================================
    API TRANSPORT
@@ -940,7 +955,6 @@ async function loadOrdersPage() {
     const batchSize = 100;
     let hasMore = true;
 
-    // Loop fetch semua data per 100 baris
     while (hasMore) {
       if (tbody) tbody.innerHTML = `<tr><td colspan="12" class="empty"><div class="spinner"></div>Memuat data... (${allOrdersRaw.length} terbaca)</td></tr>`;
 
@@ -986,7 +1000,7 @@ function populateOrderFilters() {
   if (weekSelect) {
     const weeks = new Set();
     allOrdersRaw.forEach(item => {
-      const kode = String(item.raw && item.raw[20] || '').trim(); // Kode Minggu
+      const kode = String(item.raw && item.raw[20] || '').trim();
       if (kode) weeks.add(kode);
     });
     const currentVal = orderWeekFilter || weekSelect.value;
@@ -1023,20 +1037,18 @@ function getOrderSearchBlob(item) {
 }
 
 function applyOrderFiltersAndRender() {
-  // 1) Filter
   let rows = allOrdersRaw.slice();
   const q = orderSearchQ.trim().toLowerCase();
   if (q) rows = rows.filter(item => getOrderSearchBlob(item).indexOf(q) !== -1);
   if (orderWeekFilter) rows = rows.filter(item => String(item.raw && item.raw[20] || '').trim() === orderWeekFilter);
   if (orderAgentFilter) rows = rows.filter(item => String(item.raw && item.raw[8] || '').trim().toLowerCase() === orderAgentFilter.toLowerCase());
 
-  // 2) Sort
   rows.sort((a, b) => {
     const rawA = a.raw || [], rawB = b.raw || [];
     if (orderSortBy === 'nominalHigh') return parseNominalClient(rawB[CONVERT_NOMINAL_INDEX]) - parseNominalClient(rawA[CONVERT_NOMINAL_INDEX]);
     if (orderSortBy === 'nominalLow') return parseNominalClient(rawA[CONVERT_NOMINAL_INDEX]) - parseNominalClient(rawB[CONVERT_NOMINAL_INDEX]);
     if (orderSortBy === 'oldest') return (a.rowNumber || 0) - (b.rowNumber || 0);
-    return (b.rowNumber || 0) - (a.rowNumber || 0); // newest
+    return (b.rowNumber || 0) - (a.rowNumber || 0);
   });
 
   orderFilteredAll = rows;
@@ -1087,6 +1099,15 @@ function onOrderWeekFilterChange() {
 function onOrderAgentFilterChange() {
   const sel = document.getElementById('orderAgentFilter');
   orderAgentFilter = sel ? sel.value : '';
+  orderPage = 1;
+  applyOrderFiltersAndRender();
+}
+
+// === PAGINATION SIZE ===
+function onOrderPageSizeChange() {
+  const sel = document.getElementById('orderPageSizeSelect');
+  const newSize = parseInt(sel.value, 10) || 10;
+  orderPageSize = newSize;
   orderPage = 1;
   applyOrderFiltersAndRender();
 }
@@ -1900,7 +1921,7 @@ function submitPayModal() {
 }
 
 /* =========================================================
-   DOWNLOAD INVOICE (GAMBAR PNG) — DENGAN QRIS, HIGH RESOLUSI
+   DOWNLOAD INVOICE (GAMBAR PNG)
 ========================================================= */
 function preloadQrisImage() {
   if (_qrisImageCache) return Promise.resolve(_qrisImageCache);
