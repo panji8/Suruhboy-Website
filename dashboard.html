@@ -664,11 +664,11 @@ let isAdminAuthenticated = false;
 let rawData = [], filteredData = [], weeklyData = [], revenueChart = null;
 
 // === ORDER STATE (FULL CLIENT-SIDE) ===
-let allOrdersRaw = [];          // semua order mentah dari API (diambil dengan pageSize besar)
+let allOrdersRaw = [];          // semua order mentah (dari loop fetch)
 let orderPage = 1, orderPageSize = 10;
 let orderSearchQ = '', orderSortBy = 'newest';
 let orderWeekFilter = '', orderAgentFilter = '';
-let orderRows = [];             // baris halaman aktif (untuk render)
+let orderRows = [];             // baris halaman aktif
 let orderTotal = 0, orderTotalPages = 1;
 let orderFilteredAll = [];      // semua order setelah filter+sort (untuk export)
 let orderMode = 'create', orderEditingRow = null, orderDeleteTarget = null;
@@ -687,6 +687,9 @@ let _payContext = null;
 
 // QRIS image cache
 let _qrisImageCache = null;
+
+// Index kolom Convert Nominal di array raw (kolom ke-13 spreadsheet = index 12)
+const CONVERT_NOMINAL_INDEX = 12;
 
 /* =========================================================
    API TRANSPORT
@@ -925,29 +928,55 @@ function renderWeeklyTable() {
 }
 
 /* =========================================================
-   ORDER MODULE — FULL CLIENT-SIDE
+   ORDER MODULE — FULL CLIENT-SIDE (LOOP FETCH SEMUA DATA)
 ========================================================= */
-function loadOrdersPage() {
+async function loadOrdersPage() {
   const tbody = document.getElementById('ordersTableBody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty"><div class="spinner"></div>Memuat...</td></tr>';
+  if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty"><div class="spinner"></div>Memuat semua data...</td></tr>';
 
-  // Ambil SEMUA data dari API ordersPage (pageSize besar), filter di client.
-  apiGetMain('ordersPage', { page: 1, pageSize: 9999, search: '', sortBy: 'newest' })
-    .then(function (res) {
+  try {
+    allOrdersRaw = [];
+    let currentPage = 1;
+    const batchSize = 100;
+    let hasMore = true;
+
+    // Loop fetch semua data per 100 baris
+    while (hasMore) {
+      if (tbody) tbody.innerHTML = `<tr><td colspan="12" class="empty"><div class="spinner"></div>Memuat data... (${allOrdersRaw.length} terbaca)</td></tr>`;
+
+      const res = await apiGetMain('ordersPage', {
+        page: currentPage,
+        pageSize: batchSize,
+        search: '',
+        sortBy: 'newest'
+      });
+
       if (res && res.error) throw new Error(res.error);
       if (!res || !res.success) throw new Error('Response tidak valid.');
-      
-      // Simpan data mentah hasil API asli (raw array sudah benar formatnya)
-      allOrdersRaw = res.rows || []; 
-      
-      populateOrderFilters();
-      applyOrderFiltersAndRender();
-    })
-    .catch(function (err) {
-      console.error(err);
-      if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty">Gagal: ' + escapeHtml(err.message) + '</td></tr>';
-      showToast('Gagal', err.message, 'error');
-    });
+
+      const rows = res.rows || [];
+      if (rows.length > 0) allOrdersRaw = allOrdersRaw.concat(rows);
+
+      if (rows.length < batchSize) hasMore = false;
+      else currentPage++;
+
+      if (currentPage > 200) hasMore = false; // safety
+    }
+
+    if (!allOrdersRaw.length) {
+      if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty">Belum ada order.</td></tr>';
+      return;
+    }
+
+    showToast('Sukses', `Berhasil memuat ${allOrdersRaw.length} data.`, 'success');
+    populateOrderFilters();
+    applyOrderFiltersAndRender();
+
+  } catch (err) {
+    console.error(err);
+    if (tbody) tbody.innerHTML = '<tr><td colspan="12" class="empty">Gagal: ' + escapeHtml(err.message) + '</td></tr>';
+    showToast('Gagal', err.message, 'error');
+  }
 }
 
 function populateOrderFilters() {
@@ -957,7 +986,7 @@ function populateOrderFilters() {
   if (weekSelect) {
     const weeks = new Set();
     allOrdersRaw.forEach(item => {
-      const kode = String(item.raw[20] || '').trim(); // Kode Minggu
+      const kode = String(item.raw && item.raw[20] || '').trim(); // Kode Minggu
       if (kode) weeks.add(kode);
     });
     const currentVal = orderWeekFilter || weekSelect.value;
@@ -973,7 +1002,7 @@ function populateOrderFilters() {
   if (agentSelect) {
     const agents = new Set();
     allOrdersRaw.forEach(item => {
-      const a = String(item.raw[8] || '').trim();
+      const a = String(item.raw && item.raw[8] || '').trim();
       if (a) agents.add(a);
     });
     const currentVal = orderAgentFilter || agentSelect.value;
@@ -988,10 +1017,9 @@ function populateOrderFilters() {
 }
 
 function getOrderSearchBlob(item) {
-  const r = item.raw;
-  return [
-    r[3], r[4], r[8], r[5], r[21], r[20], r[18], r[1]
-  ].map(v => String(v || '').toLowerCase()).join(' ');
+  const r = item.raw || [];
+  return [r[3], r[4], r[8], r[5], r[21], r[20], r[18], r[1]]
+    .map(v => String(v || '').toLowerCase()).join(' ');
 }
 
 function applyOrderFiltersAndRender() {
@@ -999,16 +1027,16 @@ function applyOrderFiltersAndRender() {
   let rows = allOrdersRaw.slice();
   const q = orderSearchQ.trim().toLowerCase();
   if (q) rows = rows.filter(item => getOrderSearchBlob(item).indexOf(q) !== -1);
-  if (orderWeekFilter) rows = rows.filter(item => String(item.raw[20] || '').trim() === orderWeekFilter);
-  if (orderAgentFilter) rows = rows.filter(item => String(item.raw[8] || '').trim().toLowerCase() === orderAgentFilter.toLowerCase());
+  if (orderWeekFilter) rows = rows.filter(item => String(item.raw && item.raw[20] || '').trim() === orderWeekFilter);
+  if (orderAgentFilter) rows = rows.filter(item => String(item.raw && item.raw[8] || '').trim().toLowerCase() === orderAgentFilter.toLowerCase());
 
   // 2) Sort
   rows.sort((a, b) => {
-    if (orderSortBy === 'nominalHigh') return parseNominalClient(b.raw[12]) - parseNominalClient(a.raw[12]);
-    if (orderSortBy === 'nominalLow') return parseNominalClient(a.raw[12]) - parseNominalClient(b.raw[12]);
-    if (orderSortBy === 'oldest') return a.rowNumber - b.rowNumber;
-    // newest default
-    return b.rowNumber - a.rowNumber;
+    const rawA = a.raw || [], rawB = b.raw || [];
+    if (orderSortBy === 'nominalHigh') return parseNominalClient(rawB[CONVERT_NOMINAL_INDEX]) - parseNominalClient(rawA[CONVERT_NOMINAL_INDEX]);
+    if (orderSortBy === 'nominalLow') return parseNominalClient(rawA[CONVERT_NOMINAL_INDEX]) - parseNominalClient(rawB[CONVERT_NOMINAL_INDEX]);
+    if (orderSortBy === 'oldest') return (a.rowNumber || 0) - (b.rowNumber || 0);
+    return (b.rowNumber || 0) - (a.rowNumber || 0); // newest
   });
 
   orderFilteredAll = rows;
@@ -1080,7 +1108,7 @@ function renderOrdersTable() {
   const start = (orderPage - 1) * orderPageSize;
 
   tbody.innerHTML = orderRows.map(function (item, i) {
-    const raw = item.raw;
+    const raw = item.raw || [];
     const biaya = String(raw[1] || '');
     const tanggal = formatDateForClient(raw[2]);
     const namaCS = String(raw[3] || '');
@@ -1090,7 +1118,7 @@ function renderOrdersTable() {
     const periodeMinggu = String(raw[18] || '');
     const kodeMinggu = String(raw[20] || '');
     const orderId = String(raw[21] || '');
-    const convertNominalRaw = raw[13];
+    const convertNominalRaw = raw[CONVERT_NOMINAL_INDEX];
 
     return `
       <tr>
@@ -1166,7 +1194,7 @@ function openOrderModal(mode, rowNumber) {
   if (!item) { showToast('Gagal', 'Data order tidak ditemukan.', 'error'); return; }
 
   titleEl.textContent = 'Edit Order #' + rowNumber;
-  const raw = item.raw;
+  const raw = item.raw || [];
 
   document.getElementById('fieldNominal').value = raw[1] || ''; 
   document.getElementById('fieldAgent').value = raw[8] || '';   
@@ -1220,7 +1248,7 @@ function askDeleteOrder(rowNumber) {
   const detail = document.getElementById('confirmDetail');
   if (detail) {
     if (item) {
-      const raw = item.raw;
+      const raw = item.raw || [];
       const namaCS = String(raw[3] || 'Tanpa nama'), orderId = String(raw[21] || '');
       detail.textContent = '#' + rowNumber + ' — ' + namaCS + (orderId ? ' (' + orderId + ')' : '');
     } else { detail.textContent = '#' + rowNumber; }
@@ -1275,7 +1303,7 @@ function confirmDelete() {
 ========================================================= */
 function getOrderExportRows() {
   return orderFilteredAll.map(function (item, i) {
-    const raw = item.raw;
+    const raw = item.raw || [];
     return {
       No: i + 1,
       Tanggal: formatDateForClient(raw[2]) || '-',
@@ -1287,7 +1315,7 @@ function getOrderExportRows() {
       'Periode Minggu': String(raw[18] || '-'),
       'Kode Minggu': String(raw[20] || '-'),
       'Order ID': String(raw[21] || '-'),
-      'Convert Nominal': (raw[13] !== undefined && raw[13] !== '') ? parseNominalClient(raw[12]) : 0
+      'Convert Nominal': (raw[CONVERT_NOMINAL_INDEX] !== undefined && raw[CONVERT_NOMINAL_INDEX] !== '') ? parseNominalClient(raw[CONVERT_NOMINAL_INDEX]) : 0
     };
   });
 }
@@ -1306,15 +1334,12 @@ function downloadOrdersExcel() {
   try {
     const data = getOrderExportRows();
     const ws = XLSX.utils.json_to_sheet(data);
-
     ws['!cols'] = [
       { wch: 5 }, { wch: 12 }, { wch: 18 }, { wch: 15 }, { wch: 15 },
       { wch: 30 }, { wch: 12 }, { wch: 16 }, { wch: 12 }, { wch: 18 }, { wch: 15 }
     ];
-
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Orders');
-
     const filename = `Orders${buildOrderExportSuffix()}_${new Date().toISOString().slice(0,10)}.xlsx`;
     XLSX.writeFile(wb, filename);
     showToast('Berhasil', `Excel diunduh (${data.length} baris).`, 'success');
